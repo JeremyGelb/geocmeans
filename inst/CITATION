@@ -1,0 +1,19 @@
+citHeader("To cite geocmeans in publications use:")
+
+citEntry(entry = "Article",
+  title        = "Spatially constraint c-means algorithm {geocmeans}",
+  author       = personList(as.person("Jeremy Gelb"),
+                   as.person("Phillipe Apparicio")),
+  journal      = "somewhere one day we hope",
+  year         = "2020",
+  volume       = "40",
+  number       = "3",
+  pages        = "1--25",
+  url          = "http://onyadream/letssee",
+
+  textVersion  =
+  paste("Jeremy Gelb, Phillipe Apparicio (2020).",
+        "Spatially constraint c-means algorithm.",
+        "somewhere one day we hope, 40(3), 1-25.",
+        "URL http://onyadream/letssee")
+)

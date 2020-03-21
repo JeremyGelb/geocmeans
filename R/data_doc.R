@@ -1,0 +1,28 @@
+#' social and environmental indicators for the Iris of the metropolitan region of Lyon (france)
+#'
+#' A dataset containing social and environmental data for the
+#' Iris of Lyon (france)
+#'
+#' @format A data frame with 506 rows and 33 variables:
+#' \describe{
+#'   \item{OBJECTID}{on simple OID (intger)}
+#'   \item{INSEE_COM}{the code of each commune (factor)}
+#'   \item{NOM_COM}{the name of each commune (factor)}
+#'   \item{CODE_IRIS}{the code of each unit area : iris (factor)}
+#'   \item{Lden}{the annual daily mean noise exposure values in dB (numeric)}
+#'   \item{NO2}{the annual mean of NO2 concentration in ug/m3 (numeric)}
+#'   \item{PM25}{the annual mean of PM25 concentration in ug/m3 (numeric)}
+#'   \item{PM10}{the annual mean of PM25 concentration in ug/m3 (numeric)}
+#'   \item{Pct0_14}{the percentage of people that are 0 to 14 year old (numeric)}
+#'   \item{Pct_65}{the percentage of people older than 64 (numeric)}
+#'   \item{Pct_Img}{the percentage immigrants (numeric)}
+#'   \item{TxChom1564}{the unemployment rate (numeric)}
+#'   \item{Pct_brevet}{the percentage of people that obtained the college diploma (numeric)}
+#'   \item{NivVieMed}{the median standard of living in euros (numeric)}
+#'   \item{VegHautPrt}{the percentage of the iris surface covered by canope (numeric)}
+#'   \item{X}{the X coordinate of the center of the Iris (numeric)}
+#'   \item{Y}{the Y coordinate of the center of the Iris (numeric)}
+#'   ...
+#' }
+#' @source \url{https://data.grandlyon.com/accueil}
+"LyonIris"

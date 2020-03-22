@@ -253,20 +253,28 @@ MyMaps$ClusterPlot
 
 There is still some mixing between the clusters, but the frontiers are way more clear than in the classical cmeans.
 
-To confirm ths observation, we can do a spatial diagnostic with the function *spatialdiag* of the geocmeans package. We will compare the results of the classical and the spatial solutions
+To confirm ths observation, we can do a spatial diagnostic with the function *spatialdiag* of the geocmeans package. We will compare the results of the classical and the spatial solutions. We can compare the final results too with the k-means solution with a little bit more work.
 
 ```{r warning=FALSE}
-spdiag_1 <- spatialDiag(Cmean$u,nblistw = WMat,nrep=30)
-spdiag_2 <- spatialDiag(Result2$Belongings,nblistw = WMat,nrep=30)
+#creating a belonging matrix for the kmean clustering
+KmeanBelonging <- model.matrix(~as.character(KMeanClust$cluster))[,2:5]
+KmeanBelonging <- cbind(KmeanBelonging,1-rowSums(KmeanBelonging))
+colnames(KmeanBelonging)<- paste("Cluster",1:5)
+
+spdiag_1 <- spatialDiag(KmeanBelonging,nblistw = WMat,nrep=30)
+spdiag_2 <- spatialDiag(Cmean$u,nblistw = WMat,nrep=30)
+spdiag_3 <- spatialDiag(Result2$Belongings,nblistw = WMat,nrep=30)
 
 print(spdiag_1$MoranValues)
 print(spdiag_2$MoranValues)
+print(spdiag_3$MoranValues)
 
 print(spdiag_1$SpConsist)
 print(spdiag_2$SpConsist)
+print(spdiag_3$SpConsist)
 ```
 
-So with the spatial cmeans we achieve a way higher spatial consistency and this is confirmed by the Moran I values calculated on the belonging matrices.
+So with the spatial cmeans we achieve a way higher spatial consistency and this is confirmed by the Moran I values calculated on the belonging matrices. Because of its hard-clustering approach, the K-means algorithm ends up with the lower spatial consistency.
 
 We can map the undiced observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function *undecidedUnits* of the *geocmeans* package.
 

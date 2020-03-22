@@ -7,8 +7,9 @@
 mapClusters(geodata, belongmatrix, undecided = NULL)
 }
 \arguments{
-\item{geodata}{A spatialpolygondataframe ordered like the original data used
-for the clustering}
+\item{geodata}{A object of class spatialpolygonesdataframe /
+spatiallinesdataframe or spatialpointsdataframe ordered
+like the original data used for the clustering}
 
 \item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
 
@@ -19,8 +20,10 @@ uncertain (default = NULL)}
 \value{
 a named list with :
 \itemize{
-        \item ProbaMaps : a list of ggplot maps showing for each group the probability of the observations to belong to that group
-        \item ClusterMap : a ggplot map showing the most likely group for each observation
+        \item ProbaMaps : a list of ggplot maps showing for each group the
+        probability of the observations to belong to that group
+        \item ClusterMap : a ggplot map showing the most likely group for
+         observation
 }
 }
 \description{
@@ -29,10 +32,11 @@ build some maps to visualize the results of the clustering
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-mapClusters(LyonIris, result$Belongings)
+MyMaps <- mapClusters(LyonIris, result$Belongings)
 }

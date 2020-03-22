@@ -9,11 +9,11 @@ spConsistency(belongmatrix, nblistw, nrep = 999)
 \arguments{
 \item{belongmatrix}{A belonging matrix}
 
-\item{nblistw}{A list.w object describing the neighbours (spdep package)}
-
-\item{undecided}{A float between 0 and 1 giving the minimum value that an
+\item{nblistw}{A list.w object describing the neighbours (spdep package)
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
+
+\item{nrep}{a integer indicating the number of permutation to do to simulate}
 }
 \value{
 a named list with
@@ -50,7 +50,8 @@ solution able to reduce this index has a better spatial consistency
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

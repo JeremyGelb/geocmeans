@@ -25,5 +25,5 @@ calculate the mean of each row. If all the values of the final vector are
 below the fixed tolerance, then return True, else return False
 }
 \examples{
-This is an internal function, no example provided
+#This is an internal function, no example provided
 }

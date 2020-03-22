@@ -5,19 +5,25 @@ Version: 0.1.0.9000
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
-Description: This package proposes implementations of a spatial fuzzy c-means algorithm and functions to analyze the outputs.
-    The reference for the actual implementation is : https://doi.org/10.1016/j.patcog.2006.07.011
+Description: This package proposes implementations of a spatial fuzzy c-means algorithm and functions to analyze the outputs. Some tests for estimating the spatial consistency gain are proposed in addition.
 Imports: 
     ggplot2 (>= 3.2.1),
     spdep (>= 1.1.2),
     reldist (>= 1.6.6),
-    SDMTools (>= 1.1.221.2),
     dplyr (>= 0.8.3),
     fclust (>= 2.1.1),
     fmsb (>= 0.7.0),
-    broom (>= 0.5.2)
+    broom (>= 0.5.2),
+    utils (>= 3.6.1),
+    maptools (>= 0.9-5),
+    rgeos (>= 0.5-2),
+    sp (>= 1.3-1)
 Depends:
-    R (>= 3.5.1)
+    R (>= 3.5)
+Suggests:
+    knitr (>= 1.28),
+    rmarkdown (>= 2.1),
+    ppclust (>= 1.1.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

@@ -25,5 +25,5 @@ Calculate the belonging matrix according to a set of centroids, the observed
 data and the fuzzyness degree
 }
 \examples{
-This is an internal function, no example provided
+#This is an internal function, no example provided
 }

@@ -1,1 +1,5 @@
 exportPattern("^[[:alpha:]]+")
+importFrom("grDevices", "rgb")
+importFrom("stats", "quantile", "sd", "weighted.mean")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
+importFrom("dplyr","%>%")

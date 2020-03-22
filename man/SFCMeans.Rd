@@ -12,7 +12,8 @@ SFCMeans(
   alpha,
   maxiter = 500,
   tol = 0.01,
-  standardize = TRUE
+  standardize = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ convergence assessment}
 
 \item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
+
+\item{verbose}{A boolean to specify if the prossess bar should be displayed}
 }
 \value{
 a named list with
@@ -67,7 +70,8 @@ with
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

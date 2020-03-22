@@ -1,13 +1,13 @@
-rm(list = ls())
-library(ClustGeo)
-library(rgeos)
-library(sf)
-library(ggplot2)
-library(sp)
-library(tidyverse)
-library(spdep)
-library(reldist)
-library(SDMTools)
+# rm(list = ls())
+# library(ClustGeo)
+# library(rgeos)
+# library(sf)
+# library(ggplot2)
+# library(sp)
+# library(tidyverse)
+# library(spdep)
+# library(reldist)
+# library(SDMTools)
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,7 +22,7 @@ library(SDMTools)
 #' @return A vector of length n giving the euclidean distance between all matrix
 #'   row and the vector p
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 calcEuclideanDistance <- function(m, v) {
     mat1 <- as.matrix(m)
     mat2 <- matrix(as.numeric(v), nrow = nrow(m), ncol = length(v), byrow = TRUE)
@@ -35,9 +35,10 @@ calcEuclideanDistance <- function(m, v) {
 #' @param centerid An integer representing the column to use as reference in the
 #'   distance matrix
 #' @param alldistances A distance matrix
+#' @param m A float, the fuzziness parameter
 #' @return m a float representing the fuzzyness degree
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 calcBelongDenom <- function(centerid, alldistances, m) {
     values <- sapply(1:ncol(alldistances), function(i) {
         div <- (alldistances[, centerid] / alldistances[, i])
@@ -58,7 +59,7 @@ calcBelongDenom <- function(centerid, alldistances, m) {
 #' @return A n * k matrix represening the probability of belonging of each
 #'   datapoint to each cluster
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 calcBelongMatrix <- function(centers, data, m) {
     centerdistances <- as.data.frame(apply(centers, 1, function(x) {
         return(calcEuclideanDistance(data, x))
@@ -91,7 +92,7 @@ calcBelongMatrix <- function(centers, data, m) {
 #' @return A n * k matrix represening the belonging probabilities of each
 #'   datapoint to each cluster
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 calcSFCMBelongMatrix <- function(centers, data, wdata, neighbours, m, alpha) {
     # calculate the original distances (xk-vi)**2
     originaldistances <- apply(centers, 1, function(x) {
@@ -126,7 +127,7 @@ calcSFCMBelongMatrix <- function(centers, data, wdata, neighbours, m, alpha) {
 #' @return A n X k matrix represening the belonging probabilities of each
 #'   datapoint to each cluster
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 calcCentroids <- function(data, belongmatrix, m) {
     centers <- sapply(1:ncol(belongmatrix), function(i) {
         apply(data, 2, function(x) {
@@ -156,7 +157,7 @@ calcCentroids <- function(data, belongmatrix, m) {
 #' @return A n X k matrix represening the belonging probabiblities of each
 #'   datapoint to each cluster
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 calcSWFCCentroids <- function(data, wdata, belongmatrix, neighbours, m, alpha) {
     centers <- sapply(1:ncol(belongmatrix), function(i) {
         weights <- belongmatrix[, i]^m
@@ -185,7 +186,7 @@ calcSWFCCentroids <- function(data, wdata, belongmatrix, neighbours, m, alpha) {
 #'   belong to the cluster k at iteration i+1
 #' @param tol a float representing the algorithm tolerance
 #' @examples
-#' This is an internal function, no example provided
+#' #This is an internal function, no example provided
 evaluateMatrices <- function(mat1, mat2, tol) {
     mat1 < -as.matrix(mat1)
     mat2 <- as.matrix(mat2)
@@ -212,6 +213,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #'   convergence assessment
 #' @param standardize A boolean to specify if the variables must be centered and
 #'   reduce (default = True)
+#' @param verbose A boolean to specify if the messages should be displayed
 #' @return a named list with :
 #' #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
@@ -222,13 +224,16 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' @export
 #' @examples
 #' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
 #' result <- CMeans(dataset,k = 5, m = 1.5, standardize = TRUE)
-CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE) {
+CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, verbose=TRUE) {
     # standardize data if required
     if (standardize) {
-        print("Standardizing the data (set parameter to FALSE to avoid this step)")
+        if(verbose){
+            print("Standardizing the data (set parameter to FALSE to avoid this step)")
+        }
         for (i in 1:ncol(data)) {
             data[, i] <- scale(data[, i])
         }
@@ -241,9 +246,14 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE) {
     CriterioReached <- FALSE
 
     # starting the loop
+    if(verbose){
+        pb <- txtProgressBar(1, maxiter, style = 3)
+    }
     pb <- txtProgressBar(1, maxiter, style = 3)
     for (i in 1:maxiter) {
-        setTxtProgressBar(pb, i)
+        if (verbose){
+            setTxtProgressBar(pb, i)
+        }
         newcenters <- calcCentroids(data, belongmatrix, m)
         newbelongmatrix <- calcBelongMatrix(newcenters, data, m)
         if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
@@ -252,12 +262,18 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE) {
             belongmatrix <- newbelongmatrix
         } else {
             # if we reach convergence criterion
-            print("criterion reached")
+            if (verbose){
+                print("criterion reached")
+            }
             CriterioReached <- TRUE
             centers <- newcenters
             belongmatrix <- newbelongmatrix
             break
         }
+    }
+
+    if(CriterioReached==FALSE){
+        warning("The convergence criterion was not reached within the specified number of steps")
     }
     # calculating the most likely group of earch data point
     DF <- as.data.frame(newbelongmatrix)
@@ -304,6 +320,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE) {
 #'   convergence assessment
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
+#' @param verbose A boolean to specify if the prossess bar should be displayed
 #' @return a named list with
 #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
@@ -315,15 +332,18 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE) {
 #' @examples
 #' data(LyonIris)
 #' library(spdep)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
 #' queen <- poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, standardize = TRUE) {
+SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE) {
     # standardize data if required
     if (standardize) {
-        print("Standardizing the data (set parameter to FALSE to avoid this step)")
+        if (verbose){
+            print("Standardizing the data (set parameter to FALSE to avoid this step)")
+        }
         for (i in 1:ncol(data)) {
             data[, i] <- scale(data[, i])
         }
@@ -332,7 +352,7 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
     # calculating the lagged dataset
     wdata <- data
     for (Name in names(data)) {
-        wdata[[Name]] <- lag.listw(nblistw, data[[Name]])
+        wdata[[Name]] <- spdep::lag.listw(nblistw, data[[Name]])
     }
 
     # selecting the original centers from datapoints
@@ -343,9 +363,13 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
     CriterioReached <- FALSE
 
     # starting the loop
-    pb <- txtProgressBar(1, maxiter, style = 3)
+    if(verbose){
+        pb <- txtProgressBar(1, maxiter, style = 3)
+    }
     for (i in 1:maxiter) {
-        setTxtProgressBar(pb, i)
+        if(verbose){
+            setTxtProgressBar(pb, i)
+        }
         newcenters <- calcSWFCCentroids(data, wdata, belongmatrix, nblistw, m, alpha)
         newbelongmatrix <- calcSFCMBelongMatrix(newcenters, data, wdata, nblistw, m, alpha = alpha)
         if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
@@ -354,13 +378,18 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
             belongmatrix <- newbelongmatrix
         } else {
             # if we reach convergence criterion
-            print("criterion reached")
+            if (verbose){
+                print("criterion reached")
+            }
             CriterioReached <- TRUE
             centers <- newcenters
             break
         }
     }
     # calculating the most likely group of earch data point
+    if(CriterioReached==FALSE){
+        warning("The convergence criterion was not reached within the specified number of steps")
+    }
     DF <- as.data.frame(newbelongmatrix)
     Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
     return(list(Centers = centers, Belongings = newbelongmatrix,

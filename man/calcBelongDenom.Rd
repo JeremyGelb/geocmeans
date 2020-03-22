@@ -11,6 +11,8 @@ calcBelongDenom(centerid, alldistances, m)
 distance matrix}
 
 \item{alldistances}{A distance matrix}
+
+\item{m}{A float, the fuzziness parameter}
 }
 \value{
 m a float representing the fuzzyness degree
@@ -19,5 +21,5 @@ m a float representing the fuzzyness degree
 Intermediar step in the calculation of the belonging matrix
 }
 \examples{
-This is an internal function, no example provided
+#This is an internal function, no example provided
 }

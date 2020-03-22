@@ -15,6 +15,8 @@ summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3)
 belonging matrix columns as weights (TRUE) or simply assign each
 observation to its most likely cluster and compute the statistics on each
 subset (default=True)}
+
+\item{dec}{a integer indicating the number of digits to keep when rouding (default is 3)}
 }
 \value{
 a list of length k (the number of group). Each element of the list is
@@ -27,7 +29,8 @@ Calculate some descriptive statistics of each group
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

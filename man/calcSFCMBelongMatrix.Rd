@@ -37,5 +37,5 @@ centroids, the observed data, the fuzzyness degree a neighbouring matrix and
 a spatial ponderation term
 }
 \examples{
-This is an internal function, no example provided
+#This is an internal function, no example provided
 }

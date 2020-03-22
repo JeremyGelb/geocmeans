@@ -23,5 +23,5 @@ A n X k matrix represening the belonging probabilities of each
 Calculate the new centroids of the clusters based on the belonging matrix
 }
 \examples{
-This is an internal function, no example provided
+#This is an internal function, no example provided
 }

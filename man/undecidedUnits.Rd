@@ -23,7 +23,8 @@ Identify the observation for with the classification is uncertain
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

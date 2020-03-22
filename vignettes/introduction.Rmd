@@ -4,8 +4,11 @@ author: "Jeremy Gelb"
 date: "18/03/2020"
 output:
   rmarkdown::html_vignette:
+    fig_width: 5
+    fig_height: 5
     toc: true
     toc_depth: 2
+    df_print: "tibble"
 vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -39,9 +42,12 @@ This package comes with a toy dataset LyonIris, combining many demographic and e
 Before starting the analysis, it is required to standardize the data because most of the calculus is based on euclidean distance.
 
 ```{r echo=FALSE, warning=FALSE}
-devtools::load_all("..")
+#devtools::load_all("..")
 #charging package and data
 library(geocmeans)
+library(ggplot2)
+library(dplyr)
+
 data(LyonIris)
 
 #selecting the columns for the analysis
@@ -87,17 +93,24 @@ Let's map the obtained groups.
 
 ```{r warning=FALSE}
 KMeanClust <-  kmeans(Data,centers=5,iter.max = 150)
-LyonIris$KMeanClust <- KMeanClust$cluster
-Colors <- recode(LyonIris$KMeanClust,
-                 "1"="palegreen3",
-                 "2"="firebrick",
-                 "3"="lightyellow2",
-                 "4"="steelblue",
-                 "5"="pink")
+LyonIris$Cluster <-paste("cluster",KMeanClust$cluster,sep="_")
 
 #mapping the groups
-sp::plot(LyonIris,col=Colors ,main=paste("Kmean clustering, 5 groups"),cex.main=0.8)
-legend("topleft", legend=paste("cluster",1:5), fill=c("palegreen3","firebrick","lightyellow2","steelblue","pink"), cex=0.8,bty="n")
+DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
+
+ggplot(data=DFmapping)+
+  geom_polygon(aes(x=long,y=lat,group=group,fill=Cluster),color=rgb(0,0,0,0))+
+  coord_fixed(ratio = 1)+
+  scale_fill_manual(name="Cluster",values = c("cluster_1"="palegreen3",
+                                 "cluster_2"="firebrick",
+                                 "cluster_3"="lightyellow2",
+                                 "cluster_4"="steelblue",
+                                 "cluster_5"="pink"))+
+  theme( axis.title = ggplot2::element_blank(),
+    axis.text = ggplot2::element_blank(),
+    axis.ticks = ggplot2::element_blank()
+    )
+
 ```
 
 We can clearly distinguish 5 strong spatial structure, but with some mixing between the clusters 2 and 4, 4 and 1 and 2 and 5.
@@ -156,14 +169,14 @@ The main challenge with the SFCM method is to select a parameter alpha. It repre
 
 To select the parameter, we propose here an iterative method (similar to the one in the package *ClustGeo*).
 
-```{r warning=FALSE}
+```{r warning=FALSE, echo=FALSE, message=FALSE}
 #calculating all the classification for alpha ranging between 0 and 2 (with 0.1 step)
 m <- 1.5
 AllIndices <- list()
 for(alpha in seq(0,2,0.1)){
   print(paste("Calculating alhpa = ",alpha,sep=""))
   #calculating the clustering
-  Result <- SFCMeans(Data,WMat,5,m,alpha=alpha,tol=0.00001)
+  Result <- SFCMeans(Data,WMat,5,m,alpha=alpha,tol=0.00001, verbose=FALSE)
   #calculating the quality indexes
   Indices <- calcqualityIndexes(Result$Data,Result$Belongings,Result$Centers)
   Indices$alpha <- alpha
@@ -238,7 +251,7 @@ MyMaps$ProbaMaps[[5]]
 MyMaps$ClusterPlot
 ```
 
-There is still some mixing between the clusters 5 and 1, but the frontiers are way more clear than in the classical cmeans.
+There is still some mixing between the clusters, but the frontiers are way more clear than in the classical cmeans.
 
 To confirm ths observation, we can do a spatial diagnostic with the function *spatialdiag* of the geocmeans package. We will compare the results of the classical and the spatial solutions
 
@@ -259,15 +272,24 @@ We can map the undiced observations of the final solution. These entities should
 
 ```{r warning=FALSE}
 Undecided <- undecidedUnits(Result2$Belongings,0.4)
-Colors <- recode(Undecided,
-                 "1"="palegreen3",
-                 "2"="firebrick",
-                 "3"="lightyellow2",
-                 "4"="steelblue",
-                 "5"="darkgrey",
-                 "Undecided"="black")
-sp::plot(LyonIris,col=Colors ,main=paste("Cmean clustering, 5 group"),cex.main=0.8)
-legend("topleft", legend=c(paste("cluster",1:5),"undecided"), fill=c("palegreen3","firebrick","lightyellow2","steelblue","darkgrey","black"), cex=0.8,bty="n")
+LyonIris$FinalCluster <- ifelse(Undecided=="Undecided","Undecided",paste("cluster",Undecided,sep="_"))
+
+#mapping the groups
+DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
+
+ggplot(data=DFmapping)+
+  geom_polygon(aes(x=long,y=lat,group=group,fill=FinalCluster),color=rgb(0,0,0,0))+
+  coord_fixed(ratio = 1)+
+  scale_fill_manual(name="FinalCluster",values = c("cluster_1"="palegreen3",
+                                 "cluster_2"="firebrick",
+                                 "cluster_3"="lightyellow2",
+                                 "cluster_4"="steelblue",
+                                 "cluster_5"="pink",
+                                 "Undecided"=rgb(0,0,0,0.4)))+
+  theme( axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank()
+    )
 ```
 
 Finally, one can obtain many descriptive information about the final groups with two functions of *geocmeans* : 
@@ -290,7 +312,6 @@ describGroups(LyonIris@data, "Groups", AnalysisFields, dec=3)
 
 That's all floks ! These are the enhancement for the next version
 
-* support all geometries in the mapping functions
 * introduce other method of spatially constrained cmeans
 * open some other parameters to the user (like the function defining the convergence criterion)
 * work on documentation

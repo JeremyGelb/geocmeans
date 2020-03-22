@@ -21,5 +21,5 @@ Calculate the euclidean distance between a numeric matrix n * p and a numeric
 vector of length p
 }
 \examples{
-This is an internal function, no example provided
+#This is an internal function, no example provided
 }

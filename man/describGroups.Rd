@@ -4,7 +4,7 @@
 \alias{describGroups}
 \title{display some descriptive informations about fixed groups}
 \usage{
-describGroups(data, groupvar, vars)
+describGroups(data, groupvar, vars, dec = 5)
 }
 \arguments{
 \item{data}{a dataframe with numeric columns}
@@ -13,12 +13,18 @@ describGroups(data, groupvar, vars)
 dataset}
 
 \item{vars}{the names of the numerical variables}
+
+\item{dec}{the number of digits to keep}
 }
 \value{
 a named list with :
 \itemize{
-        \item Violin : a list with a length equal to the number  of columns in data. Each element of the list in a violin plot usefull to compare the distributions of each group on that variable\cr
-        \item Tableau : a list with a length equal to the number of group (k). Each element in a dataframe with summary statistics describing the group for the columns of data.\cr
+        \item Violin : a list with a length equal to the number  of columns in data.
+        Each element of the list in a violin plot usefull to compare the distributions
+        of each group on that variable
+        \item Tableau : a list with a length equal to the number of group (k). Each
+        element in a dataframe with summary statistics describing the group for the
+        columns of data.
 }
 }
 \description{
@@ -27,7 +33,8 @@ display some descriptive informations about fixed groups
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

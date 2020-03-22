@@ -17,11 +17,11 @@ calcqualityIndexes(data, belongmatrix, centers)
 \value{
 a named list with
 \itemize{
-        \item Silhouette.index : the silhouette index (fclust::SIL.F)
-        \item Partition.entropy : the partition entropy index (fclust::PE)
-        \item Partition.coeff : the partition entropy coefficient (fclust::PC)
-        \item Modified.partition.coeff : the modified partition entropy coefficient (fclust::MPC)
-        \item Explained.inertia : the percentage of total inertia explained by the solution
+        \item Silhouette.index: the silhouette index (fclust::SIL.F)
+        \item Partition.entropy: the partition entropy index (fclust::PE)
+        \item Partition.coeff: the partition entropy coefficient (fclust::PC)
+        \item Modified.partition.coeff: the modified partition entropy coefficient (fclust::MPC)
+        \item Explained.inertia: the percentage of total inertia explained by the solution
 }
 }
 \description{
@@ -31,7 +31,8 @@ package)
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

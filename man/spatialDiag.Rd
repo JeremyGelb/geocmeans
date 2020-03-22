@@ -9,18 +9,24 @@ spatialDiag(belongmatrix, nblistw, undecided = NULL, nrep = 50)
 \arguments{
 \item{belongmatrix}{A belonging matrix}
 
+\item{nblistw}{A list.w  object describing the neighbours (spdep package)}
+
 \item{undecided}{A float between 0 and 1 giving the minimum value that an
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 
-\item{A}{list.w object describing the neighbours (spdep package)}
+\item{nrep}{a integer indicating the number of permutation to do to simulate
+the random distribution of the spatial inconsistency}
 }
 \value{
 a named list with :
 \itemize{
-        \item MoranValues : the moran I values fo each column of the belonging matrix (spdep::MoranI)
-        \item JoinCounts : the result of the join count test calculated with the most likely group for each datapoint (spdep::joincount.multi)
-        \item SpConsist : the mean value of the spatial consistency index (the lower, the better, see ?spConsistency for details)
+        \item MoranValues : the moran I values fo each column of the belonging
+         matrix (spdep::MoranI)
+        \item JoinCounts : the result of the join count test calculated with
+         the most likely group for each datapoint (spdep::joincount.multi)
+        \item SpConsist : the mean value of the spatial consistency index
+        (the lower, the better, see ?spConsistency for details)
 }
 }
 \description{
@@ -32,7 +38,8 @@ function spConsistency)
 \examples{
 data(LyonIris)
 library(spdep)
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
 queen <- poly2nb(LyonIris,queen=TRUE)
 Wqueen <- nb2listw(queen,style="W")

@@ -286,9 +286,9 @@ mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
     })
     # realisation de la carte des groupes
     ClusterMap <- ggplot2::ggplot(FortiData) +
-        ggplot2::geom_polygon(ggplot2::aes(x = long, y = lat, group = group, fill = Cluster), size = 0.1) +
+        ggplot2::geom_polygon(ggplot2::aes_string(x = "long", y = "lat", group = "group", fill = "Cluster"), size = 0.1) +
         ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::geom_polygon(ggplot2::aes(x = long, y = lat, group = group),
+        ggplot2::geom_polygon(ggplot2::aes_string(x = "long", y = "lat", group = "group"),
                               fill = rgb(1, 1, 1, 0.7),
                               size = 0.1,
                               data = subset(FortiData,FortiData$Undecided == "Undecided")) +
@@ -352,9 +352,9 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
     })
     # realisation de la carte des groupes
     ClusterMap <- ggplot2::ggplot(FortiData) +
-        ggplot2::geom_path(ggplot2::aes(x = long, y = lat, group = group, color = Cluster), size = 0.1) +
+        ggplot2::geom_path(ggplot2::aes_string(x = "long", y = "lat", group = "group", color = "Cluster"), size = 0.1) +
         ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::geom_path(ggplot2::aes(x = long, y = lat, group = group),
+        ggplot2::geom_path(ggplot2::aes_string(x = "long", y = "lat", group = "group"),
                               color = rgb(1, 1, 1, 0.7),
                               size = 0.1,
                               data = subset(FortiData,FortiData$Undecided == "Undecided")) +
@@ -418,9 +418,9 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
     })
     # realisation de la carte des groupes
     ClusterMap <- ggplot2::ggplot(geodata@data) +
-        ggplot2::geom_point(ggplot2::aes(x = X__, y = Y__, color = Cluster), size = 1) +
+        ggplot2::geom_point(ggplot2::aes_string(x = "X__", y = "Y__", color = "Cluster"), size = 1) +
         ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::geom_point(ggplot2::aes(x = X__, y = Y__),
+        ggplot2::geom_point(ggplot2::aes_string(x = "X__", y = "Y__"),
                               fill = rgb(1, 1, 1, 0.7),
                               size = 1,
                               data = subset(geodata@data,geodata@data$Undecided == "Undecided")) +

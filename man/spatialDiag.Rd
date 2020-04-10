@@ -37,12 +37,11 @@ function spConsistency)
 }
 \examples{
 data(LyonIris)
-library(spdep)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
 dataset <- LyonIris@data[AnalysisFields]
-queen <- poly2nb(LyonIris,queen=TRUE)
-Wqueen <- nb2listw(queen,style="W")
+queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 spatialDiag(result$Belongings, Wqueen, undecided=0.45, nrep=30)
 }

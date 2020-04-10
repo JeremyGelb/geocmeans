@@ -1,15 +1,3 @@
-# rm(list = ls())
-# library(ClustGeo)
-# library(rgeos)
-# library(sf)
-# library(ggplot2)
-# library(sp)
-# library(tidyverse)
-# library(spdep)
-# library(reldist)
-# library(SDMTools)
-
-
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ##### intermediate functions for cmeans algorithms #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,7 +203,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #'   reduce (default = True)
 #' @param verbose A boolean to specify if the messages should be displayed
 #' @return a named list with :
-#' #' \itemize{
+#'  \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
 #'         \item Belongings: the final belonging matrix
 #'         \item Groups: a vector with the names of the most likely group for each observation
@@ -331,12 +319,11 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' @export
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE) {
     # standardize data if required

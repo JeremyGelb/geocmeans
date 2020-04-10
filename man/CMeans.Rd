@@ -33,7 +33,7 @@ reduce (default = True)}
 }
 \value{
 a named list with :
-#' \itemize{
+ \itemize{
         \item Centers: a dataframe describing the final centers of the groups
         \item Belongings: the final belonging matrix
         \item Groups: a vector with the names of the most likely group for each observation

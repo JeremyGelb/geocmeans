@@ -1,7 +1,3 @@
-# library(fclust)
-# library(reldist)
-# library(SDMTools)
-# library(fmsb)
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ##### Fonctions de diagnostic #####
@@ -25,12 +21,11 @@
 #' @export
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' calcqualityIndexes(result$Data,result$Belongings, result$Centers)
 calcqualityIndexes <- function(data, belongmatrix, centers) {
@@ -80,12 +75,11 @@ calcqualityIndexes <- function(data, belongmatrix, centers) {
 #' @export
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' spatialDiag(result$Belongings, Wqueen, undecided=0.45, nrep=30)
 spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
@@ -152,12 +146,11 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
 #' @export
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' spConsistency(result$Belongings, Wqueen, nrep=50)
 spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
@@ -214,12 +207,11 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
 #' @export
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' MyMaps <- mapClusters(LyonIris, result$Belongings)
 mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
@@ -434,8 +426,6 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 }
 
 
-#' @importFrom dplyr %>%
-NULL
 #' Calculate some descriptive statistics of each group
 #'
 #' @param data the original dataframe used fot the classification
@@ -449,14 +439,17 @@ NULL
 #'   a dataframe with summary statistics for the variables of data for each
 #'   group
 #' @export
+#' @importFrom dplyr %>%
+#' @importFrom grDevices rgb
+#' @importFrom stats quantile sd weighted.mean
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' summarizeClusters(dataset, result$Belongings)
 summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3) {
@@ -528,12 +521,11 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3) {
 #' @export
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' undecidedUnits(result$Belongings, tol = 0.45)
 undecidedUnits <- function(belongmatrix, tol = 0.1) {
@@ -545,8 +537,6 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 }
 
 
-#' @importFrom dplyr %>%
-NULL
 #' display some descriptive informations about fixed groups
 #'
 #' @param data a dataframe with numeric columns
@@ -564,14 +554,17 @@ NULL
 #'         columns of data.
 #' }
 #' @export
+#' @importFrom dplyr %>%
+#' @importFrom grDevices rgb
+#' @importFrom stats quantile sd weighted.mean
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @examples
 #' data(LyonIris)
-#' library(spdep)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- nb2listw(queen,style="W")
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' dataset$group <- result$Groups
 #' describGroups(dataset, "group", AnalysisFields)

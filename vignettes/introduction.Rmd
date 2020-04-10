@@ -324,6 +324,7 @@ That's all floks ! These are the enhancement for the next version
 * open some other parameters to the user (like the function defining the convergence criterion)
 * work on documentation
 * improve calculus speed by dropping some apply in the code (need help here)
+* adding support for categorical variables (gower distancem and AFDM)
 
 
 

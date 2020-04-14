@@ -13,7 +13,8 @@ SFCMeans(
   maxiter = 500,
   tol = 0.01,
   standardize = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  seed = NULL
 )
 }
 \arguments{
@@ -39,6 +40,9 @@ convergence assessment}
 reduce (default = True)}
 
 \item{verbose}{A boolean to specify if the prossess bar should be displayed}
+
+\item{seed}{An integer used for random number generation. It ensures that the
+start centers will be the same if the same integer is selected.}
 }
 \value{
 a named list with

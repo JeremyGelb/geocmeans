@@ -5,14 +5,12 @@
 \title{calculate several clustering quality indexes (most of them come from fclust
 package)}
 \usage{
-calcqualityIndexes(data, belongmatrix, centers)
+calcqualityIndexes(data, belongmatrix)
 }
 \arguments{
-\item{data}{the original dataframe used fot the classification (n*p)}
+\item{data}{the original dataframe used for the classification (n*p)}
 
 \item{belongmatrix}{A belonging matrix (n*k)}
-
-\item{centers}{A dataframe representing the centers of the clusters (k*p)}
 }
 \value{
 a named list with
@@ -36,5 +34,5 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-calcqualityIndexes(result$Data,result$Belongings, result$Centers)
+calcqualityIndexes(result$Data,result$Belongings)
 }

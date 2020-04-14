@@ -4,12 +4,46 @@
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-#' calculate several clustering quality indexes (most of them come from fclust
-#' package)
+#' calculate the explained inertia by a a classification
 #'
 #' @param data the original dataframe used fot the classification (n*p)
 #' @param belongmatrix A belonging matrix (n*k)
-#' @param centers A dataframe representing the centers of the clusters (k*p)
+#' @return a float : the percentage of the total inertia explained
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
+#' calcexplainedInertia(result$Data,result$Belongings)
+calcexplainedInertia <- function(data,belongmatrix){
+    #step1 : calculating the centers
+    centers <- t(apply(belongmatrix, MARGIN=2,function(column){
+        values <- apply(data,MARGIN=2,function(var){
+            return(weighted.mean(var,column))
+        })
+        return(values)
+    }))
+    means <- apply(data, 2, mean)
+    baseinertia <- sum(calcEuclideanDistance(data, means))
+    restinertia <- sapply(1:nrow(centers), function(i) {
+        point <- centers[i, ]
+        dists <- calcEuclideanDistance(data, point) * belongmatrix[, i]
+        return(sum(dists))
+    })
+    explainedinertia <- 1 - (sum(restinertia) / baseinertia)
+    return(explainedinertia)
+}
+
+
+#' calculate several clustering quality indexes (most of them come from fclust
+#' package)
+#'
+#' @param data the original dataframe used for the classification (n*p)
+#' @param belongmatrix A belonging matrix (n*k)
 #' @return a named list with
 #' \itemize{
 #'         \item Silhouette.index: the silhouette index (fclust::SIL.F)
@@ -27,21 +61,15 @@
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' calcqualityIndexes(result$Data,result$Belongings, result$Centers)
-calcqualityIndexes <- function(data, belongmatrix, centers) {
-    idxsf <- fclust::SIL.F(data, belongmatrix)  #look for maximum
+#' calcqualityIndexes(result$Data,result$Belongings)
+calcqualityIndexes <- function(data, belongmatrix) {
+
+    idxsf <- fclust::SIL.F(data, belongmatrix, alpha=1)  #look for maximum
     idxpe <- fclust::PE(belongmatrix)  #look for minimum
     idxpc <- fclust::PC(belongmatrix)  #loook for maximum
     idxmpc <- fclust::MPC(belongmatrix)  #look for maximum
     # calculating the explained inertia
-    means <- apply(data, 2, mean)
-    baseinertia <- sum(calcEuclideanDistance(data, means))
-    restinertia <- sapply(1:nrow(centers), function(i) {
-        point <- centers[i, ]
-        dists <- calcEuclideanDistance(data, point) * belongmatrix[, i]
-        return(sum(dists))
-    })
-    explainedinertia <- 1 - (sum(restinertia) / baseinertia)
+    explainedinertia <- calcexplainedInertia(data,belongmatrix)
 
     return(list(Silhouette.index = idxsf, Partition.entropy = idxpe,
                 Partition.coeff = idxpc, Modified.partition.coeff = idxmpc,
@@ -638,4 +666,136 @@ describGroups <- function(data, groupvar, vars, dec=5) {
     TableauDes <- TableauDes[row.names(TableauDes) != "Groupe", ]
 
     return(list(Violin = ViolinPlots, Tableau = TableauDes))
+}
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+##### Functions to select parameters #####
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#' worker function for select_parameters and select_parameters.mc
+#'
+#' @param parameters a dataframe of parameters with columns k,m and alpha
+#' @param data a dataframe with numeric columns
+#' @param nblistw A list.w object describing the neighbours typically produced
+#'   by the spdep package
+#' @param standardize A boolean to specify if the variable must be centered and
+#'   reduce (default = True)
+#' @param maxiter An integer for the maximum number of iteration
+#' @param tol The tolerance criterion used in the evaluateMatrices function for
+#'   convergence assessment
+#' @param seed An integer used for random number generation. It ensures that the
+#' start centers will be the same if the same integer is selected.
+#' @importFrom utils setTxtProgressBar txtProgressBar
+eval_parameters <- function(parameters,data, nblistw, standardize , tol, maxiter, seed=123){
+    pb <- txtProgressBar(min = 0, max = nrow(parameters), style = 3)
+    cnt <- 1
+    allIndices <- apply(parameters,MARGIN = 1, function(row){
+        setTxtProgressBar(pb, cnt)
+        cnt <<-1
+        invisible(capture.output(result <- SFCMeans(data,nblistw,row[[1]],row[[2]],row[[3]],
+                           maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed)))
+        #calculating the quality indexes
+        indices <- calcqualityIndexes(data,result$Belongings)
+        #calculating spatial diag
+        indices$spConsistency <- spConsistency(result$Belongings, nblistw, nrep = 30)$Mean
+        return(indices)
+    })
+    dfIndices <-  as.data.frame(t(matrix(unlist(allIndices), nrow=length(unlist(allIndices[1])))))
+    names(dfIndices) <- names(allIndices[[1]])
+    dfIndices$k <- parameters$k
+    dfIndices$m <- parameters$m
+    dfIndices$alpha <- parameters$alpha
+    return(dfIndices)
+}
+
+
+#' function to select the parameters of the classification alpha, k and m
+#'
+#' @param data a dataframe with numeric columns
+#' @param k a sequence of values for k to test (>=2)
+#' @param m a sequence of values for m to test
+#' @param alpha a sequence of values for alpha to test
+#' @param nblistw A list.w object describing the neighbours typically produced
+#'   by the spdep package
+#' @param standardize A boolean to specify if the variable must be centered and
+#'   reduce (default = True)
+#' @param maxiter An integer for the maximum number of iteration
+#' @param tol The tolerance criterion used in the evaluateMatrices function for
+#'   convergence assessment
+#' @param seed An integer used for random number generation. It ensures that the
+#' start centers will be the same if the same integer is selected.
+#' @return a dataframe with indicators assessing the quality of classifications
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' values <- select_parameters(dataset, k = 5, m = seq(2,3,0.1),
+#'     alpha = seq(0,2,0.1), nblistw = Wqueen)
+select_parameters <- function(data,k,m,alpha, nblistw, standardize = T, maxiter = 500, tol = 0.01, seed=123){
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha)
+    print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
+    dfIndices <- eval_parameters(allcombinaisons, data, nblistw, standardize , tol, maxiter, seed)
+}
+
+
+
+#' function to select the parameters of the classification alpha, k and m.
+#' This version of the function allow to use a plan defined with the package
+#' future to reduce calculation time
+#'
+#' @param data a dataframe with numeric columns
+#' @param k a sequence of values for k to test (>=2)
+#' @param m a sequence of values for m to test
+#' @param alpha a sequence of values for alpha to test
+#' @param nblistw A list.w object describing the neighbours typically produced
+#'   by the spdep package
+#' @param standardize A boolean to specify if the variable must be centered and
+#'   reduce (default = True)
+#' @param maxiter An integer for the maximum number of iteration
+#' @param tol The tolerance criterion used in the evaluateMatrices function for
+#'   convergence assessment
+#' @param seed An integer used for random number generation. It ensures that the
+#' start centers will be the same if the same integer is selected.
+#' @param chunk_size The size of a chunk used for multiprocessing. Default is 100.
+#' @return a dataframe with indicators assessing the quality of classifications
+#' @export
+#' @importFrom utils setTxtProgressBar txtProgressBar capture.output
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' future::plan(future::multiprocess(workers=6))
+#' values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
+#'     alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
+#' \dontshow{
+#'    ## R CMD check: make sure any open connections are closed afterward
+#'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
+#'}
+select_parameters.mc <- function(data,k,m,alpha, nblistw, standardize = T, maxiter = 500, tol = 0.01, seed = 123, chunk_size=100){
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha)
+    print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
+    chunks <- split(1:nrow(allcombinaisons), rep(1:ceiling(nrow(allcombinaisons) / chunk_size),
+                                       each = chunk_size, length.out = nrow(allcombinaisons)))
+    chunks <- lapply(chunks,function(x){return(allcombinaisons[x,])})
+    # step2 : starting the function
+    iseq <- 1:length(chunks)
+    progressr::with_progress({
+        p <- progressr::progressor(along = iseq)
+        values <- future.apply::future_lapply(iseq, function(i) {
+            parameters <- chunks[[i]]
+            invisible((capture.output(indices <- eval_parameters(parameters, data, nblistw, standardize , tol, maxiter, seed))))
+            p(sprintf("i=%g", i))
+            return(indices)
+        })
+    })
+    dfIndices <- do.call(rbind,values)
+    return(dfIndices)
 }

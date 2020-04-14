@@ -1,0 +1,208 @@
+---
+title: "Spatial Fuzzy CMean with R, paper helper"
+author: "Jeremy Gelb"
+date: "13/04/2020"
+output:
+  rmarkdown::html_vignette:
+    fig_width: 5
+    fig_height: 5
+    toc: true
+    toc_depth: 2
+    df_print: "tibble"
+vignette: >
+  %\VignetteIndexEntry{paper_helper}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette is a compagnon for the paper : "Add the reference to the paper when ready". The main goal is to present the FCM_S (spatially constrained c-means) and to compare the results with a classical c-means, a HAC, and a spatialy constrained HAC. 
+
+
+#preparing environment and dataset
+
+We start here with loading the main packages, dataset and standardization of the variables prior to the clustering.
+
+```{r}
+library(ClustGeo)
+library(geocmeans)
+library(ggplot2)
+library(RColorBrewer)
+library(ggpubr)
+library(spdep)
+data("LyonIris")
+
+
+#selection of the columns used in the analysis
+Vars <- c("Lden","NO2", "PM25", "VegHautPrt", "Pct0_14", "Pct_65", "Pct_Img",
+          "TxChom1564", "Pct_brevet", "NivVieMed")
+
+#standardization of the variables
+for(v in Vars){
+  LyonIris[[paste("std_",v,sep="")]] <- scale(LyonIris[[v]])
+}
+
+#selection of the standardized columns
+stdVars <- names(LyonIris)[grepl("std_",names(LyonIris),fixed = T)]
+
+#setting the random parameter
+myseed <- 125899657
+set.seed(myseed)
+
+#building a neighbouring matrix
+nb <- poly2nb(LyonIris)
+listw <- nb2listw(nb,style = "W")
+
+```
+
+#Classical c-means
+
+The starting point will be the classical c-means classification algorithm. We will use it to find for our dataset the best values for k (the number of groups) and m (the fuzziness parameter). This can be done easily with the function *select_parameters* from the geocmeans package.
+
+```{r}
+data <- LyonIris@data[stdVars]
+
+params_df <- select_parameters(data,k = 2:9, m = seq(1.5,3,0.1),
+                  alpha = 0, nblistw=listw,standardize = F, tol=0.001, seed = myseed)
+
+```
+
+To find the best parameters, we can plot the different quality indices.
+
+```{r}
+params_df$k <- as.character(params_df$k)
+colors <- brewer.pal(8, "Accent")
+
+P1 <- ggplot(params_df)+
+  geom_smooth(aes(x=m,y=Explained.inertia, color=k, group=k))+
+  geom_point(aes(x=m,y=Explained.inertia,color=k))+
+  scale_colour_manual(values=colors)
+
+P2 <- ggplot(params_df)+
+  geom_smooth(aes(x=m,y=Partition.entropy, color=k, group=k))+
+  geom_point(aes(x=m,y=Partition.entropy,color=k))+
+  scale_colour_manual(values=colors)
+
+P3 <- ggplot(params_df)+
+  geom_smooth(aes(x=m,y=Silhouette.index, color=k, group=k))+
+  geom_point(aes(x=m,y=Silhouette.index,color=k))+
+  scale_colour_manual(values=colors)
+
+P4 <- ggplot(params_df)+
+  geom_smooth(aes(x=m,y=Partition.coeff, color=k, group=k))+
+  geom_point(aes(x=m,y=Partition.coeff,color=k))+
+  scale_colour_manual(values=colors)
+
+
+print(ggarrange(P1,P2,P3,P4, ncol = 2, nrow=2))
+
+```
+
+Considering the previous plots, we define k = 4, and m = 1.5. All the quality indices are lower for higher values of m, and the three first groups seem to explain most of the inertia. We decided to use k=4 instead of k=3 to potentially reveal a less pronounced group without reducing too much the silhouette index.
+
+```{r}
+cmean_result <- CMeans(data, 4 , 1.5, tol=0.001, seed = myseed, verbose=F, standardize = F)
+
+```
+
+#Classical HAC
+
+Now that k is define, we can realize the HAC analysis
+```{r}
+
+## generating the dissimilarity matrix
+n <- nrow(data)
+Do <- dist(data)
+
+##calssical HAC using the Ward method
+tree <- hclustgeo(Do)
+
+LyonIris$class_HAC <- cutree(tree,4)
+
+df <- data.frame("gp"=as.factor(LyonIris$class_HAC))
+HAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contrasts, contrasts=FALSE))
+
+```
+
+
+#Spatialy constrained HAC
+
+The package **ClustGeo** provide a ward-like method to include geographical distance between observations in the classical HAC. This add another parameter to find in the analysis : $\alpha$. It controls the weight of the spatial distance matrix in the analysis.
+
+```{r}
+D0 <- dist(data)
+D1 <- dist(coordinates(LyonIris))
+range.alpha <- seq(0,1,0.05)
+
+cr <- choicealpha(D0,D1,range.alpha,4,graph=TRUE)
+```
+
+We will retain a value of 0.35 for $\alpha$. This value achieve the best deal between spatial and semantical inertias. The first drops by only 2% when the second increases by more than 25%.
+
+```{r}
+tree <- hclustgeo(D0,D1,alpha=0.35)
+LyonIris$class_spHAC <- cutree(tree,4)
+
+df <- data.frame("gp"=as.factor(LyonIris$class_spHAC))
+spHAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contrasts, contrasts=FALSE))
+```
+
+#spatially constrained c-means (SFCM)
+
+for the SFCM, we  have to select a parameter ($\alpha$) controling the weight of the spatiala lagged dataset.
+
+```{r}
+values <- select_parameters(data, k = 4, m = 1.5, alpha = seq(0,2,0.05),
+            nblistw = listw, standardize = F, tol = 0.001, seed = myseed)
+
+
+P1 <- ggplot(values)+
+  geom_smooth(aes(x=alpha,y=Explained.inertia), color="black")+
+  geom_point(aes(x=alpha,y=Explained.inertia), color="red")
+
+P2 <- ggplot(values)+
+  geom_smooth(aes(x=alpha,y=Partition.entropy), color="black")+
+  geom_point(aes(x=alpha,y=Partition.entropy), color="red")
+
+P3 <- ggplot(values)+
+  geom_smooth(aes(x=alpha,y=Silhouette.index), color="black")+
+  geom_point(aes(x=alpha,y=Silhouette.index), color="red")
+
+P4 <- ggplot(values)+
+  geom_smooth(aes(x=alpha,y=Partition.coeff), color="black")+
+  geom_point(aes(x=alpha,y=Partition.coeff), color="red")
+
+
+print(ggarrange(P1,P2,P3,P4, ncol = 2, nrow=2))
+
+```
+
+Without any surprise, the explained inertia is following a decreasing trend when alpha increases. But it is interesting to note that for the partition coefficient and the partition entropy, a maximum is obtained when alpha = 0.5. This maximum provides a better classification than the classical cmeans (when alpha=0). For the silhouette index it seems that the 0.5 value for alpha leads to the worst possible classification. But with alpha = 0.75, we obtain the same silhouette value as the original cmeans. We decide to selecte alpha = 0.7
+
+
+```{r}
+SFCM_result <- SFCMeans(data, listw, k=4, m=1.5, alpha=0,
+                        tol = 0.0001, standardize = F, seed=myseed)
+```
+
+#comparing results of all algorithm
+
+It is now time to compare the results of all algorithm. We will start with a purely semantic point of view, then analyze the spatial dimension.
+
+## comparing adjustment indices
+
+```{r}
+
+HACQual <- calcqualityIndexes(data, HAC_belong)
+CmeansQual <- calcqualityIndexes(data, cmean_result$Belongings)
+spHACQual <- calcqualityIndexes(data,spHAC_belong)
+SFCMQual <- calcqualityIndexes(data,SFCM_result$Belongings)
+
+t(do.call(rbind,list(HACQual,CmeansQual,spHACQual,SFCMQual)))
+
+```

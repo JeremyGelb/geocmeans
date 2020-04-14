@@ -202,6 +202,8 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' @param standardize A boolean to specify if the variables must be centered and
 #'   reduce (default = True)
 #' @param verbose A boolean to specify if the messages should be displayed
+#' @param seed An integer used for random number generation. It ensures that the
+#' start centers will be the same if the same integer is selected.
 #' @return a named list with :
 #'  \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
@@ -216,7 +218,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
 #' result <- CMeans(dataset,k = 5, m = 1.5, standardize = TRUE)
-CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, verbose=TRUE) {
+CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
     # standardize data if required
     if (standardize) {
         if(verbose){
@@ -227,6 +229,9 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
         }
     }
     # selecting the original centers from datapoints
+    if(is.null(seed)==F){
+        set.seed(seed)
+    }
     centers <- data[sample(nrow(data), k), ]
 
     # calculating the first belonging matrix
@@ -309,6 +314,8 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param verbose A boolean to specify if the prossess bar should be displayed
+#' @param seed An integer used for random number generation. It ensures that the
+#' start centers will be the same if the same integer is selected.
 #' @return a named list with
 #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
@@ -325,7 +332,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE) {
+SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
     # standardize data if required
     if (standardize) {
         if (verbose){
@@ -343,6 +350,9 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
     }
 
     # selecting the original centers from datapoints
+    if (is.null(seed)==F){
+        set.seed(seed)
+    }
     centers <- data[sample(nrow(data), k), ]
 
     # calculating the first belonging matrix

@@ -131,7 +131,7 @@ Cmean <- fcm(Data, centers=5,m = 1.5)
 We can now use the function *calcqualityIndexes* wich combine many indices from the package *fclust* to analyze the quality of the classification
 
 ```{r warning=FALSE}
-calcqualityIndexes(Data,Cmean$u,Cmean$v)
+calcqualityIndexes(Data,Cmean$u)
 ```
 
 These values will be helpfull in comparison with the ones we will get from SFCM. Modifying the cmeans algorithm the increase spatial consistency leads to a decrease in the quality of the classification.
@@ -174,11 +174,11 @@ To select the parameter, we propose here an iterative method (similar to the one
 m <- 1.5
 AllIndices <- list()
 for(alpha in seq(0,2,0.1)){
-  print(paste("Calculating alhpa = ",alpha,sep=""))
+  print(paste("Calculating alpha = ",alpha,sep=""))
   #calculating the clustering
   Result <- SFCMeans(Data,WMat,5,m,alpha=alpha,tol=0.00001, verbose=FALSE)
   #calculating the quality indexes
-  Indices <- calcqualityIndexes(Result$Data,Result$Belongings,Result$Centers)
+  Indices <- calcqualityIndexes(Result$Data,Result$Belongings)
   Indices$alpha <- alpha
   #calculating spatial diag
   spdiag <- spatialDiag(Result$Belongings,WMat,nrep=30)

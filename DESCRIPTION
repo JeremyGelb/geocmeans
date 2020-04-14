@@ -16,14 +16,22 @@ Imports:
     broom (>= 0.5.2),
     utils (>= 3.6.1),
     maptools (>= 0.9-5),
-    rgeos (>= 0.5-2)
+    rgeos (>= 0.5-2),
+    future (>= 1.16.0),
+    future.apply (>= 1.4.0),
+    progressr (>= 0.4.0)
 Depends:
     R (>= 3.5)
 Suggests:
     knitr (>= 1.28),
     rmarkdown (>= 2.1),
     ppclust (>= 1.1.0),
-	sp (>= 1.4-1)
+	sp (>= 1.4-1),
+	ClustGeo (>= 2.0),
+	car (>= 3.0-7),
+	rgl (>= 0.100),
+	ggpubr (>= 0.2.5),
+	RColorBrewer (>= 1.1-2)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

@@ -4,7 +4,7 @@
 \alias{summarizeClusters}
 \title{Calculate some descriptive statistics of each group}
 \usage{
-summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3)
+summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3, silent = T)
 }
 \arguments{
 \item{data}{the original dataframe used fot the classification}
@@ -16,10 +16,12 @@ belonging matrix columns as weights (TRUE) or simply assign each
 observation to its most likely cluster and compute the statistics on each
 subset (default=True)}
 
-\item{dec}{a integer indicating the number of digits to keep when rouding (default is 3)}
+\item{dec}{A integer indicating the number of digits to keep when rouding (default is 3)}
+
+\item{silent}{A boolean indicating if the results must be printed or silently returned}
 }
 \value{
-a list of length k (the number of group). Each element of the list is
+A list of length k (the number of group). Each element of the list is
   a dataframe with summary statistics for the variables of data for each
   group
 }

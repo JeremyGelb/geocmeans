@@ -4,3 +4,5 @@
 ^\R\test.R # exploration
 ^\references$ # fichiers PDF des articles des methodes
 ^\tests$ # fichiers tests
+^doc$
+^Meta$

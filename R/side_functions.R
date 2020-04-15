@@ -282,8 +282,8 @@ mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
 mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
     names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = T)
-    geodata@data <- cbind(geodata@data, belongmatrix)
-    geodata$OID <- 1:nrow(geodata@data)
+    geodata@data <- belongmatrix
+    geodata$OID <- as.character(1:nrow(geodata@data))
 
     # attribution des groupes
     Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
@@ -349,7 +349,7 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
     names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = T)
     geodata@data <- cbind(geodata@data, belongmatrix)
-    geodata$OID <- 1:nrow(geodata@data)
+    invisible(capture.output(FortiData <- broom::tidy(geodata, region = "OID")))
 
     # attribution des groupes
     Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
@@ -469,8 +469,9 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 #'   belonging matrix columns as weights (TRUE) or simply assign each
 #'   observation to its most likely cluster and compute the statistics on each
 #'   subset (default=True)
-#' @param dec a integer indicating the number of digits to keep when rouding (default is 3)
-#' @return a list of length k (the number of group). Each element of the list is
+#' @param dec A integer indicating the number of digits to keep when rouding (default is 3)
+#' @param silent A boolean indicating if the results must be printed or silently returned
+#' @return A list of length k (the number of group). Each element of the list is
 #'   a dataframe with summary statistics for the variables of data for each
 #'   group
 #' @export
@@ -487,28 +488,31 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' summarizeClusters(dataset, result$Belongings)
-summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3) {
+summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, silent=T) {
     belongmatrix <- as.data.frame(belongmatrix)
     if (weighted) {
         Summaries <- lapply(1:ncol(belongmatrix), function(c) {
             W <- belongmatrix[, c]
             Values <- apply(data, 2, function(x) {
-                Q5 <- round(reldist::wtd.quantile(x, q = 0.05, na.rm = TRUE, weight = W),dec)
-                Q10 <- round(reldist::wtd.quantile(x, q = 0.1, na.rm = TRUE, weight = W),dec)
-                Q25 <- round(reldist::wtd.quantile(x, q = 0.25, na.rm = TRUE, weight = W),dec)
-                Q50 <- round(reldist::wtd.quantile(x, q = 0.5, na.rm = TRUE, weight = W),dec)
-                Q75 <- round(reldist::wtd.quantile(x, q = 0.75, na.rm = TRUE, weight = W),dec)
-                Q90 <- round(reldist::wtd.quantile(x, q = 0.9, na.rm = TRUE, weight = W),dec)
-                Q95 <- round(reldist::wtd.quantile(x, q = 0.95, na.rm = TRUE, weight = W),dec)
-                Mean <- round(weighted.mean(x, W),dec)
+                Q5 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.05, na.rm = TRUE, weight = W),dec))
+                Q10 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.1, na.rm = TRUE, weight = W),dec))
+                Q25 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.25, na.rm = TRUE, weight = W),dec))
+                Q50 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.5, na.rm = TRUE, weight = W),dec))
+                Q75 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.75, na.rm = TRUE, weight = W),dec))
+                Q90 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.9, na.rm = TRUE, weight = W),dec))
+                Q95 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.95, na.rm = TRUE, weight = W),dec))
+                Mean <- as.numeric(round(weighted.mean(x, W),dec))
                 Std <- round(sqrt(reldist::wtd.var(x, weight=W)),dec)
                 return(list(Q5 = Q5, Q10 = Q10, Q25 = Q25, Q50 = Q50,
                             Q75 = Q75, Q90 = Q90, Q95 = Q95,
                             Mean = Mean, Std = Std))
             })
             DF <- do.call(cbind, Values)
-            print(paste("Statistic summary for cluster ", c, sep = ""))
-            print(DF)
+            if(silent==F){
+                print(paste("Statistic summary for cluster ", c, sep = ""))
+                print(DF)
+            }
+
             return(DF)
         })
         names(Summaries) <- paste("Cluster_", c(1:ncol(belongmatrix)), sep = "")
@@ -521,13 +525,13 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3) {
             DF <- subset(data, data$Groups == c)
             DF$Groups <- NULL
             Values <- apply(DF, 2, function(x) {
-                Q5 <- round(quantile(x, probs = 0.05, na.rm = TRUE),dec)
-                Q10 <- round(quantile(x, probs = 0.1, na.rm = TRUE),dec)
-                Q25 <- round(quantile(x, probs = 0.25, na.rm = TRUE),dec)
-                Q50 <- round(quantile(x, probs = 0.5, na.rm = TRUE),dec)
-                Q75 <- round(quantile(x, probs = 0.75, na.rm = TRUE),dec)
-                Q90 <- round(quantile(x, probs = 0.9, na.rm = TRUE),dec)
-                Q95 <- round(quantile(x, probs = 0.95, na.rm = TRUE),dec)
+                Q5 <- as.numeric(round(quantile(x, probs = 0.05, na.rm = TRUE),dec))
+                Q10 <- as.numeric(round(quantile(x, probs = 0.1, na.rm = TRUE),dec))
+                Q25 <- as.numeric(round(quantile(x, probs = 0.25, na.rm = TRUE),dec))
+                Q50 <- as.numeric(round(quantile(x, probs = 0.5, na.rm = TRUE),dec))
+                Q75 <- as.numeric(round(quantile(x, probs = 0.75, na.rm = TRUE),dec))
+                Q90 <- as.numeric(round(quantile(x, probs = 0.9, na.rm = TRUE),dec))
+                Q95 <- as.numeric(round(quantile(x, probs = 0.95, na.rm = TRUE),dec))
                 Mean <- round(mean(x),dec)
                 Std <- round(sd(x),dec)
                 return(list(Q5 = Q5, Q10 = Q10, Q25 = Q25, Q50 = Q50,
@@ -535,8 +539,11 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3) {
                             Mean = Mean, Std = Std))
             })
             DF <- do.call(cbind, Values)
-            print(paste("Statistic summary for cluster ", c, sep = ""))
-            print(DF)
+            if(silent==F){
+                print(paste("Statistic summary for cluster ", c, sep = ""))
+                print(DF)
+            }
+
             return(DF)
         })
         names(Summaries) <- paste("Cluster_", c(1:ncol(belongmatrix)), sep = "")
@@ -572,27 +579,22 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 }
 
 
-#' display some descriptive informations about fixed groups
+
+
+#' display spider charts to quickly compare values between groups
 #'
-#' @param data a dataframe with numeric columns
-#' @param groupvar the name of the categorical variable used to split the
-#'   dataset
-#' @param vars the names of the numerical variables
-#' @param dec the number of digits to keep
-#' @return a named list with :
-#' \itemize{
-#'         \item Violin : a list with a length equal to the number  of columns in data.
-#'         Each element of the list in a violin plot usefull to compare the distributions
-#'         of each group on that variable
-#'         \item Tableau : a list with a length equal to the number of group (k). Each
-#'         element in a dataframe with summary statistics describing the group for the
-#'         columns of data.
-#' }
-#' @export
-#' @importFrom dplyr %>%
+#' for each group, the weighted mean of each variable in data is calculated
+#' based on the probability of belonging to this group of each observation.
+#' On the chart the exterior ring represents the maximum value obtained for
+#' all the groups and the interior ring the minimum. The groups are located
+#' between these two limits in a linear way.
+#'
+#' @param data A dataframe with numeric columns
+#' @param belongmatrix A belonging matrix
+#'
 #' @importFrom grDevices rgb
-#' @importFrom stats quantile sd weighted.mean
-#' @importFrom utils setTxtProgressBar txtProgressBar
+#' @importFrom stats weighted.mean
+#' @export
 #' @examples
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
@@ -601,78 +603,65 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' dataset$group <- result$Groups
-#' describGroups(dataset, "group", AnalysisFields)
-describGroups <- function(data, groupvar, vars, dec=5) {
-    #%%%%%%%%%%% sortir des violin plots %%%%%%%%%%%
-    ViolinPlots <- list()
-    for (Var in vars) {
-        Plot <- ggplot2::ggplot(data, ggplot2::aes_string(x = groupvar, y = Var, fill = groupvar)) +
-            ggplot2::geom_violin(show.legend = FALSE) +
-            ggplot2::geom_boxplot(width = 0.1, fill = "white", show.legend = FALSE) +
-            ggplot2::scale_color_brewer(palette = "Dark2")
-        ViolinPlots[[length(ViolinPlots) + 1]] <- Plot
-    }
+#' spiderPlots(dataset,result$Belongings)
+spiderPlots<- function(data, belongmatrix){
+    Groups <- ncol(belongmatrix)
 
-    # %%%%%%%%%%% sortir spyderplots %%%%%%%%%%%
-    Groups <- unique(data[[groupvar]])
-
-    Values <- do.call(rbind, lapply(Groups, function(x) {
-        Sub <- subset(data, data[[groupvar]] == x)
-        return(data.frame(matrix(sapply(Sub[vars], mean), ncol = length(vars))))
+    Values <- do.call(rbind, lapply(1:Groups, function(i) {
+        W <- belongmatrix[,i]
+        return(apply(data,2, function(row){return(weighted.mean(row,W))}))
     }))
     Mins <- apply(Values, 2, min)
     Maxs <- apply(Values, 2, max)
 
 
-    for (Gp in Groups) {
-        Sub <- subset(data, data[[groupvar]] == Gp)
-        Scores <- data.frame(matrix(sapply(Sub[vars], mean), ncol = length(vars)))
-        names(Scores) <- vars
-        datam <- rbind(Maxs, Mins, Scores)
+    for (Gp in 1:Groups) {
+        Scores <- Values[Gp,]
+        names(Scores) <- names(data)
+        datam <- data.frame(rbind(Maxs, Mins, Scores))
         Chart <- fmsb::radarchart(datam, axistype = 1, pcol = rgb(0.2, 0.5, 0.5, 0.9),
-                            pfcol = rgb(0.2, 0.5, 0.5, 0.5),
-                            plwd = 4, cglcol = "grey", cglty = 1,
-                            axislabcol = "grey", cglwd = 0.8, vlcex = 0.8,
-                            title = paste("Group number : ",Gp))
+                                  pfcol = rgb(0.2, 0.5, 0.5, 0.5),
+                                  plwd = 4, cglcol = "grey", cglty = 1,
+                                  axislabcol = "grey", cglwd = 0.8, vlcex = 0.8,
+                                  title = paste("Group number : ",Gp))
+        print(Chart)
     }
+}
 
-    # %%%%%%%%%%% sortir un tableau des stats descriptives %%%%%%%%%%%
-
-    Q1 <- function(x) {
-        return(quantile(x, probs = 0.25))
-    }
-    Q2 <- function(x) {
-        return(quantile(x, probs = 0.5))
-    }
-    Q3 <- function(x) {
-        return(quantile(x, probs = 0.75))
-    }
-
-    # calculating summary statistics
-    TableauDes <- data %>% dplyr::group_by_at(.vars = groupvar) %>%
-        dplyr::summarize_at(.vars = vars, .funs = c(min, max, mean, Q1, Q2, Q3, sd))
-
-    # renaming columns
-    NewNames <- c()
-    for (fun in c("min", "max", "mean", "Q1", "Q2", "Q3", "sd")) {
-        for (Var in vars) {
-            NewNames[[length(NewNames) + 1]] <- paste(Var, fun, sep = " : ")
+#' return violin plots to compare the distribution of each variable for each
+#' group.
+#'
+#' @param data A dataframe with numeric columns
+#' @param groups A vector indicating the group of each observation
+#'
+#' @importFrom dplyr %>%
+#' @importFrom grDevices rgb
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
+#' violinPlots(dataset, result$Groups)
+violinPlots <- function(data,groups){
+    data$groups <- groups
+    groupvar <- "groups"
+    Plots <- list()
+    vars <- names(data)
+    for (Var in vars) {
+        if(Var!="groups"){
+            Plot <- ggplot2::ggplot(data, ggplot2::aes_string(x = groupvar, y = Var, fill = groupvar)) +
+                ggplot2::geom_violin(show.legend = FALSE) +
+                ggplot2::geom_boxplot(width = 0.1, fill = "white", show.legend = FALSE) +
+                ggplot2::scale_color_brewer(palette = "Dark2")
+            Plots[[length(Plots) + 1]] <- Plot
         }
+
     }
-
-    names(TableauDes) <- c("Groupe", NewNames)
-    for (N in NewNames) {
-        TableauDes[[N]] <- round(TableauDes[[N]], dec)
-    }
-
-    # formatting the final table
-    TableauDes <- as.data.frame(t(TableauDes))
-    names(TableauDes) <- paste("Groupe_", 1:ncol(TableauDes), sep = "")
-    TableauDes <- TableauDes[order(row.names(TableauDes)), ]
-    TableauDes <- TableauDes[row.names(TableauDes) != "Groupe", ]
-
-    return(list(Violin = ViolinPlots, Tableau = TableauDes))
+    return(Plots)
 }
 
 

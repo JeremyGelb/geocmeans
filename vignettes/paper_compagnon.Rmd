@@ -24,11 +24,11 @@ knitr::opts_chunk$set(
 This vignette is a compagnon for the paper : "Add the reference to the paper when ready". The main goal is to present the FCM_S (spatially constrained c-means) and to compare the results with a classical c-means, a HAC, and a spatialy constrained HAC. 
 
 
-#preparing environment and dataset
+# Preparing environment and dataset
 
 We start here with loading the main packages, dataset and standardization of the variables prior to the clustering.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(ClustGeo)
 library(geocmeans)
 library(ggplot2)
@@ -61,11 +61,11 @@ listw <- nb2listw(nb,style = "W")
 
 ```
 
-#Classical c-means
+# Classical c-means
 
 The starting point will be the classical c-means classification algorithm. We will use it to find for our dataset the best values for k (the number of groups) and m (the fuzziness parameter). This can be done easily with the function *select_parameters* from the geocmeans package.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 data <- LyonIris@data[stdVars]
 
 #lets do this with 4 cores
@@ -79,7 +79,7 @@ if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 
 To find the best parameters, we can plot the different quality indices.
 
-```{r}
+```{r fig.width=10}
 params_df$k <- as.character(params_df$k)
 colors <- brewer.pal(8, "Accent")
 
@@ -115,7 +115,7 @@ cmean_result <- CMeans(data, 4 , 1.5, tol=0.001, seed = myseed, verbose=F, stand
 
 ```
 
-#Classical HAC
+# Classical HAC
 
 Now that k is defined, we can realize the HAC analysis
 ```{r}
@@ -135,7 +135,7 @@ HAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contrast
 ```
 
 
-#Spatialy constrained HAC
+# Spatialy constrained HAC
 
 The package **ClustGeo** provide a ward-like method to include geographical distance between observations in the classical HAC. This add another parameter to find in the analysis : $\alpha$. It controls the weight of the spatial distance matrix in the analysis.
 
@@ -157,15 +157,16 @@ df <- data.frame("gp"=as.factor(LyonIris$class_spHAC))
 spHAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contrasts, contrasts=FALSE))
 ```
 
-#spatially constrained c-means (SFCM)
+# spatially constrained c-means (SFCM)
 
 for the SFCM, we  have to select a parameter ($\alpha$) controling the weight of the spatiala lagged dataset.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 values <- select_parameters(data, k = 4, m = 1.5, alpha = seq(0,2,0.05),
             nblistw = listw, standardize = F, tol = 0.001, seed = myseed)
+```
 
-
+```{r fig.height=8, fig.width=8}
 P1 <- ggplot(values)+
   geom_smooth(aes(x=alpha,y=Explained.inertia), color="black")+
   geom_point(aes(x=alpha,y=Explained.inertia), color="red")
@@ -191,11 +192,11 @@ Without any surprise, the explained inertia is following a decreasing trend when
 
 
 ```{r}
-SFCM_result <- SFCMeans(data, listw, k=4, m=1.5, alpha=0,
+SFCM_result <- SFCMeans(data, listw, k=4, m=1.5, alpha=0.7,
                         tol = 0.0001, standardize = F, seed=myseed)
 ```
 
-#comparing results of all algorithm
+# comparing results of all algorithm
 
 It is now time to compare the results of all algorithm. We will start with a purely semantic point of view, then analyze the spatial dimension.
 
@@ -212,4 +213,118 @@ comp <- as.data.frame(t(do.call(rbind,lapply(list(HACQual,CmeansQual,spHACQual,S
 colnames(comp) <- c("HAC","Cmeans","spHAC","spCmeans")
 rownames(comp) <- names(HACQual)
 kable(comp,digits = 3)
+```
+At that point, it is interesting to note three things : 
+
+1. The hard clustering methods obtain a better explained inertia
+2. The soft clustering methods obtain a better fuzzy silhouette index
+3. The loss in therms of inertia in small when using a spatialy constrained method
+
+
+## Analyzing spatial dimension of the classifications
+
+The function *spatialDiag* of **geocmeans** gives a lot of information about the spatial dimension of the classification result
+
+```{r}
+
+HACspDiag <- spatialDiag(HAC_belong, listw, nrep = 999)
+CmeansspDiag  <- spatialDiag(cmean_result$Belongings, listw, nrep = 999)
+spHACspDiag  <- spatialDiag(spHAC_belong, listw, nrep = 999)
+SFCMspDiag  <- spatialDiag(SFCM_result$Belongings, listw, nrep = 999)
+
+```
+
+We can start with the simple Moran Values calculated on the belonging matrices
+
+```{r}
+diaglist <- list(HACspDiag,CmeansspDiag,spHACspDiag,SFCMspDiag)
+
+moranTable <- do.call(rbind,lapply(diaglist, function(x){
+  return(as.numeric(x$MoranValues$MoranI))
+}))
+rownames(moranTable) <- c("HAC","Cmeans","spHAC","spCmeans")
+kable(moranTable,digits = 3)
+```
+
+This results show that the fuzzy classification is more able to produce spatially autocorrelated groups than the hard clustering. Without any suprised, the spatially constrained methods achieve higher Moran I on the columns of their belonging matrices for all the groups.
+
+It seems that one group is significantly more spatially fragmented than the others if we look at the Moran Values of the two spatially constrained classifications. This might be explained by the presence of observation laying right between two clusters (undecided units).
+
+We can now compare the degree of spatial consistency of the different classifications
+
+```{r}
+
+spconsist <- sapply(diaglist,function(x){x$SpConsist})
+names(spconsist) <- c("HAC","Cmeans","spHAC","spCmeans")
+kable(data.frame("spatial.consist"=spconsist),digits = 3)
+
+```
+
+The spatially constrained cmeans achieves the better spatial consistency without reducing that much the quality of the clustering.
+
+Finally, we can map the clusters to compare graphicaly the results.
+
+```{r message=FALSE, warning=FALSE}
+HAC_maps <- mapClusters(LyonIris,belongmatrix = HAC_belong)
+Cmeans_maps <- mapClusters(LyonIris,belongmatrix = cmean_result$Belongings)
+spHAC_maps <- mapClusters(LyonIris,belongmatrix = spHAC_belong)
+spCmeans_maps <- mapClusters(LyonIris,belongmatrix = SFCM_result$Belongings)
+```
+
+The point is to find which cluster is similar to which one in each classification. We do this here by hand
+
+```{r fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
+allmaps <- list(HAC_maps,Cmeans_maps,spHAC_maps,spCmeans_maps)
+
+map_order <-rbind(c(1,3,2,4),
+                  c(2,1,4,3),
+                  c(1,3,4,2),
+                  c(2,1,4,3))
+
+algorithm <- c("HAC","Cmeans","spHAC","spCmeans")
+
+map_list <- lapply(1:4,function(i){
+  ids <- map_order[,i]
+  maps <- lapply(1:length(ids),function(m){
+    map <- allmaps[[m]]$ProbaMaps[ids[[m]]][[1]]
+    map <- map+ theme(legend.position = "none",
+                      plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines"))
+    if(i==1){
+      map <- map+ggtitle(algorithm[[m]])+theme(plot.title = element_text(hjust = 0.5))
+    }
+    return(map)
+  })
+  return(maps)
+})
+
+all_probamaps <- unlist(map_list,recursive = F)
+ggarrange(plotlist = all_probamaps, ncol=4,nrow=4)
+
+```
+
+All the groups are very similar for each classification but the last one. The fuzzy classifications sho more uncertainty for this group which is an interesting property.
+
+## Describe groups
+
+finaly we will compute some descriptive statistics to analyze the groups produced by the spatially constrained cmeans algorithm.
+
+```{r}
+
+spCmeansSummary <- summarizeClusters(LyonIris@data[Vars],belongmatrix = SFCM_result$Belongings, weighted = T, dec = 2)
+
+kable(spCmeansSummary$Cluster_1, caption = "descriptive values of group 1")
+kable(spCmeansSummary$Cluster_2, caption = "descriptive values of group 2")
+kable(spCmeansSummary$Cluster_3, caption = "descriptive values of group 3")
+kable(spCmeansSummary$Cluster_4, caption = "descriptive values of group 4")
+```
+
+To help the overall distinction between clusters, we can also use some plots like violin plots and spider plots
+```{r}
+spiderPlots(LyonIris@data[Vars], SFCM_result$Belongings)
+```
+
+```{r fig.height=15, fig.width=5}
+violin_plots <- violinPlots(LyonIris@data[Vars], SFCM_result$Groups)
+
+ggarrange(plotlist = violin_plots, ncol = 2, nrow=6)
 ```

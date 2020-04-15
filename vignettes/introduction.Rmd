@@ -316,8 +316,8 @@ summarizeClusters(LyonIris@data[AnalysisFields],belongmatrix = Result2$Belonging
 
 ```{r warning=FALSE}
 
-LyonIris$Groups <- Result2$Groups
-describGroups(LyonIris@data, "Groups", AnalysisFields, dec=3)
+spiderPlots(LyonIris@data[AnalysisFields], Result2$Belongings)
+violinPlots(LyonIris@data[AnalysisFields], Result2$Groups)
 
 ```
 

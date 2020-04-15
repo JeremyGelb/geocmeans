@@ -9,6 +9,8 @@ eval_parameters(
   data,
   nblistw,
   standardize,
+  spconsist,
+  classidx,
   tol,
   maxiter,
   seed = 123
@@ -24,6 +26,12 @@ by the spdep package}
 
 \item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
+
+\item{spconsist}{A boolean indicating if the spatial consistency must be
+calculated}
+
+\item{classidx}{A boolean indicating if the quality of classification
+indices must be calculated}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}

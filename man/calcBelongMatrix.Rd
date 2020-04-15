@@ -26,4 +26,5 @@ data and the fuzzyness degree
 }
 \examples{
 #This is an internal function, no example provided
+
 }

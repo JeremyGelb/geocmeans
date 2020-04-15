@@ -4,7 +4,7 @@
 \alias{calcSWFCCentroids}
 \title{Calculate the new centroids of the clusters based on the belonging matrix (spatial version)}
 \usage{
-calcSWFCCentroids(data, wdata, belongmatrix, neighbours, m, alpha)
+calcSWFCCentroids(data, wdata, belongmatrix, m, alpha)
 }
 \arguments{
 \item{data}{A dataframe or matrix representing the observed data with n rows
@@ -15,9 +15,6 @@ nrows and p columns}
 
 \item{belongmatrix}{A n X k matrix giving for each observation n, its
 probability to belong to the cluster k}
-
-\item{neighbours}{A list.w object describing the neighbours typically
-produced by the spdep package}
 
 \item{m}{An integer representing the fuzzyness degree}
 

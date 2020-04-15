@@ -12,6 +12,8 @@ select_parameters.mc(
   m,
   alpha,
   nblistw,
+  spconsist = T,
+  classidx = T,
   standardize = T,
   maxiter = 500,
   tol = 0.01,
@@ -30,6 +32,12 @@ select_parameters.mc(
 
 \item{nblistw}{A list.w object describing the neighbours typically produced
 by the spdep package}
+
+\item{spconsist}{A boolean indicating if the spatial consistency must be
+calculated}
+
+\item{classidx}{A boolean indicating if the quality of classification
+indices must be calculated}
 
 \item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
@@ -59,9 +67,11 @@ AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img"
 dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
-future::plan(future::multiprocess(workers=6))
-values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
-    alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
+future::plan(future::multiprocess(workers=2))
+#values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
+#    alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
+values <- select_parameters.mc(dataset, k = 5, m = seq(2,3,0.1),
+    alpha = seq(0,2,0.1), nblistw = Wqueen)
 \dontshow{
    ## R CMD check: make sure any open connections are closed afterward
    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)

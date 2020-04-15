@@ -35,6 +35,7 @@ library(ggplot2)
 library(RColorBrewer)
 library(ggpubr)
 library(spdep)
+library(kableExtra)
 data("LyonIris")
 
 
@@ -67,9 +68,13 @@ The starting point will be the classical c-means classification algorithm. We wi
 ```{r}
 data <- LyonIris@data[stdVars]
 
-params_df <- select_parameters(data,k = 2:9, m = seq(1.5,3,0.1),
-                  alpha = 0, nblistw=listw,standardize = F, tol=0.001, seed = myseed)
+#lets do this with 4 cores
+future::plan(future::multiprocess(workers=4))
+params_df <- select_parameters(data,k = 2:9, m = seq(1.1,3,0.1),
+                  alpha = 0, nblistw=listw,standardize = F, tol=0.001, seed = myseed, spconsist = F)
 
+#back to single process
+if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 ```
 
 To find the best parameters, we can plot the different quality indices.
@@ -112,7 +117,7 @@ cmean_result <- CMeans(data, 4 , 1.5, tol=0.001, seed = myseed, verbose=F, stand
 
 #Classical HAC
 
-Now that k is define, we can realize the HAC analysis
+Now that k is defined, we can realize the HAC analysis
 ```{r}
 
 ## generating the dissimilarity matrix
@@ -182,7 +187,7 @@ print(ggarrange(P1,P2,P3,P4, ncol = 2, nrow=2))
 
 ```
 
-Without any surprise, the explained inertia is following a decreasing trend when alpha increases. But it is interesting to note that for the partition coefficient and the partition entropy, a maximum is obtained when alpha = 0.5. This maximum provides a better classification than the classical cmeans (when alpha=0). For the silhouette index it seems that the 0.5 value for alpha leads to the worst possible classification. But with alpha = 0.75, we obtain the same silhouette value as the original cmeans. We decide to selecte alpha = 0.7
+Without any surprise, the explained inertia is following a decreasing trend when alpha increases. But it is interesting to note that for the partition coefficient and the partition entropy, a maximum is obtained when alpha = 0.5. This maximum provides a better classification than the classical cmeans (when alpha=0). For the silhouette index it seems that increasing alpha enhance the quality of the classification until apha = 0.7. We decide to selecte alpha = 0.7
 
 
 ```{r}
@@ -203,6 +208,8 @@ CmeansQual <- calcqualityIndexes(data, cmean_result$Belongings)
 spHACQual <- calcqualityIndexes(data,spHAC_belong)
 SFCMQual <- calcqualityIndexes(data,SFCM_result$Belongings)
 
-t(do.call(rbind,list(HACQual,CmeansQual,spHACQual,SFCMQual)))
-
+comp <- as.data.frame(t(do.call(rbind,lapply(list(HACQual,CmeansQual,spHACQual,SFCMQual),as.numeric))))
+colnames(comp) <- c("HAC","Cmeans","spHAC","spCmeans")
+rownames(comp) <- names(HACQual)
+kable(comp,digits = 3)
 ```

@@ -171,24 +171,27 @@ To select the parameter, we propose here an iterative method (similar to the one
 
 ```{r warning=FALSE, echo=FALSE, message=FALSE}
 #calculating all the classification for alpha ranging between 0 and 2 (with 0.1 step)
-m <- 1.5
-AllIndices <- list()
-for(alpha in seq(0,2,0.1)){
-  print(paste("Calculating alpha = ",alpha,sep=""))
-  #calculating the clustering
-  Result <- SFCMeans(Data,WMat,5,m,alpha=alpha,tol=0.00001, verbose=FALSE)
-  #calculating the quality indexes
-  Indices <- calcqualityIndexes(Result$Data,Result$Belongings)
-  Indices$alpha <- alpha
-  #calculating spatial diag
-  spdiag <- spatialDiag(Result$Belongings,WMat,nrep=30)
-  Indices$TotalJoinCount <- spdiag$JoinCounts[nrow(spdiag$JoinCounts),1]
-  Indices$SpConsistency <- spdiag$SpConsist
-  AllIndices[[length(AllIndices)+1]]<- Indices
-}
 
-DFindices <-  as.data.frame(t(matrix(unlist(AllIndices), nrow=length(unlist(AllIndices[1])))))
-names(DFindices) <- names(AllIndices[[1]])
+DFindices <- select_parameters(Data,k = 5, m = 1.5, alpha = seq(0,2,0.1),nblistw = WMat,
+            standardize = T,tol = 0.001)
+# m <- 1.5
+# AllIndices <- list()
+# for(alpha in seq(0,2,0.1)){
+#   print(paste("Calculating alpha = ",alpha,sep=""))
+#   #calculating the clustering
+#   Result <- SFCMeans(Data,WMat,5,m,alpha=alpha,tol=0.00001, verbose=TRUE)
+#   #calculating the quality indexes
+#   Indices <- calcqualityIndexes(Result$Data,Result$Belongings)
+#   Indices$alpha <- alpha
+#   #calculating spatial diag
+#   #spdiag <- spatialDiag(Result$Belongings,WMat,nrep=30)
+#   #Indices$TotalJoinCount <- spdiag$JoinCounts[nrow(spdiag$JoinCounts),1]
+#   #\Indices$SpConsistency <- spdiag$SpConsist
+#   AllIndices[[length(AllIndices)+1]]<- Indices
+# }
+# 
+# DFindices <-  as.data.frame(t(matrix(unlist(AllIndices), nrow=length(unlist(AllIndices[1])))))
+# names(DFindices) <- names(AllIndices[[1]])
 
 ```
 
@@ -200,8 +203,8 @@ A smaller values indicates a greater spatial consistency. 0 meaning that all obs
 
 ```{r warning=FALSE}
 ggplot(DFindices)+
-  geom_line(aes(x=alpha,y=SpConsistency))+
-  geom_point(aes(x=alpha,y=SpConsistency))
+  geom_line(aes(x=alpha,y=spConsistency))+
+  geom_point(aes(x=alpha,y=spConsistency))
 
 ```
 
@@ -235,7 +238,7 @@ After considering all the previous charts, we decide to keep alpha = 1.2 as it s
 
 ```{r warning=FALSE}
 OkAlpha <- 1.2
-Result2 <- SFCMeans(Data,WMat,5,m,alpha=OkAlpha,tol=0.0001, standardize = F)
+Result2 <- SFCMeans(Data,WMat,5,m=1.5,alpha=OkAlpha,tol=0.0001, standardize = F)
 ```
 
 Again, we can map the results of the algorithm. Unsurpisingly, we obtain similar results, but the spatial patterns seems more pronounced.

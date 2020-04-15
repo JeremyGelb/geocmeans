@@ -1,7 +1,7 @@
 Package: geocmeans
 Type: Package
 Title: Implementing Methods For Spatially Constrained C-Means Algorithm
-Version: 0.1.0.9000
+Version: 0.1.1.9000
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
@@ -31,7 +31,8 @@ Suggests:
 	car (>= 3.0-7),
 	rgl (>= 0.100),
 	ggpubr (>= 0.2.5),
-	RColorBrewer (>= 1.1-2)
+	RColorBrewer (>= 1.1-2),
+	kableExtra (>= 1.1.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

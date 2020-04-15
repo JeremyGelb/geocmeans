@@ -182,29 +182,36 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' spConsistency(result$Belongings, Wqueen, nrep=50)
 spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
+    belongmat <- as.matrix(belongmatrix)
+    weights <- nblistw$weights
+    neighbours <- nblistw$neighbours
     ## calcul de l'inconsistence spatiale actuelle
-    obsdev <- sapply(1:nrow(belongmatrix), function(i) {
-        row <- belongmatrix[i, ]
-        neighbours <- belongmatrix[nblistw$neighbours[[i]], ]
-        W <- nblistw$weights[[i]]
-        diff <- t((t(neighbours) - row)^2)
+    obsdev <- sapply(1:nrow(belongmat), function(i) {
+        row <- belongmat[i, ]
+        neighbours <- belongmat[neighbours[[i]], ]
+        W <- weights[[i]]
+        diff <- (neighbours-row[col(neighbours)])**2
         tot <- sum(rowSums(diff) * W)
         return(tot)
     })
+
     totalcons <- sum(obsdev)
+
     ## simulation de l'inconsistance spatiale
-    simulated <- sapply(1:nrep, function(d) {
-        belong2 <- belongmatrix[sample(nrow(belongmatrix)), ]
-        simvalues <- sapply(1:nrow(belong2), function(i) {
-            row <- belong2[i, ]
-            neighbours <- belong2[nblistw$neighbours[[i]], ]
-            W <- nblistw$weights[[i]]
-            diff <- t((t(neighbours) - row)^2)
-            tot <- sum(rowSums(diff) * W)
+    belongmat <- t(belongmat)
+    n <- ncol(belongmat)
+    simulated <- vapply(1:nrep, function(d) {
+        belong2 <- belongmat[,sample(n)]
+        simvalues <- vapply(1:ncol(belong2), function(i) {
+            row <- belong2[,i]
+            neighbours <- belong2[,neighbours[[i]]]
+            W <- weights[[i]]
+            diff <- (neighbours-row)
+            tot <- sum(diff^2 * W)
             return(tot)
-        })
+        }, FUN.VALUE = 1)
         return(sum(simvalues))
-    })
+    },FUN.VALUE = 1)
     ratio <- totalcons / simulated
     return(list(Mean = mean(ratio), Median = quantile(ratio, probs = c(0.5)),
                 prt05 = quantile(ratio, probs = c(0.05)),
@@ -681,24 +688,34 @@ describGroups <- function(data, groupvar, vars, dec=5) {
 #'   by the spdep package
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
+#' @param spconsist A boolean indicating if the spatial consistency must be
+#' calculated
+#' @param classidx A boolean indicating if the quality of classification
+#' indices must be calculated
 #' @param maxiter An integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @importFrom utils setTxtProgressBar txtProgressBar
-eval_parameters <- function(parameters,data, nblistw, standardize , tol, maxiter, seed=123){
+eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, classidx, tol, maxiter, seed=123){
     pb <- txtProgressBar(min = 0, max = nrow(parameters), style = 3)
     cnt <- 1
     allIndices <- apply(parameters,MARGIN = 1, function(row){
         setTxtProgressBar(pb, cnt)
-        cnt <<-1
+        cnt <<- cnt+1
         invisible(capture.output(result <- SFCMeans(data,nblistw,row[[1]],row[[2]],row[[3]],
-                           maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed)))
+                           maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed, tol=tol)))
         #calculating the quality indexes
-        indices <- calcqualityIndexes(data,result$Belongings)
-        #calculating spatial diag
-        indices$spConsistency <- spConsistency(result$Belongings, nblistw, nrep = 30)$Mean
+        indices <- list()
+        if(classidx){
+            indices <- calcqualityIndexes(data,result$Belongings)
+        }
+        if(spconsist){
+            #calculating spatial diag
+            indices$spConsistency <- spConsistency(result$Belongings, nblistw, nrep = 30)$Mean
+        }
+
         return(indices)
     })
     dfIndices <-  as.data.frame(t(matrix(unlist(allIndices), nrow=length(unlist(allIndices[1])))))
@@ -720,6 +737,10 @@ eval_parameters <- function(parameters,data, nblistw, standardize , tol, maxiter
 #'   by the spdep package
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
+#' @param spconsist A boolean indicating if the spatial consistency must be
+#' calculated
+#' @param classidx A boolean indicating if the quality of classification
+#' indices must be calculated
 #' @param maxiter An integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
@@ -736,10 +757,15 @@ eval_parameters <- function(parameters,data, nblistw, standardize , tol, maxiter
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' values <- select_parameters(dataset, k = 5, m = seq(2,3,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen)
-select_parameters <- function(data,k,m,alpha, nblistw, standardize = T, maxiter = 500, tol = 0.01, seed=123){
+select_parameters <- function(data,k,m,alpha, nblistw, spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed=123){
+
+    if(spconsist==F & classidx==F){
+        stop("one of spconsist and classidx must be TRUE")
+    }
     allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha)
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
-    dfIndices <- eval_parameters(allcombinaisons, data, nblistw, standardize , tol, maxiter, seed)
+    dfIndices <- eval_parameters(allcombinaisons, data, nblistw, standardize,
+        spconsist, classidx, tol, maxiter, seed)
 }
 
 
@@ -754,6 +780,10 @@ select_parameters <- function(data,k,m,alpha, nblistw, standardize = T, maxiter 
 #' @param alpha a sequence of values for alpha to test
 #' @param nblistw A list.w object describing the neighbours typically produced
 #'   by the spdep package
+#' @param spconsist A boolean indicating if the spatial consistency must be
+#' calculated
+#' @param classidx A boolean indicating if the quality of classification
+#' indices must be calculated
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param maxiter An integer for the maximum number of iteration
@@ -772,14 +802,16 @@ select_parameters <- function(data,k,m,alpha, nblistw, standardize = T, maxiter 
 #' dataset <- LyonIris@data[AnalysisFields]
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
-#' future::plan(future::multiprocess(workers=6))
-#' values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
-#'     alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
+#' future::plan(future::multiprocess(workers=2))
+#' #values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
+#' #    alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
+#' values <- select_parameters.mc(dataset, k = 5, m = seq(2,3,0.1),
+#'     alpha = seq(0,2,0.1), nblistw = Wqueen)
 #' \dontshow{
 #'    ## R CMD check: make sure any open connections are closed afterward
 #'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #'}
-select_parameters.mc <- function(data,k,m,alpha, nblistw, standardize = T, maxiter = 500, tol = 0.01, seed = 123, chunk_size=100){
+select_parameters.mc <- function(data,k,m,alpha, nblistw, spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = 123, chunk_size=100){
     allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha)
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     chunks <- split(1:nrow(allcombinaisons), rep(1:ceiling(nrow(allcombinaisons) / chunk_size),
@@ -791,7 +823,8 @@ select_parameters.mc <- function(data,k,m,alpha, nblistw, standardize = T, maxit
         p <- progressr::progressor(along = iseq)
         values <- future.apply::future_lapply(iseq, function(i) {
             parameters <- chunks[[i]]
-            invisible((capture.output(indices <- eval_parameters(parameters, data, nblistw, standardize , tol, maxiter, seed))))
+            invisible((capture.output(indices <- eval_parameters(parameters, data, nblistw, standardize,
+                spconsist, classidx, tol, maxiter, seed))))
             p(sprintf("i=%g", i))
             return(indices)
         })

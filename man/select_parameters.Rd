@@ -10,6 +10,8 @@ select_parameters(
   m,
   alpha,
   nblistw,
+  spconsist = T,
+  classidx = T,
   standardize = T,
   maxiter = 500,
   tol = 0.01,
@@ -27,6 +29,12 @@ select_parameters(
 
 \item{nblistw}{A list.w object describing the neighbours typically produced
 by the spdep package}
+
+\item{spconsist}{A boolean indicating if the spatial consistency must be
+calculated}
+
+\item{classidx}{A boolean indicating if the quality of classification
+indices must be calculated}
 
 \item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}

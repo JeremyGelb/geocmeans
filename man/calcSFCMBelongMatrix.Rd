@@ -6,7 +6,7 @@
 centroids, the observed data, the fuzzyness degree a neighbouring matrix and
 a spatial ponderation term}
 \usage{
-calcSFCMBelongMatrix(centers, data, wdata, neighbours, m, alpha)
+calcSFCMBelongMatrix(centers, data, wdata, m, alpha)
 }
 \arguments{
 \item{centers}{A matrix or a dataframe representing the centers of the
@@ -17,9 +17,6 @@ and p columns}
 
 \item{wdata}{A dataframe or matrix representing the lagged observed data with
 nrows and p columns}
-
-\item{neighbours}{A list.w object describing the neighbours typically
-produced by the spdep package}
 
 \item{m}{A float representing the fuzzyness degree}
 

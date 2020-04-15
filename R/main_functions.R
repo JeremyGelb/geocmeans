@@ -12,28 +12,20 @@
 #' @examples
 #' #This is an internal function, no example provided
 calcEuclideanDistance <- function(m, v) {
-    mat1 <- as.matrix(m)
-    mat2 <- matrix(as.numeric(v), nrow = nrow(m), ncol = length(v), byrow = TRUE)
-    alldistances <- rowSums((mat1 - mat2)^2)
+    v <- as.numeric(v)
+    alldistances <-colSums((t(m)-v)**2)
     return(alldistances)
 }
 
-#' Intermediar step in the calculation of the belonging matrix
-#'
-#' @param centerid An integer representing the column to use as reference in the
-#'   distance matrix
-#' @param alldistances A distance matrix
-#' @param m A float, the fuzziness parameter
-#' @return m a float representing the fuzzyness degree
-#' @examples
-#' #This is an internal function, no example provided
-calcBelongDenom <- function(centerid, alldistances, m) {
-    values <- sapply(1:ncol(alldistances), function(i) {
-        div <- (alldistances[, centerid] / alldistances[, i])
-        return(div^(2 / (m - 1)))
-    })
-    return(rowSums(values))
-}
+
+# calcEuclideanDistance <- function(m, v) {
+#     mat1 <- m
+#     mat2 <- matrix(as.numeric(v), nrow = nrow(m), ncol = length(v), byrow = TRUE)
+#     alldistances <- rowSums((mat1 - mat2)^2)
+#     return(alldistances)
+# }
+
+
 
 
 #' Calculate the belonging matrix according to a set of centroids, the observed
@@ -48,16 +40,21 @@ calcBelongDenom <- function(centerid, alldistances, m) {
 #'   datapoint to each cluster
 #' @examples
 #' #This is an internal function, no example provided
+#'
 calcBelongMatrix <- function(centers, data, m) {
-    centerdistances <- as.data.frame(apply(centers, 1, function(x) {
+    #calculating euclidean distance between each observation and each center
+    centerdistances <- apply(centers, 1, function(x) {
         return(calcEuclideanDistance(data, x))
-    }))
-    belongingmatrix <- sapply(1:nrow(centers), function(x) {
-        return(1 / calcBelongDenom(x, centerdistances, m))
     })
-    belongingmatrix[is.na(belongingmatrix)] <- 1
-    belongingmatrix[belongingmatrix > 1] <- 1
-    return(belongingmatrix)
+    numerator <- centerdistances**(-1/(m-1))
+    #calculating the denominator
+    denom <- rowSums(numerator)
+    #finally the total matrix
+    belongmat <- numerator / denom
+    # check for NA or Inf (if center is located on data point)
+    belongmat[is.na(belongmat)] <- 1
+    belongmat[belongmat > 1] <- 1
+    return(belongmat)
 }
 
 
@@ -71,8 +68,6 @@ calcBelongMatrix <- function(centers, data, m) {
 #'   and p columns
 #' @param wdata A dataframe or matrix representing the lagged observed data with
 #'   nrows and p columns
-#' @param neighbours A list.w object describing the neighbours typically
-#'   produced by the spdep package
 #' @param m A float representing the fuzzyness degree
 #' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
@@ -81,27 +76,27 @@ calcBelongMatrix <- function(centers, data, m) {
 #'   datapoint to each cluster
 #' @examples
 #' #This is an internal function, no example provided
-calcSFCMBelongMatrix <- function(centers, data, wdata, neighbours, m, alpha) {
-    # calculate the original distances (xk-vi)**2
-    originaldistances <- apply(centers, 1, function(x) {
+calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
+    #calculating euclidean distance between each observation and each center
+    centerdistances <- apply(centers, 1, function(x) {
         return(calcEuclideanDistance(data, x))
     })
-    # calculate the lagged distances (xk_hat-vi)**2
-    nbdistances <- apply(centers, 1, function(x) {
+    # and now for the lagged data
+    Wcenterdistances <- apply(centers, 1, function(x) {
         return(calcEuclideanDistance(wdata, x))
     })
-    # calculate the denominator
-    denom <- rowSums((originaldistances + alpha * nbdistances)^(-1 / (m - 1)))
 
-    # calculate the belonging values
-    belongingmatrix <- ((originaldistances + alpha * nbdistances)^(-1 / (m - 1))) / denom
+    numerator <- (centerdistances + alpha * Wcenterdistances)**(-1/(m-1))
+    #calculating the denominator
+    denom <- rowSums(numerator)
+    #finally the total matrix
+    belongmat <- numerator / denom
 
     # check for NA or Inf (if center is located on data point)
-    belongingmatrix[is.na(belongingmatrix)] <- 1
-    belongingmatrix[belongingmatrix > 1] <- 1
-    return(belongingmatrix)
+    belongmat[is.na(belongmat)] <- 1
+    belongmat[belongmat > 1] <- 1
+    return(belongmat)
 }
-
 
 
 
@@ -116,10 +111,10 @@ calcSFCMBelongMatrix <- function(centers, data, wdata, neighbours, m, alpha) {
 #'   datapoint to each cluster
 #' @examples
 #' #This is an internal function, no example provided
-calcCentroids <- function(data, belongmatrix, m) {
-    centers <- sapply(1:ncol(belongmatrix), function(i) {
-        apply(data, 2, function(x) {
-            weighted.mean(x, belongmatrix[, i])
+calcCentroids <- function(data, belongmatrix, m){
+    centers <- sapply(1:ncol(belongmatrix),function(i){
+        apply(data,2,function(x){
+            sum(x *  belongmatrix[, i]**m) / sum(belongmatrix[, i]**m)
         })
     })
     centers <- as.data.frame(t(centers))
@@ -136,8 +131,6 @@ calcCentroids <- function(data, belongmatrix, m) {
 #'   nrows and p columns
 #' @param belongmatrix A n X k matrix giving for each observation n, its
 #'   probability to belong to the cluster k
-#' @param neighbours A list.w object describing the neighbours typically
-#'   produced by the spdep package
 #' @param m An integer representing the fuzzyness degree
 #' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
@@ -146,20 +139,22 @@ calcCentroids <- function(data, belongmatrix, m) {
 #'   datapoint to each cluster
 #' @examples
 #' #This is an internal function, no example provided
-calcSWFCCentroids <- function(data, wdata, belongmatrix, neighbours, m, alpha) {
-    centers <- sapply(1:ncol(belongmatrix), function(i) {
-        weights <- belongmatrix[, i]^m
-        sapply(1:ncol(data), function(s) {
-            x <- data[, s]
-            wx <- wdata[, s]
-            v <- (x + alpha * wx)
-            return(sum(v * weights) / ((1 + alpha) * sum(weights)))
+calcSWFCCentroids <- function(data, wdata, belongmatrix, m, alpha) {
+    powered <- belongmatrix**m
+    wdata_alpha <- alpha*wdata
+    centers <- sapply(1:ncol(belongmatrix),function(i){
+        sapply(1:ncol(data),function(y){
+            x <- data[,y]
+            wx <- wdata_alpha[,y]
+            s1 <- powered[, i]
+            numerator <- sum( (x + wx) *  s1)
+            denom <- ( (1+alpha) * sum(s1))
+            return(numerator/denom)
         })
     })
     centers <- as.data.frame(t(centers))
     return(centers)
 }
-
 
 
 
@@ -349,6 +344,8 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
         wdata[[Name]] <- spdep::lag.listw(nblistw, data[[Name]])
     }
 
+    data <- as.matrix(data)
+    wdata <- as.matrix(wdata)
     # selecting the original centers from datapoints
     if (is.null(seed)==F){
         set.seed(seed)
@@ -356,7 +353,7 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
     centers <- data[sample(nrow(data), k), ]
 
     # calculating the first belonging matrix
-    belongmatrix <- calcSFCMBelongMatrix(centers, data, wdata, nblistw, m, alpha = alpha)
+    belongmatrix <- calcSFCMBelongMatrix(centers, data, wdata, m, alpha = alpha)
     CriterioReached <- FALSE
 
     # starting the loop
@@ -367,8 +364,8 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
         if(verbose){
             setTxtProgressBar(pb, i)
         }
-        newcenters <- calcSWFCCentroids(data, wdata, belongmatrix, nblistw, m, alpha)
-        newbelongmatrix <- calcSFCMBelongMatrix(newcenters, data, wdata, nblistw, m, alpha = alpha)
+        newcenters <- calcSWFCCentroids(data, wdata, belongmatrix, m, alpha)
+        newbelongmatrix <- calcSFCMBelongMatrix(newcenters, data, wdata, m, alpha = alpha)
         if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
             # if we don't reach convergence criterion
             centers <- newcenters

@@ -2,6 +2,42 @@
 ##### intermediate functions for cmeans algorithms #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+#' Calculate Wx, the spatialy lagged version of x, by a neighbouring matrix W
+#'
+#' @param x A dataframe with only numeric columns
+#' @param nblistw The listw object (spdep like) used to calculate WY
+#' @param method A string indicating if a classical lag must be used (mean) or
+#' if a weighted median must be used (median)
+#' @return A lagged version of x
+#' @examples
+#' #This is an internal function, no example provided
+calcLaggedData <- function(x,nblistw,method="mean"){
+    if (method=="mean"){
+        wx <- x
+        for (Name in names(x)) {
+            wx[[Name]] <- spdep::lag.listw(nblistw, x[[Name]])
+        }
+        return(wx)
+    }else if (method=="median"){
+        nb <- nblistw$neighbours
+        weights <- nblistw$weights
+        all_values <- lapply(1:length(nblistw$neighbours),function(i){
+            ids <- nb[[i]]
+            w <- weights[[i]]
+            obs <- x[ids,]
+            values <- apply(obs,2,function(column){
+                return(reldist::wtd.quantile(column,q=0.5,weight=w))
+            })
+        })
+        wx <- data.frame(do.call(rbind,all_values))
+        return(wx)
+    }else {
+        stop("The method used to calculate lagged values must be mean or median")
+    }
+}
+
+
+
 #' Calculate the euclidean distance between a numeric matrix n * p and a numeric
 #' vector of length p
 #'
@@ -16,15 +52,6 @@ calcEuclideanDistance <- function(m, v) {
     alldistances <-colSums((t(m)-v)**2)
     return(alldistances)
 }
-
-
-# calcEuclideanDistance <- function(m, v) {
-#     mat1 <- m
-#     mat2 <- matrix(as.numeric(v), nrow = nrow(m), ncol = length(v), byrow = TRUE)
-#     alldistances <- rowSums((mat1 - mat2)^2)
-#     return(alldistances)
-# }
-
 
 
 
@@ -303,6 +330,8 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 #'   dimensions, 2 is twice the weight for space)
+#' @param lag_method A string indicating if a classical lag must be used (mean) or
+#' if a weighted median must be used (median). Default is "mean"
 #' @param maxiter An integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
@@ -327,7 +356,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
+SFCMeans <- function(data, nblistw, k, m, alpha, lag_method="mean", maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
     # standardize data if required
     if (standardize) {
         if (verbose){
@@ -339,10 +368,7 @@ SFCMeans <- function(data, nblistw, k, m, alpha, maxiter = 500, tol = 0.01, stan
     }
 
     # calculating the lagged dataset
-    wdata <- data
-    for (Name in names(data)) {
-        wdata[[Name]] <- spdep::lag.listw(nblistw, data[[Name]])
-    }
+    wdata <- calcLaggedData(data,nblistw,lag_method)
 
     data <- as.matrix(data)
     wdata <- as.matrix(wdata)

@@ -591,8 +591,9 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #'
 #' @param data A dataframe with numeric columns
 #' @param belongmatrix A belonging matrix
+#' @param chartcolors A vector of color names used for the spyder plot
 #'
-#' @importFrom grDevices rgb
+#' @importFrom grDevices rgb colors col2rgb
 #' @importFrom stats weighted.mean
 #' @export
 #' @examples
@@ -604,7 +605,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' spiderPlots(dataset,result$Belongings)
-spiderPlots<- function(data, belongmatrix){
+spiderPlots<- function(data, belongmatrix, chartcolors=NULL){
     Groups <- ncol(belongmatrix)
 
     Values <- do.call(rbind, lapply(1:Groups, function(i) {
@@ -619,13 +620,33 @@ spiderPlots<- function(data, belongmatrix){
         Scores <- Values[Gp,]
         names(Scores) <- names(data)
         datam <- data.frame(rbind(Maxs, Mins, Scores))
-        Chart <- fmsb::radarchart(datam, axistype = 1, pcol = rgb(0.2, 0.5, 0.5, 0.9),
+        fmsb::radarchart(datam, axistype = 1, pcol = rgb(0.2, 0.5, 0.5, 0.9),
                                   pfcol = rgb(0.2, 0.5, 0.5, 0.5),
                                   plwd = 4, cglcol = "grey", cglty = 1,
                                   axislabcol = "grey", cglwd = 0.8, vlcex = 0.8,
                                   title = paste("Group number : ",Gp))
-        print(Chart)
     }
+    if (is.null(chartcolors)){
+        selcolors <- sample(colors(),size = ncol(belongmatrix))
+    }else{
+        selcolors <- chartcolors
+    }
+
+    tocolors <- sapply(selcolors,function(i){
+        v1 <- as.list(col2rgb(i,alpha=T))
+        v1[[length(v1)]] <- 100
+        v1$maxColorValue <- 255
+        new_color <- do.call(rgb,v1)
+        return(new_color)
+        })
+    alldata <- data.frame(rbind(Maxs, Mins,Values))
+    fmsb::radarchart(alldata,pcol=selcolors,pfcol = tocolors,
+                     axislabcol = "grey",plwd = 2, cglcol = "grey",
+                     cglty = 1,vlcex = 0.8,
+                     plty = rep(1,ncol(belongmatrix)))
+    legend("right",legend = levels(as.factor(paste("Group ",1:ncol(belongmatrix),sep=""))),
+           fill=tocolors)
+
 }
 
 #' return violin plots to compare the distribution of each variable for each

@@ -10,6 +10,7 @@ SFCMeans(
   k,
   m,
   alpha,
+  lag_method = "mean",
   maxiter = 500,
   tol = 0.01,
   standardize = TRUE,
@@ -30,6 +31,9 @@ by the spdep package}
 \item{alpha}{A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
+
+\item{lag_method}{A string indicating if a classical lag must be used (mean) or
+if a weighted median must be used (median). Default is "mean"}
 
 \item{maxiter}{An integer for the maximum number of iteration}
 

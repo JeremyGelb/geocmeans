@@ -320,11 +320,65 @@ kable(spCmeansSummary$Cluster_4, caption = "descriptive values of group 4")
 
 To help the overall distinction between clusters, we can also use some plots like violin plots and spider plots
 ```{r}
-spiderPlots(LyonIris@data[Vars], SFCM_result$Belongings)
+sfcm_belong_mat <-  SFCM_result$Belongings[,c(2,1,4,3)]
+cmeans_belong_mat <- cmean_result$Belongings[,c(1,3,2,4)]
+spiderPlots(LyonIris@data[Vars], sfcm_belong_mat, chartcolors = c("darkorange3","grey4","gray49","royalblue"))
 ```
 
 ```{r fig.height=15, fig.width=5}
 violin_plots <- violinPlots(LyonIris@data[Vars], SFCM_result$Groups)
 
 ggarrange(plotlist = violin_plots, ncol = 2, nrow=6)
+```
+
+We could also ensure that the clusters identified by the 4 methods are not to different
+```{r}
+
+belong_matrices <- list(HAC_belong, cmean_result$Belongings, spHAC_belong ,SFCM_result$Belongings)
+
+all_summary <- lapply(belong_matrices, function(x){return(summarizeClusters(LyonIris@data[Vars],belongmatrix = x, weighted = T, dec = 2))})
+
+all_table <- lapply(1:4,function(i){
+  ids <- map_order[,i]
+  cols <- lapply(1:length(all_summary),function(j){
+    x <- all_summary[[j]]
+    return(as.numeric(x[[ids[[j]]]][8,]))
+  })
+  clusttable <- do.call(cbind,cols)
+  rownames(clusttable) <- Vars
+  colnames(clusttable) <- algorithm
+  return(clusttable)
+})
+
+completetable <- do.call(cbind,all_table)
+
+kable(completetable) %>%
+  add_header_above(c(" "=1,"Group 1" = 4, "Group 2" = 4, "Group 3" = 4, "Group 4" = 4))
+```
+
+## Uncertain observations
+
+We will extract here for the SFCM algorithm the observations for which the classification is difficult. We will first observe the distribution of the most likely cluster for each obseravtion
+
+```{r}
+## first, we can extract the greatest prob of belonging for each observation
+most_likely <- apply(sfcm_belong_mat,1,max)
+hist(most_likely,breaks=30)
+quantile(most_likely,probs = c(0.05,0.1,0.25,0.5,0.75,0.9,0.95))
+
+```
+Considering the previous distribution, we decide to label as unclassified the observations for which the maximum probability in the belonging matrix is belwo 0.4.
+
+
+```{r}
+classes <- undecidedUnits(sfcm_belong_mat,tol = 0.4)
+Allmaps <- mapClusters(LyonIris,sfcm_belong_mat, undecided = 0.4)
+
+LyonIris$class_SFCM <- classes
+sfcm_belong_mat <- data.frame(sfcm_belong_mat)
+names(sfcm_belong_mat) <- paste("groupe_",1:ncol(sfcm_belong_mat),sep="")
+for(i in names(sfcm_belong_mat)){
+  LyonIris[[i]] <- sfcm_belong_mat[[i]]
+}
+#rgdal::writeOGR(LyonIris,"sfcm_results.gpkg",driver="GPKG",layer="sfcm")
 ```

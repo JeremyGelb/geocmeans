@@ -4,12 +4,14 @@
 \alias{spiderPlots}
 \title{display spider charts to quickly compare values between groups}
 \usage{
-spiderPlots(data, belongmatrix)
+spiderPlots(data, belongmatrix, chartcolors = NULL)
 }
 \arguments{
 \item{data}{A dataframe with numeric columns}
 
 \item{belongmatrix}{A belonging matrix}
+
+\item{chartcolors}{A vector of color names used for the spyder plot}
 }
 \description{
 for each group, the weighted mean of each variable in data is calculated

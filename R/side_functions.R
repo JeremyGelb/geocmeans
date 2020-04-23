@@ -594,6 +594,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #' @param chartcolors A vector of color names used for the spyder plot
 #'
 #' @importFrom grDevices rgb colors col2rgb
+#' @importFrom graphics legend
 #' @importFrom stats weighted.mean
 #' @export
 #' @examples

@@ -129,7 +129,7 @@ tree <- hclustgeo(Do)
 
 LyonIris$class_HAC <- cutree(tree,4)
 
-df <- data.frame("gp"=as.factor(LyonIris$class_HAC))
+df <- data.frame("V"=as.factor(LyonIris$class_HAC))
 HAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contrasts, contrasts=FALSE))
 
 ```
@@ -153,7 +153,7 @@ We will retain a value of 0.35 for $\alpha$. This value achieve the best deal be
 tree <- hclustgeo(D0,D1,alpha=0.35)
 LyonIris$class_spHAC <- cutree(tree,4)
 
-df <- data.frame("gp"=as.factor(LyonIris$class_spHAC))
+df <- data.frame("V"=as.factor(LyonIris$class_spHAC))
 spHAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contrasts, contrasts=FALSE))
 ```
 
@@ -281,14 +281,17 @@ map_order <-rbind(c(1,3,2,4),
                   c(1,3,4,2),
                   c(2,1,4,3))
 
-algorithm <- c("HAC","Cmeans","spHAC","spCmeans")
+algorithm <- c("HAC","FCM","ClustGeo","SFCM")
 
 map_list <- lapply(1:4,function(i){
-  ids <- map_order[,i]
+  ids <- map_order[i,]
   maps <- lapply(1:length(ids),function(m){
     map <- allmaps[[m]]$ProbaMaps[ids[[m]]][[1]]
     map <- map+ theme(legend.position = "none",
-                      plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines"))
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          plot.margin = unit(c(0.05,0.05,0.05,0.05), "lines"))
     if(i==1){
       map <- map+ggtitle(algorithm[[m]])+theme(plot.title = element_text(hjust = 0.5))
     }
@@ -296,9 +299,25 @@ map_list <- lapply(1:4,function(i){
   })
   return(maps)
 })
-
 all_probamaps <- unlist(map_list,recursive = F)
-ggarrange(plotlist = all_probamaps, ncol=4,nrow=4)
+
+## adding now the final class maps
+colors <- c("#6eb97e","#386cb0","#fdc086","#ffff99")
+for(i in 1:4){
+  actual_map <- allmaps[[i]]
+  index <- map_order[i,]
+  names(colors) <- paste("V",index,sep="")
+  clustmap <- actual_map$ClusterPlot + 
+    scale_fill_manual(values = colors)+
+    theme(legend.position = "none",
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          plot.margin = unit(c(0.05,0.05,0.05,0.05), "lines"))
+  all_probamaps[[length(all_probamaps)+1]] <- clustmap
+}
+
+print(ggarrange(plotlist = all_probamaps, ncol=4,nrow=5))
 
 ```
 
@@ -382,3 +401,64 @@ for(i in names(sfcm_belong_mat)){
 }
 #rgdal::writeOGR(LyonIris,"sfcm_results.gpkg",driver="GPKG",layer="sfcm")
 ```
+
+## adjusting for the spatial parameters
+
+We still have to choose between different types of matrices and between the two methods for the spatial neighbouring.
+We can try to adjust all these parameters simultaneously with alpha and compare results.
+```{r}
+
+## classical Queen matrix
+Queen <- poly2nb(LyonIris)
+WQueen <- nb2listw(Queen)
+
+## classical Rook matrix
+Rook <- poly2nb(LyonIris, queen = F)
+WRook <- nb2listw(Rook)
+
+## nearest neighbours matrices
+coords <- coordinates(LyonIris)
+nneighbours <- lapply(5:10,function(i){
+  knn <- knearneigh(coords, k=i)
+  nb <- knn2nb(knn)
+  wnb <- nb2listw(nb)
+  return(wnb)
+})
+
+allWlist <- nneighbours
+allWlist[[length(allWlist)+1]] <- WRook
+allWlist[[length(allWlist)+1]] <- WQueen
+
+future::plan(future::multiprocess(workers=6))
+values <- select_parameters.mc(data, k = 4, m = 1.5, alpha = seq(0,2,0.05),
+            nblistw = allWlist, lag_method = c("mean","median"), standardize = F, tol = 0.001, seed = myseed)
+
+#back to single process
+if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
+
+listwnames <- c("queen","rook",paste("nearest neighbour ",5:10, sep=""))
+
+inertia_plots <- lapply(1:length(listwnames),function(i){
+  sub <- subset(values,values$listw==i)
+  tmpplot <- ggplot(data=sub)+
+    geom_line(aes(x=alpha,y=Explained.inertia,color=lag_method))+
+    geom_point(aes(x=alpha,y=Explained.inertia,color=lag_method))+
+    ggtitle(listwnames[[i]])
+})
+
+spConsistency_plots <- lapply(1:length(listwnames),function(i){
+  sub <- subset(values,values$listw==i)
+  tmpplot <- ggplot(data=sub)+
+    geom_line(aes(x=alpha,y=spConsistency,color=lag_method))+
+    geom_point(aes(x=alpha,y=spConsistency,color=lag_method))+
+    ggtitle(listwnames[[i]])
+})
+
+
+ggarrange(plotlist = inertia_plots, ncol=2, nrow = 4)
+
+ggarrange(plotlist = spConsistency_plots, ncol=2, nrow = 4)
+
+```
+
+We can see that the choice of the spatial matrix does not affect too much the results, but the median method seems to perform worst.

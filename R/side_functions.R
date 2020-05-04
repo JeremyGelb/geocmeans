@@ -715,8 +715,10 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
     allIndices <- apply(parameters,MARGIN = 1, function(row){
         setTxtProgressBar(pb, cnt)
         cnt <<- cnt+1
-        invisible(capture.output(result <- SFCMeans(data,nblistw,row[[1]],row[[2]],row[[3]],
-                           maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed, tol=tol)))
+        templistw <- nblistw[[as.numeric(row[[4]])]]
+        invisible(capture.output(result <- SFCMeans(data,templistw,k=as.numeric(row[[1]]),m=as.numeric(row[[2]]),
+                        alpha=as.numeric(row[[3]]),lag_method=row[[5]],
+                        maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed, tol=tol)))
         #calculating the quality indexes
         indices <- list()
         if(classidx){
@@ -724,7 +726,7 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
         }
         if(spconsist){
             #calculating spatial diag
-            indices$spConsistency <- spConsistency(result$Belongings, nblistw, nrep = 30)$Mean
+            indices$spConsistency <- spConsistency(result$Belongings, templistw, nrep = 30)$Mean
         }
 
         return(indices)
@@ -734,6 +736,8 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
     dfIndices$k <- parameters$k
     dfIndices$m <- parameters$m
     dfIndices$alpha <- parameters$alpha
+    dfIndices$listw <- parameters$listsw
+    dfIndices$lag_method <- parameters$lag_method
     return(dfIndices)
 }
 
@@ -768,12 +772,17 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' values <- select_parameters(dataset, k = 5, m = seq(2,3,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen)
-select_parameters <- function(data,k,m,alpha, nblistw, spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed=123){
+select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed=123){
 
     if(spconsist==F & classidx==F){
         stop("one of spconsist and classidx must be TRUE")
     }
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha)
+
+    if(class(nblistw)[[1]]!="list"){
+        nblistw <- list(nblistw)
+    }
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,listsw=1:length(nblistw),lag_method=lag_method)
+
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     dfIndices <- eval_parameters(allcombinaisons, data, nblistw, standardize,
         spconsist, classidx, tol, maxiter, seed)
@@ -822,8 +831,17 @@ select_parameters <- function(data,k,m,alpha, nblistw, spconsist = T, classidx =
 #'    ## R CMD check: make sure any open connections are closed afterward
 #'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #'}
-select_parameters.mc <- function(data,k,m,alpha, nblistw, spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = 123, chunk_size=100){
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha)
+select_parameters.mc <- function(data,k,m,alpha, nblistw, lag_method="mean",  spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = 123, chunk_size=100){
+
+    if(spconsist==F & classidx==F){
+        stop("one of spconsist and classidx must be TRUE")
+    }
+
+    if(class(nblistw)[[1]]!="list"){
+        nblistw <- list(nblistw)
+    }
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,listsw=1:length(nblistw), lag_method=lag_method)
+
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     chunks <- split(1:nrow(allcombinaisons), rep(1:ceiling(nrow(allcombinaisons) / chunk_size),
                                        each = chunk_size, length.out = nrow(allcombinaisons)))
@@ -843,3 +861,4 @@ select_parameters.mc <- function(data,k,m,alpha, nblistw, spconsist = T, classid
     dfIndices <- do.call(rbind,values)
     return(dfIndices)
 }
+

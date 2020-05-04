@@ -54,7 +54,6 @@ calcEuclideanDistance <- function(m, v) {
 }
 
 
-
 #' Calculate the belonging matrix according to a set of centroids, the observed
 #' data and the fuzzyness degree
 #'

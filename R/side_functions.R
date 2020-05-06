@@ -3,8 +3,38 @@
 ##### Fonctions de diagnostic #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+#' calculate Fukuyama and Sugeno index of classification quality
+#'
+#' @param data the original dataframe used fot the classification (n*p)
+#' @param belongmatrix A belonging matrix (n*k)
+#' @param centers the centers of the clusters
+#' @param m the fuzzyness parameter
+#' @return a float : the Fukuyama and Sugeno index
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
+#' calcFukuyamaSugeno(result$Data,result$Belongings, result$Centers, 1.5)
+calcFukuyamaSugeno <- function(data,belongmatrix,centers,m){
+    v_hat <- apply(centers,2,mean)
+    um <- (belongmatrix)**m
+    values <- sapply(1:ncol(belongmatrix),function(i){
+        w <- um[,i]
+        v <- centers[i,]
+        t1 <- calcEuclideanDistance(data,v)
+        t2 <- sum((v - v_hat)**2)
+        dists <- (t1 - t2)*w
+        return(sum(dists))
+    })
+    return(sum(values))
+}
 
-#' calculate the explained inertia by a a classification
+#' calculate the explained inertia by a classification
 #'
 #' @param data the original dataframe used fot the classification (n*p)
 #' @param belongmatrix A belonging matrix (n*k)
@@ -43,13 +73,16 @@ calcexplainedInertia <- function(data,belongmatrix){
 #' package)
 #'
 #' @param data the original dataframe used for the classification (n*p)
-#' @param belongmatrix A belonging matrix (n*k)
+#' @param belongmatrix a belonging matrix (n*k)
+#' @param m the fuzziness parameter used for the classification
 #' @return a named list with
 #' \itemize{
 #'         \item Silhouette.index: the silhouette index (fclust::SIL.F)
 #'         \item Partition.entropy: the partition entropy index (fclust::PE)
 #'         \item Partition.coeff: the partition entropy coefficient (fclust::PC)
 #'         \item Modified.partition.coeff: the modified partition entropy coefficient (fclust::MPC)
+#'         \item XieBeni.index : the Xie and Beni index (fclust::XB)
+#'         \item FukuyamaSugeno.index : the Fukuyama and Sugeno index (geocmeans::calcFukuyamaSugeno)
 #'         \item Explained.inertia: the percentage of total inertia explained by the solution
 #'}
 #' @export
@@ -61,18 +94,33 @@ calcexplainedInertia <- function(data,belongmatrix){
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' calcqualityIndexes(result$Data,result$Belongings)
-calcqualityIndexes <- function(data, belongmatrix) {
+#' calcqualityIndexes(result$Data,result$Belongings, m=1.5)
+calcqualityIndexes <- function(data, belongmatrix, m) {
+
+    centers <- t(apply(belongmatrix, MARGIN=2,function(column){
+        values <- apply(data,MARGIN=2,function(var){
+            return(weighted.mean(var,column))
+        })
+        return(values)
+    }))
 
     idxsf <- fclust::SIL.F(data, belongmatrix, alpha=1)  #look for maximum
     idxpe <- fclust::PE(belongmatrix)  #look for minimum
     idxpc <- fclust::PC(belongmatrix)  #loook for maximum
     idxmpc <- fclust::MPC(belongmatrix)  #look for maximum
+    idxfukusu <- calcFukuyamaSugeno(data, belongmatrix, centers, m) # look for minimum
+    if(m>1){
+        idxXB <- fclust::XB(data,belongmatrix,centers,m) # look for minimum
+    }else{
+        idxXB <- NA
+    }
+
     # calculating the explained inertia
     explainedinertia <- calcexplainedInertia(data,belongmatrix)
 
     return(list(Silhouette.index = idxsf, Partition.entropy = idxpe,
                 Partition.coeff = idxpc, Modified.partition.coeff = idxmpc,
+                XieBeni.index = idxXB, FukuyamaSugeno.index = idxfukusu,
                 Explained.inertia = explainedinertia))
 }
 
@@ -503,6 +551,7 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
                 Q95 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.95, na.rm = TRUE, weight = W),dec))
                 Mean <- as.numeric(round(weighted.mean(x, W),dec))
                 Std <- round(sqrt(reldist::wtd.var(x, weight=W)),dec)
+                N <-
                 return(list(Q5 = Q5, Q10 = Q10, Q25 = Q25, Q50 = Q50,
                             Q75 = Q75, Q90 = Q90, Q95 = Q95,
                             Mean = Mean, Std = Std))
@@ -722,7 +771,7 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
         #calculating the quality indexes
         indices <- list()
         if(classidx){
-            indices <- calcqualityIndexes(data,result$Belongings)
+            indices <- calcqualityIndexes(result$Data,result$Belongings,as.numeric(row[[2]]))
         }
         if(spconsist){
             #calculating spatial diag

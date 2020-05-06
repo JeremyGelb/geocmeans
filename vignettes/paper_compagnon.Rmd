@@ -89,8 +89,8 @@ P1 <- ggplot(params_df)+
   scale_colour_manual(values=colors)
 
 P2 <- ggplot(params_df)+
-  geom_smooth(aes(x=m,y=Partition.entropy, color=k, group=k))+
-  geom_point(aes(x=m,y=Partition.entropy,color=k))+
+  geom_smooth(aes(x=m,y=Partition.coeff, color=k, group=k))+
+  geom_point(aes(x=m,y=Partition.coeff,color=k))+
   scale_colour_manual(values=colors)
 
 P3 <- ggplot(params_df)+
@@ -99,12 +99,17 @@ P3 <- ggplot(params_df)+
   scale_colour_manual(values=colors)
 
 P4 <- ggplot(params_df)+
-  geom_smooth(aes(x=m,y=Partition.coeff, color=k, group=k))+
-  geom_point(aes(x=m,y=Partition.coeff,color=k))+
+  geom_smooth(aes(x=m,y=FukuyamaSugeno.index, color=k, group=k))+
+  geom_point(aes(x=m,y=FukuyamaSugeno.index,color=k))+
   scale_colour_manual(values=colors)
 
+P5 <- ggplot(params_df)+
+  geom_smooth(aes(x=m,y=XieBeni.index, color=k, group=k),se=F)+
+  geom_point(aes(x=m,y=XieBeni.index,color=k))+
+  scale_colour_manual(values=colors)+ylim(0,5)
 
-print(ggarrange(P1,P2,P3,P4, ncol = 2, nrow=2))
+
+print(ggarrange(P1,P2,P3,P4,P5, ncol = 2, nrow=3))
 
 ```
 
@@ -167,24 +172,29 @@ values <- select_parameters(data, k = 4, m = 1.5, alpha = seq(0,2,0.05),
 ```
 
 ```{r fig.height=8, fig.width=8}
+
 P1 <- ggplot(values)+
   geom_smooth(aes(x=alpha,y=Explained.inertia), color="black")+
   geom_point(aes(x=alpha,y=Explained.inertia), color="red")
 
 P2 <- ggplot(values)+
-  geom_smooth(aes(x=alpha,y=Partition.entropy), color="black")+
-  geom_point(aes(x=alpha,y=Partition.entropy), color="red")
+  geom_smooth(aes(x=alpha,y=Partition.coeff), color="black")+
+  geom_point(aes(x=alpha,y=Partition.coeff), color="red")
 
 P3 <- ggplot(values)+
   geom_smooth(aes(x=alpha,y=Silhouette.index), color="black")+
   geom_point(aes(x=alpha,y=Silhouette.index), color="red")
 
 P4 <- ggplot(values)+
-  geom_smooth(aes(x=alpha,y=Partition.coeff), color="black")+
-  geom_point(aes(x=alpha,y=Partition.coeff), color="red")
+  geom_smooth(aes(x=alpha,y=FukuyamaSugeno.index), color="black")+
+  geom_point(aes(x=alpha,y=FukuyamaSugeno.index), color="red")
+
+P5 <- ggplot(values)+
+  geom_smooth(aes(x=alpha,y=XieBeni.index),se=F, color="black")+
+  geom_point(aes(x=alpha,y=XieBeni.index), color="red")
 
 
-print(ggarrange(P1,P2,P3,P4, ncol = 2, nrow=2))
+print(ggarrange(P1,P2,P3,P4,P5, ncol = 2, nrow=3))
 
 ```
 
@@ -284,7 +294,7 @@ map_order <-rbind(c(1,3,2,4),
 algorithm <- c("HAC","FCM","ClustGeo","SFCM")
 
 map_list <- lapply(1:4,function(i){
-  ids <- map_order[i,]
+  ids <- map_order[,i]
   maps <- lapply(1:length(ids),function(m){
     map <- allmaps[[m]]$ProbaMaps[ids[[m]]][[1]]
     map <- map+ theme(legend.position = "none",
@@ -350,12 +360,31 @@ violin_plots <- violinPlots(LyonIris@data[Vars], SFCM_result$Groups)
 ggarrange(plotlist = violin_plots, ncol = 2, nrow=6)
 ```
 
+We should count the number of observation in each cluster too.
+```{r}
+belong_matrices <- list(HAC_belong, cmean_result$Belongings, spHAC_belong ,SFCM_result$Belongings)
+
+counts <- lapply(1:4,function(i){
+  mat <- belong_matrices[[i]]
+  idx <- map_order[i,]
+  maxs <- apply(mat,1,max)
+  counts <- apply(mat,2,function(column){
+    return(sum(column == maxs))
+  })
+  return(counts[idx])
+})
+
+counts <- do.call(rbind,counts)
+row.names(counts) <- c("HAC","FCM","ClustGeo","SFCM")
+kable(counts)
+
+```
 We could also ensure that the clusters identified by the 4 methods are not to different
 ```{r}
 
-belong_matrices <- list(HAC_belong, cmean_result$Belongings, spHAC_belong ,SFCM_result$Belongings)
-
-all_summary <- lapply(belong_matrices, function(x){return(summarizeClusters(LyonIris@data[Vars],belongmatrix = x, weighted = T, dec = 2))})
+all_summary <- lapply(belong_matrices, function(x){
+  return(summarizeClusters(LyonIris@data[Vars],belongmatrix = x, weighted = T, dec = 2))
+  })
 
 all_table <- lapply(1:4,function(i){
   ids <- map_order[,i]
@@ -387,6 +416,7 @@ quantile(most_likely,probs = c(0.05,0.1,0.25,0.5,0.75,0.9,0.95))
 
 ```
 Considering the previous distribution, we decide to label as unclassified the observations for which the maximum probability in the belonging matrix is belwo 0.4.
+
 
 
 ```{r}

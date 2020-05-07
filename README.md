@@ -12,13 +12,13 @@ A good start point for this package is the Introduction vignette. It presents th
 you can install this package with the following code in R.
 The packages use mainly the following packages in its internal structure :
 
-*sp
-*spdep
-*fclust
-*future
-*future.apply
-*dplyr
-*ggplot2
+* sp
+* spdep
+* fclust
+* future
+* future.apply
+* dplyr
+* ggplot2
 
 ```{r}
 devtools::install_github("JeremyGelb/geocmeans")

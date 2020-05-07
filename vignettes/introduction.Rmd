@@ -22,18 +22,18 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Introduction
 
 This document is a short introduction to the package geocmeans. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation
-Ce document est une courte introduction au package geo-c-mean.
+
 The reference can be found here : [https://doi.org/10.1016/j.patcog.2006.07.011](https://doi.org/10.1016/j.patcog.2006.07.011)
 
-There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*,*kmeans*,*cmeans*,*factoextra*, etc.). However theses methods are not always well suited for analyzing spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solution where close observation end up in different groups dispite the fact that they are very similar.
+There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*,*kmeans*,*cmeans*,*factoextra*, etc.). However theses methods are not always well suited for analyzing spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solution where close observation end up in different groups despite the fact that they are very similar.
 
-The package *ClustGeo* is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between obersvations. The proposed approach is very appealing because the user has to select a parameter (alpha) that control the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated  between observations with their variables).
+The package *ClustGeo* is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between observations The proposed approach is very appealing because the user has to select a parameter (alpha) that control the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated  between observations with their variables).
 
-However, this method belongs to the category of "hard-clustering" algorithms. Each observation end up in one cluster/group. The main draw-bakc here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms give more informations because they calculate for each observation its "probability" of belonging to each group.
+However, this method belongs to the category of "hard-clustering" algorithms. Each observation end up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms give more informations because they calculate for each observation its "probability" of belonging to each group.
 
-The algorithm FCMS (fast spatial c-means) proposes to combien the best of both worlds
+The algorithm FCMS (fast spatial c-means) proposes to combine the best of both worlds
 
-The package geocmeans is an implementation in R of this method (originnaly developped for analysis of brain imagery). It comes with a set of function to facilitate the analysis of the final belonging matrices like calculating many quality indices (comming mainly from the packahe *fclust*), mapping the results or giving summary statistics for each cluster/group.
+The package geocmeans is an implementation in R of this method (originally developed for analysis of brain imagery). It comes with a set of function to facilitate the analysis of the final belonging matrices like calculating many quality indices (coming mainly from the package *fclust*), mapping the results or giving summary statistics for each cluster/group.
 
 ## Loading the packages and the data
 
@@ -87,7 +87,7 @@ ggplot(Df)+
   ylab("R2 of classification")
 ```
 
-By ploting the R2 of the kmeans classification for each k between 2 and 10, we can see a fort elbow at k=3. But this small number of group leads to a classification explaining only 43% of the original data variance. With k=5, we reach 50% of the variance, so we decide here to keep k=5.
+By plotting the R2 of the kmeans classification for each k between 2 and 10, we can see a fort elbow at k=3. But this small number of group leads to a classification explaining only 43% of the original data variance. With k=5, we reach 50% of the variance, so we decide here to keep k=5.
 
 Let's map the obtained groups.
 
@@ -119,7 +119,7 @@ We could know compare this solution with a classical cmeans algorithm.
 
 ## classical cmeans
 
-The classical cmeans will be a comparison point for the spatial cmeans latter. The package geocmeans proposes a function to apply this algorithm, but we will use here the one of the *fcm* package. We fixe the fuzzyness degree (m) to 1.5
+The classical cmeans will be a comparison point for the spatial cmeans latter. The package geocmeans proposes a function to apply this algorithm, but we will use here the one of the *fcm* package. We set the fuzzyness degree (m) to 1.5
 
 ```{r warning=FALSE}
 library(ppclust)
@@ -128,13 +128,13 @@ Cmean <- fcm(Data, centers=5,m = 1.5)
 
 ```
 
-We can now use the function *calcqualityIndexes* wich combine many indices from the package *fclust* to analyze the quality of the classification
+We can now use the function *calcqualityIndexes* which combine many indices from the package *fclust* to analyze the quality of the classification
 
 ```{r warning=FALSE}
-calcqualityIndexes(Data,Cmean$u)
+calcqualityIndexes(Data,Cmean$u,m=1.5)
 ```
 
-These values will be helpfull in comparison with the ones we will get from SFCM. Modifying the cmeans algorithm the increase spatial consistency leads to a decrease in the quality of the classification.
+These values will be helpful in comparison with the ones we will get from SFCM. Modifying the cmeans algorithm the increase spatial consistency leads to a decrease in the quality of the classification.
 
 We can now map the belonging matrix. To do so, we can use the function *mapClusters* of *geocmeans* package. We can map the most likely group for each observation too. We propose here to define a threshold of 0.45. If an observation has only values below this probability in the belonging matrix, it will be labeled as "undecided" (represented with transparency on the map).
 
@@ -152,7 +152,7 @@ MyMaps$ClusterPlot
 
 ## Spatial C-means
 
-Now we can use the SFCM function to perform a spatial cmeans. The first step is to define a spatial weight matrix indicating which observations are neighbours and the strength of their relationship. We propose here to use a basic queen neighbour matrix (builded with spdep). The matrix must be rowstandardized to ensure that the interpretation of all the parameters remains clear.
+Now we can use the SFCM function to perform a spatial cmeans. The first step is to define a spatial weight matrix indicating which observations are neighbours and the strength of their relationship. We propose here to use a basic queen neighbour matrix (built with spdep). The matrix must be row-standardized to ensure that the interpretation of all the parameters remains clear.
 
 ```{r warning=FALSE}
 library(spdep)
@@ -195,9 +195,9 @@ DFindices <- select_parameters(Data,k = 5, m = 1.5, alpha = seq(0,2,0.1),nblistw
 
 ```
 
-Now we cas check the indices to select the best alpha: achieving a nice spatial consistency increase with a low decrease in classification quality.
+Now we can check the indices to select the best alpha: achieving a nice spatial consistency increase with a low decrease in classification quality.
 
-Let's start with the spatial consistency. This indicator (developped for this package) proposes to calculate the sum the squared differences between each observation and its neighbours for their belonging probabilities to each cluster. Thus, the maximum for each observation is 4*j with j the number of neighbours for the observation. This maximum is reached if the the observations have 100% chance to belong to a cluster that is different from all its neighbours. So, when we sum up all the values obtained for all the observatiobs, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when permutating randomly the rows of the beloning matrix. This second quantity represents the spatial inconsistency that we might expect if the clusters show no spatial consistency. We can repeat the permutation step and keep the mean of the ratios to have a more robus indicators (see help(spConsistency) for details).
+Let's start with the spatial consistency. This indicator (developed for this package) proposes to calculate the sum the squared differences between each observation and its neighbours for their belonging probabilities to each cluster. Thus, the maximum for each observation is 4*j with j the number of neighbours for the observation. This maximum is reached if the the observations have 100% chance to belong to a cluster that is different from all its neighbours. So, when we sum up all the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when permuting randomly the rows of the belonging matrix. This second quantity represents the spatial inconsistency that we might expect if the clusters show no spatial consistency. We can repeat the permutation step and keep the mean of the ratios to have a more robust indicators (see help(spConsistency) for details).
 
 A smaller values indicates a greater spatial consistency. 0 meaning that all observations have exactly the same values in the belonging matrix than their neighbours.
 
@@ -217,7 +217,7 @@ ggplot(DFindices)+
   geom_point(aes(x=alpha,y=Explained.inertia))
 ```
 
-As expected, the explaiend inertia decrease when alpha increase. The classification has to find a compromise betweem the original values and the lagged values. However, the loss is very small here : only 3% between alpha=0 and alpha=2.
+As expected, the explained inertia decrease when alpha increase. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here : only 3% between alpha=0 and alpha=2.
 
 To finish here, we can observe the silhouette and entropy partition indicators (calculates with the package *fclust*)
 
@@ -234,14 +234,14 @@ ggplot(DFindices)+
 
 The detail of the meaning of theses indicators is beyond the scope of this vignette. Let's just stress that a bigger silhouette index indicates a better classification, and a smaller entropy partition index indicates a better classification.
 
-After considering all the previous charts, we decide to keep alpha = 1.2 as it seems to give a good balance between spatial consistency and calssification quality in this case.
+After considering all the previous charts, we decide to keep alpha = 1.2 as it seems to give a good balance between spatial consistency and classification quality in this case.
 
 ```{r warning=FALSE}
 OkAlpha <- 1.2
 Result2 <- SFCMeans(Data,WMat,5,m=1.5,alpha=OkAlpha,tol=0.0001, standardize = F)
 ```
 
-Again, we can map the results of the algorithm. Unsurpisingly, we obtain similar results, but the spatial patterns seems more pronounced.
+Again, we can map the results of the algorithm. Unsurprisingly, we obtain similar results, but the spatial patterns seems more pronounced.
 
 
 ```{r warning=FALSE}
@@ -256,7 +256,7 @@ MyMaps$ClusterPlot
 
 There is still some mixing between the clusters, but the frontiers are way more clear than in the classical cmeans.
 
-To confirm ths observation, we can do a spatial diagnostic with the function *spatialdiag* of the geocmeans package. We will compare the results of the classical and the spatial solutions. We can compare the final results too with the k-means solution with a little bit more work.
+To confirm this point, we can do a spatial diagnostic with the function *spatialdiag* of the geocmeans package. We will compare the results of the classical and the spatial solutions. We can compare the final results too with the k-means solution with a little bit more work.
 
 ```{r warning=FALSE}
 #creating a belonging matrix for the kmean clustering
@@ -279,7 +279,7 @@ print(spdiag_3$SpConsist)
 
 So with the spatial cmeans we achieve a way higher spatial consistency and this is confirmed by the Moran I values calculated on the belonging matrices. Because of its hard-clustering approach, the K-means algorithm ends up with the lower spatial consistency.
 
-We can map the undiced observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function *undecidedUnits* of the *geocmeans* package.
+We can map the undecided observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function *undecidedUnits* of the *geocmeans* package.
 
 ```{r warning=FALSE}
 Undecided <- undecidedUnits(Result2$Belongings,0.4)
@@ -303,9 +303,10 @@ ggplot(data=DFmapping)+
     )
 ```
 
-Finally, one can obtain many descriptive information about the final groups with two functions of *geocmeans* : 
+Finally, one can obtain many descriptive information about the final groups with three functions of *geocmeans* : 
 * summarizeClusters : calculate summary statistics for each group for a given dataset by using the belonging matrix as weights (remaining in the fuzzy spirit).
-* DescribGroups : calculate summary statistic and display many usefull charts (but use a hard-classification)
+* spidePlots : display a spider plot allowing to compare quickly the differences between groups.
+* violinPlots : display a violin plot for each variable in a given dataset. Observations must be grouped before.
 
 
 ```{r warning=FALSE}
@@ -321,13 +322,12 @@ violinPlots(LyonIris@data[AnalysisFields], Result2$Groups)
 
 ```
 
-That's all floks ! These are the enhancement for the next version
+That's all folks ! These are the enhancement for the next version
 
 * introduce other method of spatially constrained cmeans
 * open some other parameters to the user (like the function defining the convergence criterion)
 * work on documentation
 * improve calculus speed by dropping some apply in the code (need help here)
-* adding support for categorical variables (gower distancem and AFDM)
 
 
 

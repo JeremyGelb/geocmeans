@@ -2,8 +2,8 @@
 % Please edit documentation in R/side_functions.R
 \name{select_parameters.mc}
 \alias{select_parameters.mc}
-\title{function to select the parameters of the classification alpha, k and m.
-This version of the function allow to use a plan defined with the package
+\title{Function to select the parameters of the classification alpha, k and m.
+This version of the function allows to use a plan defined with the package
 future to reduce calculation time}
 \usage{
 select_parameters.mc(
@@ -12,6 +12,7 @@ select_parameters.mc(
   m,
   alpha,
   nblistw,
+  lag_method = "mean",
   spconsist = T,
   classidx = T,
   standardize = T,
@@ -30,24 +31,28 @@ select_parameters.mc(
 
 \item{alpha}{a sequence of values for alpha to test}
 
-\item{nblistw}{A list.w object describing the neighbours typically produced
-by the spdep package}
+\item{nblistw}{a list of list.w objects describing the neighbours typically
+produced by the spdep package}
 
-\item{spconsist}{A boolean indicating if the spatial consistency must be
+\item{lag_method}{a string indicating if a classical lag must be used
+("mean") or if a weighted median must be used ("median"). Both can be
+tested by specifying a vector : c("mean","median")}
+
+\item{spconsist}{a boolean indicating if the spatial consistency must be
 calculated}
 
-\item{classidx}{A boolean indicating if the quality of classification
+\item{classidx}{a boolean indicating if the quality of classification
 indices must be calculated}
 
-\item{standardize}{A boolean to specify if the variable must be centered and
+\item{standardize}{a boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{maxiter}{An integer for the maximum number of iteration}
+\item{maxiter}{an integer for the maximum number of iteration}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{seed}{An integer used for random number generation. It ensures that the
+\item{seed}{an integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 
 \item{chunk_size}{The size of a chunk used for multiprocessing. Default is 100.}
@@ -56,8 +61,8 @@ start centers will be the same if the same integer is selected.}
 a dataframe with indicators assessing the quality of classifications
 }
 \description{
-function to select the parameters of the classification alpha, k and m.
-This version of the function allow to use a plan defined with the package
+Function to select the parameters of the classification alpha, k and m.
+This version of the function allows to use a plan defined with the package
 future to reduce calculation time
 }
 \examples{
@@ -68,7 +73,7 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 future::plan(future::multiprocess(workers=2))
-#values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
+#values <- select_parameters.mc(dataset, k = 2:5, m = seq(2,3.5,0.1),
 #    alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
 values <- select_parameters.mc(dataset, k = 5, m = seq(2,3,0.1),
     alpha = seq(0,2,0.1), nblistw = Wqueen)

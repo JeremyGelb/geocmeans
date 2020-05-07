@@ -10,10 +10,10 @@ below the fixed tolerance, then return True, else return False}
 evaluateMatrices(mat1, mat2, tol)
 }
 \arguments{
-\item{mat1}{A n X k matrix giving for each observation n, its probability to
+\item{mat1}{a n X k matrix giving for each observation n, its probability to
 belong to the cluster k at iteration i}
 
-\item{mat2}{A n X k matrix giving for each observation n, its probability to
+\item{mat2}{a n X k matrix giving for each observation n, its probability to
 belong to the cluster k at iteration i+1}
 
 \item{tol}{a float representing the algorithm tolerance}

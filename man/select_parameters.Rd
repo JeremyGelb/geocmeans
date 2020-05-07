@@ -2,7 +2,7 @@
 % Please edit documentation in R/side_functions.R
 \name{select_parameters}
 \alias{select_parameters}
-\title{function to select the parameters of the classification alpha, k and m}
+\title{Function to select the parameters of the classification alpha, k and m}
 \usage{
 select_parameters(
   data,
@@ -10,6 +10,7 @@ select_parameters(
   m,
   alpha,
   nblistw,
+  lag_method = "mean",
   spconsist = T,
   classidx = T,
   standardize = T,
@@ -27,31 +28,35 @@ select_parameters(
 
 \item{alpha}{a sequence of values for alpha to test}
 
-\item{nblistw}{A list.w object describing the neighbours typically produced
-by the spdep package}
+\item{nblistw}{a list of list.w objects describing the neighbours typically
+produced by the spdep package}
 
-\item{spconsist}{A boolean indicating if the spatial consistency must be
+\item{lag_method}{a string indicating if a classical lag must be used
+("mean") or if a weighted median must be used ("median"). Both can be
+tested by specifying a vector : c("mean","median")}
+
+\item{spconsist}{a boolean indicating if the spatial consistency must be
 calculated}
 
-\item{classidx}{A boolean indicating if the quality of classification
+\item{classidx}{a boolean indicating if the quality of classification
 indices must be calculated}
 
-\item{standardize}{A boolean to specify if the variable must be centered and
+\item{standardize}{a boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{maxiter}{An integer for the maximum number of iteration}
+\item{maxiter}{an integer for the maximum number of iteration}
 
-\item{tol}{The tolerance criterion used in the evaluateMatrices function for
+\item{tol}{the tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{seed}{An integer used for random number generation. It ensures that the
+\item{seed}{an integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \value{
 a dataframe with indicators assessing the quality of classifications
 }
 \description{
-function to select the parameters of the classification alpha, k and m
+Function to select the parameters of the classification alpha, k and m
 }
 \examples{
 data(LyonIris)

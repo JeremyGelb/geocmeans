@@ -7,13 +7,13 @@
 spConsistency(belongmatrix, nblistw, nrep = 999)
 }
 \arguments{
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{a belonging matrix}
 
-\item{nblistw}{A list.w object describing the neighbours (spdep package)
+\item{nblistw}{a list.w object describing the neighbours (spdep package)
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 
-\item{nrep}{a integer indicating the number of permutation to do to simulate}
+\item{nrep}{an integer indicating the number of permutation to do to simulate}
 }
 \value{
 a named list with
@@ -31,18 +31,18 @@ neighbouring observation do not belong to the same group. See detail for
 a description of its calculation
 }
 \details{
-The total spatial inconsistency (*isp*) is calculated as follow
+The total spatial inconsistency (*Scr*) is calculated as follow
 
-\deqn{isp = \sum_{i}\sum_{j}\sum_{k} (A_{ik} - A_{jk})^{2} * W_{ij}}
+\deqn{isp = \sum_{i}\sum_{j}\sum_{k} (u_{ik} - u_{jk})^{2} * W_{ij}}
 
-With A the belonging matrix, i an observation, k the neighbours of i and W
+With U the belonging matrix, i an observation, k the neighbours of i and W
 the spatial weight matrix This represents the total spatial inconsistency of
 the solution (true inconsistency) We propose to compare this total with
 simulated values obtained by permutations (simulated inconsistency). The
 values obtained by permutation are an approximation of the spatial
 inconsistency obtained in a random context Ratios between the true
 inconsistency and simulated inconsistencies are calculated A value of 0
-depict a situation where all observations are identitical to their neighbours
+depict a situation where all observations are identical to their neighbours
 A value of 1 depict a situation where all observations are as much different
 as their neighbours that what randomness can produce A classification
 solution able to reduce this index has a better spatial consistency

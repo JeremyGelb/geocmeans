@@ -2,7 +2,7 @@
 % Please edit documentation in R/main_functions.R
 \name{CMeans}
 \alias{CMeans}
-\title{calssical c-mean algorithm}
+\title{clasical c-mean algorithm}
 \usage{
 CMeans(
   data,
@@ -16,23 +16,23 @@ CMeans(
 )
 }
 \arguments{
-\item{data}{A dataframe with only numerical variable}
+\item{data}{a dataframe with only numerical variable}
 
-\item{k}{An integer describing the number of cluster to find}
+\item{k}{an integer describing the number of cluster to find}
 
-\item{m}{A float for the fuzzyness degree}
+\item{m}{a float for the fuzziness degree}
 
-\item{maxiter}{A float for the maximum number of iteration}
+\item{maxiter}{a float for the maximum number of iteration}
 
-\item{tol}{The tolerance criterion used in the evaluateMatrices function for
+\item{tol}{the tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{standardize}{A boolean to specify if the variables must be centered and
+\item{standardize}{a boolean to specify if the variables must be centered and
 reduce (default = True)}
 
-\item{verbose}{A boolean to specify if the messages should be displayed}
+\item{verbose}{a boolean to specify if the messages should be displayed}
 
-\item{seed}{An integer used for random number generation. It ensures that the
+\item{seed}{an integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \value{
@@ -45,7 +45,7 @@ a named list with :
 }
 }
 \description{
-calssical c-mean algorithm
+clasical c-mean algorithm
 }
 \examples{
 data(LyonIris)

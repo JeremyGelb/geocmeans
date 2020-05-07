@@ -8,12 +8,12 @@ vector of length p}
 calcEuclideanDistance(m, v)
 }
 \arguments{
-\item{m}{A n * p matrix or dataframe with only numeric columns}
+\item{m}{a n * p matrix or dataframe with only numeric columns}
 
-\item{v}{A numeric vector of length p}
+\item{v}{a numeric vector of length p}
 }
 \value{
-A vector of length n giving the euclidean distance between all matrix
+a vector of length n giving the euclidean distance between all matrix
   row and the vector p
 }
 \description{

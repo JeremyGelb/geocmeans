@@ -7,21 +7,22 @@
 summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3, silent = T)
 }
 \arguments{
-\item{data}{the original dataframe used fot the classification}
+\item{data}{the original dataframe used for the classification}
 
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{a belonging matrix}
 
-\item{weighted}{A boolean indicating if the summary statistics must use the
+\item{weighted}{a boolean indicating if the summary statistics must use the
 belonging matrix columns as weights (TRUE) or simply assign each
 observation to its most likely cluster and compute the statistics on each
 subset (default=True)}
 
-\item{dec}{A integer indicating the number of digits to keep when rouding (default is 3)}
+\item{dec}{an integer indicating the number of digits to keep when rounding
+(default is 3)}
 
-\item{silent}{A boolean indicating if the results must be printed or silently returned}
+\item{silent}{a boolean indicating if the results must be printed or silently returned}
 }
 \value{
-A list of length k (the number of group). Each element of the list is
+a list of length k (the number of group). Each element of the list is
   a dataframe with summary statistics for the variables of data for each
   group
 }

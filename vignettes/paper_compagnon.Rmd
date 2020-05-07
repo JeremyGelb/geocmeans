@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette is a compagnon for the paper : "Add the reference to the paper when ready". The main goal is to present the FCM_S (spatially constrained c-means) and to compare the results with a classical c-means, a HAC, and a spatialy constrained HAC. 
+This vignette is a companion for the paper : "Add the reference to the paper when ready". The main goal is to present the FCM_S (spatially constrained c-means) and to compare the results with a classical c-means, a HAC, and a spatialy constrained HAC. 
 
 
 # Preparing environment and dataset
@@ -152,7 +152,7 @@ range.alpha <- seq(0,1,0.05)
 cr <- choicealpha(D0,D1,range.alpha,4,graph=TRUE)
 ```
 
-We will retain a value of 0.35 for $\alpha$. This value achieve the best deal between spatial and semantical inertias. The first drops by only 2% when the second increases by more than 25%.
+We will retain a value of 0.35 for $\alpha$. This value achieve the best deal between spatial and semantical inertia. The first drops by only 2% when the second increases by more than 25%.
 
 ```{r}
 tree <- hclustgeo(D0,D1,alpha=0.35)
@@ -164,9 +164,11 @@ spHAC_belong <- model.matrix(~ . + 0, data=df, contrasts.arg = lapply(df, contra
 
 # spatially constrained c-means (SFCM)
 
-for the SFCM, we  have to select a parameter ($\alpha$) controling the weight of the spatiala lagged dataset.
+for the SFCM, we  have to select a parameter ($\alpha$) controlling the weight of the spatially lagged dataset.
 
 ```{r message=FALSE, warning=FALSE}
+listw2 <- adjustSpatialWeights(data,listw$neighbours,style="C")
+
 values <- select_parameters(data, k = 4, m = 1.5, alpha = seq(0,2,0.05),
             nblistw = listw, standardize = F, tol = 0.001, seed = myseed)
 ```
@@ -193,17 +195,24 @@ P5 <- ggplot(values)+
   geom_smooth(aes(x=alpha,y=XieBeni.index),se=F, color="black")+
   geom_point(aes(x=alpha,y=XieBeni.index), color="red")
 
+P6 <- ggplot(values)+
+  geom_ribbon(aes(ymin = spConsistency_05, ymax = spConsistency_95, x=alpha))+
+  geom_smooth(aes(x=alpha,y=spConsistency),se=F, color="black")+
+  geom_point(aes(x=alpha,y=spConsistency), color="red")
 
-print(ggarrange(P1,P2,P3,P4,P5, ncol = 2, nrow=3))
+
+
+print(ggarrange(P1,P2,P3,P4,P5,P6, ncol = 2, nrow=3))
 
 ```
 
-Without any surprise, the explained inertia is following a decreasing trend when alpha increases. But it is interesting to note that for the partition coefficient and the partition entropy, a maximum is obtained when alpha = 0.5. This maximum provides a better classification than the classical cmeans (when alpha=0). For the silhouette index it seems that increasing alpha enhance the quality of the classification until apha = 0.7. We decide to selecte alpha = 0.7
+Without any surprise, the explained inertia is following a decreasing trend when alpha increases. But it is interesting to note that for the partition coefficient and the partition entropy, a maximum is obtained when alpha = 0.5. This maximum provides a better classification than the classical cmeans (when alpha=0). For the silhouette index it seems that increasing alpha enhance the quality of the classification until alpha = 0.7. We decide to select alpha = 0.7
 
 
 ```{r}
 SFCM_result <- SFCMeans(data, listw, k=4, m=1.5, alpha=0.7,
                         tol = 0.0001, standardize = F, seed=myseed)
+
 ```
 
 # comparing results of all algorithm
@@ -214,10 +223,10 @@ It is now time to compare the results of all algorithm. We will start with a pur
 
 ```{r}
 
-HACQual <- calcqualityIndexes(data, HAC_belong)
-CmeansQual <- calcqualityIndexes(data, cmean_result$Belongings)
-spHACQual <- calcqualityIndexes(data,spHAC_belong)
-SFCMQual <- calcqualityIndexes(data,SFCM_result$Belongings)
+HACQual <- calcqualityIndexes(data, HAC_belong, m=1)
+CmeansQual <- calcqualityIndexes(data, cmean_result$Belongings, m=1.5)
+spHACQual <- calcqualityIndexes(data,spHAC_belong, m=1)
+SFCMQual <- calcqualityIndexes(data,SFCM_result$Belongings, m=1.5)
 
 comp <- as.data.frame(t(do.call(rbind,lapply(list(HACQual,CmeansQual,spHACQual,SFCMQual),as.numeric))))
 colnames(comp) <- c("HAC","Cmeans","spHAC","spCmeans")
@@ -228,7 +237,7 @@ At that point, it is interesting to note three things :
 
 1. The hard clustering methods obtain a better explained inertia
 2. The soft clustering methods obtain a better fuzzy silhouette index
-3. The loss in therms of inertia in small when using a spatialy constrained method
+3. The loss in therms of inertia in small when using a spatially constrained method
 
 
 ## Analyzing spatial dimension of the classifications
@@ -256,23 +265,48 @@ rownames(moranTable) <- c("HAC","Cmeans","spHAC","spCmeans")
 kable(moranTable,digits = 3)
 ```
 
-This results show that the fuzzy classification is more able to produce spatially autocorrelated groups than the hard clustering. Without any suprised, the spatially constrained methods achieve higher Moran I on the columns of their belonging matrices for all the groups.
+This results show that the fuzzy classification is more able to produce spatially autocorrelated groups than the hard clustering. Without any surprise, the spatially constrained methods achieve higher Moran I on the columns of their belonging matrices for all the groups.
 
 It seems that one group is significantly more spatially fragmented than the others if we look at the Moran Values of the two spatially constrained classifications. This might be explained by the presence of observation laying right between two clusters (undecided units).
+
+To complete the diagnostic, we could calculate another version of the spatial-consistency which takes into account the semantic distance between observations.
+```{r}
+HACspDiag2 <- spatialDiag(HAC_belong, listw2, nrep = 999)
+CmeansspDiag2  <- spatialDiag(cmean_result$Belongings, listw2, nrep = 999)
+spHACspDiag2  <- spatialDiag(spHAC_belong, listw2, nrep = 999)
+SFCMspDiag2  <- spatialDiag(SFCM_result$Belongings, listw2, nrep = 999)
+diaglist2 <- list(HACspDiag2,CmeansspDiag2,spHACspDiag2,SFCMspDiag2)
+```
 
 We can now compare the degree of spatial consistency of the different classifications
 
 ```{r}
-
-spconsist <- sapply(diaglist,function(x){x$SpConsist})
-names(spconsist) <- c("HAC","Cmeans","spHAC","spCmeans")
-kable(data.frame("spatial.consist"=spconsist),digits = 3)
+spconsist <- do.call(rbind,lapply(diaglist,function(x){
+  c(round(x$SpConsist,3),
+    round(quantile(x$SpConsistSamples,probs =0.05),3),
+    round(quantile(x$SpConsistSamples,probs =0.95),3))
+  }))
+spconsist2 <- do.call(rbind,lapply(diaglist2,function(x){
+  c(round(x$SpConsist,3),
+    round(quantile(x$SpConsistSamples,probs =0.05),3),
+    round(quantile(x$SpConsistSamples,probs =0.95),3))
+  }))
+df <- data.frame(t(cbind(spconsist,spconsist2)))
+colnames(df) <- c("HAC","FCM","ClustGeo","SFCM")
+rownames(df) <- c("mean Scr",
+                  "0.05 Scr",
+                  "0.95 Scr",
+                  "mean Smcr",
+                  "0.05 Smcr",
+                  "0.95 Smcr"
+                  )
+kable(df,digits = 3)
 
 ```
 
 The spatially constrained cmeans achieves the better spatial consistency without reducing that much the quality of the clustering.
 
-Finally, we can map the clusters to compare graphicaly the results.
+Finally, we can map the clusters to compare graphically the results.
 
 ```{r message=FALSE, warning=FALSE}
 HAC_maps <- mapClusters(LyonIris,belongmatrix = HAC_belong)
@@ -335,7 +369,7 @@ All the groups are very similar for each classification but the last one. The fu
 
 ## Describe groups
 
-finaly we will compute some descriptive statistics to analyze the groups produced by the spatially constrained cmeans algorithm.
+finally we will compute some descriptive statistics to analyze the groups produced by the spatially constrained cmeans algorithm.
 
 ```{r}
 
@@ -406,7 +440,7 @@ kable(completetable) %>%
 
 ## Uncertain observations
 
-We will extract here for the SFCM algorithm the observations for which the classification is difficult. We will first observe the distribution of the most likely cluster for each obseravtion
+We will extract here for the SFCM algorithm the observations for which the classification is difficult. We will first observe the distribution of the most likely cluster for each observation
 
 ```{r}
 ## first, we can extract the greatest prob of belonging for each observation
@@ -415,7 +449,7 @@ hist(most_likely,breaks=30)
 quantile(most_likely,probs = c(0.05,0.1,0.25,0.5,0.75,0.9,0.95))
 
 ```
-Considering the previous distribution, we decide to label as unclassified the observations for which the maximum probability in the belonging matrix is belwo 0.4.
+Considering the previous distribution, we decide to label as unclassified the observations for which the maximum probability in the belonging matrix is below 0.4.
 
 
 

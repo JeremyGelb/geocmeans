@@ -7,17 +7,17 @@
 calcCentroids(data, belongmatrix, m)
 }
 \arguments{
-\item{data}{A dataframe or matrix representing the observed data with n rows
+\item{data}{a dataframe or matrix representing the observed data with n rows
 and p columns}
 
-\item{belongmatrix}{A n X k matrix giving for each observation n, its
+\item{belongmatrix}{a n X k matrix giving for each observation n, its
 probability to belong to the cluster k}
 
-\item{m}{An integer representing the fuzzyness degree}
+\item{m}{an integer representing the fuzziness degree}
 }
 \value{
-A n X k matrix represening the belonging probabilities of each
-  datapoint to each cluster
+a n X k matrix representing the belonging probabilities of each
+  observation to each cluster
 }
 \description{
 Calculate the new centroids of the clusters based on the belonging matrix

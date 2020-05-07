@@ -19,33 +19,33 @@ SFCMeans(
 )
 }
 \arguments{
-\item{data}{A dataframe with only numerical variable}
+\item{data}{a dataframe with only numerical variable}
 
-\item{nblistw}{A list.w object describing the neighbours typically produced
+\item{nblistw}{a list.w object describing the neighbours typically produced
 by the spdep package}
 
-\item{k}{An integer describing the number of cluster to find}
+\item{k}{an integer describing the number of cluster to find}
 
-\item{m}{A float for the fuzzyness degree}
+\item{m}{a float for the fuzziness degree}
 
-\item{alpha}{A float representing the weight of the space in the analysis (0
+\item{alpha}{a float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 
-\item{lag_method}{A string indicating if a classical lag must be used (mean) or
-if a weighted median must be used (median). Default is "mean"}
+\item{lag_method}{a string indicating if a classical lag must be used
+("mean") or if a weighted median must be used ("median")}
 
-\item{maxiter}{An integer for the maximum number of iteration}
+\item{maxiter}{an integer for the maximum number of iteration}
 
-\item{tol}{The tolerance criterion used in the evaluateMatrices function for
+\item{tol}{the tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{standardize}{A boolean to specify if the variable must be centered and
+\item{standardize}{a boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{verbose}{A boolean to specify if the prossess bar should be displayed}
+\item{verbose}{a boolean to specify if the progress bar should be displayed}
 
-\item{seed}{An integer used for random number generation. It ensures that the
+\item{seed}{an integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \value{

@@ -5,12 +5,14 @@
 \title{calculate several clustering quality indexes (most of them come from fclust
 package)}
 \usage{
-calcqualityIndexes(data, belongmatrix)
+calcqualityIndexes(data, belongmatrix, m)
 }
 \arguments{
 \item{data}{the original dataframe used for the classification (n*p)}
 
-\item{belongmatrix}{A belonging matrix (n*k)}
+\item{belongmatrix}{a belonging matrix (n*k)}
+
+\item{m}{the fuzziness parameter used for the classification}
 }
 \value{
 a named list with
@@ -19,6 +21,8 @@ a named list with
         \item Partition.entropy: the partition entropy index (fclust::PE)
         \item Partition.coeff: the partition entropy coefficient (fclust::PC)
         \item Modified.partition.coeff: the modified partition entropy coefficient (fclust::MPC)
+        \item XieBeni.index : the Xie and Beni index (fclust::XB)
+        \item FukuyamaSugeno.index : the Fukuyama and Sugeno index (geocmeans::calcFukuyamaSugeno)
         \item Explained.inertia: the percentage of total inertia explained by the solution
 }
 }
@@ -34,5 +38,5 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-calcqualityIndexes(result$Data,result$Belongings)
+calcqualityIndexes(result$Data,result$Belongings, m=1.5)
 }

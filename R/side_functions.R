@@ -1,12 +1,12 @@
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-##### Fonctions de diagnostic #####
+##### Diagnostic functions #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' calculate Fukuyama and Sugeno index of classification quality
+#' calculate Fukuyama and Sugeno index of clustering quality
 #'
-#' @param data the original dataframe used fot the classification (n*p)
-#' @param belongmatrix A belonging matrix (n*k)
+#' @param data the original dataframe used for the clustering (n*p)
+#' @param belongmatrix a belonging matrix (n*k)
 #' @param centers the centers of the clusters
 #' @param m the fuzzyness parameter
 #' @return a float : the Fukuyama and Sugeno index
@@ -28,6 +28,8 @@ calcFukuyamaSugeno <- function(data,belongmatrix,centers,m){
         v <- centers[i,]
         t1 <- calcEuclideanDistance(data,v)
         t2 <- sum((v - v_hat)**2)
+        #t3 <- calcEuclideanDistance(wdata,v) ajouter l'espace dans l'indice ?
+        #dists <- ((t1+alpha*t3)/(1+alpha) - t2)*w
         dists <- (t1 - t2)*w
         return(sum(dists))
     })
@@ -36,8 +38,8 @@ calcFukuyamaSugeno <- function(data,belongmatrix,centers,m){
 
 #' calculate the explained inertia by a classification
 #'
-#' @param data the original dataframe used fot the classification (n*p)
-#' @param belongmatrix A belonging matrix (n*k)
+#' @param data the original dataframe used for the classification (n*p)
+#' @param belongmatrix a belonging matrix (n*k)
 #' @return a float : the percentage of the total inertia explained
 #' @export
 #' @examples
@@ -127,17 +129,17 @@ calcqualityIndexes <- function(data, belongmatrix, m) {
 
 #' Utility function to facilitate the spatial diagnostic of a classification
 #'
-#' Calculate the followinf indicators : Moran I index (spdep::moranI) for each
-#' column of the belonging matrix Join count test (spdep::joincount.multi) for
-#' the most likely groups of each datapoint Spatial consistency index (see
+#' Calculate the following indicators : Moran I index (spdep::moranI) for each
+#' column of the belonging matrix, Join count test (spdep::joincount.multi) for
+#' the most likely groups of each datapoint, Spatial consistency index (see
 #' function spConsistency)
 #'
-#' @param belongmatrix A belonging matrix
-#' @param nblistw A list.w  object describing the neighbours (spdep package)
-#' @param undecided A float between 0 and 1 giving the minimum value that an
+#' @param belongmatrix s belonging matrix
+#' @param nblistw a list.w  object describing the neighbours (spdep package)
+#' @param undecided a float between 0 and 1 giving the minimum value that an
 #'   observation must get in the belonging matrix to not be considered as
 #'   uncertain (default = NULL)
-#' @param nrep a integer indicating the number of permutation to do to simulate
+#' @param nrep an integer indicating the number of permutation to do to simulate
 #'   the random distribution of the spatial inconsistency
 #' @return a named list with :
 #' \itemize{
@@ -179,7 +181,7 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
     groups <- as.factor(groups)
     # calcul des join count test
     spjctetst <- spdep::joincount.multi(groups, nblistw, zero.policy = TRUE)
-    return(list(MoranValues = morandf, JoinCounts = spjctetst, SpConsist = Consist$Mean))
+    return(list(MoranValues = morandf, JoinCounts = spjctetst, SpConsist = Consist$Mean, SpConsistSamples = Consist$samples))
 }
 
 
@@ -191,27 +193,27 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
 #' a description of its calculation
 #'
 #'
-#' The total spatial inconsistency (*isp*) is calculated as follow
+#' The total spatial inconsistency (*Scr*) is calculated as follow
 #'
-#' \deqn{isp = \sum_{i}\sum_{j}\sum_{k} (A_{ik} - A_{jk})^{2} * W_{ij}}
+#' \deqn{isp = \sum_{i}\sum_{j}\sum_{k} (u_{ik} - u_{jk})^{2} * W_{ij}}
 #'
-#' With A the belonging matrix, i an observation, k the neighbours of i and W
+#' With U the belonging matrix, i an observation, k the neighbours of i and W
 #' the spatial weight matrix This represents the total spatial inconsistency of
 #' the solution (true inconsistency) We propose to compare this total with
 #' simulated values obtained by permutations (simulated inconsistency). The
 #' values obtained by permutation are an approximation of the spatial
 #' inconsistency obtained in a random context Ratios between the true
 #' inconsistency and simulated inconsistencies are calculated A value of 0
-#' depict a situation where all observations are identitical to their neighbours
+#' depict a situation where all observations are identical to their neighbours
 #' A value of 1 depict a situation where all observations are as much different
 #' as their neighbours that what randomness can produce A classification
 #' solution able to reduce this index has a better spatial consistency
 #'
-#' @param belongmatrix A belonging matrix
-#' @param nblistw A list.w object describing the neighbours (spdep package)
+#' @param belongmatrix a belonging matrix
+#' @param nblistw a list.w object describing the neighbours (spdep package)
 #'   observation must get in the belonging matrix to not be considered as
 #'   uncertain (default = NULL)
-#' @param nrep a integer indicating the number of permutation to do to simulate
+#' @param nrep an integer indicating the number of permutation to do to simulate
 #' @return a named list with
 #'  \itemize{
 #'         \item Mean : the mean of the spatial consistency index
@@ -273,11 +275,11 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
 
 #' build some maps to visualize the results of the clustering
 #'
-#' @param geodata A object of class spatialpolygonesdataframe /
+#' @param geodata a object of class spatialpolygonesdataframe /
 #' spatiallinesdataframe or spatialpointsdataframe ordered
 #' like the original data used for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
-#' @param undecided A float between 0 and 1 giving the minimum value that an
+#' @param belongmatrix the belonging matrix obtained at the end of the algorithm
+#' @param undecided a float between 0 and 1 giving the minimum value that an
 #'   observation must get in the belonging matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return a named list with :
@@ -313,10 +315,10 @@ mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
 
 #' Internal function to realize maps based on spatialpolygondataframe
 #'
-#' @param geodata A spatialpolygonsdataframe ordered like the original data used
+#' @param geodata a spatialpolygonsdataframe ordered like the original data used
 #'   for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
-#' @param undecided A float between 0 and 1 giving the minimum value that an
+#' @param belongmatrix the belonging matrix obtained at the end of the algorithm
+#' @param undecided a float between 0 and 1 giving the minimum value that an
 #'   observation must get in the belonging matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return a named list with :
@@ -379,10 +381,10 @@ mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
 
 #' Internal function to realize maps based on spatiallinesdataframe
 #'
-#' @param geodata A spatiallinesdataframe ordered like the original data used
+#' @param geodata a spatiallinesdataframe ordered like the original data used
 #'   for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
-#' @param undecided A float between 0 and 1 giving the minimum value that an
+#' @param belongmatrix the belonging matrix obtained at the end of the algorithm
+#' @param undecided a float between 0 and 1 giving the minimum value that an
 #'   observation must get in the belonging matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return a named list with :
@@ -445,10 +447,10 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
 
 #' Internal function to realize maps based on spatialpolygondataframe
 #'
-#' @param geodata A spatialpointsdataframe ordered like the original data used
+#' @param geodata a spatialpointsdataframe ordered like the original data used
 #'   for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
-#' @param undecided A float between 0 and 1 giving the minimum value that an
+#' @param belongmatrix the belonging matrix obtained at the end of the algorithm
+#' @param undecided a float between 0 and 1 giving the minimum value that an
 #'   observation must get in the belonging matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return a named list with :
@@ -511,15 +513,16 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 
 #' Calculate some descriptive statistics of each group
 #'
-#' @param data the original dataframe used fot the classification
-#' @param belongmatrix A belonging matrix
-#' @param weighted A boolean indicating if the summary statistics must use the
+#' @param data the original dataframe used for the classification
+#' @param belongmatrix a belonging matrix
+#' @param weighted a boolean indicating if the summary statistics must use the
 #'   belonging matrix columns as weights (TRUE) or simply assign each
 #'   observation to its most likely cluster and compute the statistics on each
 #'   subset (default=True)
-#' @param dec A integer indicating the number of digits to keep when rouding (default is 3)
-#' @param silent A boolean indicating if the results must be printed or silently returned
-#' @return A list of length k (the number of group). Each element of the list is
+#' @param dec an integer indicating the number of digits to keep when rounding
+#' (default is 3)
+#' @param silent a boolean indicating if the results must be printed or silently returned
+#' @return a list of length k (the number of group). Each element of the list is
 #'   a dataframe with summary statistics for the variables of data for each
 #'   group
 #' @export
@@ -603,10 +606,10 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
 
 #' Identify the observation for with the classification is uncertain
 #'
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
-#' @param tol A float indicating the minimum required level of belonging to be
-#'   not considered as uncertaint
-#' @return a vector indicating the most liekly group for each observation or
+#' @param belongmatrix the belonging matrix obtained at the end of the algorithm
+#' @param tol a float indicating the minimum required level of belonging to be
+#'   not considered as undecided
+#' @return a vector indicating the most likely group for each observation or
 #'   "Undecided" if the maximum probability for the observation does not reach
 #'   the value of the tol parameter
 #' @export
@@ -630,7 +633,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 
 
 
-#' display spider charts to quickly compare values between groups
+#' Display spider charts to quickly compare values between groups
 #'
 #' for each group, the weighted mean of each variable in data is calculated
 #' based on the probability of belonging to this group of each observation.
@@ -638,9 +641,9 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #' all the groups and the interior ring the minimum. The groups are located
 #' between these two limits in a linear way.
 #'
-#' @param data A dataframe with numeric columns
-#' @param belongmatrix A belonging matrix
-#' @param chartcolors A vector of color names used for the spyder plot
+#' @param data a dataframe with numeric columns
+#' @param belongmatrix a belonging matrix
+#' @param chartcolors a vector of color names used for the spider plot
 #'
 #' @importFrom grDevices rgb colors col2rgb
 #' @importFrom graphics legend
@@ -699,11 +702,11 @@ spiderPlots<- function(data, belongmatrix, chartcolors=NULL){
 
 }
 
-#' return violin plots to compare the distribution of each variable for each
+#' Return violin plots to compare the distribution of each variable for each
 #' group.
 #'
-#' @param data A dataframe with numeric columns
-#' @param groups A vector indicating the group of each observation
+#' @param data a dataframe with numeric columns
+#' @param groups a vector indicating the group of each observation
 #'
 #' @importFrom dplyr %>%
 #' @importFrom grDevices rgb
@@ -740,24 +743,26 @@ violinPlots <- function(data,groups){
 ##### Functions to select parameters #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' worker function for select_parameters and select_parameters.mc
+#' Worker function for select_parameters and select_parameters.mc
 #'
 #' @param parameters a dataframe of parameters with columns k,m and alpha
 #' @param data a dataframe with numeric columns
-#' @param nblistw A list.w object describing the neighbours typically produced
+#' @param nblistw a list.w object describing the neighbours typically produced
 #'   by the spdep package
-#' @param standardize A boolean to specify if the variable must be centered and
+#' @param standardize a boolean to specify if the variable must be centered and
 #'   reduce (default = True)
-#' @param spconsist A boolean indicating if the spatial consistency must be
+#' @param spconsist a boolean indicating if the spatial consistency must be
 #' calculated
-#' @param classidx A boolean indicating if the quality of classification
+#' @param classidx a boolean indicating if the quality of classification
 #' indices must be calculated
-#' @param maxiter An integer for the maximum number of iteration
-#' @param tol The tolerance criterion used in the evaluateMatrices function for
+#' @param maxiter an integer for the maximum number of iteration
+#' @param tol the tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param seed An integer used for random number generation. It ensures that the
+#' @param seed an integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @examples
+#' #No example provided, this is an internal function
 eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, classidx, tol, maxiter, seed=123){
     pb <- txtProgressBar(min = 0, max = nrow(parameters), style = 3)
     cnt <- 1
@@ -775,7 +780,10 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
         }
         if(spconsist){
             #calculating spatial diag
-            indices$spConsistency <- spConsistency(result$Belongings, templistw, nrep = 30)$Mean
+            consist <- spConsistency(result$Belongings, templistw, nrep = 30)
+            indices$spConsistency <- consist$Mean
+            indices$spConsistency_05 <- consist$prt05
+            indices$spConsistency_95 <- consist$prt95
         }
 
         return(indices)
@@ -791,24 +799,27 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
 }
 
 
-#' function to select the parameters of the classification alpha, k and m
+#' Function to select the parameters of the classification alpha, k and m
 #'
 #' @param data a dataframe with numeric columns
 #' @param k a sequence of values for k to test (>=2)
 #' @param m a sequence of values for m to test
 #' @param alpha a sequence of values for alpha to test
-#' @param nblistw A list.w object describing the neighbours typically produced
-#'   by the spdep package
-#' @param standardize A boolean to specify if the variable must be centered and
+#' @param nblistw a list of list.w objects describing the neighbours typically
+#'  produced by the spdep package
+#' @param lag_method a string indicating if a classical lag must be used
+#' ("mean") or if a weighted median must be used ("median"). Both can be
+#' tested by specifying a vector : c("mean","median")
+#' @param standardize a boolean to specify if the variable must be centered and
 #'   reduce (default = True)
-#' @param spconsist A boolean indicating if the spatial consistency must be
+#' @param spconsist a boolean indicating if the spatial consistency must be
 #' calculated
-#' @param classidx A boolean indicating if the quality of classification
+#' @param classidx a boolean indicating if the quality of classification
 #' indices must be calculated
-#' @param maxiter An integer for the maximum number of iteration
-#' @param tol The tolerance criterion used in the evaluateMatrices function for
+#' @param maxiter an integer for the maximum number of iteration
+#' @param tol the tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param seed An integer used for random number generation. It ensures that the
+#' @param seed an integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @return a dataframe with indicators assessing the quality of classifications
 #' @export
@@ -839,26 +850,29 @@ select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spcons
 
 
 
-#' function to select the parameters of the classification alpha, k and m.
-#' This version of the function allow to use a plan defined with the package
+#' Function to select the parameters of the classification alpha, k and m.
+#' This version of the function allows to use a plan defined with the package
 #' future to reduce calculation time
 #'
 #' @param data a dataframe with numeric columns
 #' @param k a sequence of values for k to test (>=2)
 #' @param m a sequence of values for m to test
 #' @param alpha a sequence of values for alpha to test
-#' @param nblistw A list.w object describing the neighbours typically produced
-#'   by the spdep package
-#' @param spconsist A boolean indicating if the spatial consistency must be
+#' @param nblistw a list of list.w objects describing the neighbours typically
+#'  produced by the spdep package
+#' @param lag_method a string indicating if a classical lag must be used
+#' ("mean") or if a weighted median must be used ("median"). Both can be
+#' tested by specifying a vector : c("mean","median")
+#' @param spconsist a boolean indicating if the spatial consistency must be
 #' calculated
-#' @param classidx A boolean indicating if the quality of classification
+#' @param classidx a boolean indicating if the quality of classification
 #' indices must be calculated
-#' @param standardize A boolean to specify if the variable must be centered and
+#' @param standardize a boolean to specify if the variable must be centered and
 #'   reduce (default = True)
-#' @param maxiter An integer for the maximum number of iteration
+#' @param maxiter an integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param seed An integer used for random number generation. It ensures that the
+#' @param seed an integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @param chunk_size The size of a chunk used for multiprocessing. Default is 100.
 #' @return a dataframe with indicators assessing the quality of classifications
@@ -872,7 +886,7 @@ select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spcons
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' future::plan(future::multiprocess(workers=2))
-#' #values <- select_parameters.mc(dataset, k = 2:8, m = seq(2,3.5,0.1),
+#' #values <- select_parameters.mc(dataset, k = 2:5, m = seq(2,3.5,0.1),
 #' #    alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
 #' values <- select_parameters.mc(dataset, k = 5, m = seq(2,3,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen)
@@ -910,4 +924,41 @@ select_parameters.mc <- function(data,k,m,alpha, nblistw, lag_method="mean",  sp
     dfIndices <- do.call(rbind,values)
     return(dfIndices)
 }
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+##### Functions to recalculate spatial weights #####
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#' Function to adjust the spatial weights so that they represent semantic
+#' distances between neighbours
+#'
+#' @param data a dataframe with numeric columns
+#' @param listw a nb object from spdep
+#' @param style a letter indicating the weighting scheme (see spdep doc)
+#'
+#' @return a listw object (spdep like)
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' Wqueen2 <- adjustSpatialWeights(dataset,queen,style="C")
+adjustSpatialWeights <- function(data,listw,style){
+    new_weights <- lapply(1:nrow(data),function(i){
+        row <- data[i,]
+        neighbours <- data[listw[[i]],]
+        dists <- 1/calcEuclideanDistance(neighbours,row)
+        weights <- dists / sum(dists)
+        return(weights)
+    })
+    new_listw <- spdep::nb2listw(listw,glist=new_weights,style = style)
+    return(new_listw)
+}
+
+
+
+
 

@@ -3,26 +3,26 @@
 \name{calcBelongMatrix}
 \alias{calcBelongMatrix}
 \title{Calculate the belonging matrix according to a set of centroids, the observed
-data and the fuzzyness degree}
+data and the fuzziness degree}
 \usage{
 calcBelongMatrix(centers, data, m)
 }
 \arguments{
-\item{centers}{A matrix or a dataframe representing the centers of the
+\item{centers}{a matrix or a dataframe representing the centers of the
 clusters with p columns and k rows}
 
-\item{data}{A dataframe or matrix representing the observed data with n rows
+\item{data}{a dataframe or matrix representing the observed data with n rows
 and p columns}
 
-\item{m}{An float representing the fuzzyness degree}
+\item{m}{a float representing the fuzziness degree}
 }
 \value{
-A n * k matrix represening the probability of belonging of each
-  datapoint to each cluster
+a n * k matrix representing the probability of belonging of each
+  observation to each cluster
 }
 \description{
 Calculate the belonging matrix according to a set of centroids, the observed
-data and the fuzzyness degree
+data and the fuzziness degree
 }
 \examples{
 #This is an internal function, no example provided

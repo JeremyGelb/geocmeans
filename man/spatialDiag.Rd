@@ -7,15 +7,15 @@
 spatialDiag(belongmatrix, nblistw, undecided = NULL, nrep = 50)
 }
 \arguments{
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{s belonging matrix}
 
-\item{nblistw}{A list.w  object describing the neighbours (spdep package)}
+\item{nblistw}{a list.w  object describing the neighbours (spdep package)}
 
-\item{undecided}{A float between 0 and 1 giving the minimum value that an
+\item{undecided}{a float between 0 and 1 giving the minimum value that an
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 
-\item{nrep}{a integer indicating the number of permutation to do to simulate
+\item{nrep}{an integer indicating the number of permutation to do to simulate
 the random distribution of the spatial inconsistency}
 }
 \value{
@@ -30,9 +30,9 @@ a named list with :
 }
 }
 \description{
-Calculate the followinf indicators : Moran I index (spdep::moranI) for each
-column of the belonging matrix Join count test (spdep::joincount.multi) for
-the most likely groups of each datapoint Spatial consistency index (see
+Calculate the following indicators : Moran I index (spdep::moranI) for each
+column of the belonging matrix, Join count test (spdep::joincount.multi) for
+the most likely groups of each datapoint, Spatial consistency index (see
 function spConsistency)
 }
 \examples{

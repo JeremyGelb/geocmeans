@@ -7,24 +7,24 @@
 calcSWFCCentroids(data, wdata, belongmatrix, m, alpha)
 }
 \arguments{
-\item{data}{A dataframe or matrix representing the observed data with n rows
+\item{data}{a dataframe or matrix representing the observed data with n rows
 and p columns}
 
-\item{wdata}{A dataframe or matrix representing the lagged observed data with
+\item{wdata}{a dataframe or matrix representing the lagged observed data with
 nrows and p columns}
 
 \item{belongmatrix}{A n X k matrix giving for each observation n, its
 probability to belong to the cluster k}
 
-\item{m}{An integer representing the fuzzyness degree}
+\item{m}{an integer representing the fuzziness degree}
 
-\item{alpha}{A float representing the weight of the space in the analysis (0
+\item{alpha}{a float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 }
 \value{
-A n X k matrix represening the belonging probabiblities of each
-  datapoint to each cluster
+a n X k matrix representing the belonging probabilities of each
+  observation to each cluster
 }
 \description{
 Calculate the new centroids of the clusters based on the belonging matrix (spatial version)

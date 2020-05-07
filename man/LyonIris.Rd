@@ -7,7 +7,7 @@
 \format{
 A data frame with 506 rows and 33 variables:
 \describe{
-  \item{OBJECTID}{on simple OID (intger)}
+  \item{OBJECTID}{on simple OID (integer)}
   \item{INSEE_COM}{the code of each commune (factor)}
   \item{NOM_COM}{the name of each commune (factor)}
   \item{CODE_IRIS}{the code of each unit area : iris (factor)}
@@ -21,7 +21,7 @@ A data frame with 506 rows and 33 variables:
   \item{TxChom1564}{the unemployment rate (numeric)}
   \item{Pct_brevet}{the percentage of people that obtained the college diploma (numeric)}
   \item{NivVieMed}{the median standard of living in euros (numeric)}
-  \item{VegHautPrt}{the percentage of the iris surface covered by canope (numeric)}
+  \item{VegHautPrt}{the percentage of the iris surface covered by trees (numeric)}
   \item{X}{the X coordinate of the center of the Iris (numeric)}
   \item{Y}{the Y coordinate of the center of the Iris (numeric)}
   ...
@@ -35,6 +35,6 @@ LyonIris
 }
 \description{
 A dataset containing social and environmental data for the
-Iris of Lyon (france)
+Iris of Lyon (France)
 }
 \keyword{datasets}

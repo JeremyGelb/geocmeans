@@ -2,7 +2,7 @@
 % Please edit documentation in R/side_functions.R
 \name{eval_parameters}
 \alias{eval_parameters}
-\title{worker function for select_parameters and select_parameters.mc}
+\title{Worker function for select_parameters and select_parameters.mc}
 \usage{
 eval_parameters(
   parameters,
@@ -21,26 +21,29 @@ eval_parameters(
 
 \item{data}{a dataframe with numeric columns}
 
-\item{nblistw}{A list.w object describing the neighbours typically produced
+\item{nblistw}{a list.w object describing the neighbours typically produced
 by the spdep package}
 
-\item{standardize}{A boolean to specify if the variable must be centered and
+\item{standardize}{a boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{spconsist}{A boolean indicating if the spatial consistency must be
+\item{spconsist}{a boolean indicating if the spatial consistency must be
 calculated}
 
-\item{classidx}{A boolean indicating if the quality of classification
+\item{classidx}{a boolean indicating if the quality of classification
 indices must be calculated}
 
-\item{tol}{The tolerance criterion used in the evaluateMatrices function for
+\item{tol}{the tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{maxiter}{An integer for the maximum number of iteration}
+\item{maxiter}{an integer for the maximum number of iteration}
 
-\item{seed}{An integer used for random number generation. It ensures that the
+\item{seed}{an integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \description{
-worker function for select_parameters and select_parameters.mc
+Worker function for select_parameters and select_parameters.mc
+}
+\examples{
+#No example provided, this is an internal function
 }

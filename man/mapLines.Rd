@@ -7,12 +7,12 @@
 mapLines(geodata, belongmatrix, undecided = NULL)
 }
 \arguments{
-\item{geodata}{A spatiallinesdataframe ordered like the original data used
+\item{geodata}{a spatiallinesdataframe ordered like the original data used
 for the clustering}
 
-\item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
+\item{belongmatrix}{the belonging matrix obtained at the end of the algorithm}
 
-\item{undecided}{A float between 0 and 1 giving the minimum value that an
+\item{undecided}{a float between 0 and 1 giving the minimum value that an
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 }

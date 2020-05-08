@@ -14,7 +14,6 @@ Imports:
     fclust (>= 2.1.1),
     fmsb (>= 0.7.0),
     broom (>= 0.5.2),
-    utils (>= 3.6.1),
     maptools (>= 0.9-5),
     rgeos (>= 0.5-2),
     future (>= 1.16.0),

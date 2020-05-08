@@ -5,7 +5,7 @@ Version: 0.1.1.9000
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
-Description: This package proposes implementations of a spatial fuzzy c-means algorithm and functions to analyze the outputs. Some tests for estimating the spatial consistency gain are proposed in addition.
+Description: This package proposes implementation of a spatial fuzzy c-means algorithm and functions to analyze the outputs. Some tests for estimating the spatial consistency gain are proposed in addition.
 Imports: 
     ggplot2 (>= 3.2.1),
     spdep (>= 1.1.2),

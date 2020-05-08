@@ -65,6 +65,8 @@ AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img"
 dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
+#set spconsist to TRUE to calculate the spatial consistency indicator
+#FALSE here to reduce the time during package check
 values <- select_parameters(dataset, k = 5, m = seq(2,3,0.1),
-    alpha = seq(0,2,0.1), nblistw = Wqueen)
+    alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 }

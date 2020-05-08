@@ -73,10 +73,10 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 future::plan(future::multiprocess(workers=2))
-#values <- select_parameters.mc(dataset, k = 2:5, m = seq(2,3.5,0.1),
-#    alpha = seq(0,2,0.1), nblistw = Wqueen, chunk_size=50)
-values <- select_parameters.mc(dataset, k = 5, m = seq(2,3,0.1),
-    alpha = seq(0,2,0.1), nblistw = Wqueen)
+#set spconsist to TRUE to calculate the spatial consistency indicator
+#FALSE here to reduce the time during package check
+values <- select_parameters.mc(dataset, k = 5, m = seq(1,2.5,0.1),
+    alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 \dontshow{
    ## R CMD check: make sure any open connections are closed afterward
    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)

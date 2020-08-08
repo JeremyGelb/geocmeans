@@ -2,20 +2,19 @@
 % Please edit documentation in R/side_functions.R
 \name{calcqualityIndexes}
 \alias{calcqualityIndexes}
-\title{calculate several clustering quality indexes (most of them come from fclust
-package)}
+\title{Quality indexes}
 \usage{
 calcqualityIndexes(data, belongmatrix, m)
 }
 \arguments{
-\item{data}{the original dataframe used for the classification (n*p)}
+\item{data}{The original dataframe used for the classification (n*p)}
 
-\item{belongmatrix}{a belonging matrix (n*k)}
+\item{belongmatrix}{A belonging matrix (n*k)}
 
-\item{m}{the fuzziness parameter used for the classification}
+\item{m}{The fuzziness parameter used for the classification}
 }
 \value{
-a named list with
+A named list with
 \itemize{
         \item Silhouette.index: the silhouette index (fclust::SIL.F)
         \item Partition.entropy: the partition entropy index (fclust::PE)

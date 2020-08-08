@@ -3,7 +3,7 @@
 #' A dataset containing social and environmental data for the
 #' Iris of Lyon (France)
 #'
-#' @format A data frame with 506 rows and 33 variables:
+#' @format A SpatialPolygonsDataFrame with 506 rows and 33 variables:
 #' \describe{
 #'   \item{OBJECTID}{on simple OID (integer)}
 #'   \item{INSEE_COM}{the code of each commune (factor)}

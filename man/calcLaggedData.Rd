@@ -2,24 +2,25 @@
 % Please edit documentation in R/main_functions.R
 \name{calcLaggedData}
 \alias{calcLaggedData}
-\title{Calculate Wx, the spatially lagged version of x, by a neighbouring matrix W}
+\title{Lagged Data}
 \usage{
 calcLaggedData(x, nblistw, method = "mean")
 }
 \arguments{
-\item{x}{a dataframe with only numeric columns}
+\item{x}{A dataframe with only numeric columns}
 
-\item{nblistw}{the listw object (spdep like) used to calculate WY}
+\item{nblistw}{The listw object (spdep like) used to calculate WY}
 
-\item{method}{a string indicating if a classical lag must be used
+\item{method}{A string indicating if a classical lag must be used
 ("mean") or if a weighted median must be used ("median")}
 }
 \value{
-a lagged version of x
+A lagged version of x
 }
 \description{
-Calculate Wx, the spatially lagged version of x, by a neighbouring matrix W
+Calculate Wx, the spatially lagged version of x, by a neighbouring matrix W.
 }
 \examples{
 #This is an internal function, no example provided
 }
+\keyword{internal}

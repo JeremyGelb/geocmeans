@@ -2,13 +2,17 @@
 ##### intermediate functions for cmeans algorithms #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' Calculate Wx, the spatially lagged version of x, by a neighbouring matrix W
+
+#' @title Lagged Data
 #'
-#' @param x a dataframe with only numeric columns
-#' @param nblistw the listw object (spdep like) used to calculate WY
-#' @param method a string indicating if a classical lag must be used
+#' @description Calculate Wx, the spatially lagged version of x, by a neighbouring matrix W.
+#'
+#' @param x A dataframe with only numeric columns
+#' @param nblistw The listw object (spdep like) used to calculate WY
+#' @param method A string indicating if a classical lag must be used
 #' ("mean") or if a weighted median must be used ("median")
-#' @return a lagged version of x
+#' @return A lagged version of x
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 calcLaggedData <- function(x,nblistw,method="mean"){
@@ -37,14 +41,15 @@ calcLaggedData <- function(x,nblistw,method="mean"){
 }
 
 
-
-#' Calculate the euclidean distance between a numeric matrix n * p and a numeric
-#' vector of length p
+#' @title Calculate the Euclidean distance
 #'
-#' @param m a n * p matrix or dataframe with only numeric columns
-#' @param v a numeric vector of length p
-#' @return a vector of length n giving the euclidean distance between all matrix
+#' @description Calculate the euclidean distance between a numeric matrix n * p and a numeric
+#' vector of length p
+#' @param m A n * p matrix or dataframe with only numeric columns
+#' @param v A numeric vector of length p
+#' @return A vector of length n giving the euclidean distance between all matrix
 #'   row and the vector p
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 calcEuclideanDistance <- function(m, v) {
@@ -53,17 +58,19 @@ calcEuclideanDistance <- function(m, v) {
     return(alldistances)
 }
 
-
-#' Calculate the belonging matrix according to a set of centroids, the observed
+#' @title Calculate the belonging matrix
+#'
+#' @description Calculate the belonging matrix according to a set of centroids, the observed
 #' data and the fuzziness degree
 #'
-#' @param centers a matrix or a dataframe representing the centers of the
+#' @param centers A matrix or a dataframe representing the centers of the
 #'   clusters with p columns and k rows
-#' @param data a dataframe or matrix representing the observed data with n rows
+#' @param data A dataframe or matrix representing the observed data with n rows
 #'   and p columns
-#' @param m a float representing the fuzziness degree
-#' @return a n * k matrix representing the probability of belonging of each
+#' @param m A float representing the fuzziness degree
+#' @return A n * k matrix representing the probability of belonging of each
 #'   observation to each cluster
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 #'
@@ -83,23 +90,25 @@ calcBelongMatrix <- function(centers, data, m) {
     return(belongmat)
 }
 
-
-#' Calculate the belonging matrix (spatial version) according to a set of
+#' @title Calculate the belonging matrix (spatial version)
+#'
+#' @description Calculate the belonging matrix (spatial version) according to a set of
 #' centroids, the observed data, the fuzziness degree a neighbouring matrix and
 #' a spatial weighting term
 #'
-#' @param centers a matrix or a dataframe representing the centers of the
+#' @param centers A matrix or a dataframe representing the centers of the
 #'   clusters with p columns and k rows
-#' @param data a dataframe or matrix representing the observed data with n rows
+#' @param data A dataframe or matrix representing the observed data with n rows
 #'   and p columns
-#' @param wdata a dataframe or matrix representing the lagged observed data with
+#' @param wdata A dataframe or matrix representing the lagged observed data with
 #'   nrows and p columns
-#' @param m a float representing the fuzziness degree
-#' @param alpha a float representing the weight of the space in the analysis (0
+#' @param m A float representing the fuzziness degree
+#' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 #'   dimensions, 2 is twice the weight for space)
-#' @return a n * k matrix representing the belonging probabilities of each
+#' @return A n * k matrix representing the belonging probabilities of each
 #'   observation to each cluster
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
@@ -125,16 +134,18 @@ calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
 }
 
 
-
-#' Calculate the new centroids of the clusters based on the belonging matrix
+#' @title Calculate the centroids
 #'
-#' @param data a dataframe or matrix representing the observed data with n rows
+#' @description Calculate the new centroids of the clusters based on the belonging matrix
+#'
+#' @param data A dataframe or matrix representing the observed data with n rows
 #'   and p columns
-#' @param belongmatrix a n X k matrix giving for each observation n, its
+#' @param belongmatrix A n X k matrix giving for each observation n, its
 #'   probability to belong to the cluster k
-#' @param m an integer representing the fuzziness degree
-#' @return a n X k matrix representing the belonging probabilities of each
+#' @param m An integer representing the fuzziness degree
+#' @return A n X k matrix representing the belonging probabilities of each
 #'   observation to each cluster
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 calcCentroids <- function(data, belongmatrix, m){
@@ -148,21 +159,23 @@ calcCentroids <- function(data, belongmatrix, m){
 }
 
 
-
-#' Calculate the new centroids of the clusters based on the belonging matrix (spatial version)
+#' @title Calculate the centroids (spatial version)
 #'
-#' @param data a dataframe or matrix representing the observed data with n rows
+#' @description Calculate the new centroids of the clusters based on the belonging matrix (spatial version)
+#'
+#' @param data A dataframe or matrix representing the observed data with n rows
 #'   and p columns
-#' @param wdata a dataframe or matrix representing the lagged observed data with
+#' @param wdata A dataframe or matrix representing the lagged observed data with
 #'   nrows and p columns
 #' @param belongmatrix A n X k matrix giving for each observation n, its
 #'   probability to belong to the cluster k
-#' @param m an integer representing the fuzziness degree
-#' @param alpha a float representing the weight of the space in the analysis (0
+#' @param m An integer representing the fuzziness degree
+#' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 #'   dimensions, 2 is twice the weight for space)
-#' @return a n X k matrix representing the belonging probabilities of each
+#' @return A n X k matrix representing the belonging probabilities of each
 #'   observation to each cluster
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 calcSWFCCentroids <- function(data, wdata, belongmatrix, m, alpha) {
@@ -184,16 +197,19 @@ calcSWFCCentroids <- function(data, wdata, belongmatrix, m, alpha) {
 
 
 
-#' evaluate if the algorithm converged by comparing two successive belongings
+#' @title Matrix evaluation
+#'
+#' @description Evaluate if the algorithm converged by comparing two successive belongings
 #' matrices. Calculate the absolute difference between the matrices and then
 #' calculate the mean of each row. If all the values of the final vector are
 #' below the fixed tolerance, then return True, else return False
 #'
-#' @param mat1 a n X k matrix giving for each observation n, its probability to
+#' @param mat1 A n X k matrix giving for each observation n, its probability to
 #'   belong to the cluster k at iteration i
-#' @param mat2 a n X k matrix giving for each observation n, its probability to
+#' @param mat2 A n X k matrix giving for each observation n, its probability to
 #'   belong to the cluster k at iteration i+1
-#' @param tol a float representing the algorithm tolerance
+#' @param tol A float representing the algorithm tolerance
+#' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 evaluateMatrices <- function(mat1, mat2, tol) {
@@ -212,20 +228,22 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-#' clasical c-mean algorithm
+#' @title C-means
 #'
-#' @param data a dataframe with only numerical variable
-#' @param k an integer describing the number of cluster to find
-#' @param m a float for the fuzziness degree
-#' @param maxiter a float for the maximum number of iteration
-#' @param tol the tolerance criterion used in the evaluateMatrices function for
+#' @description The clasical c-mean algorithm
+#'
+#' @param data A dataframe with only numerical variable
+#' @param k An integer describing the number of cluster to find
+#' @param m A float for the fuzziness degree
+#' @param maxiter A float for the maximum number of iteration
+#' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param standardize a boolean to specify if the variables must be centered and
+#' @param standardize A boolean to specify if the variables must be centered and
 #'   reduce (default = True)
-#' @param verbose a boolean to specify if the messages should be displayed
-#' @param seed an integer used for random number generation. It ensures that the
+#' @param verbose A boolean to specify if the messages should be displayed
+#' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
-#' @return a named list with :
+#' @return A named list with :
 #'  \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
 #'         \item Belongings: the final belonging matrix
@@ -302,11 +320,11 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-#' spatial version of the c-mean algorithm (SFCMeans, FCM_S1)
+#' @title SFCMeans
 #'
-#' The implementation is based on the following article : \url{https://doi.org/10.1016/j.patcog.2006.07.011}.\cr
-#' See details for the formulas.
+#' @description spatial version of the c-mean algorithm (SFCMeans, FCM_S1)
 #'
+#' @details The implementation is based on the following article : \url{https://doi.org/10.1016/j.patcog.2006.07.011}.\cr
 #'
 #' the matrix of belonging (u) is calculated as follow \cr
 #' \deqn{u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}}
@@ -321,25 +339,25 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' \item xk_bar the spatially lagged data point k
 #' }
 #'
-#' @param data a dataframe with only numerical variable
-#' @param nblistw a list.w object describing the neighbours typically produced
+#' @param data A dataframe with only numerical variable
+#' @param nblistw A list.w object describing the neighbours typically produced
 #'   by the spdep package
-#' @param k an integer describing the number of cluster to find
-#' @param m a float for the fuzziness degree
-#' @param alpha a float representing the weight of the space in the analysis (0
+#' @param k An integer describing the number of cluster to find
+#' @param m A float for the fuzziness degree
+#' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 #'   dimensions, 2 is twice the weight for space)
-#' @param lag_method a string indicating if a classical lag must be used
+#' @param lag_method A string indicating if a classical lag must be used
 #' ("mean") or if a weighted median must be used ("median")
-#' @param maxiter an integer for the maximum number of iteration
-#' @param tol the tolerance criterion used in the evaluateMatrices function for
+#' @param maxiter An integer for the maximum number of iteration
+#' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param standardize a boolean to specify if the variable must be centered and
+#' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
-#' @param verbose a boolean to specify if the progress bar should be displayed
-#' @param seed an integer used for random number generation. It ensures that the
+#' @param verbose A boolean to specify if the progress bar should be displayed
+#' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
-#' @return a named list with
+#' @return A named list with
 #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
 #'         \item Belongings: the final belonging matrix

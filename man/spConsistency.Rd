@@ -2,21 +2,21 @@
 % Please edit documentation in R/side_functions.R
 \name{spConsistency}
 \alias{spConsistency}
-\title{Calculate a spatial consistency index}
+\title{Spatial consistency index}
 \usage{
 spConsistency(belongmatrix, nblistw, nrep = 999)
 }
 \arguments{
-\item{belongmatrix}{a belonging matrix}
+\item{belongmatrix}{A belonging matrix}
 
-\item{nblistw}{a list.w object describing the neighbours (spdep package)
+\item{nblistw}{A list.w object describing the neighbours (spdep package)
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 
-\item{nrep}{an integer indicating the number of permutation to do to simulate}
+\item{nrep}{An integer indicating the number of permutation to do to simulate}
 }
 \value{
-a named list with
+A named list with
  \itemize{
         \item Mean : the mean of the spatial consistency index
         \item prt05 : the 5th percentile of the spatial consistency index
@@ -25,12 +25,14 @@ a named list with
 }
 }
 \description{
+Calculate a spatial consistency index
+}
+\details{
 This index is experimental, it aims to measure how much a clustering solution
 is spatially consistent. A classification is spatially inconsistent if
 neighbouring observation do not belong to the same group. See detail for
 a description of its calculation
-}
-\details{
+
 The total spatial inconsistency (*Scr*) is calculated as follow
 
 \deqn{isp = \sum_{i}\sum_{j}\sum_{k} (u_{ik} - u_{jk})^{2} * W_{ij}}

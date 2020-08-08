@@ -2,8 +2,7 @@
 % Please edit documentation in R/side_functions.R
 \name{adjustSpatialWeights}
 \alias{adjustSpatialWeights}
-\title{Function to adjust the spatial weights so that they represent semantic
-distances between neighbours}
+\title{Semantic adjusted spatial weights}
 \usage{
 adjustSpatialWeights(data, listw, style)
 }

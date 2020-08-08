@@ -2,18 +2,18 @@
 % Please edit documentation in R/side_functions.R
 \name{undecidedUnits}
 \alias{undecidedUnits}
-\title{Identify the observation for with the classification is uncertain}
+\title{Undecided observations}
 \usage{
 undecidedUnits(belongmatrix, tol = 0.1)
 }
 \arguments{
-\item{belongmatrix}{the belonging matrix obtained at the end of the algorithm}
+\item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
 
-\item{tol}{a float indicating the minimum required level of belonging to be
+\item{tol}{A float indicating the minimum required level of belonging to be
 not considered as undecided}
 }
 \value{
-a vector indicating the most likely group for each observation or
+A vector indicating the most likely group for each observation or
   "Undecided" if the maximum probability for the observation does not reach
   the value of the tol parameter
 }

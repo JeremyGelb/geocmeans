@@ -2,23 +2,23 @@
 % Please edit documentation in R/side_functions.R
 \name{mapClusters}
 \alias{mapClusters}
-\title{build some maps to visualize the results of the clustering}
+\title{Mapping the clusters}
 \usage{
 mapClusters(geodata, belongmatrix, undecided = NULL)
 }
 \arguments{
-\item{geodata}{a object of class spatialpolygonesdataframe /
+\item{geodata}{A object of class spatialpolygonesdataframe /
 spatiallinesdataframe or spatialpointsdataframe ordered
 like the original data used for the clustering}
 
-\item{belongmatrix}{the belonging matrix obtained at the end of the algorithm}
+\item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
 
-\item{undecided}{a float between 0 and 1 giving the minimum value that an
+\item{undecided}{A float between 0 and 1 giving the minimum value that an
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 }
 \value{
-a named list with :
+A named list with :
 \itemize{
         \item ProbaMaps : a list of ggplot maps showing for each group the
         probability of the observations to belong to that group
@@ -27,7 +27,7 @@ a named list with :
 }
 }
 \description{
-build some maps to visualize the results of the clustering
+Build some maps to visualize the results of the clustering
 }
 \examples{
 data(LyonIris)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/side_functions.R
 \name{eval_parameters}
 \alias{eval_parameters}
-\title{Worker function for select_parameters and select_parameters.mc}
+\title{Worker function}
 \usage{
 eval_parameters(
   parameters,
@@ -17,28 +17,28 @@ eval_parameters(
 )
 }
 \arguments{
-\item{parameters}{a dataframe of parameters with columns k,m and alpha}
+\item{parameters}{A dataframe of parameters with columns k,m and alpha}
 
-\item{data}{a dataframe with numeric columns}
+\item{data}{A dataframe with numeric columns}
 
-\item{nblistw}{a list.w object describing the neighbours typically produced
+\item{nblistw}{A list.w object describing the neighbours typically produced
 by the spdep package}
 
-\item{standardize}{a boolean to specify if the variable must be centered and
+\item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{spconsist}{a boolean indicating if the spatial consistency must be
+\item{spconsist}{A boolean indicating if the spatial consistency must be
 calculated}
 
-\item{classidx}{a boolean indicating if the quality of classification
+\item{classidx}{A boolean indicating if the quality of classification
 indices must be calculated}
 
-\item{tol}{the tolerance criterion used in the evaluateMatrices function for
+\item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{maxiter}{an integer for the maximum number of iteration}
+\item{maxiter}{An integer for the maximum number of iteration}
 
-\item{seed}{an integer used for random number generation. It ensures that the
+\item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \description{
@@ -47,3 +47,4 @@ Worker function for select_parameters and select_parameters.mc
 \examples{
 #No example provided, this is an internal function
 }
+\keyword{internal}

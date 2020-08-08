@@ -5,7 +5,7 @@ Version: 0.1.1.9000
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
-Description: This package proposes implementation of a spatial fuzzy c-means algorithm and functions to analyze the outputs. Some tests for estimating the spatial consistency gain are proposed in addition.
+Maintainer: Jeremy Gelb <jeremy.gelb@ucs.inrs.ca>
 Imports: 
     ggplot2 (>= 3.2.1),
     spdep (>= 1.1.2),
@@ -25,17 +25,23 @@ Suggests:
     knitr (>= 1.28),
     rmarkdown (>= 2.1),
     ppclust (>= 1.1.0),
-	sp (>= 1.4-1),
-	ClustGeo (>= 2.0),
-	car (>= 3.0-7),
-	rgl (>= 0.100),
-	ggpubr (>= 0.2.5),
-	RColorBrewer (>= 1.1-2),
-	kableExtra (>= 1.1.0)
+	  sp (>= 1.4-1),
+	  ClustGeo (>= 2.0),
+	  car (>= 3.0-7),
+	  rgl (>= 0.100),
+	  ggpubr (>= 0.2.5),
+	  RColorBrewer (>= 1.1-2),
+	  kableExtra (>= 1.1.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
+Description: Provides functions to apply Spatially Constrained C-Means 
+    Algorithm and to visualize and interpret results. This type of method is 
+    particulary revelant in context when the user want to analyze data with a 
+    fuzzy clustering algorithm and take into account the spatial dimension of 
+    the dataset. Some tests for estimating the spatial consistency gain are 
+    proposed in addition.
 URL: http://github.com/JeremyGelb/geocmeans
 BugReports: http://github.com/JeremyGelb/geocmeans/issues

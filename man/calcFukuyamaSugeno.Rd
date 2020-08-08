@@ -2,24 +2,24 @@
 % Please edit documentation in R/side_functions.R
 \name{calcFukuyamaSugeno}
 \alias{calcFukuyamaSugeno}
-\title{calculate Fukuyama and Sugeno index of clustering quality}
+\title{Fukuyama and Sugeno index}
 \usage{
 calcFukuyamaSugeno(data, belongmatrix, centers, m)
 }
 \arguments{
-\item{data}{the original dataframe used for the clustering (n*p)}
+\item{data}{The original dataframe used for the clustering (n*p)}
 
-\item{belongmatrix}{a belonging matrix (n*k)}
+\item{belongmatrix}{A belonging matrix (n*k)}
 
-\item{centers}{the centers of the clusters}
+\item{centers}{The centers of the clusters}
 
-\item{m}{the fuzzyness parameter}
+\item{m}{The fuzzyness parameter}
 }
 \value{
-a float : the Fukuyama and Sugeno index
+A float : the Fukuyama and Sugeno index
 }
 \description{
-calculate Fukuyama and Sugeno index of clustering quality
+Calculate Fukuyama and Sugeno index of clustering quality
 }
 \examples{
 data(LyonIris)

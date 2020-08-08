@@ -2,30 +2,28 @@
 % Please edit documentation in R/main_functions.R
 \name{calcSFCMBelongMatrix}
 \alias{calcSFCMBelongMatrix}
-\title{Calculate the belonging matrix (spatial version) according to a set of
-centroids, the observed data, the fuzziness degree a neighbouring matrix and
-a spatial weighting term}
+\title{Calculate the belonging matrix (spatial version)}
 \usage{
 calcSFCMBelongMatrix(centers, data, wdata, m, alpha)
 }
 \arguments{
-\item{centers}{a matrix or a dataframe representing the centers of the
+\item{centers}{A matrix or a dataframe representing the centers of the
 clusters with p columns and k rows}
 
-\item{data}{a dataframe or matrix representing the observed data with n rows
+\item{data}{A dataframe or matrix representing the observed data with n rows
 and p columns}
 
-\item{wdata}{a dataframe or matrix representing the lagged observed data with
+\item{wdata}{A dataframe or matrix representing the lagged observed data with
 nrows and p columns}
 
-\item{m}{a float representing the fuzziness degree}
+\item{m}{A float representing the fuzziness degree}
 
-\item{alpha}{a float representing the weight of the space in the analysis (0
+\item{alpha}{A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 }
 \value{
-a n * k matrix representing the belonging probabilities of each
+A n * k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
@@ -36,3 +34,4 @@ a spatial weighting term
 \examples{
 #This is an internal function, no example provided
 }
+\keyword{internal}

@@ -2,21 +2,21 @@
 % Please edit documentation in R/main_functions.R
 \name{calcCentroids}
 \alias{calcCentroids}
-\title{Calculate the new centroids of the clusters based on the belonging matrix}
+\title{Calculate the centroids}
 \usage{
 calcCentroids(data, belongmatrix, m)
 }
 \arguments{
-\item{data}{a dataframe or matrix representing the observed data with n rows
+\item{data}{A dataframe or matrix representing the observed data with n rows
 and p columns}
 
-\item{belongmatrix}{a n X k matrix giving for each observation n, its
+\item{belongmatrix}{A n X k matrix giving for each observation n, its
 probability to belong to the cluster k}
 
-\item{m}{an integer representing the fuzziness degree}
+\item{m}{An integer representing the fuzziness degree}
 }
 \value{
-a n X k matrix representing the belonging probabilities of each
+A n X k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
@@ -25,3 +25,4 @@ Calculate the new centroids of the clusters based on the belonging matrix
 \examples{
 #This is an internal function, no example provided
 }
+\keyword{internal}

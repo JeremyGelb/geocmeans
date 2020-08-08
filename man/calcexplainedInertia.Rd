@@ -2,20 +2,20 @@
 % Please edit documentation in R/side_functions.R
 \name{calcexplainedInertia}
 \alias{calcexplainedInertia}
-\title{calculate the explained inertia by a classification}
+\title{Explained inertia index}
 \usage{
 calcexplainedInertia(data, belongmatrix)
 }
 \arguments{
-\item{data}{the original dataframe used for the classification (n*p)}
+\item{data}{The original dataframe used for the classification (n*p)}
 
-\item{belongmatrix}{a belonging matrix (n*k)}
+\item{belongmatrix}{A belonging matrix (n*k)}
 }
 \value{
-a float : the percentage of the total inertia explained
+A float : the percentage of the total inertia explained
 }
 \description{
-calculate the explained inertia by a classification
+Calculate the explained inertia by a classification
 }
 \examples{
 data(LyonIris)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/main_functions.R
 \name{SFCMeans}
 \alias{SFCMeans}
-\title{spatial version of the c-mean algorithm (SFCMeans, FCM_S1)}
+\title{SFCMeans}
 \usage{
 SFCMeans(
   data,
@@ -19,37 +19,37 @@ SFCMeans(
 )
 }
 \arguments{
-\item{data}{a dataframe with only numerical variable}
+\item{data}{A dataframe with only numerical variable}
 
-\item{nblistw}{a list.w object describing the neighbours typically produced
+\item{nblistw}{A list.w object describing the neighbours typically produced
 by the spdep package}
 
-\item{k}{an integer describing the number of cluster to find}
+\item{k}{An integer describing the number of cluster to find}
 
-\item{m}{a float for the fuzziness degree}
+\item{m}{A float for the fuzziness degree}
 
-\item{alpha}{a float representing the weight of the space in the analysis (0
+\item{alpha}{A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 
-\item{lag_method}{a string indicating if a classical lag must be used
+\item{lag_method}{A string indicating if a classical lag must be used
 ("mean") or if a weighted median must be used ("median")}
 
-\item{maxiter}{an integer for the maximum number of iteration}
+\item{maxiter}{An integer for the maximum number of iteration}
 
-\item{tol}{the tolerance criterion used in the evaluateMatrices function for
+\item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{standardize}{a boolean to specify if the variable must be centered and
+\item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{verbose}{a boolean to specify if the progress bar should be displayed}
+\item{verbose}{A boolean to specify if the progress bar should be displayed}
 
-\item{seed}{an integer used for random number generation. It ensures that the
+\item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \value{
-a named list with
+A named list with
 \itemize{
         \item Centers: a dataframe describing the final centers of the groups
         \item Belongings: the final belonging matrix
@@ -58,10 +58,11 @@ a named list with
 }
 }
 \description{
-The implementation is based on the following article : \url{https://doi.org/10.1016/j.patcog.2006.07.011}.\cr
-See details for the formulas.
+spatial version of the c-mean algorithm (SFCMeans, FCM_S1)
 }
 \details{
+The implementation is based on the following article : \url{https://doi.org/10.1016/j.patcog.2006.07.011}.\cr
+
 the matrix of belonging (u) is calculated as follow \cr
 \deqn{u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}}
 

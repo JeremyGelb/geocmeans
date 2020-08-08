@@ -2,22 +2,22 @@
 % Please edit documentation in R/side_functions.R
 \name{mapPoints}
 \alias{mapPoints}
-\title{Internal function to realize maps based on spatialpolygondataframe}
+\title{Mapping the clusters (points)}
 \usage{
 mapPoints(geodata, belongmatrix, undecided = NULL)
 }
 \arguments{
-\item{geodata}{a spatialpointsdataframe ordered like the original data used
+\item{geodata}{A spatialpointsdataframe ordered like the original data used
 for the clustering}
 
-\item{belongmatrix}{the belonging matrix obtained at the end of the algorithm}
+\item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
 
-\item{undecided}{a float between 0 and 1 giving the minimum value that an
+\item{undecided}{A float between 0 and 1 giving the minimum value that an
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 }
 \value{
-a named list with :
+A named list with :
 \itemize{
         \item ProbaMaps : a list of ggplot maps showing for each group the probability
          of the observations to belong to that group
@@ -25,8 +25,9 @@ a named list with :
 }
 }
 \description{
-Internal function to realize maps based on spatialpolygondataframe
+Internal function to realize maps based on spatialpointsdataframe
 }
 \examples{
 #No example provided, this is an internal function, use the general wrapper function mapClusters
 }
+\keyword{internal}

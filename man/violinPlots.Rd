@@ -2,15 +2,14 @@
 % Please edit documentation in R/side_functions.R
 \name{violinPlots}
 \alias{violinPlots}
-\title{Return violin plots to compare the distribution of each variable for each
-group.}
+\title{Violin plots}
 \usage{
 violinPlots(data, groups)
 }
 \arguments{
-\item{data}{a dataframe with numeric columns}
+\item{data}{A dataframe with numeric columns}
 
-\item{groups}{a vector indicating the group of each observation}
+\item{groups}{A vector indicating the group of each observation}
 }
 \description{
 Return violin plots to compare the distribution of each variable for each

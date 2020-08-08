@@ -2,19 +2,22 @@
 % Please edit documentation in R/side_functions.R
 \name{spiderPlots}
 \alias{spiderPlots}
-\title{Display spider charts to quickly compare values between groups}
+\title{Spider chart}
 \usage{
 spiderPlots(data, belongmatrix, chartcolors = NULL)
 }
 \arguments{
-\item{data}{a dataframe with numeric columns}
+\item{data}{A dataframe with numeric columns}
 
-\item{belongmatrix}{a belonging matrix}
+\item{belongmatrix}{A belonging matrix}
 
-\item{chartcolors}{a vector of color names used for the spider plot}
+\item{chartcolors}{A vector of color names used for the spider plot}
 }
 \description{
-for each group, the weighted mean of each variable in data is calculated
+Display spider charts to quickly compare values between groups
+}
+\details{
+For each group, the weighted mean of each variable in data is calculated
 based on the probability of belonging to this group of each observation.
 On the chart the exterior ring represents the maximum value obtained for
 all the groups and the interior ring the minimum. The groups are located

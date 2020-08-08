@@ -2,24 +2,24 @@
 % Please edit documentation in R/side_functions.R
 \name{spatialDiag}
 \alias{spatialDiag}
-\title{Utility function to facilitate the spatial diagnostic of a classification}
+\title{Spatial diagnostic}
 \usage{
 spatialDiag(belongmatrix, nblistw, undecided = NULL, nrep = 50)
 }
 \arguments{
-\item{belongmatrix}{s belonging matrix}
+\item{belongmatrix}{A belonging matrix}
 
-\item{nblistw}{a list.w  object describing the neighbours (spdep package)}
+\item{nblistw}{A list.w  object describing the neighbours (spdep package)}
 
-\item{undecided}{a float between 0 and 1 giving the minimum value that an
+\item{undecided}{A float between 0 and 1 giving the minimum value that an
 observation must get in the belonging matrix to not be considered as
 uncertain (default = NULL)}
 
-\item{nrep}{an integer indicating the number of permutation to do to simulate
+\item{nrep}{An integer indicating the number of permutation to do to simulate
 the random distribution of the spatial inconsistency}
 }
 \value{
-a named list with :
+A named list with :
 \itemize{
         \item MoranValues : the moran I values fo each column of the belonging
          matrix (spdep::MoranI)
@@ -30,6 +30,8 @@ a named list with :
 }
 }
 \description{
+Utility function to facilitate the spatial diagnostic of a classification
+
 Calculate the following indicators : Moran I index (spdep::moranI) for each
 column of the belonging matrix, Join count test (spdep::joincount.multi) for
 the most likely groups of each datapoint, Spatial consistency index (see

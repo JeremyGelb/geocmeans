@@ -2,28 +2,28 @@
 % Please edit documentation in R/main_functions.R
 \name{calcSWFCCentroids}
 \alias{calcSWFCCentroids}
-\title{Calculate the new centroids of the clusters based on the belonging matrix (spatial version)}
+\title{Calculate the centroids (spatial version)}
 \usage{
 calcSWFCCentroids(data, wdata, belongmatrix, m, alpha)
 }
 \arguments{
-\item{data}{a dataframe or matrix representing the observed data with n rows
+\item{data}{A dataframe or matrix representing the observed data with n rows
 and p columns}
 
-\item{wdata}{a dataframe or matrix representing the lagged observed data with
+\item{wdata}{A dataframe or matrix representing the lagged observed data with
 nrows and p columns}
 
 \item{belongmatrix}{A n X k matrix giving for each observation n, its
 probability to belong to the cluster k}
 
-\item{m}{an integer representing the fuzziness degree}
+\item{m}{An integer representing the fuzziness degree}
 
-\item{alpha}{a float representing the weight of the space in the analysis (0
+\item{alpha}{A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 }
 \value{
-a n X k matrix representing the belonging probabilities of each
+A n X k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
@@ -32,3 +32,4 @@ Calculate the new centroids of the clusters based on the belonging matrix (spati
 \examples{
 #This is an internal function, no example provided
 }
+\keyword{internal}

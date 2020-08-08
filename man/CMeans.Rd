@@ -2,7 +2,7 @@
 % Please edit documentation in R/main_functions.R
 \name{CMeans}
 \alias{CMeans}
-\title{clasical c-mean algorithm}
+\title{C-means}
 \usage{
 CMeans(
   data,
@@ -16,27 +16,27 @@ CMeans(
 )
 }
 \arguments{
-\item{data}{a dataframe with only numerical variable}
+\item{data}{A dataframe with only numerical variable}
 
-\item{k}{an integer describing the number of cluster to find}
+\item{k}{An integer describing the number of cluster to find}
 
-\item{m}{a float for the fuzziness degree}
+\item{m}{A float for the fuzziness degree}
 
-\item{maxiter}{a float for the maximum number of iteration}
+\item{maxiter}{A float for the maximum number of iteration}
 
-\item{tol}{the tolerance criterion used in the evaluateMatrices function for
+\item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{standardize}{a boolean to specify if the variables must be centered and
+\item{standardize}{A boolean to specify if the variables must be centered and
 reduce (default = True)}
 
-\item{verbose}{a boolean to specify if the messages should be displayed}
+\item{verbose}{A boolean to specify if the messages should be displayed}
 
-\item{seed}{an integer used for random number generation. It ensures that the
+\item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 }
 \value{
-a named list with :
+A named list with :
  \itemize{
         \item Centers: a dataframe describing the final centers of the groups
         \item Belongings: the final belonging matrix
@@ -45,7 +45,7 @@ a named list with :
 }
 }
 \description{
-clasical c-mean algorithm
+The clasical c-mean algorithm
 }
 \examples{
 data(LyonIris)

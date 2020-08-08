@@ -2,9 +2,7 @@
 % Please edit documentation in R/side_functions.R
 \name{select_parameters.mc}
 \alias{select_parameters.mc}
-\title{Function to select the parameters of the classification alpha, k and m.
-This version of the function allows to use a plan defined with the package
-future to reduce calculation time}
+\title{Select parameters for clustering algorithm (multicore)}
 \usage{
 select_parameters.mc(
   data,
@@ -23,42 +21,42 @@ select_parameters.mc(
 )
 }
 \arguments{
-\item{data}{a dataframe with numeric columns}
+\item{data}{A dataframe with numeric columns}
 
-\item{k}{a sequence of values for k to test (>=2)}
+\item{k}{A sequence of values for k to test (>=2)}
 
-\item{m}{a sequence of values for m to test}
+\item{m}{A sequence of values for m to test}
 
-\item{alpha}{a sequence of values for alpha to test}
+\item{alpha}{A sequence of values for alpha to test}
 
-\item{nblistw}{a list of list.w objects describing the neighbours typically
+\item{nblistw}{A list of list.w objects describing the neighbours typically
 produced by the spdep package}
 
-\item{lag_method}{a string indicating if a classical lag must be used
+\item{lag_method}{A string indicating if a classical lag must be used
 ("mean") or if a weighted median must be used ("median"). Both can be
 tested by specifying a vector : c("mean","median")}
 
-\item{spconsist}{a boolean indicating if the spatial consistency must be
+\item{spconsist}{A boolean indicating if the spatial consistency must be
 calculated}
 
-\item{classidx}{a boolean indicating if the quality of classification
+\item{classidx}{A boolean indicating if the quality of classification
 indices must be calculated}
 
-\item{standardize}{a boolean to specify if the variable must be centered and
+\item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
 
-\item{maxiter}{an integer for the maximum number of iteration}
+\item{maxiter}{An integer for the maximum number of iteration}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{seed}{an integer used for random number generation. It ensures that the
+\item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
 
 \item{chunk_size}{The size of a chunk used for multiprocessing. Default is 100.}
 }
 \value{
-a dataframe with indicators assessing the quality of classifications
+A dataframe with indicators assessing the quality of classifications
 }
 \description{
 Function to select the parameters of the classification alpha, k and m.

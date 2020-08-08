@@ -2,18 +2,17 @@
 % Please edit documentation in R/main_functions.R
 \name{calcEuclideanDistance}
 \alias{calcEuclideanDistance}
-\title{Calculate the euclidean distance between a numeric matrix n * p and a numeric
-vector of length p}
+\title{Calculate the Euclidean distance}
 \usage{
 calcEuclideanDistance(m, v)
 }
 \arguments{
-\item{m}{a n * p matrix or dataframe with only numeric columns}
+\item{m}{A n * p matrix or dataframe with only numeric columns}
 
-\item{v}{a numeric vector of length p}
+\item{v}{A numeric vector of length p}
 }
 \value{
-a vector of length n giving the euclidean distance between all matrix
+A vector of length n giving the euclidean distance between all matrix
   row and the vector p
 }
 \description{
@@ -23,3 +22,4 @@ vector of length p
 \examples{
 #This is an internal function, no example provided
 }
+\keyword{internal}

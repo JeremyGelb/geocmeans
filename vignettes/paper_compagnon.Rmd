@@ -388,6 +388,35 @@ cmeans_belong_mat <- cmean_result$Belongings[,c(1,3,2,4)]
 spiderPlots(LyonIris@data[Vars], sfcm_belong_mat, chartcolors = c("darkorange3","grey4","gray49","royalblue"))
 ```
 
+Some people doest no like spiderplots, one can instead use barcharts.
+```{r fig.height=15, fig.width=5}
+Means <- lapply(spCmeansSummary, function(i){as.numeric(i[8,])})
+Means <- data.frame(do.call(rbind, Means))
+names(Means) <- colnames(spCmeansSummary$Cluster_1)
+Means$Cluster <- rownames(Means)
+Means <- reshape2::melt(Means, id.vars = "Cluster")
+
+
+colors <- c("Cluster_1" = "#386cb0",
+            "Cluster_2" = "#6eb97e",
+            "Cluster_3" = "#ffff99",
+            "Cluster_4" = "#fdc086")
+
+
+ggplot(Means) +
+  geom_bar(aes(x = Cluster, weight = value, fill = Cluster), width = 0.7) +
+  scale_fill_manual(values = colors) +
+  theme(panel.background = element_blank(),
+        panel.grid = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.y = element_blank()
+        ) + 
+  facet_wrap(vars(variable), ncol=3, scales="free_y")
+
+```
+
+
 ```{r fig.height=15, fig.width=5}
 violin_plots <- violinPlots(LyonIris@data[Vars], SFCM_result$Groups)
 
@@ -413,6 +442,7 @@ row.names(counts) <- c("HAC","FCM","ClustGeo","SFCM")
 kable(counts)
 
 ```
+
 We could also ensure that the clusters identified by the 4 methods are not to different
 ```{r}
 
@@ -450,7 +480,6 @@ quantile(most_likely,probs = c(0.05,0.1,0.25,0.5,0.75,0.9,0.95))
 
 ```
 Considering the previous distribution, we decide to label as unclassified the observations for which the maximum probability in the belonging matrix is below 0.4.
-
 
 
 ```{r}

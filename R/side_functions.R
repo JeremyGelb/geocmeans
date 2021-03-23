@@ -249,9 +249,13 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
     ## calcul de l'inconsistence spatiale actuelle
     obsdev <- sapply(1:nrow(belongmat), function(i) {
         row <- belongmat[i, ]
-        neighbours <- belongmat[neighbours[[i]], ]
+        idneighbour <- neighbours[[i]]
+        neighbour <- belongmat[idneighbour, ]
+        if (length(idneighbour) == 1){
+            neighbour <- t(as.matrix(neighbour))
+        }
         W <- weights[[i]]
-        diff <- (neighbours-row[col(neighbours)])**2
+        diff <- (neighbour-row[col(neighbour)])**2
         tot <- sum(rowSums(diff) * W)
         return(tot)
     })
@@ -265,9 +269,13 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
         belong2 <- belongmat[,sample(n)]
         simvalues <- vapply(1:ncol(belong2), function(i) {
             row <- belong2[,i]
-            neighbours <- belong2[,neighbours[[i]]]
+            idneighbour <- neighbours[[i]]
+            neighbour <- belong2[,neighbours[[i]]]
+            if (length(idneighbour) == 1){
+                neighbour <- t(as.matrix(neighbour))
+            }
             W <- weights[[i]]
-            diff <- (neighbours-row)
+            diff <- (neighbour-row)
             tot <- sum(diff^2 * W)
             return(tot)
         }, FUN.VALUE = 1)
@@ -771,6 +779,55 @@ violinPlots <- function(data,groups){
 }
 
 
+#' @title Bar plots
+#'
+#' @description Return bar plots to compare groups
+#'
+#' @param data A dataframe with numeric columns
+#' @param belongmatrix A belonging matrix
+#' @param what Can be "mean" (default) or "median"
+#' @param ncol An integer indicating the number of columns for the bar plot
+#
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
+#' barPlots(dataset, result$Belongings)
+barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
+    datasummary <- summarizeClusters(data, belongmatrix)
+    if (what == "mean"){
+        values <- lapply(datasummary, function(i){as.numeric(i[8,])})
+    } else if (what == "median"){
+        values <- lapply(datasummary, function(i){as.numeric(i[4,])})
+    }else{
+        warning('The parameter what is invalid, using what = "mean"')
+        values <- lapply(datasummary, function(i){as.numeric(i[8,])})
+    }
+
+    values <- data.frame(do.call(rbind, values))
+    names(values) <- colnames(spCmeansSummary$Cluster_1)
+    values$Cluster <- rownames(values)
+    values <- reshape2::melt(values, id.vars = "Cluster")
+
+
+    faceplot <- ggplot(values) +
+        geom_bar(aes(x = Cluster, weight = value, fill = Cluster), width = 0.7) +
+        theme(panel.background = element_blank(),
+              panel.grid = element_blank(),
+              axis.text.x = element_blank(),
+              axis.ticks.x = element_blank(),
+              axis.title.y = element_blank()
+        ) +
+        facet_wrap(vars(variable), ncol=ncol, scales="free_y")
+    return(faceplot)
+
+}
+
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ##### Functions to select parameters #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1003,5 +1060,25 @@ adjustSpatialWeights <- function(data,listw,style){
 
 
 
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+##### Utilitary functions #####
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#' @title Convert categories to belonging matrix
+#'
+#' @description Function to Convert categories to belonging matrix (binary matrix)
+#'
+#' @param categories A vector with the categories of each observation
+#'
+#' @return a matrix
+#' @export
+cat_to_belongings <- function(categories){
+    cats <- unique(categories)
+    cols <- lapply(cats, function(i){
+        return (ifelse(categories == i, 1, 0))
+    })
+    mat <- do.call(cbind, cols)
+    return(mat)
+}
 
 

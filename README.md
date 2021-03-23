@@ -2,7 +2,7 @@
 
 <img src="man/figures/geocmeans_logo.png" width = 120 alt="geocmeans Logo"/>
 
-A R package to perform spatially constrained cmeans.
+A R package to perform Spatial Fuzzy C-means.
 
 ## Getting Started
 

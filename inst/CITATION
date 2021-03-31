@@ -1,19 +1,19 @@
 citHeader("To cite geocmeans in publications use:")
 
 citEntry(entry = "Article",
-  title        = "Spatially constraint c-means algorithm {geocmeans}",
+  title        = "Apport de la classification floue c-means spatiale en géographie : essai de taxinomie sociorésidentielle et environnementale à Lyon",
   author       = personList(as.person("Jeremy Gelb"),
                    as.person("Phillipe Apparicio")),
-  journal      = "somewhere one day we hope",
-  year         = "2020",
+  journal      = "Cybergeo",
+  year         = "2021",
   volume       = "40",
   number       = "3",
   pages        = "1--25",
   url          = "http://onyadream/letssee",
 
   textVersion  =
-  paste("Jeremy Gelb, Phillipe Apparicio (2020).",
-        "Spatially constraint c-means algorithm.",
+  paste("Jeremy Gelb, Phillipe Apparicio (2021).",
+        "Apport de la classification floue c-means spatiale en géographie : essai de taxinomie sociorésidentielle et environnementale à Lyon.",
         "somewhere one day we hope, 40(3), 1-25.",
         "URL http://onyadream/letssee")
 )

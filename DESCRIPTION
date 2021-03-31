@@ -1,7 +1,7 @@
 Package: geocmeans
 Type: Package
-Title: Implementing Methods For Spatial Fuzzy C-Means Algorithm
-Version: 0.1.1.9000
+Title: Implementing Methods for Spatial Fuzzy C-Means Algorithm
+Version: 0.1.1
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
@@ -14,34 +14,37 @@ Imports:
     fclust (>= 2.1.1),
     fmsb (>= 0.7.0),
     broom (>= 0.5.2),
-    maptools (>= 0.9-5),
-    rgeos (>= 0.5-2),
-    future (>= 1.16.0),
     future.apply (>= 1.4.0),
-    progressr (>= 0.4.0)
+    progressr (>= 0.4.0),
+    reshape2 (>= 1.4.4),
+    sp (>= 1.4-4),
+    stats (>= 4.1)
 Depends:
     R (>= 3.5)
 Suggests:
     knitr (>= 1.28),
     rmarkdown (>= 2.1),
+    maptools (>= 0.9-5),
+    rgeos (>= 0.5-2),
+    future (>= 1.16.0),
     ppclust (>= 1.1.0),
-	  sp (>= 1.4-1),
 	  ClustGeo (>= 2.0),
 	  car (>= 3.0-7),
 	  rgl (>= 0.100),
 	  ggpubr (>= 0.2.5),
 	  RColorBrewer (>= 1.1-2),
-	  kableExtra (>= 1.1.0)
+	  kableExtra (>= 1.1.0),
+	  viridis (>= 0.5.1)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
-Description: Provides functions to apply Spatial Fuzzy C-Means 
-    Algorithm and to visualize and interpret results. This method is 
+Description: Provides functions to apply Spatial Fuzzy c-means 
+    Algorithm, visualize and interpret results. This method is 
     particulary revelant when the user wants to analyze data with a 
     fuzzy clustering algorithm and to take into account the spatial dimension of 
-    the dataset. Tests for estimating the spatial consistency gain and explained 
-    semantic inertia loss are proposed in addition.
-URL: http://github.com/JeremyGelb/geocmeans
-BugReports: http://github.com/JeremyGelb/geocmeans/issues
+    the dataset. Tests for estimating the spatial consistency and classification 
+    quality are proposed in addition.
+URL: https://github.com/JeremyGelb/geocmeans
+BugReports: https://github.com/JeremyGelb/geocmeans/issues

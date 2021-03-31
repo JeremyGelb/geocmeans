@@ -182,6 +182,9 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
                     Cluster = paste("Cluster_", i, sep = "")))
     })
     morandf <- as.data.frame(t(Values))
+    for(col in colnames(morandf)){
+        morandf[[col]] <- unlist(morandf[[col]])
+    }
     # attribution des groupes
     groups <- colnames(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
     if (is.null(undecided) == FALSE) {
@@ -787,7 +790,6 @@ violinPlots <- function(data,groups){
 #' @param belongmatrix A belonging matrix
 #' @param what Can be "mean" (default) or "median"
 #' @param ncol An integer indicating the number of columns for the bar plot
-#
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -810,20 +812,20 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
     }
 
     values <- data.frame(do.call(rbind, values))
-    names(values) <- colnames(spCmeansSummary$Cluster_1)
+    names(values) <- colnames(datasummary$Cluster_1)
     values$Cluster <- rownames(values)
     values <- reshape2::melt(values, id.vars = "Cluster")
 
 
-    faceplot <- ggplot(values) +
-        geom_bar(aes(x = Cluster, weight = value, fill = Cluster), width = 0.7) +
-        theme(panel.background = element_blank(),
-              panel.grid = element_blank(),
-              axis.text.x = element_blank(),
-              axis.ticks.x = element_blank(),
-              axis.title.y = element_blank()
+    faceplot <- ggplot2::ggplot(values) +
+        ggplot2::geom_bar(ggplot2::aes_string(x = "Cluster", weight = "value", fill = "Cluster"), width = 0.7) +
+        ggplot2::theme(panel.background = ggplot2::element_blank(),
+              panel.grid = ggplot2::element_blank(),
+              axis.text.x = ggplot2::element_blank(),
+              axis.ticks.x = ggplot2::element_blank(),
+              axis.title.y = ggplot2::element_blank()
         ) +
-        facet_wrap(vars(variable), ncol=ncol, scales="free_y")
+        ggplot2::facet_wrap(ggplot2::vars(values$variable), ncol=ncol, scales="free_y")
     return(faceplot)
 
 }
@@ -836,6 +838,7 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #'
 #' @description Worker function for select_parameters and select_parameters.mc
 #'
+#' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
 #' @param parameters A dataframe of parameters with columns k,m and alpha
 #' @param data A dataframe with numeric columns
 #' @param nblistw A list.w object describing the neighbours typically produced
@@ -851,20 +854,47 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #'   convergence assessment
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
+#' @param verbose A boolean indicating if a progressbar should be displayed
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @keywords internal
 #' @examples
 #' #No example provided, this is an internal function
-eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, classidx, tol, maxiter, seed=123){
-    pb <- txtProgressBar(min = 0, max = nrow(parameters), style = 3)
+eval_parameters <- function(algo, parameters,data, nblistw, standardize,spconsist, classidx, tol, maxiter, seed=NULL, verbose = TRUE){
+    if(algo == "FCM"){
+        exefun <- function(data,x, lw){
+            return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+        }
+    }else if(algo == "GFCM"){
+        exefun <- function(data,x, lw){
+            return(GCMeans(data, x$k, x$m, x$beta, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+        }
+    }else if(algo == "SFCM"){
+        exefun <- function(data,x, lw){
+            return(SFCMeans(data, lw, x$k, x$m, x$alpha, x$lag_method, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+        }
+    }else if(algo == "SGFCM"){
+        exefun <- function(data,x, lw){
+            return(SGFCMeans(data, lw, x$k, x$m, x$alpha, x$beta, x$lag_method, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+        }
+    }else{
+        stop("The algo selected must be one in FCM, GFCM, SFCM, SGFCM")
+    }
+
+    if(verbose){
+        pb <- txtProgressBar(min = 0, max = nrow(parameters), style = 3)
+    }
     cnt <- 1
-    allIndices <- apply(parameters,MARGIN = 1, function(row){
-        setTxtProgressBar(pb, cnt)
+    allIndices <- lapply(1:nrow(parameters), function(i){
+        row <- parameters[i,]
+        if(verbose){
+            setTxtProgressBar(pb, cnt)
+        }
         cnt <<- cnt+1
-        templistw <- nblistw[[as.numeric(row[[4]])]]
-        invisible(capture.output(result <- SFCMeans(data,templistw,k=as.numeric(row[[1]]),m=as.numeric(row[[2]]),
-                        alpha=as.numeric(row[[3]]),lag_method=row[[5]],
-                        maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed, tol=tol)))
+        templistw <- nblistw[[row$listsw]]
+        # invisible(capture.output(result <- SFCMeans(data,templistw,k=as.numeric(row[[1]]),m=as.numeric(row[[2]]),
+        #                 alpha=as.numeric(row[[3]]),lag_method=row[[5]],
+        #                 maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed, tol=tol)))
+        result <- exefun(data,row,templistw)
         #calculating the quality indexes
         indices <- list()
         if(classidx){
@@ -878,29 +908,35 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
             indices$spConsistency_95 <- consist$prt95
         }
 
-        return(indices)
+        return(unlist(indices))
     })
-    dfIndices <-  as.data.frame(t(matrix(unlist(allIndices), nrow=length(unlist(allIndices[1])))))
-    names(dfIndices) <- names(allIndices[[1]])
+    dfIndices <- data.frame(do.call(rbind,allIndices))
     dfIndices$k <- parameters$k
     dfIndices$m <- parameters$m
-    dfIndices$alpha <- parameters$alpha
-    dfIndices$listw <- parameters$listsw
-    dfIndices$lag_method <- parameters$lag_method
+    if(algo %in% c("SFCM","SGFCM")){
+        dfIndices$alpha <- parameters$alpha
+        dfIndices$listw <- parameters$listsw
+        dfIndices$lag_method <- parameters$lag_method
+    }
+    if(algo %in% c("GFCM","SGFCM")){
+        dfIndices$beta <- parameters$beta
+    }
     return(dfIndices)
 }
 
 
 #' @title Select parameters for clustering algorithm
 #'
-#' @description Function to select the parameters of the classification alpha, k and m
+#' @description Function to select the parameters of the classification
 #'
+#' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
 #' @param data A dataframe with numeric columns
 #' @param k A sequence of values for k to test (>=2)
 #' @param m A sequence of values for m to test
-#' @param alpha A sequence of values for alpha to test
+#' @param alpha A sequence of values for alpha to test (NULL if not required)
+#' @param beta A sequence of values for beta to test (NULL if not required)
 #' @param nblistw A list of list.w objects describing the neighbours typically
-#'  produced by the spdep package
+#'  produced by the spdep package (NULL if not required)
 #' @param lag_method A string indicating if a classical lag must be used
 #' ("mean") or if a weighted median must be used ("median"). Both can be
 #' tested by specifying a vector : c("mean","median")
@@ -915,9 +951,11 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
 #'   convergence assessment
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
+#' @param verbose A boolean indicating if a progressbar should be displayed
 #' @return A dataframe with indicators assessing the quality of classifications
 #' @export
 #' @examples
+#' \dontrun{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
@@ -926,9 +964,10 @@ eval_parameters <- function(parameters,data, nblistw, standardize,spconsist, cla
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' #set spconsist to TRUE to calculate the spatial consistency indicator
 #' #FALSE here to reduce the time during package check
-#' values <- select_parameters(dataset, k = 5, m = seq(2,3,0.1),
+#' values <- select_parameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
-select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed=123){
+#' }
+select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed=NULL, verbose = TRUE){
 
     if(spconsist==F & classidx==F){
         stop("one of spconsist and classidx must be TRUE")
@@ -937,11 +976,11 @@ select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spcons
     if(class(nblistw)[[1]]!="list"){
         nblistw <- list(nblistw)
     }
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,listsw=1:length(nblistw),lag_method=lag_method)
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method)
 
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
-    dfIndices <- eval_parameters(allcombinaisons, data, nblistw, standardize,
-        spconsist, classidx, tol, maxiter, seed)
+    dfIndices <- eval_parameters(algo,allcombinaisons, data, nblistw, standardize,
+        spconsist, classidx, tol, maxiter, seed, verbose)
 }
 
 
@@ -952,12 +991,14 @@ select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spcons
 #' This version of the function allows to use a plan defined with the package
 #' future to reduce calculation time
 #'
+#' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
 #' @param data A dataframe with numeric columns
 #' @param k A sequence of values for k to test (>=2)
 #' @param m A sequence of values for m to test
-#' @param alpha A sequence of values for alpha to test
+#' @param alpha A sequence of values for alpha to test (NULL if not required)
+#' @param beta A sequence of values for beta to test (NULL if not required)
 #' @param nblistw A list of list.w objects describing the neighbours typically
-#'  produced by the spdep package
+#'  produced by the spdep package (NULL if not required)
 #' @param lag_method A string indicating if a classical lag must be used
 #' ("mean") or if a weighted median must be used ("median"). Both can be
 #' tested by specifying a vector : c("mean","median")
@@ -973,10 +1014,12 @@ select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spcons
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @param chunk_size The size of a chunk used for multiprocessing. Default is 100.
+#' @param verbose A boolean indicating if a progressbar should be displayed
 #' @return A dataframe with indicators assessing the quality of classifications
 #' @export
 #' @importFrom utils setTxtProgressBar txtProgressBar capture.output
 #' @examples
+#' \dontrun{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
@@ -986,13 +1029,14 @@ select_parameters <- function(data,k,m,alpha, nblistw, lag_method="mean", spcons
 #' future::plan(future::multiprocess(workers=2))
 #' #set spconsist to TRUE to calculate the spatial consistency indicator
 #' #FALSE here to reduce the time during package check
-#' values <- select_parameters.mc(dataset, k = 5, m = seq(1,2.5,0.1),
+#' values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 #' \dontshow{
 #'    ## R CMD check: make sure any open connections are closed afterward
 #'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
+#' }
 #'}
-select_parameters.mc <- function(data,k,m,alpha, nblistw, lag_method="mean",  spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = 123, chunk_size=100){
+select_parameters.mc <- function(algo,data,k,m,alpha,beta, nblistw, lag_method="mean",  spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
 
     if(spconsist==F & classidx==F){
         stop("one of spconsist and classidx must be TRUE")
@@ -1001,7 +1045,10 @@ select_parameters.mc <- function(data,k,m,alpha, nblistw, lag_method="mean",  sp
     if(class(nblistw)[[1]]!="list"){
         nblistw <- list(nblistw)
     }
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,listsw=1:length(nblistw), lag_method=lag_method)
+    if(is.null(seed)){
+        seed <- FALSE
+    }
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha, beta = beta, listsw=1:length(nblistw), lag_method=lag_method)
 
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     chunks <- split(1:nrow(allcombinaisons), rep(1:ceiling(nrow(allcombinaisons) / chunk_size),
@@ -1009,16 +1056,26 @@ select_parameters.mc <- function(data,k,m,alpha, nblistw, lag_method="mean",  sp
     chunks <- lapply(chunks,function(x){return(allcombinaisons[x,])})
     # step2 : starting the function
     iseq <- 1:length(chunks)
-    progressr::with_progress({
-        p <- progressr::progressor(along = iseq)
+    if(verbose){
+        progressr::with_progress({
+            p <- progressr::progressor(along = iseq)
+            values <- future.apply::future_lapply(iseq, function(i) {
+                parameters <- chunks[[i]]
+                indices <- eval_parameters(algo, parameters, data, nblistw, standardize,
+                                                             spconsist, classidx, tol, maxiter)
+                p(sprintf("i=%g", i))
+                return(indices)
+            }, future.seed = seed)
+        })
+    }else{
         values <- future.apply::future_lapply(iseq, function(i) {
             parameters <- chunks[[i]]
             invisible((capture.output(indices <- eval_parameters(parameters, data, nblistw, standardize,
-                spconsist, classidx, tol, maxiter, seed))))
-            p(sprintf("i=%g", i))
+                                                                 spconsist, classidx, tol, maxiter))))
             return(indices)
-        })
-    })
+        },future.seed = seed)
+    }
+
     dfIndices <- do.call(rbind,values)
     return(dfIndices)
 }
@@ -1032,11 +1089,11 @@ select_parameters.mc <- function(data,k,m,alpha, nblistw, lag_method="mean",  sp
 #' @description Function to adjust the spatial weights so that they represent semantic
 #' distances between neighbours
 #'
-#' @param data a dataframe with numeric columns
-#' @param listw a nb object from spdep
-#' @param style a letter indicating the weighting scheme (see spdep doc)
+#' @param data A dataframe with numeric columns
+#' @param listw A nb object from spdep
+#' @param style A letter indicating the weighting scheme (see spdep doc)
 #'
-#' @return a listw object (spdep like)
+#' @return A listw object (spdep like)
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -1070,7 +1127,7 @@ adjustSpatialWeights <- function(data,listw,style){
 #'
 #' @param categories A vector with the categories of each observation
 #'
-#' @return a matrix
+#' @return A binary matrix
 #' @export
 cat_to_belongings <- function(categories){
     cats <- unique(categories)

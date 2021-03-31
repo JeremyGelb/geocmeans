@@ -5,6 +5,7 @@
 \title{Worker function}
 \usage{
 eval_parameters(
+  algo,
   parameters,
   data,
   nblistw,
@@ -13,10 +14,13 @@ eval_parameters(
   classidx,
   tol,
   maxiter,
-  seed = 123
+  seed = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
+\item{algo}{A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)}
+
 \item{parameters}{A dataframe of parameters with columns k,m and alpha}
 
 \item{data}{A dataframe with numeric columns}
@@ -40,6 +44,8 @@ convergence assessment}
 
 \item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
+
+\item{verbose}{A boolean indicating if a progressbar should be displayed}
 }
 \description{
 Worker function for select_parameters and select_parameters.mc

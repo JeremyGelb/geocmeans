@@ -1,6 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\data\IRIS_GrandLyonPollutionINSEE_ssHydro_veg2.gpkg #original datafile
 ^\R\test.R # exploration
 ^\references$ # fichiers PDF des articles des methodes
 ^\tests$ # fichiers tests

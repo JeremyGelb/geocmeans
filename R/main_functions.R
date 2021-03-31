@@ -239,7 +239,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
 #' @param standardize A boolean to specify if the variables must be centered and
-#'   reduce (default = True)
+#'   reduced (default = True)
 #' @param verbose A boolean to specify if the messages should be displayed
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
@@ -267,51 +267,57 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
             data[, i] <- scale(data[, i])
         }
     }
-    # selecting the original centers from observations
-    if(is.null(seed)==F){
-        set.seed(seed)
-    }
-    centers <- data[sample(nrow(data), k), ]
-
-    # calculating the first belonging matrix
-    belongmatrix <- calcBelongMatrix(centers, data, m)
-    CriterioReached <- FALSE
-
-    # starting the loop
-    if(verbose){
-        pb <- txtProgressBar(1, maxiter, style = 3)
-    }
-    pb <- txtProgressBar(1, maxiter, style = 3)
-    for (i in 1:maxiter) {
-        if (verbose){
-            setTxtProgressBar(pb, i)
-        }
-        newcenters <- calcCentroids(data, belongmatrix, m)
-        newbelongmatrix <- calcBelongMatrix(newcenters, data, m)
-        if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
-            # if we don't reach convergence criterion
-            centers <- newcenters
-            belongmatrix <- newbelongmatrix
-        } else {
-            # if we reach convergence criterion
-            if (verbose){
-                print("criterion reached")
-            }
-            CriterioReached <- TRUE
-            centers <- newcenters
-            belongmatrix <- newbelongmatrix
-            break
-        }
-    }
-
-    if(CriterioReached==FALSE){
-        warning("The convergence criterion was not reached within the specified number of steps")
-    }
-    # calculating the most likely group of earch data point
-    DF <- as.data.frame(newbelongmatrix)
-    groups <- colnames(DF)[max.col(DF, ties.method = "first")]
-    return(list(Centers = centers, Belongings = newbelongmatrix,
-                Groups = groups, Data = data))
+    data <- as.matrix(data)
+    results <- main_worker("FCM", data = data, k = k, m = m,
+                           maxiter = maxiter, tol = tol, standardize = standardize,
+                           verbose = verbose, seed = seed
+                           )
+    return(results)
+    # # selecting the original centers from observations
+    # if(is.null(seed)==F){
+    #     set.seed(seed)
+    # }
+    # centers <- data[sample(nrow(data), k), ]
+    #
+    # # calculating the first belonging matrix
+    # belongmatrix <- calcBelongMatrix(centers, data, m)
+    # CriterioReached <- FALSE
+    #
+    # # starting the loop
+    # if(verbose){
+    #     pb <- txtProgressBar(1, maxiter, style = 3)
+    # }
+    # pb <- txtProgressBar(1, maxiter, style = 3)
+    # for (i in 1:maxiter) {
+    #     if (verbose){
+    #         setTxtProgressBar(pb, i)
+    #     }
+    #     newcenters <- calcCentroids(data, belongmatrix, m)
+    #     newbelongmatrix <- calcBelongMatrix(newcenters, data, m)
+    #     if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
+    #         # if we don't reach convergence criterion
+    #         centers <- newcenters
+    #         belongmatrix <- newbelongmatrix
+    #     } else {
+    #         # if we reach convergence criterion
+    #         if (verbose){
+    #             print("criterion reached")
+    #         }
+    #         CriterioReached <- TRUE
+    #         centers <- newcenters
+    #         belongmatrix <- newbelongmatrix
+    #         break
+    #     }
+    # }
+    #
+    # if(CriterioReached==FALSE){
+    #     warning("The convergence criterion was not reached within the specified number of steps")
+    # }
+    # # calculating the most likely group of earch data point
+    # DF <- as.data.frame(newbelongmatrix)
+    # groups <- colnames(DF)[max.col(DF, ties.method = "first")]
+    # return(list(Centers = centers, Belongings = newbelongmatrix,
+    #             Groups = groups, Data = data))
 }
 
 
@@ -353,7 +359,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
 #' @param standardize A boolean to specify if the variable must be centered and
-#'   reduce (default = True)
+#'   reduced (default = True)
 #' @param verbose A boolean to specify if the progress bar should be displayed
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
@@ -374,6 +380,15 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 SFCMeans <- function(data, nblistw, k, m, alpha, lag_method="mean", maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
+
+    if(class(nblistw)[[1]] != "listw"){
+        stop("the nblistw must be a listw object from spdep package")
+    }
+
+    if(lag_method %in% c("mean","median") == FALSE){
+        stop("the parameter lag_method must be one of 'mean' or 'median'")
+    }
+
     # standardize data if required
     if (standardize) {
         if (verbose){
@@ -389,47 +404,52 @@ SFCMeans <- function(data, nblistw, k, m, alpha, lag_method="mean", maxiter = 50
 
     data <- as.matrix(data)
     wdata <- as.matrix(wdata)
-    # selecting the original centers from observations
-    if (is.null(seed)==F){
-        set.seed(seed)
-    }
-    centers <- data[sample(nrow(data), k), ]
-
-    # calculating the first belonging matrix
-    belongmatrix <- calcSFCMBelongMatrix(centers, data, wdata, m, alpha = alpha)
-    CriterioReached <- FALSE
-
-    # starting the loop
-    if(verbose){
-        pb <- txtProgressBar(1, maxiter, style = 3)
-    }
-    for (i in 1:maxiter) {
-        if(verbose){
-            setTxtProgressBar(pb, i)
-        }
-        newcenters <- calcSWFCCentroids(data, wdata, belongmatrix, m, alpha)
-        newbelongmatrix <- calcSFCMBelongMatrix(newcenters, data, wdata, m, alpha = alpha)
-        if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
-            # if we don't reach convergence criterion
-            centers <- newcenters
-            belongmatrix <- newbelongmatrix
-        } else {
-            # if we reach convergence criterion
-            if (verbose){
-                print("criterion reached")
-            }
-            CriterioReached <- TRUE
-            centers <- newcenters
-            break
-        }
-    }
-    # calculating the most likely group of earch data point
-    if(CriterioReached==FALSE){
-        warning("The convergence criterion was not reached within the specified number of steps")
-    }
-    DF <- as.data.frame(newbelongmatrix)
-    Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
-    return(list(Centers = centers, Belongings = newbelongmatrix,
-                Groups = Groups, Data = data))
+    results <- main_worker("SFCM", data = data, wdata = wdata,
+                           nblistw = nblistw, k = k, m = m, alpha = alpha,
+                           lag_method=lag_method, maxiter = maxiter, tol = tol,
+                           standardize = standardize, verbose = verbose, seed = seed)
+    return(results)
+    # # selecting the original centers from observations
+    # if (is.null(seed)==F){
+    #     set.seed(seed)
+    # }
+    # centers <- data[sample(nrow(data), k), ]
+    #
+    # # calculating the first belonging matrix
+    # belongmatrix <- calcSFCMBelongMatrix(centers, data, wdata, m, alpha = alpha)
+    # CriterioReached <- FALSE
+    #
+    # # starting the loop
+    # if(verbose){
+    #     pb <- txtProgressBar(1, maxiter, style = 3)
+    # }
+    # for (i in 1:maxiter) {
+    #     if(verbose){
+    #         setTxtProgressBar(pb, i)
+    #     }
+    #     newcenters <- calcSWFCCentroids(data, wdata, belongmatrix, m, alpha)
+    #     newbelongmatrix <- calcSFCMBelongMatrix(newcenters, data, wdata, m, alpha = alpha)
+    #     if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
+    #         # if we don't reach convergence criterion
+    #         centers <- newcenters
+    #         belongmatrix <- newbelongmatrix
+    #     } else {
+    #         # if we reach convergence criterion
+    #         if (verbose){
+    #             print("criterion reached")
+    #         }
+    #         CriterioReached <- TRUE
+    #         centers <- newcenters
+    #         break
+    #     }
+    # }
+    # # calculating the most likely group of earch data point
+    # if(CriterioReached==FALSE){
+    #     warning("The convergence criterion was not reached within the specified number of steps")
+    # }
+    # DF <- as.data.frame(newbelongmatrix)
+    # Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
+    # return(list(Centers = centers, Belongings = newbelongmatrix,
+    #             Groups = Groups, Data = data))
 }
 

@@ -21,19 +21,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This document is a short introduction to the package geocmeans. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation
+This document is a short introduction to the package **geocmeans**. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation
 
-The reference can be found here : [https://doi.org/10.1016/j.patcog.2006.07.011](https://doi.org/10.1016/j.patcog.2006.07.011)
+The original paper describing the method can be found here : [https://doi.org/10.1016/j.patcog.2006.07.011](https://doi.org/10.1016/j.patcog.2006.07.011)
 
-There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*,*kmeans*,*cmeans*,*factoextra*, etc.). However theses methods are not always well suited for analyzing spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solution where close observation end up in different groups despite the fact that they are very similar.
+There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*,*kmeans*,*cmeans*,*factoextra*, etc.). However theses methods are not always well suited to analyze spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solutions where close observations end up in different groups despite the fact that they are very similar.
 
-The package *ClustGeo* is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between observations The proposed approach is very appealing because the user has to select a parameter (alpha) that control the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated  between observations with their variables).
+The package *ClustGeo* is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between observations. The proposed approach is very appealing because the user has to select a parameter (alpha) that controls the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated  between observations with their variables).
 
-However, this method belongs to the category of "hard-clustering" algorithms. Each observation end up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms give more informations because they calculate for each observation its "probability" of belonging to each group.
+However, this method belongs to the category of "hard-clustering" algorithms. Each observation ends up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms give more informations because they calculate for each observation its "probability" of belonging to each group.
 
-The algorithm FCMS (fast spatial c-means) proposes to combine the best of both worlds
 
-The package geocmeans is an implementation in R of this method (originally developed for analysis of brain imagery). It comes with a set of function to facilitate the analysis of the final belonging matrices like calculating many quality indices (coming mainly from the package *fclust*), mapping the results or giving summary statistics for each cluster/group.
+The algorithm SFCM (spatial fuzzy c-means) and SGFCM (spatial generalized fuzzy c-means)  propose to combine the best of both worlds
+
+The package geocmeans is an implementation in R of these methods (originally developed for analysis of brain imagery). It comes with a set of functions to facilitate the analysis of the final belonging matrices like calculating many quality indices (coming mainly from the package *fclust*), mapping the results or giving summary statistics for each cluster/group.
 
 ## Loading the packages and the data
 
@@ -41,12 +42,14 @@ This package comes with a toy dataset LyonIris, combining many demographic and e
 
 Before starting the analysis, it is required to standardize the data because most of the calculus is based on euclidean distance.
 
-```{r echo=FALSE, warning=FALSE}
-#devtools::load_all("..")
-#charging package and data
+```{r message=FALSE, warning=FALSE}
+#charging packages and data
 library(geocmeans)
 library(ggplot2)
+library(ggpubr)
 library(dplyr)
+library(viridis)
+library(spdep)
 
 data(LyonIris)
 
@@ -59,9 +62,15 @@ for (Col in names(Data)){
   Data[[Col]] <- scale(Data[[Col]])
 }
 
-#preparing some stuff for mapping later
+#preparing some elements for mapping later
 LyonIris$OID <- as.character(1:nrow(LyonIris))
 FortiData <- broom::tidy(LyonIris,region="OID")
+```
+
+```{r include=FALSE}
+#loading the pre-calculated results
+load(system.file("extdata", "results_vignette_intro.rda",
+                           package = "geocmeans", mustWork = TRUE))
 ```
 
 ## Classical Kmeans
@@ -87,12 +96,12 @@ ggplot(Df)+
   ylab("R2 of classification")
 ```
 
-By plotting the R2 of the kmeans classification for each k between 2 and 10, we can see a fort elbow at k=3. But this small number of group leads to a classification explaining only 43% of the original data variance. With k=5, we reach 50% of the variance, so we decide here to keep k=5.
+By plotting the R2 of the kmeans classification for each k between 2 and 10, we can see a fort elbow at k=3. But this small number of group leads to a classification explaining only 43% of the original data variance. With k=4, we reach 47% of the variance, so we decide here to keep k=4.
 
-Let's map the obtained groups.
+Let us map the obtained groups.
 
 ```{r warning=FALSE}
-KMeanClust <-  kmeans(Data,centers=5,iter.max = 150)
+KMeanClust <-  kmeans(Data,centers=4,iter.max = 150)
 LyonIris$Cluster <-paste("cluster",KMeanClust$cluster,sep="_")
 
 #mapping the groups
@@ -104,8 +113,7 @@ ggplot(data=DFmapping)+
   scale_fill_manual(name="Cluster",values = c("cluster_1"="palegreen3",
                                  "cluster_2"="firebrick",
                                  "cluster_3"="lightyellow2",
-                                 "cluster_4"="steelblue",
-                                 "cluster_5"="pink"))+
+                                 "cluster_4"="steelblue"))+
   theme( axis.title = ggplot2::element_blank(),
     axis.text = ggplot2::element_blank(),
     axis.ticks = ggplot2::element_blank()
@@ -113,176 +121,286 @@ ggplot(data=DFmapping)+
 
 ```
 
-We can clearly distinguish 5 strong spatial structure, but with some mixing between the clusters 2 and 4, 4 and 1 and 2 and 5.
+We can clearly distinguish 4 strong spatial structure, but with some mixing between the clusters.
 
-We could know compare this solution with a classical cmeans algorithm.
+We could know compare this solution with a classical c-means algorithm.
 
-## classical cmeans
+## classical c-means and generalized c-means
 
-The classical cmeans will be a comparison point for the spatial cmeans latter. The package geocmeans proposes a function to apply this algorithm, but we will use here the one of the *fcm* package. We set the fuzzyness degree (m) to 1.5
+The classical c-means provides a simple method to perform fuzzy unsupervised classification. The package geocmeans proposes the function *CMeans* We set the fuzzyness degree (m) to 1.5
 
 ```{r warning=FALSE}
-library(ppclust)
+Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
+```
+We do not present here the algorithm, but only the formulas.
 
-Cmean <- fcm(Data, centers=5,m = 1.5)
+The first one is used to update the values of the belonging matrix $u_ik$
 
+$$u_{ik} = \frac{(||x_{k} - v{_i}||^{2}) ^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 )^{(-1/(m-1))}}$$
+And the second one to update the centers of the clusters
+
+$$v_{i} = \frac{\sum_{k=1}^N u_{ik}^m(x_{k})}{\sum_{k=1}^N u_{ik}^m}$$
+
+With : 
+* $x_k$ the values of the observation $k$
+* $v_i$ the values of the center of the cluster $i$
+* $c$ the number of clusters
+* $m$ the fuzzyness index
+
+We can now use the function *calcqualityIndexes* which combines many indices from the package **fclust** to analyze the quality of the classification. We will use these values latter for comparisons purpose.
+
+```{r warning=FALSE}
+calcqualityIndexes(Data, Cmean$Belongings, m = 1.5)
 ```
 
-We can now use the function *calcqualityIndexes* which combine many indices from the package *fclust* to analyze the quality of the classification
+Note, **geocmeans** proposes also a generalized version of the c-means algorithm. It is known to accelerate convergence and yield less fuzzy results by adjusting the belonging matrix at each iteration. It requires an extra parameters *beta* controlling the strength of the modification. The modification affects only the formula updating the belonging matrix.
 
-```{r warning=FALSE}
-calcqualityIndexes(Data,Cmean$u,m=1.5)
+$$u_{ik} = \frac{(||x_{k} - v{_i}||^{2} - \beta_k) ^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 - \beta_k)^{(-1/(m-1))}}$$
+
+with $\beta_k = min(||x_{k} - v||^2)$ and $0 \leq \beta \leq 1 $
+
+To select an appropriate value for this parameter, we will try all the possible values between 0 and 1 with a step of 0.05.
+
+```{r warning=FALSE, eval = FALSE}
+beta_values <- select_parameters("GFCM",data = Data, k = 4, m = 1.5, beta = seq(0,1,0.05), spconsist = F,tol = 0.00001, seed = 456)
 ```
 
-These values will be helpful in comparison with the ones we will get from SFCM. Modifying the cmeans algorithm the increase spatial consistency leads to a decrease in the quality of the classification.
-
-We can now map the belonging matrix. To do so, we can use the function *mapClusters* of *geocmeans* package. We can map the most likely group for each observation too. We propose here to define a threshold of 0.45. If an observation has only values below this probability in the belonging matrix, it will be labeled as "undecided" (represented with transparency on the map).
-
-
 ```{r warning=FALSE}
-MyMaps <- mapClusters(LyonIris,Cmean$u,undecided = 0.45)
-MyMaps$ProbaMaps[[1]]
-MyMaps$ProbaMaps[[2]]
-MyMaps$ProbaMaps[[3]]
-MyMaps$ProbaMaps[[4]]
-MyMaps$ProbaMaps[[5]]
-MyMaps$ClusterPlot
-
+knitr::kable(beta_values[c("beta","Silhouette.index","XieBeni.index","Explained.inertia")],
+             digits = 3,col.names = c("beta", "silhouette index", "Xie and Beni index", "explained inertia"))
 ```
 
-## Spatial C-means
-
-Now we can use the SFCM function to perform a spatial cmeans. The first step is to define a spatial weight matrix indicating which observations are neighbours and the strength of their relationship. We propose here to use a basic queen neighbour matrix (built with spdep). The matrix must be row-standardized to ensure that the interpretation of all the parameters remains clear.
+Considering the table above, we select beta = 0.7, it keeps a good silhouhette index, and increased Xie and Beni index and explained inertia. Let us compare the results of GFCM and FCM.
 
 ```{r warning=FALSE}
+GCmean <- GCMeans(Data,k = 4,m = 1.5, beta = 0.7,500,standardize = F,seed=456, tol = 0.00001)
+r1 <- calcqualityIndexes(Data,GCmean$Belongings,m=1.5)
+r2 <- calcqualityIndexes(Data,Cmean$Belongings,m=1.5)
+df <- cbind(unlist(r1), unlist(r2))
+
+knitr::kable(df,
+             digits = 3,col.names = c("GFCM", "FCM"))
+```
+The results indicate that the GFCM gives a solution that is less fuzzy (higher explained inertia and lower partition entropy) but keeps a good silhouette index and an even better Xie and Beni index.
+
+We can now map the two belonging matrices. To do so, we can use the function *mapClusters* from **geocmeans**. We can map the most likely group for each observation too. We propose here to define a threshold of 0.45. If an observation has only values below this probability in a belonging matrix, it will be labeled as "undecided" (represented with transparency on the map).
+
+
+We can compare the maps of the classical c-means and the generalized version.
+```{r warning=FALSE}
+cmeansMaps<- mapClusters(LyonIris,Cmean$Belongings,undecided = 0.45)
+GcmeansMaps<- mapClusters(LyonIris,GCmean$Belongings,undecided = 0.45)
+
+ggarrange(cmeansMaps$ProbaMaps[[1]],GcmeansMaps$ProbaMaps[[1]], nrow = 1, ncol = 2)
+ggarrange(cmeansMaps$ProbaMaps[[2]],GcmeansMaps$ProbaMaps[[2]], nrow = 1, ncol = 2)
+ggarrange(cmeansMaps$ProbaMaps[[3]],GcmeansMaps$ProbaMaps[[3]], nrow = 1, ncol = 2)
+ggarrange(cmeansMaps$ProbaMaps[[4]],GcmeansMaps$ProbaMaps[[4]], nrow = 1, ncol = 2)
+ggarrange(cmeansMaps$ClusterPlot,GcmeansMaps$ClusterPlot, nrow = 1, ncol = 2)
+```
+
+As expected, the results are very similar, but the generalized version provides a more clear-cut classification.
+
+## Spatial c-means and generalized c-means
+
+### Selecting alpha for SFCM
+
+Now we can use the *SFCM* function to perform a spatial c-means. The first step is to define a spatial weight matrix indicating which observations are neighbours and the strength of their relationship. We propose here to use a basic queen neighbour matrix (built with spdep). The matrix must be row-standardized to ensure that the interpretation of all the parameters remains clear.
+
+```{r message=FALSE, warning=FALSE}
 library(spdep)
 
 Neighbours <- poly2nb(LyonIris,queen = TRUE)
 WMat <- nb2listw(Neighbours,style="W",zero.policy = TRUE)
 ```
 
-The main challenge with the SFCM method is to select a parameter alpha. It represents the weight of the spatial dimension (lagged values) in the calculus of the belonging matrix and the cluster centers.
-* If alpha=0, then we end up with a classical cmeans algorithm.
+The main challenge with the SFCM method is to select the parameter *alpha*. It represents the weight of the spatial dimension (lagged values) in the calculus of the belonging matrix and the cluster centers.
+* If alpha=0, then we end up with a classical c-means algorithm.
 * If alpha=1, then the original and the lagged values have the same weight
 * If alpha=2, then the lagged values are twice more important than the original values
 * end so on...
 
-To select the parameter, we propose here an iterative method (similar to the one in the package *ClustGeo*).
+The two following formulas show how the functions updating the belonging matrix and the centers of the clusters are modified.
 
-```{r warning=FALSE, echo=FALSE, message=FALSE}
-#calculating all the classification for alpha ranging between 0 and 2 (with 0.1 step)
+$$u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}$$
 
-DFindices <- select_parameters(Data,k = 5, m = 1.5, alpha = seq(0,2,0.1),nblistw = WMat,
-            standardize = T,tol = 0.001)
-# m <- 1.5
-# AllIndices <- list()
-# for(alpha in seq(0,2,0.1)){
-#   print(paste("Calculating alpha = ",alpha,sep=""))
-#   #calculating the clustering
-#   Result <- SFCMeans(Data,WMat,5,m,alpha=alpha,tol=0.00001, verbose=TRUE)
-#   #calculating the quality indexes
-#   Indices <- calcqualityIndexes(Result$Data,Result$Belongings)
-#   Indices$alpha <- alpha
-#   #calculating spatial diag
-#   #spdiag <- spatialDiag(Result$Belongings,WMat,nrep=30)
-#   #Indices$TotalJoinCount <- spdiag$JoinCounts[nrow(spdiag$JoinCounts),1]
-#   #\Indices$SpConsistency <- spdiag$SpConsist
-#   AllIndices[[length(AllIndices)+1]]<- Indices
-# }
-# 
-# DFindices <-  as.data.frame(t(matrix(unlist(AllIndices), nrow=length(unlist(AllIndices[1])))))
-# names(DFindices) <- names(AllIndices[[1]])
+$$v_{i} = \frac{\sum_{k=1}^N u_{ik}^m(x_{k} + \alpha\bar{x_{k}})}{(1 + \alpha)\sum_{k=1}^N u_{ik}^m}$$
+with $\bar{x}$ the lagged version of x and $\alpha \geq 0$
+
+To select the parameter, we propose to check all the possible values between 0 and 2 with a step of 0.05.
+
+```{r warning=FALSE,  message=FALSE, eval = FALSE}
+DFindices_SFCM <- select_parameters(algo = "SFCM", data = Data,
+                               k = 4, m = 1.5, alpha = seq(0,2,0.05),
+                               nblistw = WMat, standardize = FALSE,
+                               tol = 0.0001, verbose = FALSE, seed = 456)
 
 ```
 
-Now we can check the indices to select the best alpha: achieving a nice spatial consistency increase with a low decrease in classification quality.
+Now we can check the indices to select the best *alpha*. The goal is to reduce as much as possible spatial inconsistency and to keep a good classification quality.
 
-Let's start with the spatial consistency. This indicator (developed for this package) proposes to calculate the sum the squared differences between each observation and its neighbours for their belonging probabilities to each cluster. Thus, the maximum for each observation is 4*j with j the number of neighbours for the observation. This maximum is reached if the the observations have 100% chance to belong to a cluster that is different from all its neighbours. So, when we sum up all the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when permuting randomly the rows of the belonging matrix. This second quantity represents the spatial inconsistency that we might expect if the clusters show no spatial consistency. We can repeat the permutation step and keep the mean of the ratios to have a more robust indicators (see help(spConsistency) for details).
+Let's start with the spatial inconsistency. This indicator (developed for this package) proposes to calculate the sum the squared differences between each observation and its neighbors for their belonging probabilities to each cluster. Thus, the maximum for each observation is $k*j$ with *j* the number of neighbours for the observation and *k* the number of groups. This maximum is reached if the the observations have 100% chance to belong to a cluster that is different from all its neighbours. So, when we sum up all the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when permuting randomly the rows of the belonging matrix. This second quantity represents the spatial inconsistency that we might expect if the clusters show no spatial consistency. We can repeat the permutation step and keep the mean of the ratios to have a more robust indicators (see help(spConsistency) for details).
 
-A smaller values indicates a greater spatial consistency. 0 meaning that all observations have exactly the same values in the belonging matrix than their neighbours.
+A smaller values indicates a smaller spatial inconsistency and thus a greater spatial consistency. 0 meaning that all observations have exactly the same values in the belonging matrix than their neighbours (perfect spatial consistency).
 
 ```{r warning=FALSE}
-ggplot(DFindices)+
-  geom_line(aes(x=alpha,y=spConsistency))+
-  geom_point(aes(x=alpha,y=spConsistency))
+ggplot(DFindices_SFCM)+
+  geom_smooth(aes(x=alpha,y=spConsistency), color = "black")+
+  geom_point(aes(x=alpha,y=spConsistency), color = "red")
 
 ```
 
-Unsurprisingly, increasing alpha leads to a decrease of the spatial inconsistency. When alpha>1, the gain seems to be less pronounced.
+Unsurprisingly, increasing *alpha* leads to a decrease of the spatial inconsistency. This gain follow an inverse function.
 
 Let's check now the explained inertia
 ```{r warning=FALSE}
-ggplot(DFindices)+
-  geom_line(aes(x=alpha,y=Explained.inertia))+
-  geom_point(aes(x=alpha,y=Explained.inertia))
+ggplot(DFindices_SFCM)+
+  geom_smooth(aes(x=alpha,y=Explained.inertia), color = "black")+
+  geom_point(aes(x=alpha,y=Explained.inertia), color = "red")
 ```
 
-As expected, the explained inertia decrease when alpha increase. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here : only 3% between alpha=0 and alpha=2.
+As expected, the explained inertia decreases when alpha increase and follow again an inverse function. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here : only 3% between $alpha = 0$ and $alpha = 2$.
 
-To finish here, we can observe the silhouette and entropy partition indicators (calculates with the package *fclust*)
-
+To finish here, we can observe the silhouette and Xie and Beni indicators.
 
 ```{r warning=FALSE}
-ggplot(DFindices)+
-  geom_line(aes(x=alpha,y=Silhouette.index))+
-  geom_point(aes(x=alpha,y=Silhouette.index))
+ggplot(DFindices_SFCM)+
+  geom_smooth(aes(x=alpha,y=Silhouette.index), color = "black")+
+  geom_point(aes(x=alpha,y=Silhouette.index), color = "red")
 
-ggplot(DFindices)+
-  geom_line(aes(x=alpha,y=Partition.entropy))+
-  geom_point(aes(x=alpha,y=Partition.entropy))
+ggplot(DFindices_SFCM)+
+  geom_smooth(aes(x=alpha,y=XieBeni.index), color = "black")+
+  geom_point(aes(x=alpha,y=XieBeni.index))
 ```
 
-The detail of the meaning of theses indicators is beyond the scope of this vignette. Let's just stress that a bigger silhouette index indicates a better classification, and a smaller entropy partition index indicates a better classification.
+The detail of the meaning of theses indicators is beyond the scope of this vignette. Let's just stress that a bigger silhouette index indicates a better classification, and a smaller Xie and beni index indicates a better classification.
 
-After considering all the previous charts, we decide to keep alpha = 1.2 as it seems to give a good balance between spatial consistency and classification quality in this case.
+After considering all the previous charts, we decide to keep alpha = 0.7 as it seems to give a good balance between spatial consistency and classification quality in this case.
 
 ```{r warning=FALSE}
-OkAlpha <- 1.2
-Result2 <- SFCMeans(Data,WMat,5,m=1.5,alpha=OkAlpha,tol=0.0001, standardize = F)
+SFCM <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
+                 tol = 0.0001, standardize = FALSE,
+                 verbose = FALSE, seed = 456)
 ```
 
-Again, we can map the results of the algorithm. Unsurprisingly, we obtain similar results, but the spatial patterns seems more pronounced.
+### Selecting alpha and beta for SGFCM
 
+It is also possible to use the generalized version of the spatial c-means. In that case, we have to define both *alpha* and *beta*.
+
+The next formula shows how the belonging matrix is updated at each iteration. Note thate the centers of the clusters are updated with the same formula as SFCM.
+
+$$u_{ik} = \frac{(||x_{k} - v{_i}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}$$
+
+because we select a small resolution for our grid search of *alpha* and *beta*, we will use a multiprocessing approach.
+
+```{r warning=FALSE, eval = FALSE}
+future::plan(future::multiprocess(workers=4))
+DFindices_SFGCM <- select_parameters.mc(algo = "SGFCM", data = Data,
+                               k = 4, m = 1.5, alpha = seq(0,2,0.05),
+                               beta = seq(0,0.85,0.05),
+                               nblistw = WMat, standardize = FALSE, chunk_size = 50,
+                               tol = 0.0001, verbose = FALSE, seed = 456)
+```
 
 ```{r warning=FALSE}
-MyMaps <- mapClusters(geodata = LyonIris,belongmatrix = Result2$Belongings)
-MyMaps$ProbaMaps[[1]]
-MyMaps$ProbaMaps[[2]]
-MyMaps$ProbaMaps[[3]]
-MyMaps$ProbaMaps[[4]]
-MyMaps$ProbaMaps[[5]]
-MyMaps$ClusterPlot
+ggplot(DFindices_SFGCM) + 
+  geom_raster(aes(x = alpha, y = beta, fill = Silhouette.index),  size = 5) + 
+  scale_fill_viridis() +
+  coord_fixed(ratio=1)
+
+ggplot(DFindices_SFGCM) + 
+  geom_raster(aes(x = alpha, y = beta, fill = XieBeni.index),  size = 5) + 
+  scale_fill_viridis() +
+  coord_fixed(ratio=1)
+
+ggplot(DFindices_SFGCM) + 
+  geom_raster(aes(x = alpha, y = beta, fill = spConsistency),  size = 5) + 
+  scale_fill_viridis() +
+  coord_fixed(ratio=1)
+
 ```
 
-There is still some mixing between the clusters, but the frontiers are way more clear than in the classical cmeans.
+The first two plots indicates that some particular combinaisons of *alpha* and *beta* yield good results in the range $0.8<alpha<1.2$ and $0.6<beta<0.8$. The last plot shows that the selection of *beta* has no impacts on the spatial consistency.
 
-To confirm this point, we can do a spatial diagnostic with the function *spatialdiag* of the geocmeans package. We will compare the results of the classical and the spatial solutions. We can compare the final results too with the k-means solution with a little bit more work.
+Considering the previous plots, we decide to retain the solution with beta = 0.65 and alpha = 0.95 which yield very good results for all the considered indices.
 
 ```{r warning=FALSE}
-#creating a belonging matrix for the kmean clustering
-KmeanBelonging <- model.matrix(~as.character(KMeanClust$cluster))[,2:5]
-KmeanBelonging <- cbind(KmeanBelonging,1-rowSums(KmeanBelonging))
-colnames(KmeanBelonging)<- paste("Cluster",1:5)
-
-spdiag_1 <- spatialDiag(KmeanBelonging,nblistw = WMat,nrep=30)
-spdiag_2 <- spatialDiag(Cmean$u,nblistw = WMat,nrep=30)
-spdiag_3 <- spatialDiag(Result2$Belongings,nblistw = WMat,nrep=30)
-
-print(spdiag_1$MoranValues)
-print(spdiag_2$MoranValues)
-print(spdiag_3$MoranValues)
-
-print(spdiag_1$SpConsist)
-print(spdiag_2$SpConsist)
-print(spdiag_3$SpConsist)
+SGFCM <- SGFCMeans(Data,WMat,k = 4,m=1.5, alpha=0.95, beta = 0.65,
+                    tol=0.0001, standardize = FALSE, verbose = FALSE, seed = 456)
 ```
 
-So with the spatial cmeans we achieve a way higher spatial consistency and this is confirmed by the Moran I values calculated on the belonging matrices. Because of its hard-clustering approach, the K-means algorithm ends up with the lower spatial consistency.
+Again, we compare the here the generalized and the classical version of the spatial c-means algorithm.
+
+```{r warning=FALSE}
+r1 <- calcqualityIndexes(Data, SFCM$Belongings,m = 1.5)
+r2 <- calcqualityIndexes(Data, SGFCM$Belongings,m = 1.5)
+
+diagSFCM <- spatialDiag(belongmatrix = SFCM$Belongings, nblistw = WMat,undecided = 0.45,nrep = 500)
+diagSGFCM <- spatialDiag(belongmatrix = SGFCM$Belongings, nblistw = WMat,undecided = 0.45,nrep = 500)
+
+df <- cbind(
+  c(unlist(r1),diagSFCM$SpConsist),
+  c(unlist(r2),diagSGFCM$SpConsist)
+)
+row.names(df)[length(row.names(df))] <- "sp.consistency"
+
+knitr::kable(df,digits = 3,col.names = c("SFCM","SGFCM"))
+```
+
+The solution of the SGFCM is better on the semantic and the spatial aspects.
+
+We can compare the maps
+```{r warning=FALSE}
+SFCMMaps <- mapClusters(geodata = LyonIris,belongmatrix = SFCM$Belongings,undecided = 0.45)
+SGFCMMaps <- mapClusters(geodata = LyonIris,belongmatrix = SGFCM$Belongings,undecided = 0.45)
+
+ggarrange(SFCMMaps$ProbaMaps[[1]],SGFCMMaps$ProbaMaps[[1]], nrow = 1, ncol = 2)
+ggarrange(SFCMMaps$ProbaMaps[[2]],SGFCMMaps$ProbaMaps[[2]], nrow = 1, ncol = 2)
+ggarrange(SFCMMaps$ProbaMaps[[3]],SGFCMMaps$ProbaMaps[[3]], nrow = 1, ncol = 2)
+ggarrange(SFCMMaps$ProbaMaps[[4]],SGFCMMaps$ProbaMaps[[4]], nrow = 1, ncol = 2)
+ggarrange(SFCMMaps$ClusterPlot,SGFCMMaps$ClusterPlot, nrow = 1, ncol = 2)
+
+```
+
+## Comparing the spatial consistency of FCM, GFCM, SFCM and SGFCM
+
+Now, we can  do a deeper spatial analysis and compare the spatial consistency of the four classifications realized (FCM, GFCM, SFCM, SGFCM) 
+
+```{r warning=FALSE}
+spdiag_1 <- spatialDiag(Cmean$Belongings, nblistw = WMat,nrep=250)
+spdiag_2 <- spatialDiag(GCmean$Belongings, nblistw = WMat,nrep=250)
+spdiag_3 <- spatialDiag(SFCM$Belongings, nblistw = WMat,nrep=250)
+spdiag_4 <- spatialDiag(SGFCM$Belongings, nblistw = WMat,nrep=250)
+
+#looking at the moran I values for each group
+moran_table <- data.frame(cbind(spdiag_1$MoranValues$MoranI,
+                     spdiag_2$MoranValues$MoranI,
+                     spdiag_3$MoranValues$MoranI,
+                     spdiag_4$MoranValues$MoranI
+                     ))
+row.names(moran_table) <- paste("cluster ",1:4,sep="")
+knitr::kable(moran_table, digits = 3,
+             col.names = c("FCM","GFCM","SFCM","SGFCM")
+             )
+```
+
+Unsurprisingly, the Moran I values calculated on the belonging matrices are higher for SFCM and SGFCM, indicating stronger spatial structures in the classifications.
+
+```{r warning=FALSE}
+print(c(spdiag_1$SpConsist, spdiag_2$SpConsist,spdiag_3$SpConsist,spdiag_4$SpConsist))
+```
+Considering the value of spatial inconsistency, we could ask if the value obtained for SGFCM is significantly lower than the one of SFCM. Considering the permutated values, we can calculate a pseudo p-value:
+
+```{r warning=FALSE}
+sum(spdiag_4$SpConsist > spdiag_3$SpConsistSamples) / length(spdiag_3$SpConsistSamples)
+```
+
+It appears that out of `length(spdiag_3$SpConsistSamples)` permutations, the observed values of spatial inconsistency of SGFCM is always lower than the one of SFCM. The difference is this significant at the thresold `1/length(spdiag_3$SpConsistSamples)`=1/`length(spdiag_3$SpConsistSamples)`
+
 
 We can map the undecided observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function *undecidedUnits* of the *geocmeans* package.
 
 ```{r warning=FALSE}
-Undecided <- undecidedUnits(Result2$Belongings,0.4)
+Undecided <- undecidedUnits(SGFCM$Belongings,0.45)
 LyonIris$FinalCluster <- ifelse(Undecided=="Undecided","Undecided",paste("cluster",Undecided,sep="_"))
 
 #mapping the groups
@@ -291,11 +409,11 @@ DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
 ggplot(data=DFmapping)+
   geom_polygon(aes(x=long,y=lat,group=group,fill=FinalCluster),color=rgb(0,0,0,0))+
   coord_fixed(ratio = 1)+
-  scale_fill_manual(name="FinalCluster",values = c("cluster_1"="palegreen3",
-                                 "cluster_2"="firebrick",
-                                 "cluster_3"="lightyellow2",
-                                 "cluster_4"="steelblue",
-                                 "cluster_5"="pink",
+  scale_fill_manual(name="FinalCluster",values = c("cluster_V1"="palegreen3",
+                                 "cluster_V2"="firebrick",
+                                 "cluster_V3"="lightyellow2",
+                                 "cluster_V4"="steelblue",
+                                 "cluster_V5"="pink",
                                  "Undecided"=rgb(0,0,0,0.4)))+
   theme( axis.title = element_blank(),
     axis.text = element_blank(),
@@ -303,31 +421,30 @@ ggplot(data=DFmapping)+
     )
 ```
 
-Finally, one can obtain many descriptive information about the final groups with three functions of *geocmeans* : 
-* summarizeClusters : calculate summary statistics for each group for a given dataset by using the belonging matrix as weights (remaining in the fuzzy spirit).
+## Interpreting the results of the final classification
+
+One can obtain many descriptive information about the final groups with three functions of *geocmeans* : 
+* summarizeClusters : calculate summary statistics for each group for a given dataset by using the belonging matrix as weights (sticking with the fuzzy spirit).
 * spidePlots : display a spider plot allowing to compare quickly the differences between groups.
 * violinPlots : display a violin plot for each variable in a given dataset. Observations must be grouped before.
 
 
 ```{r warning=FALSE}
-
-summarizeClusters(LyonIris@data[AnalysisFields],belongmatrix = Result2$Belongings,weighted = T,dec = 3)
-
+summarizeClusters(LyonIris@data[AnalysisFields],belongmatrix = SGFCM$Belongings,weighted = T,dec = 3)
 ```
 
 ```{r warning=FALSE}
-
-spiderPlots(LyonIris@data[AnalysisFields], Result2$Belongings)
-violinPlots(LyonIris@data[AnalysisFields], Result2$Groups)
-
+spiderPlots(LyonIris@data[AnalysisFields], SGFCM$Belongings, chartcolors = c("darkorange3","grey4","darkgreen","royalblue"))
+violinPlots(LyonIris@data[AnalysisFields], SGFCM$Groups)
 ```
 
-That's all folks ! These are the enhancement for the next version
+That's all folks ! These are the enhancements for the next version
 
-* introduce other method of spatially constrained cmeans
+* introduce other methods of spatial C-means
 * open some other parameters to the user (like the function defining the convergence criterion)
 * work on documentation
-* improve calculus speed by dropping some apply in the code (need help here)
+* improve calculus speed by dropping some apply in the code
+* adding the manhattan distance (useful when data have a high dimensionality)
 
 
 

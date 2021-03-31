@@ -5,10 +5,12 @@
 \title{Select parameters for clustering algorithm (multicore)}
 \usage{
 select_parameters.mc(
+  algo,
   data,
   k,
   m,
   alpha,
+  beta,
   nblistw,
   lag_method = "mean",
   spconsist = T,
@@ -16,21 +18,26 @@ select_parameters.mc(
   standardize = T,
   maxiter = 500,
   tol = 0.01,
-  seed = 123,
-  chunk_size = 100
+  seed = NULL,
+  chunk_size = 100,
+  verbose = FALSE
 )
 }
 \arguments{
+\item{algo}{A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)}
+
 \item{data}{A dataframe with numeric columns}
 
 \item{k}{A sequence of values for k to test (>=2)}
 
 \item{m}{A sequence of values for m to test}
 
-\item{alpha}{A sequence of values for alpha to test}
+\item{alpha}{A sequence of values for alpha to test (NULL if not required)}
+
+\item{beta}{A sequence of values for beta to test (NULL if not required)}
 
 \item{nblistw}{A list of list.w objects describing the neighbours typically
-produced by the spdep package}
+produced by the spdep package (NULL if not required)}
 
 \item{lag_method}{A string indicating if a classical lag must be used
 ("mean") or if a weighted median must be used ("median"). Both can be
@@ -54,6 +61,8 @@ convergence assessment}
 start centers will be the same if the same integer is selected.}
 
 \item{chunk_size}{The size of a chunk used for multiprocessing. Default is 100.}
+
+\item{verbose}{A boolean indicating if a progressbar should be displayed}
 }
 \value{
 A dataframe with indicators assessing the quality of classifications
@@ -64,6 +73,7 @@ This version of the function allows to use a plan defined with the package
 future to reduce calculation time
 }
 \examples{
+\dontrun{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
@@ -73,10 +83,11 @@ Wqueen <- spdep::nb2listw(queen,style="W")
 future::plan(future::multiprocess(workers=2))
 #set spconsist to TRUE to calculate the spatial consistency indicator
 #FALSE here to reduce the time during package check
-values <- select_parameters.mc(dataset, k = 5, m = seq(1,2.5,0.1),
+values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 \dontshow{
    ## R CMD check: make sure any open connections are closed afterward
    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
+}
 }
 }

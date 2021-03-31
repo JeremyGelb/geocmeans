@@ -3,11 +3,10 @@
 #' A dataset containing social and environmental data for the
 #' Iris of Lyon (France)
 #'
-#' @format A SpatialPolygonsDataFrame with 506 rows and 33 variables:
+#' @format A SpatialPolygonsDataFrame with 506 rows and 32 variables:
 #' \describe{
-#'   \item{OBJECTID}{on simple OID (integer)}
+#'   \item{OBJECTID}{a simple OID (integer)}
 #'   \item{INSEE_COM}{the code of each commune (factor)}
-#'   \item{NOM_COM}{the name of each commune (factor)}
 #'   \item{CODE_IRIS}{the code of each unit area : iris (factor)}
 #'   \item{Lden}{the annual daily mean noise exposure values in dB (numeric)}
 #'   \item{NO2}{the annual mean of NO2 concentration in ug/m3 (numeric)}

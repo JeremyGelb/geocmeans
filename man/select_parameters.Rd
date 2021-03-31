@@ -5,31 +5,38 @@
 \title{Select parameters for clustering algorithm}
 \usage{
 select_parameters(
+  algo,
   data,
   k,
   m,
-  alpha,
-  nblistw,
+  alpha = NA,
+  beta = NA,
+  nblistw = NULL,
   lag_method = "mean",
   spconsist = T,
   classidx = T,
   standardize = T,
   maxiter = 500,
   tol = 0.01,
-  seed = 123
+  seed = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
+\item{algo}{A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)}
+
 \item{data}{A dataframe with numeric columns}
 
 \item{k}{A sequence of values for k to test (>=2)}
 
 \item{m}{A sequence of values for m to test}
 
-\item{alpha}{A sequence of values for alpha to test}
+\item{alpha}{A sequence of values for alpha to test (NULL if not required)}
+
+\item{beta}{A sequence of values for beta to test (NULL if not required)}
 
 \item{nblistw}{A list of list.w objects describing the neighbours typically
-produced by the spdep package}
+produced by the spdep package (NULL if not required)}
 
 \item{lag_method}{A string indicating if a classical lag must be used
 ("mean") or if a weighted median must be used ("median"). Both can be
@@ -51,14 +58,17 @@ convergence assessment}
 
 \item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
+
+\item{verbose}{A boolean indicating if a progressbar should be displayed}
 }
 \value{
 A dataframe with indicators assessing the quality of classifications
 }
 \description{
-Function to select the parameters of the classification alpha, k and m
+Function to select the parameters of the classification
 }
 \examples{
+\dontrun{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
@@ -67,6 +77,7 @@ queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 #set spconsist to TRUE to calculate the spatial consistency indicator
 #FALSE here to reduce the time during package check
-values <- select_parameters(dataset, k = 5, m = seq(2,3,0.1),
+values <- select_parameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
+}
 }

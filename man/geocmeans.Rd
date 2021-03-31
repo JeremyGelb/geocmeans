@@ -8,7 +8,7 @@ algorithm}
 \description{
 The geocmeans package implement a modified c-means algorithm more suited to
 work with spatial data (characterized by high spatial autocorrelation). The
-spatial information is introduced with a spatial weight #' matrix W (n * n)
+spatial information is introduced with a spatial weight matrix W (n * n)
 where wij indicate the strength of the spatial relationship between the
 observation i and j. Its is recommended to use a matrix standardized by row
 (so that the sum of each row is 1). More specifically, the spatial c-means
@@ -18,10 +18,7 @@ A parameter alpha allow to control for the weight of the lagged matrix. If
 alpha = 0, then the spatial c-means is equal to a classical c-means. If alpha
 = 1, then the weights of the X and WX are equals. If alpha = 2, then the
 weight of WX is twice the one of X and so on.
-}
-\details{
 A index to measure the spatial consistency of a classification is proposed in
 this package.
-
 More algorithm will be implemented in the future.
 }

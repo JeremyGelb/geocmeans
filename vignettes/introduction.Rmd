@@ -1,7 +1,7 @@
 ---
 title: "Spatial Fuzzy CMean with R"
 author: "Jeremy Gelb"
-date: "18/03/2020"
+date: "02/04/2021"
 output:
   rmarkdown::html_vignette:
     fig_width: 5
@@ -13,6 +13,9 @@ vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: geocmeans_references.bibtex
+link-citations: yes
+colorlinks: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -23,9 +26,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This document is a short introduction to the package **geocmeans**. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation
 
-The original paper describing the method can be found here : [https://doi.org/10.1016/j.patcog.2006.07.011](https://doi.org/10.1016/j.patcog.2006.07.011).
+@cai2007fast described in their article the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by @zhao2013kernel.
 
-The method is discussed and compared to other classification algorithms in the article [Contribution of the spatial c-means fuzzy classification in geography: a socio-residential and environmental taxonomy in Lyon](http://journals.openedition.org/cybergeo/36414) (in french).
+@gelb2021apport applied the method to socio-residential and environmental data and compared the results with oter unsupervised classification algorithms (in french).
 
 There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*, *kmeans*, *cmeans*, *factoextra*, etc.). However theses methods are not always well suited to analyze spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups despite the fact that they are very similar.
 

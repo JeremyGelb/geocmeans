@@ -3,9 +3,10 @@ title: "Spatial Fuzzy CMean with R"
 author: "Jeremy Gelb"
 date: "02/04/2021"
 output:
-  rmarkdown::html_vignette:
+  rmarkdown::pdf_document:
     fig_width: 5
     fig_height: 5
+    extra_dependencies: ["float"]
     toc: true
     toc_depth: 2
     df_print: "tibble"
@@ -30,7 +31,7 @@ This document is a short introduction to the package **geocmeans**. It implement
 
 @gelb2021apport applied the method to socio-residential and environmental data and compared the results with oter unsupervised classification algorithms (in french).
 
-There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*, *kmeans*, *cmeans*, *factoextra*, etc.). However theses methods are not always well suited to analyze spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups despite the fact that they are very similar.
+There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*, *kmeans*, *cmeans*, *factoextra*, etc.). However theses methods are not always well-suited to analyze spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups despite the fact that they are very similar.
 
 The package **ClustGeo** is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between observations. The proposed approach is very appealing because the user has to select a parameter (*alpha*) that controls the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated  between observations with their variables).
 
@@ -88,7 +89,7 @@ load(system.file("extdata", "results_vignette_intro.rda",
 
 To explore the dataset and choose a number of cluster/groups (k) we propose to start with a classical kmeans.
 
-```{r warning=FALSE, fig.cap = "Impact of the number of groups on the explained variance", out.width = "50%"}
+```{r warning=FALSE, fig.cap = "Impact of the number of groups on the explained variance", out.width = "50%", fig.pos="H", fig.align="center"}
 #finding the best k by using the r2 of the classification
 #trying for k from 2 to 10
 R2s <- sapply(2:10,function(k){
@@ -103,7 +104,7 @@ Df <- data.frame(K=2:10,
 ggplot(Df)+
   geom_line(aes(x=K,y=R2s))+
   geom_point(aes(x=K,y=R2s),color="red")+
-  xlab("number of groups")+
+  xlab("Number of groups")+
   ylab("R2 of classification")
 ```
 
@@ -111,7 +112,7 @@ By plotting the R-squared of the kmeans classification for each k between 2 and 
 
 Let us map the obtained groups.
 
-```{r warning=FALSE, fig.cap="Clusters identified by classical k-means"}
+```{r warning=FALSE, fig.cap="Clusters identified by classical k-means", fig.pos="H", fig.align="center"}
 KMeanClust <-  kmeans(Data,centers=4,iter.max = 150)
 LyonIris$Cluster <-paste("cluster",KMeanClust$cluster,sep="_")
 
@@ -182,8 +183,8 @@ beta_values <- select_parameters("GFCM",data = Data, k = 4, m = 1.5,
 
 ```{r warning=FALSE}
 knitr::kable(beta_values[c("beta","Silhouette.index","XieBeni.index","Explained.inertia")],
-             col.names = c("beta", "silhouette index", "Xie and Beni index", "explained inertia"),
-             digits = 3)
+             col.names = c("beta", "silhouette index",
+                           "Xie and Beni index", "explained inertia"),digits = 3)
 ```
 
 Considering the table above, we select beta = 0.7, it keeps a good silhouhette index, and increases Xie and Beni index and explained inertia. Let us compare the results of GFCM and FCM.
@@ -203,26 +204,26 @@ The results indicate that the GFCM gives a solution that is less fuzzy (higher e
 We can now map the two membership matrices and the most likely group for each observation. To do so, we use the function *mapClusters* from **geocmeans**. We propose here to define a threshold of 0.45. If an observation has only values below this probability in a membership matrix, it will be labeled as "undecided" (represented with transparency on the map).
 
 We can compare the maps of the classical c-means and the generalized version.
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 1", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 1", out.width="80%", fig.pos="H", fig.align="center"}
 cmeansMaps<- mapClusters(LyonIris,Cmean$Belongings,undecided = 0.45)
 GcmeansMaps<- mapClusters(LyonIris,GCmean$Belongings,undecided = 0.45)
 
 ggarrange(cmeansMaps$ProbaMaps[[1]],GcmeansMaps$ProbaMaps[[1]], 
           nrow = 1, ncol = 2, common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 2", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 2", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(cmeansMaps$ProbaMaps[[2]],GcmeansMaps$ProbaMaps[[2]], 
           nrow = 1, ncol = 2, common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 3", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 3", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(cmeansMaps$ProbaMaps[[3]],GcmeansMaps$ProbaMaps[[3]], 
           nrow = 1, ncol = 2, common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 4", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 4", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(cmeansMaps$ProbaMaps[[4]],GcmeansMaps$ProbaMaps[[4]], 
           nrow = 1, ncol = 2, common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Most likely clusters and undecided units", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Most likely clusters and undecided units", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(cmeansMaps$ClusterPlot,GcmeansMaps$ClusterPlot,
           nrow = 1, ncol = 2, common.legend = TRUE, legend = "bottom")
 ```
@@ -274,7 +275,7 @@ Let's start with the spatial inconsistency. This indicator (developed for this p
 
 A smaller value indicates a smaller spatial inconsistency and thus a greater spatial consistency. 0 meaning that all observations have exactly the same values in the membership matrix than their neighbours (perfect spatial consistency).
 
-```{r warning=FALSE, fig.cap = "Link between alpha and spatial inconsistency", out.width="50%"}
+```{r warning=FALSE, fig.cap = "Link between alpha and spatial inconsistency", out.width="50%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFCM)+
   geom_smooth(aes(x=alpha,y=spConsistency), color = "black")+
   geom_point(aes(x=alpha,y=spConsistency), color = "red")
@@ -284,7 +285,7 @@ ggplot(DFindices_SFCM)+
 Unsurprisingly, increasing *alpha* leads to a decrease of the spatial inconsistency. This gain follow an inverse function.
 
 Let's check now the explained inertia
-```{r warning=FALSE, fig.cap = "Link between alpha and explained inertia", out.width="50%"}
+```{r warning=FALSE, fig.cap = "Link between alpha and explained inertia", out.width="50%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFCM)+
   geom_smooth(aes(x=alpha,y=Explained.inertia), color = "black")+
   geom_point(aes(x=alpha,y=Explained.inertia), color = "red")
@@ -294,13 +295,13 @@ As expected, the explained inertia decreases when alpha increases and follows ag
 
 To finish here, we can observe the silhouette and Xie and Beni indicators.
 
-```{r fig.cap="Link between alpha and silhouette index", message=FALSE, warning=FALSE, out.width="50%"}
+```{r fig.cap="Link between alpha and silhouette index", message=FALSE, warning=FALSE, fig.pos="H", fig.align="center", out.width="50%"}
 ggplot(DFindices_SFCM)+
   geom_smooth(aes(x=alpha,y=Silhouette.index), color = "black")+
   geom_point(aes(x=alpha,y=Silhouette.index), color = "red")
 ```
 
-```{r fig.cap="Link between alpha and Xie and Beni index", message=FALSE, warning=FALSE, out.width="50%"}
+```{r fig.cap="Link between alpha and Xie and Beni index", message=FALSE, warning=FALSE, out.width="50%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFCM)+
   geom_smooth(aes(x=alpha,y=XieBeni.index), color = "black")+
   geom_point(aes(x=alpha,y=XieBeni.index), color = "red")
@@ -336,19 +337,19 @@ DFindices_SFGCM <- select_parameters.mc(algo = "SGFCM", data = Data,
                                tol = 0.0001, verbose = FALSE, seed = 456)
 ```
 
-```{r warning=FALSE, fig.cap = "Impact of beta and alpha on silhouette index", out.width = "80%"}
+```{r warning=FALSE, fig.cap = "Impact of beta and alpha on silhouette index", out.width = "80%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFGCM) + 
   geom_raster(aes(x = alpha, y = beta, fill = Silhouette.index),  size = 5) + 
   scale_fill_viridis() +
   coord_fixed(ratio=1)
 ```
-```{r warning=FALSE, fig.cap = "Impact of beta and alpha on Xie and Beni index", out.width = "80%"}
+```{r warning=FALSE, fig.cap = "Impact of beta and alpha on Xie and Beni index", out.width = "80%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFGCM) + 
   geom_raster(aes(x = alpha, y = beta, fill = XieBeni.index),  size = 5) + 
   scale_fill_viridis() +
   coord_fixed(ratio=1)
 ```
-```{r warning=FALSE, fig.cap = "Impact of beta and alpha on spatial inconsistency", out.width = "80%"}
+```{r warning=FALSE, fig.cap = "Impact of beta and alpha on spatial inconsistency", out.width = "80%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFGCM) + 
   geom_raster(aes(x = alpha, y = beta, fill = spConsistency),  size = 5) + 
   scale_fill_viridis() +
@@ -371,8 +372,10 @@ Again, we compare here the generalized and the classical version of the spatial 
 r1 <- calcqualityIndexes(Data, SFCM$Belongings,m = 1.5)
 r2 <- calcqualityIndexes(Data, SGFCM$Belongings,m = 1.5)
 
-diagSFCM <- spatialDiag(belongmatrix = SFCM$Belongings, nblistw = WMat,undecided = 0.45,nrep = 500)
-diagSGFCM <- spatialDiag(belongmatrix = SGFCM$Belongings, nblistw = WMat,undecided = 0.45,nrep = 500)
+diagSFCM <- spatialDiag(belongmatrix = SFCM$Belongings, nblistw = WMat,
+                        undecided = 0.45,nrep = 500)
+diagSGFCM <- spatialDiag(belongmatrix = SGFCM$Belongings, nblistw = WMat,
+                         undecided = 0.45,nrep = 500)
 
 df <- cbind(
   c(unlist(r1),diagSFCM$SpConsist),
@@ -386,18 +389,18 @@ knitr::kable(df,digits = 3,col.names = c("SFCM","SGFCM"))
 The solution of the SGFCM is better on the semantic and the spatial aspects.
 
 We can compare the maps
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 1", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 1", out.width="80%", fig.pos="H", fig.align="center"}
 SFCMMaps <- mapClusters(geodata = LyonIris,belongmatrix = SFCM$Belongings,undecided = 0.45)
 SGFCMMaps <- mapClusters(geodata = LyonIris,belongmatrix = SGFCM$Belongings,undecided = 0.45)
 
 ggarrange(SFCMMaps$ProbaMaps[[1]],SGFCMMaps$ProbaMaps[[1]], nrow = 1, ncol = 2,
           common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 2", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 2", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(SFCMMaps$ProbaMaps[[2]],SGFCMMaps$ProbaMaps[[2]], nrow = 1, ncol = 2,
           common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 3", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 3", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(SFCMMaps$ProbaMaps[[3]],SGFCMMaps$ProbaMaps[[3]], nrow = 1, ncol = 2,
           common.legend = TRUE, legend = "bottom")
 ```
@@ -405,14 +408,14 @@ ggarrange(SFCMMaps$ProbaMaps[[3]],SGFCMMaps$ProbaMaps[[3]], nrow = 1, ncol = 2,
 ggarrange(SFCMMaps$ProbaMaps[[4]],SGFCMMaps$ProbaMaps[[4]], nrow = 1, ncol = 2,
           common.legend = TRUE, legend = "bottom")
 ```
-```{r warning=FALSE, fig.cap = "Most likely cluster", out.width="80%"}
+```{r warning=FALSE, fig.cap = "Most likely cluster and undecided units", out.width="80%", fig.pos="H", fig.align="center"}
 ggarrange(SFCMMaps$ClusterPlot,SGFCMMaps$ClusterPlot, nrow = 1, ncol = 2,
           common.legend = TRUE, legend = "bottom")
 ```
 
 ## Comparing the spatial consistency of FCM, GFCM, SFCM and SGFCM
 
-Now, we can  do a deeper spatial analysis and compare the spatial consistency of the four classifications realized (FCM, GFCM, SFCM, SGFCM) 
+Now, we can  do a deeper spatial analysis and compare the spatial consistency of the four classifications realized (FCM, GFCM, SFCM, SGFCM). 
 
 ```{r warning=FALSE}
 spdiag_1 <- spatialDiag(Cmean$Belongings, nblistw = WMat,nrep=250)

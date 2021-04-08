@@ -1,4 +1,4 @@
-citHeader("To cite geocmeans in publications use:")
+citHeader("To cite geocmeans in publications use one of:")
 
 citEntry(entry = "Article",
   title        = "Contribution of the spatial c-means fuzzy classification in geography: a socio-residential and environmental taxonomy in Lyon",
@@ -7,11 +7,26 @@ citEntry(entry = "Article",
   journal      = "Cybergeo",
   year         = "2021",
   number       = "972",
-  url          = "http://journals.openedition.org/cybergeo/36414",
+  doi          = "https://doi.org/10.4000/cybergeo.36414",
+  url          = "https://journals.openedition.org/cybergeo/36414",
 
   textVersion  =
   paste("Jeremy Gelb, Phillipe Apparicio (2021).",
         "Contribution of the spatial c-means fuzzy classification in geography: a socio-residential and environmental taxonomy in Lyon",
         "Cybergeo: European Journal of Geography, document 972.",
-        "http://journals.openedition.org/cybergeo/36414")
+        "https://doi.org/10.4000/cybergeo.36414")
+)
+
+citEntry(entry = "Manual",
+  title        = "Package geocmeans",
+  author       = personList(as.person("Jeremy Gelb")),
+  year         = "2021",
+  organization = "LAEQ",
+  url          = "https://github.com/JeremyGelb/geocmeans",
+
+  textVersion  =
+  paste("Jeremy Gelb (2021).",
+        "Package geocmeans.",
+        "LAEQ,",
+        "https://github.com/JeremyGelb/geocmeans")
 )

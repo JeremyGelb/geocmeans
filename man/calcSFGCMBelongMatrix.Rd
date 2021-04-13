@@ -2,7 +2,7 @@
 % Please edit documentation in R/SFGCM.R
 \name{calcSFGCMBelongMatrix}
 \alias{calcSFGCMBelongMatrix}
-\title{Calculate the generalized belonging matrix (spatial version)}
+\title{Calculate the generalized membership matrix (spatial version)}
 \usage{
 calcSFGCMBelongMatrix(centers, data, wdata, m, alpha, beta)
 }
@@ -29,7 +29,7 @@ A n * k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
-Calculate the generalized belonging matrix (spatial version) according to a set of
+Calculate the generalized membership matrix (spatial version) according to a set of
 centroids, the observed data, the fuzziness degree a neighbouring matrix,
 a spatial weighting term and a beta parameter
 }

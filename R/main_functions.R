@@ -58,9 +58,9 @@ calcEuclideanDistance <- function(m, v) {
     return(alldistances)
 }
 
-#' @title Calculate the belonging matrix
+#' @title Calculate the membership matrix
 #'
-#' @description Calculate the belonging matrix according to a set of centroids, the observed
+#' @description Calculate the membership matrix according to a set of centroids, the observed
 #' data and the fuzziness degree
 #'
 #' @param centers A matrix or a dataframe representing the centers of the
@@ -90,9 +90,9 @@ calcBelongMatrix <- function(centers, data, m) {
     return(belongmat)
 }
 
-#' @title Calculate the belonging matrix (spatial version)
+#' @title Calculate the membership matrix (spatial version)
 #'
-#' @description Calculate the belonging matrix (spatial version) according to a set of
+#' @description Calculate the membership matrix (spatial version) according to a set of
 #' centroids, the observed data, the fuzziness degree a neighbouring matrix and
 #' a spatial weighting term
 #'
@@ -136,7 +136,7 @@ calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
 
 #' @title Calculate the centroids
 #'
-#' @description Calculate the new centroids of the clusters based on the belonging matrix
+#' @description Calculate the new centroids of the clusters based on the membership matrix
 #'
 #' @param data A dataframe or matrix representing the observed data with n rows
 #'   and p columns
@@ -161,7 +161,7 @@ calcCentroids <- function(data, belongmatrix, m){
 
 #' @title Calculate the centroids (spatial version)
 #'
-#' @description Calculate the new centroids of the clusters based on the belonging matrix (spatial version)
+#' @description Calculate the new centroids of the clusters based on the membership matrix (spatial version)
 #'
 #' @param data A dataframe or matrix representing the observed data with n rows
 #'   and p columns
@@ -246,7 +246,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' @return A named list with :
 #'  \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
-#'         \item Belongings: the final belonging matrix
+#'         \item Belongings: the final membership matrix
 #'         \item Groups: a vector with the names of the most likely group for each observation
 #'         \item Data: the dataset used to perform the clustering (might be standardized)
 #' }
@@ -366,7 +366,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' @return A named list with
 #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
-#'         \item Belongings: the final belonging matrix
+#'         \item Belongings: the final bmembership matrix
 #'         \item Groups: a vector with the names of the most likely group for each observation
 #'         \item Data: the dataset used to perform the clustering (might be standardized)
 #' }

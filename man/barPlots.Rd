@@ -9,7 +9,7 @@ barPlots(data, belongmatrix, ncol = 3, what = "mean")
 \arguments{
 \item{data}{A dataframe with numeric columns}
 
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{A membership matrix}
 
 \item{ncol}{An integer indicating the number of columns for the bar plot}
 

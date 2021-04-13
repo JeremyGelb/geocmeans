@@ -2,9 +2,9 @@
 #### GFCM ####
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' @title Calculate the generalized belonging matrix
+#' @title Calculate the generalized membership matrix
 #'
-#' @description Calculate the generalized belonging matrix according to a set of
+#' @description Calculate the generalized membership matrix according to a set of
 #' centroids, the observed data, the fuzziness degree, and a beta parameter
 #'
 #' @param centers A matrix or a dataframe representing the centers of the
@@ -61,7 +61,7 @@ calcFGCMBelongMatrix <- function(centers, data, m, beta ){
 #' @return A named list with :
 #'  \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
-#'         \item Belongings: the final belonging matrix
+#'         \item Belongings: the final membership matrix
 #'         \item Groups: a vector with the names of the most likely group for each observation
 #'         \item Data: the dataset used to perform the clustering (might be standardized)
 #' }
@@ -97,9 +97,9 @@ GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = T
 #### SGFCM ####
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' @title Calculate the generalized belonging matrix (spatial version)
+#' @title Calculate the generalized membership matrix (spatial version)
 #'
-#' @description Calculate the generalized belonging matrix (spatial version) according to a set of
+#' @description Calculate the generalized membership matrix (spatial version) according to a set of
 #' centroids, the observed data, the fuzziness degree a neighbouring matrix,
 #' a spatial weighting term and a beta parameter
 #'
@@ -194,7 +194,7 @@ calcSFGCMBelongMatrix <- function(centers, data, wdata, m, alpha, beta ){
 #' @return A named list with
 #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
-#'         \item Belongings: the final belonging matrix
+#'         \item Belongings: the final membership matrix
 #'         \item Groups: a vector with the names of the most likely group for each observation
 #'         \item Data: the dataset used to perform the clustering (might be standardized)
 #' }

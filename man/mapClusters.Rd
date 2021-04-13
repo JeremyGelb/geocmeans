@@ -11,10 +11,10 @@ mapClusters(geodata, belongmatrix, undecided = NULL)
 spatiallinesdataframe or spatialpointsdataframe ordered
 like the original data used for the clustering}
 
-\item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
+\item{belongmatrix}{The membership matrix obtained at the end of the algorithm}
 
 \item{undecided}{A float between 0 and 1 giving the minimum value that an
-observation must get in the belonging matrix to not be considered as
+observation must get in the membership matrix to not be considered as
 uncertain (default = NULL)}
 }
 \value{

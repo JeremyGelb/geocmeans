@@ -7,10 +7,10 @@
 spConsistency(belongmatrix, nblistw, nrep = 999)
 }
 \arguments{
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{A membership matrix}
 
 \item{nblistw}{A list.w object describing the neighbours (spdep package)
-observation must get in the belonging matrix to not be considered as
+observation must get in the membership matrix to not be considered as
 uncertain (default = NULL)}
 
 \item{nrep}{An integer indicating the number of permutation to do to simulate}
@@ -37,7 +37,7 @@ The total spatial inconsistency (*Scr*) is calculated as follow
 
 \deqn{isp = \sum_{i}\sum_{j}\sum_{k} (u_{ik} - u_{jk})^{2} * W_{ij}}
 
-With U the belonging matrix, i an observation, k the neighbours of i and W
+With U the membership matrix, i an observation, k the neighbours of i and W
 the spatial weight matrix This represents the total spatial inconsistency of
 the solution (true inconsistency) We propose to compare this total with
 simulated values obtained by permutations (simulated inconsistency). The

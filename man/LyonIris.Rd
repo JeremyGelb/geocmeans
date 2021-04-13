@@ -3,7 +3,7 @@
 \docType{data}
 \name{LyonIris}
 \alias{LyonIris}
-\title{social and environmental indicators for the Iris of the metropolitan region of Lyon (france)}
+\title{social and environmental indicators for the Iris of the metropolitan region of Lyon (France)}
 \format{
 A SpatialPolygonsDataFrame with 506 rows and 32 variables:
 \describe{

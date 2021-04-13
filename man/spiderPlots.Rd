@@ -9,7 +9,7 @@ spiderPlots(data, belongmatrix, chartcolors = NULL)
 \arguments{
 \item{data}{A dataframe with numeric columns}
 
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{A membership matrix}
 
 \item{chartcolors}{A vector of color names used for the spider plot}
 }

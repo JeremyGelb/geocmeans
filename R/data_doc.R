@@ -1,4 +1,4 @@
-#' social and environmental indicators for the Iris of the metropolitan region of Lyon (france)
+#' social and environmental indicators for the Iris of the metropolitan region of Lyon (France)
 #'
 #' A dataset containing social and environmental data for the
 #' Iris of Lyon (France)

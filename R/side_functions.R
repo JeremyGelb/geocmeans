@@ -8,7 +8,7 @@
 #' @description Calculate Fukuyama and Sugeno index of clustering quality
 #'
 #' @param data The original dataframe used for the clustering (n*p)
-#' @param belongmatrix A belonging matrix (n*k)
+#' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
 #' @param m The fuzzyness parameter
 #' @return A float : the Fukuyama and Sugeno index
@@ -45,7 +45,7 @@ calcFukuyamaSugeno <- function(data,belongmatrix,centers,m){
 #' @description Calculate the explained inertia by a classification
 #'
 #' @param data The original dataframe used for the classification (n*p)
-#' @param belongmatrix A belonging matrix (n*k)
+#' @param belongmatrix A membership matrix (n*k)
 #' @return A float : the percentage of the total inertia explained
 #' @export
 #' @examples
@@ -83,7 +83,7 @@ calcexplainedInertia <- function(data,belongmatrix){
 #' package)
 #'
 #' @param data The original dataframe used for the classification (n*p)
-#' @param belongmatrix A belonging matrix (n*k)
+#' @param belongmatrix A membership matrix (n*k)
 #' @param m The fuzziness parameter used for the classification
 #' @return A named list with
 #' \itemize{
@@ -144,16 +144,16 @@ calcqualityIndexes <- function(data, belongmatrix, m) {
 #' the most likely groups of each datapoint, Spatial consistency index (see
 #' function spConsistency)
 #'
-#' @param belongmatrix A belonging matrix
+#' @param belongmatrix A membership matrix
 #' @param nblistw A list.w  object describing the neighbours (spdep package)
 #' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the belonging matrix to not be considered as
+#'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @param nrep An integer indicating the number of permutation to do to simulate
 #'   the random distribution of the spatial inconsistency
 #' @return A named list with :
 #' \itemize{
-#'         \item MoranValues : the moran I values fo each column of the belonging
+#'         \item MoranValues : the moran I values fo each column of the membership
 #'          matrix (spdep::MoranI)
 #'         \item JoinCounts : the result of the join count test calculated with
 #'          the most likely group for each datapoint (spdep::joincount.multi)
@@ -211,7 +211,7 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
 #'
 #' \deqn{isp = \sum_{i}\sum_{j}\sum_{k} (u_{ik} - u_{jk})^{2} * W_{ij}}
 #'
-#' With U the belonging matrix, i an observation, k the neighbours of i and W
+#' With U the membership matrix, i an observation, k the neighbours of i and W
 #' the spatial weight matrix This represents the total spatial inconsistency of
 #' the solution (true inconsistency) We propose to compare this total with
 #' simulated values obtained by permutations (simulated inconsistency). The
@@ -223,9 +223,9 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
 #' as their neighbours that what randomness can produce A classification
 #' solution able to reduce this index has a better spatial consistency
 #'
-#' @param belongmatrix A belonging matrix
+#' @param belongmatrix A membership matrix
 #' @param nblistw A list.w object describing the neighbours (spdep package)
-#'   observation must get in the belonging matrix to not be considered as
+#'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @param nrep An integer indicating the number of permutation to do to simulate
 #' @return A named list with
@@ -302,9 +302,9 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
 #' @param geodata A object of class spatialpolygonesdataframe /
 #' spatiallinesdataframe or spatialpointsdataframe ordered
 #' like the original data used for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
+#' @param belongmatrix The membership matrix obtained at the end of the algorithm
 #' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the belonging matrix to not be considered as
+#'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return A named list with :
 #' \itemize{
@@ -344,9 +344,9 @@ mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
 #'
 #' @param geodata A spatialpolygonsdataframe ordered like the original data used
 #'   for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
+#' @param belongmatrix The membership matrix obtained at the end of the algorithm
 #' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the belonging matrix to not be considered as
+#'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return A named list with :
 #' \itemize{
@@ -413,9 +413,9 @@ mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
 #'
 #' @param geodata A spatiallinesdataframe ordered like the original data used
 #'   for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
+#' @param belongmatrix The membership matrix obtained at the end of the algorithm
 #' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the belonging matrix to not be considered as
+#'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return A named list with :
 #' \itemize{
@@ -482,9 +482,9 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
 #'
 #' @param geodata A spatialpointsdataframe ordered like the original data used
 #'   for the clustering
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
+#' @param belongmatrix The membership matrix obtained at the end of the algorithm
 #' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the belonging matrix to not be considered as
+#'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
 #' @return A named list with :
 #' \itemize{
@@ -550,11 +550,11 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 #' @description Calculate some descriptive statistics of each group
 #'
 #' @param data The original dataframe used for the classification
-#' @param belongmatrix A belonging matrix
+#' @param belongmatrix A membership matrix
 #' @param weighted A boolean indicating if the summary statistics must use the
-#'   belonging matrix columns as weights (TRUE) or simply assign each
+#'   membership matrix columns as weights (TRUE) or simply assign each
 #'   observation to its most likely cluster and compute the statistics on each
-#'   subset (default=True)
+#'   subset (FALSE)
 #' @param dec An integer indicating the number of digits to keep when rounding
 #' (default is 3)
 #' @param silent A boolean indicating if the results must be printed or silently returned
@@ -644,8 +644,8 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
 #'
 #' @description Identify the observation for with the classification is uncertain
 #'
-#' @param belongmatrix The belonging matrix obtained at the end of the algorithm
-#' @param tol A float indicating the minimum required level of belonging to be
+#' @param belongmatrix The membership matrix obtained at the end of the algorithm
+#' @param tol A float indicating the minimum required level of membership to be
 #'   not considered as undecided
 #' @return A vector indicating the most likely group for each observation or
 #'   "Undecided" if the maximum probability for the observation does not reach
@@ -681,7 +681,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #' between these two limits in a linear way.
 #'
 #' @param data A dataframe with numeric columns
-#' @param belongmatrix A belonging matrix
+#' @param belongmatrix A membership matrix
 #' @param chartcolors A vector of color names used for the spider plot
 #'
 #' @importFrom grDevices rgb colors col2rgb
@@ -787,7 +787,7 @@ violinPlots <- function(data,groups){
 #' @description Return bar plots to compare groups
 #'
 #' @param data A dataframe with numeric columns
-#' @param belongmatrix A belonging matrix
+#' @param belongmatrix A membership matrix
 #' @param what Can be "mean" (default) or "median"
 #' @param ncol An integer indicating the number of columns for the bar plot
 #' @export
@@ -859,7 +859,7 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #' @keywords internal
 #' @examples
 #' #No example provided, this is an internal function
-eval_parameters <- function(algo, parameters,data, nblistw, standardize,spconsist, classidx, tol, maxiter, seed=NULL, verbose = TRUE){
+eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize = TRUE ,spconsist = FALSE, classidx = TRUE, tol, maxiter, seed=NULL, verbose = TRUE){
     if(algo == "FCM"){
         exefun <- function(data,x, lw){
             return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
@@ -1036,7 +1036,7 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
 #'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #' }
 #'}
-select_parameters.mc <- function(algo,data,k,m,alpha,beta, nblistw, lag_method="mean",  spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
+select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw = NULL, lag_method="mean",  spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
 
     if(spconsist==F & classidx==F){
         stop("one of spconsist and classidx must be TRUE")
@@ -1049,8 +1049,9 @@ select_parameters.mc <- function(algo,data,k,m,alpha,beta, nblistw, lag_method="
         seed <- FALSE
     }
     allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha, beta = beta, listsw=1:length(nblistw), lag_method=lag_method)
-
-    print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
+    if (verbose){
+        print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
+    }
     chunks <- split(1:nrow(allcombinaisons), rep(1:ceiling(nrow(allcombinaisons) / chunk_size),
                                        each = chunk_size, length.out = nrow(allcombinaisons)))
     chunks <- lapply(chunks,function(x){return(allcombinaisons[x,])})
@@ -1060,6 +1061,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha,beta, nblistw, lag_method="
         progressr::with_progress({
             p <- progressr::progressor(along = iseq)
             values <- future.apply::future_lapply(iseq, function(i) {
+                sprintf(algo)
                 parameters <- chunks[[i]]
                 indices <- eval_parameters(algo, parameters, data, nblistw, standardize,
                                                              spconsist, classidx, tol, maxiter)
@@ -1070,8 +1072,9 @@ select_parameters.mc <- function(algo,data,k,m,alpha,beta, nblistw, lag_method="
     }else{
         values <- future.apply::future_lapply(iseq, function(i) {
             parameters <- chunks[[i]]
-            invisible((capture.output(indices <- eval_parameters(parameters, data, nblistw, standardize,
-                                                                 spconsist, classidx, tol, maxiter))))
+            indices <- eval_parameters(algo, parameters, data, nblistw, standardize,
+                                                    spconsist, classidx, tol, maxiter,
+                                       verbose = F)
             return(indices)
         },future.seed = seed)
     }
@@ -1079,6 +1082,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha,beta, nblistw, lag_method="
     dfIndices <- do.call(rbind,values)
     return(dfIndices)
 }
+
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ##### Functions to recalculate spatial weights #####
@@ -1121,9 +1125,9 @@ adjustSpatialWeights <- function(data,listw,style){
 ##### Utilitary functions #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' @title Convert categories to belonging matrix
+#' @title Convert categories to membership matrix
 #'
-#' @description Function to Convert categories to belonging matrix (binary matrix)
+#' @description Function to Convert categories to membership matrix (binary matrix)
 #'
 #' @param categories A vector with the categories of each observation
 #'

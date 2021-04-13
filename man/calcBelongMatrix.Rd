@@ -2,7 +2,7 @@
 % Please edit documentation in R/main_functions.R
 \name{calcBelongMatrix}
 \alias{calcBelongMatrix}
-\title{Calculate the belonging matrix}
+\title{Calculate the membership matrix}
 \usage{
 calcBelongMatrix(centers, data, m)
 }
@@ -20,7 +20,7 @@ A n * k matrix representing the probability of belonging of each
   observation to each cluster
 }
 \description{
-Calculate the belonging matrix according to a set of centroids, the observed
+Calculate the membership matrix according to a set of centroids, the observed
 data and the fuzziness degree
 }
 \examples{

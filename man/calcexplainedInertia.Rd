@@ -9,7 +9,7 @@ calcexplainedInertia(data, belongmatrix)
 \arguments{
 \item{data}{The original dataframe used for the classification (n*p)}
 
-\item{belongmatrix}{A belonging matrix (n*k)}
+\item{belongmatrix}{A membership matrix (n*k)}
 }
 \value{
 A float : the percentage of the total inertia explained

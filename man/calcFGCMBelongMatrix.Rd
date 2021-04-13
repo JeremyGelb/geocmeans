@@ -2,7 +2,7 @@
 % Please edit documentation in R/SFGCM.R
 \name{calcFGCMBelongMatrix}
 \alias{calcFGCMBelongMatrix}
-\title{Calculate the generalized belonging matrix}
+\title{Calculate the generalized membership matrix}
 \usage{
 calcFGCMBelongMatrix(centers, data, m, beta)
 }
@@ -22,7 +22,7 @@ A n * k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
-Calculate the generalized belonging matrix according to a set of
+Calculate the generalized membership matrix according to a set of
 centroids, the observed data, the fuzziness degree, and a beta parameter
 }
 \examples{

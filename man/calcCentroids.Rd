@@ -20,7 +20,7 @@ A n X k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
-Calculate the new centroids of the clusters based on the belonging matrix
+Calculate the new centroids of the clusters based on the membership matrix
 }
 \examples{
 #This is an internal function, no example provided

@@ -7,12 +7,12 @@
 spatialDiag(belongmatrix, nblistw, undecided = NULL, nrep = 50)
 }
 \arguments{
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{A membership matrix}
 
 \item{nblistw}{A list.w  object describing the neighbours (spdep package)}
 
 \item{undecided}{A float between 0 and 1 giving the minimum value that an
-observation must get in the belonging matrix to not be considered as
+observation must get in the membership matrix to not be considered as
 uncertain (default = NULL)}
 
 \item{nrep}{An integer indicating the number of permutation to do to simulate
@@ -21,7 +21,7 @@ the random distribution of the spatial inconsistency}
 \value{
 A named list with :
 \itemize{
-        \item MoranValues : the moran I values fo each column of the belonging
+        \item MoranValues : the moran I values fo each column of the membership
          matrix (spdep::MoranI)
         \item JoinCounts : the result of the join count test calculated with
          the most likely group for each datapoint (spdep::joincount.multi)

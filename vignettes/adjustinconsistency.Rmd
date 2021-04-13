@@ -3,10 +3,9 @@ title: "An adjusted spatial inconsistency index"
 author: "Jeremy Gelb"
 date: "02/04/2021"
 output:
-  rmarkdown::pdf_document:
+  rmarkdown::html_vignette:
     fig_width: 5
     fig_height: 5
-    extra_dependencies: ["float"]
     toc: true
     toc_depth: 2
     df_print: "tibble"

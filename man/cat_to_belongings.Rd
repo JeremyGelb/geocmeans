@@ -2,7 +2,7 @@
 % Please edit documentation in R/side_functions.R
 \name{cat_to_belongings}
 \alias{cat_to_belongings}
-\title{Convert categories to belonging matrix}
+\title{Convert categories to membership matrix}
 \usage{
 cat_to_belongings(categories)
 }
@@ -13,5 +13,5 @@ cat_to_belongings(categories)
 A binary matrix
 }
 \description{
-Function to Convert categories to belonging matrix (binary matrix)
+Function to Convert categories to membership matrix (binary matrix)
 }

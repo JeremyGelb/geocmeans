@@ -9,7 +9,7 @@ calcFukuyamaSugeno(data, belongmatrix, centers, m)
 \arguments{
 \item{data}{The original dataframe used for the clustering (n*p)}
 
-\item{belongmatrix}{A belonging matrix (n*k)}
+\item{belongmatrix}{A membership matrix (n*k)}
 
 \item{centers}{The centers of the clusters}
 

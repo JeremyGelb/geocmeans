@@ -42,7 +42,7 @@ start centers will be the same if the same integer is selected.}
 A named list with :
  \itemize{
         \item Centers: a dataframe describing the final centers of the groups
-        \item Belongings: the final belonging matrix
+        \item Belongings: the final membership matrix
         \item Groups: a vector with the names of the most likely group for each observation
         \item Data: the dataset used to perform the clustering (might be standardized)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/main_functions.R
 \name{calcSFCMBelongMatrix}
 \alias{calcSFCMBelongMatrix}
-\title{Calculate the belonging matrix (spatial version)}
+\title{Calculate the membership matrix (spatial version)}
 \usage{
 calcSFCMBelongMatrix(centers, data, wdata, m, alpha)
 }
@@ -27,7 +27,7 @@ A n * k matrix representing the belonging probabilities of each
   observation to each cluster
 }
 \description{
-Calculate the belonging matrix (spatial version) according to a set of
+Calculate the membership matrix (spatial version) according to a set of
 centroids, the observed data, the fuzziness degree a neighbouring matrix and
 a spatial weighting term
 }

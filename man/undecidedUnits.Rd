@@ -7,9 +7,9 @@
 undecidedUnits(belongmatrix, tol = 0.1)
 }
 \arguments{
-\item{belongmatrix}{The belonging matrix obtained at the end of the algorithm}
+\item{belongmatrix}{The membership matrix obtained at the end of the algorithm}
 
-\item{tol}{A float indicating the minimum required level of belonging to be
+\item{tol}{A float indicating the minimum required level of membership to be
 not considered as undecided}
 }
 \value{

@@ -9,12 +9,12 @@ summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3, silent = T)
 \arguments{
 \item{data}{The original dataframe used for the classification}
 
-\item{belongmatrix}{A belonging matrix}
+\item{belongmatrix}{A membership matrix}
 
 \item{weighted}{A boolean indicating if the summary statistics must use the
-belonging matrix columns as weights (TRUE) or simply assign each
+membership matrix columns as weights (TRUE) or simply assign each
 observation to its most likely cluster and compute the statistics on each
-subset (default=True)}
+subset (FALSE)}
 
 \item{dec}{An integer indicating the number of digits to keep when rounding
 (default is 3)}

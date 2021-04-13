@@ -9,7 +9,7 @@ calcqualityIndexes(data, belongmatrix, m)
 \arguments{
 \item{data}{The original dataframe used for the classification (n*p)}
 
-\item{belongmatrix}{A belonging matrix (n*k)}
+\item{belongmatrix}{A membership matrix (n*k)}
 
 \item{m}{The fuzziness parameter used for the classification}
 }

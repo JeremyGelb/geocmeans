@@ -26,15 +26,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This document is a short introduction to the package **geocmeans**. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation
 
-@cai2007fast described in their article the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by @zhao2013kernel.
+In their article, @cai2007fast described the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by @zhao2013kernel.
 
-@gelb2021apport applied the method to socio-residential and environmental data and compared the results with oter unsupervised classification algorithms (in french).
+@gelb2021apport applied the method to socio-residential and environmental data comparing the results with other unsupervised classification algorithms (in French).
 
-There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*, *kmeans*, *cmeans*, *factoextra*, etc.). However theses methods are not always well-suited to analyze spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups despite the fact that they are very similar.
+There are actually numerous packages and functions to perform unsupervised classification in R (*hclust*, *kmeans*, *cmeans*, *factoextra*, etc.). However, these methods are not always well-suited to analyze spatial data. Indeed, they do not account for spatial information such as proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups event though they are very similar.
 
-The package **ClustGeo** is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between observations. The proposed approach is very appealing because the user has to select a parameter (*alpha*) that controls the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated  between observations with their variables).
+To our knowledge, the package **ClustGeo** is the only package proposing an unsupervised classification method which directly consider spatial proximity between observations. The proposed approach is appealing because the user can select a parameter (*alpha*) that controls the weight of the spatial distance matrix (calculated between observations with their locations) versus the semantic distance matrix (calculated  between observations with their variables).
 
-However, this method belongs to the category of "hard-clustering" algorithms. Each observation ends up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms give more information because they calculate for each observation its "probability" of belonging to each group.
+However, this method belongs to the category of "hard-clustering" algorithms. Each observation ends up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms provide more information because they calculate the "probability" of each observation to belong to each group.
 
 
 The algorithms SFCM (spatial fuzzy c-means) and SGFCM (spatial generalized fuzzy c-means) propose to combine the best of both worlds.
@@ -50,7 +50,7 @@ The package **geocmeans** is an implementation in R of these methods (originally
 
 **geocmeans** comes with a toy dataset *LyonIris*, combining many demographic and environmental variables aggregated at the scale of the Iris (aggregated units for statistical information) in Lyon (France).
 
-Before starting the analysis, it is required to standardize the data because most of the calculus is based on Euclidean distance (we plan to also include Manhattan distance in a future release).
+Before starting the analysis, the data must be standardized because most of the calculus is based on Euclidean distance (we plan to also include Manhattan distance in a future release).
 
 ```{r message=FALSE, warning=FALSE}
 #charging packages and data
@@ -86,7 +86,7 @@ load(system.file("extdata", "results_vignette_intro.rda",
 
 ## Classical Kmeans
 
-To explore the dataset and choose a number of cluster/groups (k) we propose to start with a classical kmeans.
+To explore the dataset and choose the right number of cluster/groups (k) we propose to start with a classical kmeans.
 
 ```{r warning=FALSE, fig.cap = "Impact of the number of groups on the explained variance", out.width = "50%", fig.pos="H", fig.align="center"}
 #finding the best k by using the r2 of the classification
@@ -138,9 +138,9 @@ We could now compare this solution with a classical c-means algorithm.
 
 ## Classical c-means and generalized c-means
 
-The classical c-means is a simple method to perform fuzzy unsupervised classification. The package **geocmeans** proposes the function *CMeans*. We set the fuzzyness degree (m) to 1.5.
+The classical c-means is a simple method to perform fuzzy unsupervised classification. The package **geocmeans** proposes the function *CMeans*. We set the fuzziness degree (m) to 1.5.
 
-We do not present here the algorithm, but only the two main formulas.
+We do not present the algorithm here, but only the two main formulas.
 
 The first one is used to update the values of the membership matrix at each iteration $u_ik$
 
@@ -154,19 +154,19 @@ With :
 * $x_k$ the values of the observation $k$
 * $v_i$ the values of the center of the cluster $i$
 * $c$ the number of clusters
-* $m$ the fuzzyness index
+* $m$ the fuzziness index
 
 ```{r warning=FALSE}
 Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 ```
 
-We can now use the function *calcqualityIndexes* which combines many indices from the package **fclust** to analyze the quality of the classification. We will use these values later to do comparisons among the different algorithms.
+We can now use the function *calcqualityIndexes* which combines many indices from the package **fclust** to analyze the quality of the classification. We will use these values later for the purpose of comparisons among the different algorithms.
 
 ```{r message=FALSE, warning=FALSE}
 calcqualityIndexes(Data, Cmean$Belongings, m = 1.5)
 ```
 
-Note, **geocmeans** proposes also a generalized version of the c-means algorithm. It is known to accelerate convergence and yield less fuzzy results by adjusting the membership matrix at each iteration. It requires an extra parameter *beta* controlling the strength of the modification. The modification affects only the formula updating the membership matrix.
+Note, **geocmeans** also proposes a so-called generalized version of the c-means algorithm. It is known to accelerate convergence and yield less fuzzy results by adjusting the membership matrix at each iteration. It requires an extra *beta* parameter controlling the strength of the modification. The modification only affects the formula updating the membership matrix.
 
 $$u_{ik} = \frac{(||x_{k} - v{_i}||^{2} - \beta_k) ^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 - \beta_k)^{(-1/(m-1))}}$$
 
@@ -186,7 +186,7 @@ knitr::kable(beta_values[c("beta","Silhouette.index","XieBeni.index","Explained.
                            "Xie and Beni index", "explained inertia"),digits = 3)
 ```
 
-Considering the table above, we select beta = 0.7, it keeps a good silhouhette index, and increases Xie and Beni index and explained inertia. Let us compare the results of GFCM and FCM.
+Considering the table above, we select *beta* = 0.7, it maintains a good silhouette index, and increases Xie and Beni index and explained inertia. Let us compare the results of GFCM and FCM.
 
 ```{r warning=FALSE}
 GCmean <- GCMeans(Data,k = 4,m = 1.5, beta = 0.7,500,standardize = FALSE, seed=456,
@@ -198,9 +198,9 @@ df <- cbind(unlist(r1), unlist(r2))
 knitr::kable(df,
              digits = 3,col.names = c("GFCM", "FCM"))
 ```
-The results indicate that the GFCM gives a solution that is less fuzzy (higher explained inertia and lower partition entropy) but keeps a good silhouette index and an even better Xie and Beni index.
+The results indicate that the GFCM provides a solution that is less fuzzy (higher explained inertia and lower partition entropy) but keeps a good silhouette index and an even better Xie and Beni index.
 
-We can now map the two membership matrices and the most likely group for each observation. To do so, we use the function *mapClusters* from **geocmeans**. We propose here to define a threshold of 0.45. If an observation has only values below this probability in a membership matrix, it will be labeled as "undecided" (represented with transparency on the map).
+We can now map the two membership matrices and the most likely group for each observation. To do so, we use the function *mapClusters* from **geocmeans**. We propose here to define a threshold of 0.45. If an observation only has values below this probability in a membership matrix, it will be labeled as "undecided" (represented with transparency on the map).
 
 We can compare the maps of the classical c-means and the generalized version.
 ```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 1", out.width="80%", fig.pos="H", fig.align="center"}
@@ -256,9 +256,9 @@ $$u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m
 $$v_{i} = \frac{\sum_{k=1}^N u_{ik}^m(x_{k} + \alpha\bar{x_{k}})}{(1 + \alpha)\sum_{k=1}^N u_{ik}^m}$$
 with $\bar{x}$ the lagged version of x and $\alpha \geq 0$
 
-As the formula suggests, the *SFCM* can be see as a spatially smoothed version of the classical c-means and *alpha* controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the classical c-means. 
+As the formula suggests, the *SFCM* can be seen as a spatially smoothed version of the classical c-means and *alpha* controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the classical c-means. 
 
-To select *alpha*, we propose to check all the possible values between 0 and 2 with a step of 0.05.
+To select *alpha*, we propose to check all possible values between 0 and 2 with a step of 0.05.
 
 ```{r warning=FALSE,  message=FALSE, eval = FALSE}
 DFindices_SFCM <- select_parameters(algo = "SFCM", data = Data,
@@ -268,11 +268,11 @@ DFindices_SFCM <- select_parameters(algo = "SFCM", data = Data,
 
 ```
 
-Now we can check the indices to select the best *alpha*. The goal is to reduce as much as possible spatial inconsistency and to keep a good classification quality.
+Now we are able to check the indices to select the best *alpha*. The goal is to reduce spatial inconsistency as much as possible and to maintain a good classification quality.
 
-Let's start with the spatial inconsistency. This indicator (developed for this package) calculates the sum of the squared differences between each observation and its neighbours on the membership matrix. Thus, the maximum for each observation is $k*j$ with *j* the number of neighbours for the observation and *k* the number of groups. A maximum is reached if each observations have 100% chance to belong to a cluster that is different from all its neighbours. So, when we sum up the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when permuting randomly the rows of the membership matrix. This second quantity represents the spatial inconsistency that we might expect if the observations were randomly scattered in space. We can repeat the permutation step (Monte Carlo approach) and keep the mean of the ratios to have a more robust indicators (see help(spConsistency) for details).
+Let us start with the spatial inconsistency. This indicator (developed for this package) calculates the sum of the squared differences between each observation and its neighbours on the membership matrix. Thus, the maximum for each observation is $k*j$ with *j* the number of neighbours for the observation and *k* the number of groups. A maximum is reached if each observation has 100% chance belonging to a cluster that is different from all its neighbours. So, when we sum up the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when randomly permuting the rows of the membership matrix. This second quantity represents the spatial inconsistency that we might expect if the observations were randomly scattered in space. We can repeat the permutation step (Monte Carlo approach) and keep the mean of the ratios to have a more robust indicator (see help(spConsistency) for details).
 
-A smaller value indicates a smaller spatial inconsistency and thus a greater spatial consistency. 0 meaning that all observations have exactly the same values in the membership matrix than their neighbours (perfect spatial consistency).
+A smaller value indicates a smaller spatial inconsistency and thus a greater spatial consistency. 0 meaning that all observations have exactly the same values in the membership matrix as their neighbours (perfect spatial consistency).
 
 ```{r warning=FALSE, fig.cap = "Link between alpha and spatial inconsistency", out.width="50%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFCM)+
@@ -281,16 +281,16 @@ ggplot(DFindices_SFCM)+
 
 ```
 
-Unsurprisingly, increasing *alpha* leads to a decrease of the spatial inconsistency. This gain follow an inverse function.
+Not surprisingly, increasing *alpha* leads to a decrease of the spatial inconsistency. This gain follows an inverse function.
 
-Let's check now the explained inertia
+Let us now check the explained inertia
 ```{r warning=FALSE, fig.cap = "Link between alpha and explained inertia", out.width="50%", fig.pos="H", fig.align="center"}
 ggplot(DFindices_SFCM)+
   geom_smooth(aes(x=alpha,y=Explained.inertia), color = "black")+
   geom_point(aes(x=alpha,y=Explained.inertia), color = "red")
 ```
 
-As expected, the explained inertia decreases when alpha increases and follows again an inverse function. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here: only 3% between alpha = 0 and alpha = 2.
+As expected, the explained inertia decreases when alpha increases and again follows an inverse function. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here: only 3% between alpha = 0 and alpha = 2.
 
 To finish here, we can observe the silhouette and Xie and Beni indicators.
 
@@ -307,9 +307,9 @@ ggplot(DFindices_SFCM)+
 
 ```
 
-The detail of the meaning of theses indicators is beyond the scope of this vignette. Let's just stress that a bigger silhouette index indicates a better classification, and a smaller Xie and beni index indicates a better classification.
+The detail of the meaning of these indicators is beyond the scope of this vignette. Let us just stress that a larger silhouette index indicates a better classification, and a smaller Xie and beni index indicates a better classification.
 
-After considering all the previous charts, we decide to keep alpha = 0.7 as it seems to give a good balance between spatial consistency and classification quality in this case.
+After considering all the previous charts, we decide to keep alpha = 0.7 as it seems to provide a good balance between spatial consistency and classification quality in this case.
 
 ```{r warning=FALSE}
 SFCM <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
@@ -319,9 +319,9 @@ SFCM <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
 
 ### Selecting alpha and beta for SGFCM
 
-It is also possible to use the generalized version of the spatial c-means. In that case, we have to define both *alpha* and *beta*.
+It is also possible to use the so-called generalized version of the spatial c-means. In that case, we must define both *alpha* and *beta*.
 
-The next formula shows how the membership matrix is updated at each iteration. Note that the centers of the clusters are updated with the same formula as SFCM.
+The next formula shows how the membership matrix is updated at each iteration. Note that the centres of the clusters are updated with the same formula as SFCM.
 
 $$u_{ik} = \frac{(||x_{k} - v{_i}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}$$
 
@@ -356,9 +356,9 @@ ggplot(DFindices_SFGCM) +
 
 ```
 
-The first two plots indicate that some particular pairs of *alpha* and *beta* yield good results in the range 0.8 < *alpha* < 1.2 and 0.6 < *beta* < 0.8. The last plot shows that the selection of *beta* has no impact on the spatial consistency.
+The first two plots indicate that some pairs of *alpha* and *beta* in particulat yield good results in the range 0.8 < *alpha* < 1.2 and 0.6 < *beta* < 0.8. The last plot shows that the selection of *beta* has no impact on the spatial consistency.
 
-Considering the previous plots, we decide to retain the solution with *beta* = 0.65 and *alpha* = 0.95 which yield very good results for all the considered indices.
+Considering the previous plots, we decide to retain the solution with *beta* = 0.65 and *alpha* = 0.95 which yield very good results for all the indices considered.
 
 ```{r warning=FALSE}
 SGFCM <- SGFCMeans(Data,WMat,k = 4,m=1.5, alpha=0.95, beta = 0.65,
@@ -435,7 +435,7 @@ knitr::kable(moran_table, digits = 3,
              )
 ```
 
-Unsurprisingly, the Moran I values calculated on the membership matrices are higher for SFCM and SGFCM, indicating stronger spatial structures in the classifications.
+Not surprisingly, the Moran I values calculated on the membership matrices are higher for SFCM and SGFCM, indicating stronger spatial structures in the classifications.
 
 ```{r warning=FALSE}
 print(c(spdiag_1$SpConsist, spdiag_2$SpConsist,spdiag_3$SpConsist,spdiag_4$SpConsist))
@@ -447,7 +447,7 @@ Considering the values of spatial inconsistency, we could check if the value obt
 sum(spdiag_4$SpConsist > spdiag_3$SpConsistSamples) / length(spdiag_3$SpConsistSamples)
 ```
 
-It appears that out of `r length(spdiag_3$SpConsistSamples)` permutations, the observed values of spatial inconsistency of SGFCM is always lower than the one of SFCM. The difference is significant at the threshold `r 1/length(spdiag_3$SpConsistSamples)`=1/`r length(spdiag_3$SpConsistSamples)`
+It appears that out of `r length(spdiag_3$SpConsistSamples)` permutations, the observed values of spatial inconsistency of SGFCM are always lower than that of SFCM. The difference is significant at the threshold `r 1/length(spdiag_3$SpConsistSamples)` (=1/`r length(spdiag_3$SpConsistSamples)`)
 
 
 We can map the undecided observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function *undecidedUnits* of the **geocmeans** package.
@@ -477,7 +477,7 @@ ggplot(data=DFmapping)+
 
 ## Interpreting the results of the final classification
 
-One can obtain many descriptive information about the final groups with three functions of **geocmeans** : 
+One can obtain a lot of descriptive information about the final groups with three functions of **geocmeans** : 
 
 * *summarizeClusters* : calculate summary statistics for each group for a given dataset by using the membership matrix as weights (sticking with the fuzzy spirit).
 * *spiderPlots* : display a spider plot allowing to compare quickly the differences between groups.
@@ -495,12 +495,12 @@ spiderPlots(LyonIris@data[AnalysisFields], SGFCM$Belongings,
 violinPlots(LyonIris@data[AnalysisFields], SGFCM$Groups)
 ```
 
-That's all folks ! These are the enhancements for the next version
+That's all, folks ! Following are the enhancements for the next version
 
 * introduce other methods of spatial c-means
-* open some other parameters to the user (like the function defining the convergence criterion)
+* open some other parameters to the user (such as the function defining the convergence criterion)
 * work on documentation
-* improve calculus speed by dropping some apply in the code
+* improve calculus speed by dropping some *apply* in the code
 * adding the manhattan distance (useful when data have a high dimensionality)
 
 

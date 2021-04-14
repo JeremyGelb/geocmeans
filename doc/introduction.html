@@ -181,11 +181,11 @@ div.csl-indent {
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>This document is a short introduction to the package <strong>geocmeans</strong>. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation</p>
-<p><span class="citation"><a href="#ref-cai2007fast" role="doc-biblioref">Cai, Chen, and Zhang</a> (<a href="#ref-cai2007fast" role="doc-biblioref">2007</a>)</span> described in their article the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by <span class="citation"><a href="#ref-zhao2013kernel" role="doc-biblioref">Zhao, Jiao, and Liu</a> (<a href="#ref-zhao2013kernel" role="doc-biblioref">2013</a>)</span>.</p>
-<p><span class="citation"><a href="#ref-gelb2021apport" role="doc-biblioref">Gelb and Apparicio</a> (<a href="#ref-gelb2021apport" role="doc-biblioref">2021</a>)</span> applied the method to socio-residential and environmental data and compared the results with oter unsupervised classification algorithms (in french).</p>
-<p>There are actually numerous packages and functions to perform unsupervised classification in R (<em>hclust</em>, <em>kmeans</em>, <em>cmeans</em>, <em>factoextra</em>, etc.). However theses methods are not always well-suited to analyze spatial data. Indeed, they do not take into account spatial information like proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups despite the fact that they are very similar.</p>
-<p>The package <strong>ClustGeo</strong> is to our knowledge the only package proposing an unsupervised classification method considering directly spatial proximity between observations. The proposed approach is very appealing because the user has to select a parameter (<em>alpha</em>) that controls the weight of the spatial distance matrix (calculated between observations with their locations) VS the semantic distance matrix (calculated between observations with their variables).</p>
-<p>However, this method belongs to the category of “hard-clustering” algorithms. Each observation ends up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms give more information because they calculate for each observation its “probability” of belonging to each group.</p>
+<p>In their article, <span class="citation"><a href="#ref-cai2007fast" role="doc-biblioref">Cai, Chen, and Zhang</a> (<a href="#ref-cai2007fast" role="doc-biblioref">2007</a>)</span> described the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by <span class="citation"><a href="#ref-zhao2013kernel" role="doc-biblioref">Zhao, Jiao, and Liu</a> (<a href="#ref-zhao2013kernel" role="doc-biblioref">2013</a>)</span>.</p>
+<p><span class="citation"><a href="#ref-gelb2021apport" role="doc-biblioref">Gelb and Apparicio</a> (<a href="#ref-gelb2021apport" role="doc-biblioref">2021</a>)</span> applied the method to socio-residential and environmental data comparing the results with other unsupervised classification algorithms (in French).</p>
+<p>There are actually numerous packages and functions to perform unsupervised classification in R (<em>hclust</em>, <em>kmeans</em>, <em>cmeans</em>, <em>factoextra</em>, etc.). However, these methods are not always well-suited to analyze spatial data. Indeed, they do not account for spatial information such as proximity or contiguity between observations. This may lead to solutions for which close observations end up in different groups event though they are very similar.</p>
+<p>To our knowledge, the package <strong>ClustGeo</strong> is the only package proposing an unsupervised classification method which directly consider spatial proximity between observations. The proposed approach is appealing because the user can select a parameter (<em>alpha</em>) that controls the weight of the spatial distance matrix (calculated between observations with their locations) versus the semantic distance matrix (calculated between observations with their variables).</p>
+<p>However, this method belongs to the category of “hard-clustering” algorithms. Each observation ends up in one cluster/group. The main draw-back here is the difficulty to identify observations that are undecided, at the frontier of two clusters/groups. The soft or fuzzy clustering algorithms provide more information because they calculate the “probability” of each observation to belong to each group.</p>
 <p>The algorithms SFCM (spatial fuzzy c-means) and SGFCM (spatial generalized fuzzy c-means) propose to combine the best of both worlds.</p>
 <p>The package <strong>geocmeans</strong> is an implementation in R of these methods (originally developed for analysis of brain imagery). It comes with a set of functions to facilitate the analysis of the final membership matrices :</p>
 <ul>
@@ -197,7 +197,7 @@ div.csl-indent {
 <div id="loading-the-packages-and-the-data" class="section level2">
 <h2>Loading the packages and the data</h2>
 <p><strong>geocmeans</strong> comes with a toy dataset <em>LyonIris</em>, combining many demographic and environmental variables aggregated at the scale of the Iris (aggregated units for statistical information) in Lyon (France).</p>
-<p>Before starting the analysis, it is required to standardize the data because most of the calculus is based on Euclidean distance (we plan to also include Manhattan distance in a future release).</p>
+<p>Before starting the analysis, the data must be standardized because most of the calculus is based on Euclidean distance (we plan to also include Manhattan distance in a future release).</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#charging packages and data</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geocmeans)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -224,7 +224,7 @@ div.csl-indent {
 </div>
 <div id="classical-kmeans" class="section level2">
 <h2>Classical Kmeans</h2>
-<p>To explore the dataset and choose a number of cluster/groups (k) we propose to start with a classical kmeans.</p>
+<p>To explore the dataset and choose the right number of cluster/groups (k) we propose to start with a classical kmeans.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#finding the best k by using the r2 of the classification</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#trying for k from 2 to 10</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>R2s <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>,<span class="cf">function</span>(k){</span>
@@ -277,8 +277,8 @@ Clusters identified by classical k-means
 </div>
 <div id="classical-c-means-and-generalized-c-means" class="section level2">
 <h2>Classical c-means and generalized c-means</h2>
-<p>The classical c-means is a simple method to perform fuzzy unsupervised classification. The package <strong>geocmeans</strong> proposes the function <em>CMeans</em>. We set the fuzzyness degree (m) to 1.5.</p>
-<p>We do not present here the algorithm, but only the two main formulas.</p>
+<p>The classical c-means is a simple method to perform fuzzy unsupervised classification. The package <strong>geocmeans</strong> proposes the function <em>CMeans</em>. We set the fuzziness degree (m) to 1.5.</p>
+<p>We do not present the algorithm here, but only the two main formulas.</p>
 <p>The first one is used to update the values of the membership matrix at each iteration <span class="math inline">\(u_ik\)</span></p>
 <p><span class="math display">\[u_{ik} = \frac{(||x_{k} - v{_i}||^{2}) ^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 )^{(-1/(m-1))}}\]</span> And the second one to update the centers of the clusters</p>
 <p><span class="math display">\[v_{i} = \frac{\sum_{k=1}^N u_{ik}^m(x_{k})}{\sum_{k=1}^N u_{ik}^m}\]</span></p>
@@ -287,10 +287,10 @@ Clusters identified by classical k-means
 <li><span class="math inline">\(x_k\)</span> the values of the observation <span class="math inline">\(k\)</span></li>
 <li><span class="math inline">\(v_i\)</span> the values of the center of the cluster <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(c\)</span> the number of clusters</li>
-<li><span class="math inline">\(m\)</span> the fuzzyness index</li>
+<li><span class="math inline">\(m\)</span> the fuzziness index</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Cmean <span class="ot">&lt;-</span> <span class="fu">CMeans</span>(Data,<span class="dv">4</span>,<span class="fl">1.5</span>,<span class="dv">500</span>,<span class="at">standardize =</span> <span class="cn">FALSE</span>, <span class="at">seed =</span> <span class="dv">456</span>, <span class="at">tol =</span> <span class="fl">0.00001</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<p>We can now use the function <em>calcqualityIndexes</em> which combines many indices from the package <strong>fclust</strong> to analyze the quality of the classification. We will use these values later to do comparisons among the different algorithms.</p>
+<p>We can now use the function <em>calcqualityIndexes</em> which combines many indices from the package <strong>fclust</strong> to analyze the quality of the classification. We will use these values later for the purpose of comparisons among the different algorithms.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calcqualityIndexes</span>(Data, Cmean<span class="sc">$</span>Belongings, <span class="at">m =</span> <span class="fl">1.5</span>)</span></code></pre></div>
 <pre><code>## $Silhouette.index
 ## [1] 0.3628511
@@ -312,7 +312,7 @@ Clusters identified by classical k-means
 ## 
 ## $Explained.inertia
 ## [1] 0.3018186</code></pre>
-<p>Note, <strong>geocmeans</strong> proposes also a generalized version of the c-means algorithm. It is known to accelerate convergence and yield less fuzzy results by adjusting the membership matrix at each iteration. It requires an extra parameter <em>beta</em> controlling the strength of the modification. The modification affects only the formula updating the membership matrix.</p>
+<p>Note, <strong>geocmeans</strong> also proposes a so-called generalized version of the c-means algorithm. It is known to accelerate convergence and yield less fuzzy results by adjusting the membership matrix at each iteration. It requires an extra <em>beta</em> parameter controlling the strength of the modification. The modification only affects the formula updating the membership matrix.</p>
 <p><span class="math display">\[u_{ik} = \frac{(||x_{k} - v{_i}||^{2} - \beta_k) ^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 - \beta_k)^{(-1/(m-1))}}\]</span></p>
 <p>with <span class="math inline">\(\beta_k = min(||x_{k} - v||^2)\)</span> and <span class="math inline">\(0 \leq \beta \leq 1\)</span>.</p>
 <p>To select an appropriate value for this parameter, we will try all the possible values between 0 and 1 with a step of 0.05.</p>
@@ -460,7 +460,7 @@ Clusters identified by classical k-means
 </tr>
 </tbody>
 </table>
-<p>Considering the table above, we select beta = 0.7, it keeps a good silhouhette index, and increases Xie and Beni index and explained inertia. Let us compare the results of GFCM and FCM.</p>
+<p>Considering the table above, we select <em>beta</em> = 0.7, it maintains a good silhouette index, and increases Xie and Beni index and explained inertia. Let us compare the results of GFCM and FCM.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>GCmean <span class="ot">&lt;-</span> <span class="fu">GCMeans</span>(Data,<span class="at">k =</span> <span class="dv">4</span>,<span class="at">m =</span> <span class="fl">1.5</span>, <span class="at">beta =</span> <span class="fl">0.7</span>,<span class="dv">500</span>,<span class="at">standardize =</span> <span class="cn">FALSE</span>, <span class="at">seed=</span><span class="dv">456</span>,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">tol =</span> <span class="fl">0.00001</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">&lt;-</span> <span class="fu">calcqualityIndexes</span>(Data,GCmean<span class="sc">$</span>Belongings,<span class="at">m=</span><span class="fl">1.5</span>)</span>
@@ -515,8 +515,8 @@ Clusters identified by classical k-means
 </tr>
 </tbody>
 </table>
-<p>The results indicate that the GFCM gives a solution that is less fuzzy (higher explained inertia and lower partition entropy) but keeps a good silhouette index and an even better Xie and Beni index.</p>
-<p>We can now map the two membership matrices and the most likely group for each observation. To do so, we use the function <em>mapClusters</em> from <strong>geocmeans</strong>. We propose here to define a threshold of 0.45. If an observation has only values below this probability in a membership matrix, it will be labeled as “undecided” (represented with transparency on the map).</p>
+<p>The results indicate that the GFCM provides a solution that is less fuzzy (higher explained inertia and lower partition entropy) but keeps a good silhouette index and an even better Xie and Beni index.</p>
+<p>We can now map the two membership matrices and the most likely group for each observation. To do so, we use the function <em>mapClusters</em> from <strong>geocmeans</strong>. We propose here to define a threshold of 0.45. If an observation only has values below this probability in a membership matrix, it will be labeled as “undecided” (represented with transparency on the map).</p>
 <p>We can compare the maps of the classical c-means and the generalized version.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cmeansMaps<span class="ot">&lt;-</span> <span class="fu">mapClusters</span>(LyonIris,Cmean<span class="sc">$</span>Belongings,<span class="at">undecided =</span> <span class="fl">0.45</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>GcmeansMaps<span class="ot">&lt;-</span> <span class="fu">mapClusters</span>(LyonIris,GCmean<span class="sc">$</span>Belongings,<span class="at">undecided =</span> <span class="fl">0.45</span>)</span>
@@ -582,15 +582,15 @@ Most likely clusters and undecided units
 <p>The two following formulas show how the functions updating the membership matrix and the centers of the clusters are modified.</p>
 <p><span class="math display">\[u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}\]</span></p>
 <p><span class="math display">\[v_{i} = \frac{\sum_{k=1}^N u_{ik}^m(x_{k} + \alpha\bar{x_{k}})}{(1 + \alpha)\sum_{k=1}^N u_{ik}^m}\]</span> with <span class="math inline">\(\bar{x}\)</span> the lagged version of x and <span class="math inline">\(\alpha \geq 0\)</span></p>
-<p>As the formula suggests, the <em>SFCM</em> can be see as a spatially smoothed version of the classical c-means and <em>alpha</em> controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the classical c-means.</p>
-<p>To select <em>alpha</em>, we propose to check all the possible values between 0 and 2 with a step of 0.05.</p>
+<p>As the formula suggests, the <em>SFCM</em> can be seen as a spatially smoothed version of the classical c-means and <em>alpha</em> controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the classical c-means.</p>
+<p>To select <em>alpha</em>, we propose to check all possible values between 0 and 2 with a step of 0.05.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>DFindices_SFCM <span class="ot">&lt;-</span> <span class="fu">select_parameters</span>(<span class="at">algo =</span> <span class="st">&quot;SFCM&quot;</span>, <span class="at">data =</span> Data,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">k =</span> <span class="dv">4</span>, <span class="at">m =</span> <span class="fl">1.5</span>, <span class="at">alpha =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">2</span>,<span class="fl">0.05</span>),</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">nblistw =</span> WMat, <span class="at">standardize =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">tol =</span> <span class="fl">0.0001</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">seed =</span> <span class="dv">456</span>)</span></code></pre></div>
-<p>Now we can check the indices to select the best <em>alpha</em>. The goal is to reduce as much as possible spatial inconsistency and to keep a good classification quality.</p>
-<p>Let’s start with the spatial inconsistency. This indicator (developed for this package) calculates the sum of the squared differences between each observation and its neighbours on the membership matrix. Thus, the maximum for each observation is <span class="math inline">\(k*j\)</span> with <em>j</em> the number of neighbours for the observation and <em>k</em> the number of groups. A maximum is reached if each observations have 100% chance to belong to a cluster that is different from all its neighbours. So, when we sum up the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when permuting randomly the rows of the membership matrix. This second quantity represents the spatial inconsistency that we might expect if the observations were randomly scattered in space. We can repeat the permutation step (Monte Carlo approach) and keep the mean of the ratios to have a more robust indicators (see help(spConsistency) for details).</p>
-<p>A smaller value indicates a smaller spatial inconsistency and thus a greater spatial consistency. 0 meaning that all observations have exactly the same values in the membership matrix than their neighbours (perfect spatial consistency).</p>
+<p>Now we are able to check the indices to select the best <em>alpha</em>. The goal is to reduce spatial inconsistency as much as possible and to maintain a good classification quality.</p>
+<p>Let us start with the spatial inconsistency. This indicator (developed for this package) calculates the sum of the squared differences between each observation and its neighbours on the membership matrix. Thus, the maximum for each observation is <span class="math inline">\(k*j\)</span> with <em>j</em> the number of neighbours for the observation and <em>k</em> the number of groups. A maximum is reached if each observation has 100% chance belonging to a cluster that is different from all its neighbours. So, when we sum up the values obtained for all the observations, we obtain a quantity of spatial inconsistency. This quantity is divided by the quantity obtained when randomly permuting the rows of the membership matrix. This second quantity represents the spatial inconsistency that we might expect if the observations were randomly scattered in space. We can repeat the permutation step (Monte Carlo approach) and keep the mean of the ratios to have a more robust indicator (see help(spConsistency) for details).</p>
+<p>A smaller value indicates a smaller spatial inconsistency and thus a greater spatial consistency. 0 meaning that all observations have exactly the same values in the membership matrix as their neighbours (perfect spatial consistency).</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(DFindices_SFCM)<span class="sc">+</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>alpha,<span class="at">y=</span>spConsistency), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)<span class="sc">+</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>alpha,<span class="at">y=</span>spConsistency), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
@@ -601,8 +601,8 @@ Most likely clusters and undecided units
 Link between alpha and spatial inconsistency
 </p>
 </div>
-<p>Unsurprisingly, increasing <em>alpha</em> leads to a decrease of the spatial inconsistency. This gain follow an inverse function.</p>
-<p>Let’s check now the explained inertia</p>
+<p>Not surprisingly, increasing <em>alpha</em> leads to a decrease of the spatial inconsistency. This gain follows an inverse function.</p>
+<p>Let us now check the explained inertia</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(DFindices_SFCM)<span class="sc">+</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>alpha,<span class="at">y=</span>Explained.inertia), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)<span class="sc">+</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>alpha,<span class="at">y=</span>Explained.inertia), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
@@ -613,7 +613,7 @@ Link between alpha and spatial inconsistency
 Link between alpha and explained inertia
 </p>
 </div>
-<p>As expected, the explained inertia decreases when alpha increases and follows again an inverse function. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here: only 3% between alpha = 0 and alpha = 2.</p>
+<p>As expected, the explained inertia decreases when alpha increases and again follows an inverse function. The classification has to find a compromise between the original values and the lagged values. However, the loss is very small here: only 3% between alpha = 0 and alpha = 2.</p>
 <p>To finish here, we can observe the silhouette and Xie and Beni indicators.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(DFindices_SFCM)<span class="sc">+</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>alpha,<span class="at">y=</span>Silhouette.index), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)<span class="sc">+</span></span>
@@ -633,16 +633,16 @@ Link between alpha and silhouette index
 Link between alpha and Xie and Beni index
 </p>
 </div>
-<p>The detail of the meaning of theses indicators is beyond the scope of this vignette. Let’s just stress that a bigger silhouette index indicates a better classification, and a smaller Xie and beni index indicates a better classification.</p>
-<p>After considering all the previous charts, we decide to keep alpha = 0.7 as it seems to give a good balance between spatial consistency and classification quality in this case.</p>
+<p>The detail of the meaning of these indicators is beyond the scope of this vignette. Let us just stress that a larger silhouette index indicates a better classification, and a smaller Xie and beni index indicates a better classification.</p>
+<p>After considering all the previous charts, we decide to keep alpha = 0.7 as it seems to provide a good balance between spatial consistency and classification quality in this case.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>SFCM <span class="ot">&lt;-</span> <span class="fu">SFCMeans</span>(Data, WMat, <span class="at">k =</span> <span class="dv">4</span>, <span class="at">m =</span> <span class="fl">1.5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>,</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">tol =</span> <span class="fl">0.0001</span>, <span class="at">standardize =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">seed =</span> <span class="dv">456</span>)</span></code></pre></div>
 </div>
 <div id="selecting-alpha-and-beta-for-sgfcm" class="section level3">
 <h3>Selecting alpha and beta for SGFCM</h3>
-<p>It is also possible to use the generalized version of the spatial c-means. In that case, we have to define both <em>alpha</em> and <em>beta</em>.</p>
-<p>The next formula shows how the membership matrix is updated at each iteration. Note that the centers of the clusters are updated with the same formula as SFCM.</p>
+<p>It is also possible to use the so-called generalized version of the spatial c-means. In that case, we must define both <em>alpha</em> and <em>beta</em>.</p>
+<p>The next formula shows how the membership matrix is updated at each iteration. Note that the centres of the clusters are updated with the same formula as SFCM.</p>
 <p><span class="math display">\[u_{ik} = \frac{(||x_{k} - v{_i}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}\]</span></p>
 <p>Because we select a high resolution for our grid search of <em>alpha</em> and <em>beta</em>, we will use a multiprocessing approach.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span><span class="fu">multiprocess</span>(<span class="at">workers=</span><span class="dv">4</span>))</span>
@@ -681,8 +681,8 @@ Impact of beta and alpha on Xie and Beni index
 Impact of beta and alpha on spatial inconsistency
 </p>
 </div>
-<p>The first two plots indicate that some particular pairs of <em>alpha</em> and <em>beta</em> yield good results in the range 0.8 &lt; <em>alpha</em> &lt; 1.2 and 0.6 &lt; <em>beta</em> &lt; 0.8. The last plot shows that the selection of <em>beta</em> has no impact on the spatial consistency.</p>
-<p>Considering the previous plots, we decide to retain the solution with <em>beta</em> = 0.65 and <em>alpha</em> = 0.95 which yield very good results for all the considered indices.</p>
+<p>The first two plots indicate that some pairs of <em>alpha</em> and <em>beta</em> in particulat yield good results in the range 0.8 &lt; <em>alpha</em> &lt; 1.2 and 0.6 &lt; <em>beta</em> &lt; 0.8. The last plot shows that the selection of <em>beta</em> has no impact on the spatial consistency.</p>
+<p>Considering the previous plots, we decide to retain the solution with <em>beta</em> = 0.65 and <em>alpha</em> = 0.95 which yield very good results for all the indices considered.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>SGFCM <span class="ot">&lt;-</span> <span class="fu">SGFCMeans</span>(Data,WMat,<span class="at">k =</span> <span class="dv">4</span>,<span class="at">m=</span><span class="fl">1.5</span>, <span class="at">alpha=</span><span class="fl">0.95</span>, <span class="at">beta =</span> <span class="fl">0.65</span>,</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">tol=</span><span class="fl">0.0001</span>, <span class="at">standardize =</span> <span class="cn">FALSE</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">seed =</span> <span class="dv">456</span>)</span></code></pre></div>
 <p>Again, we compare here the generalized and the classical version of the spatial c-means algorithm.</p>
@@ -860,13 +860,13 @@ Most likely cluster and undecided units
 </tr>
 </tbody>
 </table>
-<p>Unsurprisingly, the Moran I values calculated on the membership matrices are higher for SFCM and SGFCM, indicating stronger spatial structures in the classifications.</p>
+<p>Not surprisingly, the Moran I values calculated on the membership matrices are higher for SFCM and SGFCM, indicating stronger spatial structures in the classifications.</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">c</span>(spdiag_1<span class="sc">$</span>SpConsist, spdiag_2<span class="sc">$</span>SpConsist,spdiag_3<span class="sc">$</span>SpConsist,spdiag_4<span class="sc">$</span>SpConsist))</span></code></pre></div>
 <pre><code>## [1] 0.3344419 0.3933803 0.1837956 0.1713605</code></pre>
 <p>Considering the values of spatial inconsistency, we could check if the value obtained for SGFCM is significantly lower than the one of SFCM. Considering the previous 250 permutated values, we can calculate a pseudo p-value:</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(spdiag_4<span class="sc">$</span>SpConsist <span class="sc">&gt;</span> spdiag_3<span class="sc">$</span>SpConsistSamples) <span class="sc">/</span> <span class="fu">length</span>(spdiag_3<span class="sc">$</span>SpConsistSamples)</span></code></pre></div>
 <pre><code>## [1] 0</code></pre>
-<p>It appears that out of 250 permutations, the observed values of spatial inconsistency of SGFCM is always lower than the one of SFCM. The difference is significant at the threshold 0.004=1/250</p>
+<p>It appears that out of 250 permutations, the observed values of spatial inconsistency of SGFCM are always lower than that of SFCM. The difference is significant at the threshold 0.004 (=1/250)</p>
 <p>We can map the undecided observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function <em>undecidedUnits</em> of the <strong>geocmeans</strong> package.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>Undecided <span class="ot">&lt;-</span> <span class="fu">undecidedUnits</span>(SGFCM<span class="sc">$</span>Belongings,<span class="fl">0.45</span>)</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>LyonIris<span class="sc">$</span>FinalCluster <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Undecided<span class="sc">==</span><span class="st">&quot;Undecided&quot;</span>,</span>
@@ -892,7 +892,7 @@ Most likely cluster and undecided units
 </div>
 <div id="interpreting-the-results-of-the-final-classification" class="section level2">
 <h2>Interpreting the results of the final classification</h2>
-<p>One can obtain many descriptive information about the final groups with three functions of <strong>geocmeans</strong> :</p>
+<p>One can obtain a lot of descriptive information about the final groups with three functions of <strong>geocmeans</strong> :</p>
 <ul>
 <li><em>summarizeClusters</em> : calculate summary statistics for each group for a given dataset by using the membership matrix as weights (sticking with the fuzzy spirit).</li>
 <li><em>spiderPlots</em> : display a spider plot allowing to compare quickly the differences between groups.</li>
@@ -990,12 +990,12 @@ Most likely cluster and undecided units
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spiderPlots</span>(LyonIris<span class="sc">@</span>data[AnalysisFields], SGFCM<span class="sc">$</span>Belongings,</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">chartcolors =</span> <span class="fu">c</span>(<span class="st">&quot;darkorange3&quot;</span>,<span class="st">&quot;grey4&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;royalblue&quot;</span>))</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">violinPlots</span>(LyonIris<span class="sc">@</span>data[AnalysisFields], SGFCM<span class="sc">$</span>Groups)</span></code></pre></div>
-<p>That’s all folks ! These are the enhancements for the next version</p>
+<p>That’s all, folks ! Following are the enhancements for the next version</p>
 <ul>
 <li>introduce other methods of spatial c-means</li>
-<li>open some other parameters to the user (like the function defining the convergence criterion)</li>
+<li>open some other parameters to the user (such as the function defining the convergence criterion)</li>
 <li>work on documentation</li>
-<li>improve calculus speed by dropping some apply in the code</li>
+<li>improve calculus speed by dropping some <em>apply</em> in the code</li>
 <li>adding the manhattan distance (useful when data have a high dimensionality)</li>
 </ul>
 <div id="refs" class="references csl-bib-body hanging-indent">

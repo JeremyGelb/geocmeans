@@ -25,21 +25,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This vignette is a short description of an adjusted version of the spatial inconsistency index proposed in the package **geocmeans**. For a published reference, please consider citing @gelb2021apport.
 
-Most of the time, data with a spatial component show an autocorrelated structure: close observations tend to be more similar than distant ones. Classical unsupervised classification algorithms do not take into account space and tend to produce scattered results. In other words, some close observations may end up in different clusters despite that their differences are not that pronounced. Spatially aware clustering algorithms try to correct this by spatially smoothing the results.
+Most of the time, data with a spatial component show an autocorrelated structure: close observations tend to be more similar than distant ones. Classical unsupervised classification algorithms do not account for space and tend to produce scattered results. In other words, some close observations may end up in different clusters despite their differences not being too pronounced. Spatially aware clustering algorithms try to correct this by spatially smoothing the results.
 
 ## Spatial inconsistency index
 
-We proposed an index $S_{cr}$ to measure the spatial inconsistency of a classifcation considering its membership matrix $u$ and a spatial weight matrix $w$. It is simply the sum of the Euclidean distance of each observation $k$ to its spatial neighbours $l$ on the membership matrix, weighted by the spatial wight matrix.
+We proposed an index $S_{cr}$ to measure the spatial inconsistency of a classification considering its membership matrix $u$ and a spatial weight matrix $w$. It is simply the sum of the Euclidean distance of each observation $k$ to its spatial neighbours $l$ on the membership matrix, weighted by the spatial wight matrix.
 
 $$S_{cr}=\sum_{k=1}^{k} \sum_{l=1}^{l} w_{k l}\left\|u_{k}-u_{l}\right\|^{2}$$
 
-We also propose to standardize this sum by the total spatial inconsistency under the assumption of total spatial randomness (obtained by repeated permutation). A small value of this index indicates a strong spatial consistency as observations tend to belong to the same clusters than their neighbours. A value close to one indicates that the spatial inconsistency of the classification is close to what one can expect form a situation of total spatial randomness.
+We also propose to standardize this sum by the total spatial inconsistency under the assumption of total spatial randomness (obtained by repeated permutation). A small value of this index indicates a strong spatial consistency as observations tend to belong to the same clusters as their neighbours. A value close to one indicates that the spatial inconsistency of the classification is close to what one can expect from a situation of total spatial randomness.
 
 <center>
 ![Image Title](images/spinconsistency.png){width=400px}
 </center>
 
-Its is easy to calcule this index with the package **geocmeans** with the function *spConsistency*
+It is easy to calculate this index with the package **geocmeans** using the function *spConsistency*
 
 ```{r message=FALSE, warning=FALSE, fig.pos="H", fig.align="center"}
 library(spdep)
@@ -80,22 +80,22 @@ ggplot() +
                 label = round(consistIndex$Mean,2))) + 
   labs(x = "Spatial Inconsistency Index", y = "")
 ```
-So on average, for this classification, the spatial inconsistency index is around 0.18.
+So on average, for this classification, the spatial inconsistency index is about 0.18.
 
 ## Adjusted spatial inconsistency index
 
 The spatial inconsistency index presented above has two drawbacks : 
 
-* first, as the number of cluster increases, the index will increase too because more borders will be needed to delimit them in space.
+* first, as the number of clusters increases, the index will increase as well because more borders will be needed to delimit them in space.
 * second, two close observations should not have to belong to the same group if they are very dissimilar.
 
 To adjust the index, we propose to replace the spatial weight matrix used in the calculus by a semantico-spatial matrix. In this matrix, the spatial weight between two neighbours is replaced by the inverse of the Euclidean distance between their attributes.
 
 $$W_{kl} = \frac{1}{||k-l||^2}$$
 
-Thus, if two neighbours do not belonging to the same cluster, but are very dissimilar, this new semantico-spatial weight matrix will limit the weight of their dissimilarity in the spatial inconsistency index. Note, the new spatial matrix must be standardized globally (and not by row) to consider the differences between observations for the full dataset and not only at the local level. This second index is noted $S_{mcr}$.
+Thus, if two neighbours do not belong to the same cluster, but are very dissimilar, this new semantico-spatial weight matrix will limit the weight of their dissimilarity in the spatial inconsistency index. Note, the new spatial matrix must be standardized globally (and not by row) to consider the differences between observations for the full dataset and not only at the local level. This second index is noted $S_{mcr}$.
 
-It is easy to calculate this adjusted version with the package **geocmeans** by using the the function *adjustSpatialWeights*.
+It is easy to calculate this adjusted version with the package **geocmeans** by using the function *adjustSpatialWeights*.
 
 ```{r message=FALSE, warning=FALSE, fig.pos="H", fig.align="center"}
 WMat2 <- adjustSpatialWeights(Data, WMat$neighbours, style = "C")

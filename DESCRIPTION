@@ -18,7 +18,7 @@ Imports:
     progressr (>= 0.4.0),
     reshape2 (>= 1.4.4),
     sp (>= 1.4-4),
-    stats (>= 4.1)
+    stats (>= 4.0.3)
 Depends:
     R (>= 3.5)
 Suggests:

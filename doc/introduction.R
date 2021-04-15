@@ -76,7 +76,7 @@ Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, v
 calcqualityIndexes(Data, Cmean$Belongings, m = 1.5)
 
 ## ----warning=FALSE, eval = FALSE----------------------------------------------
-#  beta_values <- select_parameters("GFCM",data = Data, k = 4, m = 1.5,
+#  beta_values <- selectParameters("GFCM",data = Data, k = 4, m = 1.5,
 #                                   beta = seq(0,1,0.05), spconsist = F,
 #                                   tol = 0.00001, seed = 456)
 
@@ -125,7 +125,7 @@ Neighbours <- poly2nb(LyonIris,queen = TRUE)
 WMat <- nb2listw(Neighbours,style="W",zero.policy = TRUE)
 
 ## ----warning=FALSE,  message=FALSE, eval = FALSE------------------------------
-#  DFindices_SFCM <- select_parameters(algo = "SFCM", data = Data,
+#  DFindices_SFCM <- selectParameters(algo = "SFCM", data = Data,
 #                                 k = 4, m = 1.5, alpha = seq(0,2,0.05),
 #                                 nblistw = WMat, standardize = FALSE,
 #                                 tol = 0.0001, verbose = FALSE, seed = 456)
@@ -160,7 +160,7 @@ SFCM <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
 
 ## ----warning=FALSE, eval = FALSE----------------------------------------------
 #  future::plan(future::multiprocess(workers=4))
-#  DFindices_SFGCM <- select_parameters.mc(algo = "SGFCM", data = Data,
+#  DFindices_SFGCM <- selectParameters.mc(algo = "SGFCM", data = Data,
 #                                 k = 4, m = 1.5, alpha = seq(0,2,0.05),
 #                                 beta = seq(0,0.85,0.05),
 #                                 nblistw = WMat, standardize = FALSE, chunk_size = 50,

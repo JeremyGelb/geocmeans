@@ -3,7 +3,8 @@ title: "Spatial Fuzzy CMean with R"
 author: "Jeremy Gelb"
 date: "02/04/2021"
 output:
-  rmarkdown::html_vignette:
+  rmarkdown::pdf_document:
+    extra_dependencies: ["float"]
     fig_width: 5
     fig_height: 5
     toc: true
@@ -175,7 +176,7 @@ with $\beta_k = min(||x_{k} - v||^2)$ and $0 \leq \beta \leq 1$.
 To select an appropriate value for this parameter, we will try all the possible values between 0 and 1 with a step of 0.05.
 
 ```{r warning=FALSE, eval = FALSE}
-beta_values <- select_parameters("GFCM",data = Data, k = 4, m = 1.5,
+beta_values <- selectParameters("GFCM",data = Data, k = 4, m = 1.5,
                                  beta = seq(0,1,0.05), spconsist = F,
                                  tol = 0.00001, seed = 456)
 ```
@@ -261,7 +262,7 @@ As the formula suggests, the *SFCM* can be seen as a spatially smoothed version 
 To select *alpha*, we propose to check all possible values between 0 and 2 with a step of 0.05.
 
 ```{r warning=FALSE,  message=FALSE, eval = FALSE}
-DFindices_SFCM <- select_parameters(algo = "SFCM", data = Data,
+DFindices_SFCM <- selectParameters(algo = "SFCM", data = Data,
                                k = 4, m = 1.5, alpha = seq(0,2,0.05),
                                nblistw = WMat, standardize = FALSE,
                                tol = 0.0001, verbose = FALSE, seed = 456)
@@ -329,7 +330,7 @@ Because we select a high resolution for our grid search of *alpha* and *beta*, w
 
 ```{r warning=FALSE, eval = FALSE}
 future::plan(future::multiprocess(workers=4))
-DFindices_SFGCM <- select_parameters.mc(algo = "SGFCM", data = Data,
+DFindices_SFGCM <- selectParameters.mc(algo = "SGFCM", data = Data,
                                k = 4, m = 1.5, alpha = seq(0,2,0.05),
                                beta = seq(0,0.85,0.05),
                                nblistw = WMat, standardize = FALSE, chunk_size = 50,

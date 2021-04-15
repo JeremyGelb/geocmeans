@@ -2,9 +2,28 @@
 % Please edit documentation in R/side_functions.R
 \name{select_parameters}
 \alias{select_parameters}
+\alias{selectParameters}
 \title{Select parameters for clustering algorithm}
 \usage{
 select_parameters(
+  algo,
+  data,
+  k,
+  m,
+  alpha = NA,
+  beta = NA,
+  nblistw = NULL,
+  lag_method = "mean",
+  spconsist = T,
+  classidx = T,
+  standardize = T,
+  maxiter = 500,
+  tol = 0.01,
+  seed = NULL,
+  verbose = TRUE
+)
+
+selectParameters(
   algo,
   data,
   k,
@@ -78,6 +97,18 @@ Wqueen <- spdep::nb2listw(queen,style="W")
 #set spconsist to TRUE to calculate the spatial consistency indicator
 #FALSE here to reduce the time during package check
 values <- select_parameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
+    alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
+}
+\dontrun{
+data(LyonIris)
+AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+"TxChom1564","Pct_brevet","NivVieMed")
+dataset <- LyonIris@data[AnalysisFields]
+queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+Wqueen <- spdep::nb2listw(queen,style="W")
+#set spconsist to TRUE to calculate the spatial consistency indicator
+#FALSE here to reduce the time during package check
+values <- selectParameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 }
 }

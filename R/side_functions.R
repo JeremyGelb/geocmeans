@@ -925,9 +925,9 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
 }
 
 
-#' @title Select parameters for clustering algorithm
+#' @title Select parameters for a clustering algorithm
 #'
-#' @description Function to select the parameters of the classification
+#' @description Function to select the parameters for a clustering algorithm.
 #'
 #' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
 #' @param data A dataframe with numeric columns
@@ -984,12 +984,29 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
 }
 
 
+#' @rdname select_parameters
+#' @examples
+#' \dontrun{
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' #set spconsist to TRUE to calculate the spatial consistency indicator
+#' #FALSE here to reduce the time during package check
+#' values <- selectParameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
+#'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
+#' }
+#' @export
+selectParameters <- select_parameters
+
 
 #' @title Select parameters for clustering algorithm (multicore)
 #'
-#' @description Function to select the parameters of the classification alpha, k and m.
+#' @description Function to select the parameters for a clustering algorithm.
 #' This version of the function allows to use a plan defined with the package
-#' future to reduce calculation time
+#' future to reduce calculation time.
 #'
 #' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
 #' @param data A dataframe with numeric columns
@@ -1082,6 +1099,28 @@ select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw =
     dfIndices <- do.call(rbind,values)
     return(dfIndices)
 }
+
+#' @rdname select_parameters.mc
+#' @examples
+#' \dontrun{
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' future::plan(future::multiprocess(workers=2))
+#' #set spconsist to TRUE to calculate the spatial consistency indicator
+#' #FALSE here to reduce the time during package check
+#' values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
+#'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
+#' \dontshow{
+#'    ## R CMD check: make sure any open connections are closed afterward
+#'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
+#' }
+#'}
+#' @export
+selectParameters.mc <- select_parameters.mc
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

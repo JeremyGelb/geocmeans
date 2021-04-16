@@ -7,7 +7,7 @@ citEntry(entry = "Article",
   journal      = "Cybergeo",
   year         = "2021",
   number       = "972",
-  doi          = "https://doi.org/10.4000/cybergeo.36414",
+  doi          = "10.4000/cybergeo.36414",
   url          = "https://journals.openedition.org/cybergeo/36414",
 
   textVersion  =

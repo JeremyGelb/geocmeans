@@ -5,3 +5,4 @@
 ^\tests$ # fichiers tests
 ^doc$
 ^Meta$
+^cran-comments\.md$

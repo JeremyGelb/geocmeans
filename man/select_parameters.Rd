@@ -3,7 +3,7 @@
 \name{select_parameters}
 \alias{select_parameters}
 \alias{selectParameters}
-\title{Select parameters for clustering algorithm}
+\title{Select parameters for a clustering algorithm}
 \usage{
 select_parameters(
   algo,
@@ -84,7 +84,7 @@ start centers will be the same if the same integer is selected.}
 A dataframe with indicators assessing the quality of classifications
 }
 \description{
-Function to select the parameters of the classification
+Function to select the parameters for a clustering algorithm.
 }
 \examples{
 \dontrun{

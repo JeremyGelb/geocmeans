@@ -88,9 +88,9 @@ start centers will be the same if the same integer is selected.}
 A dataframe with indicators assessing the quality of classifications
 }
 \description{
-Function to select the parameters of the classification alpha, k and m.
+Function to select the parameters for a clustering algorithm.
 This version of the function allows to use a plan defined with the package
-future to reduce calculation time
+future to reduce calculation time.
 }
 \examples{
 \dontrun{

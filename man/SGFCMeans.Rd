@@ -64,7 +64,7 @@ A named list with
 spatial version of the generalized c-mean algorithm (SGFCMeans)
 }
 \details{
-The implementation is based on the following article : \url{http://dx.doi.org/10.1016/j.dsp.2012.09.016}.\cr
+The implementation is based on the following article : \doi{10.1016/j.dsp.2012.09.016}.\cr
 
 the matrix of belonging (u) is calculated as follow \cr
 \deqn{u_{ik} = \frac{(||x_{k} - v{_i}||^2 -b_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -b_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}}

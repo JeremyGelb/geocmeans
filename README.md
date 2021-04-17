@@ -7,7 +7,7 @@
 
 <!-- badges: start -->
 
-    [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/workflows/R-CMD-check/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions)
+    [R-CMD-check](https://github.com/JeremyGelb/geocmeans/workflows/R-CMD-check/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions)
 
 <!-- badges: end -->
 

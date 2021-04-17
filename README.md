@@ -128,55 +128,10 @@ include `INSTALL_opts = "--install-tests"` in the installation code.
 To contribute to `geocmeans`, please follow these
 [guidelines](CONTRIBUTING.md).
 
-Please note that the `Vizumap` project is released with a [Contributor
+Please note that the `geocmeans` project is released with a [Contributor
 Code of Conduct](CONDUCT.md). By contributing to this project, you agree
 to abide by its terms.
 
 ## License
 
-`Vizumap` version 1.2.0 is licensed under [GPLv3](LICENSE.md).
-
-## History of Vizumap
-
-Vizumap began as a visualisation project at the University of Missouri
-in 2016. Chris Wikle, professor of statistics, posed an interesting
-research question to Lydia Lucchesi, a student curious about data
-visualisation and R.
-
-How do you include uncertainty on a map displaying areal data estimates?
-
-Over the course of a year, they put together three methods for
-visualising uncertainty in spatial statistics: the bivariate choropleth
-map, the pixel map, and the glyph map. By mid-2017, there were maps, and
-there was a lot of R code, but there was not a tool that others could
-use to easily make these types of maps, too. That’s when statistician
-Petra Kuhnert recommended developing an R package. Over the course of a
-month, Petra and Lydia developed Vizumap (originally named VizU) at
-CSIRO Data61 in Canberra, Australia. Since then, the package has been
-expanded to include exceedance probability maps, an uncertainty
-visualisation method developed by Petra while working on a Great Barrier
-Reef (GBR) project.
-
-Vizumap has been used to visualise the uncertainty of American Community
-Survey estimates, the prediction errors of sediment estimates in a GBR
-catchment, and most recently the [uncertainty of estimated locust
-densities in
-Australia](https://www.nature.com/articles/s41598-020-73897-1/figures/4).
-We would like to assemble a Vizumap gallery that showcases different
-applications of the package’s mapping methods. If you use Vizumap to
-visualise uncertainty, please feel free to send the map our way. We
-would like to see it!
-
-## References
-
-Kuhnert, P.M., Pagendam, D.E., Bartley, R., Gladish, D.W., Lewis, S.E.
-and Bainbridge, Z.T. (2018) [Making management decisions in face of
-uncertainty: a case study using the Burdekin catchment in the Great
-Barrier Reef, Marine and Freshwater
-Research](https://publications.csiro.au/publications/#publication/PIcsiro:EP168206),
-69, 1187-1200, <https://doi.org/10.1071/MF17237>.
-
-Lucchesi, L.R. and Wikle C.K. (2017) [Visualizing uncertainty in areal
-data with bivariate choropleth maps, map pixelation and glyph
-rotation](http://faculty.missouri.edu/~wiklec/LucchesiWikle2017Stat),
-Stat, <https://doi.org/10.1002/sta4.150>.
+`geocmeans` version 0.1.0 is licensed under [GPL2 License](LICENSE.txt).

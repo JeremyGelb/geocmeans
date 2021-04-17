@@ -34,7 +34,8 @@ Suggests:
 	  ggpubr (>= 0.2.5),
 	  RColorBrewer (>= 1.1-2),
 	  kableExtra (>= 1.1.0),
-	  viridis (>= 0.5.1)
+	  viridis (>= 0.5.1),
+	  testthat(>= 3.0.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

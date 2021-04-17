@@ -33,6 +33,8 @@ remotes::install_github(repo = "JeremyGelb/geocmeans", build_vignettes = TRUE, f
 
 Jeremy Gelb, Laboratoire d'Équité Environnemental INRS (CANADA),  Email: jeremy.gelb@ucs.inrs.ca
 
+## Contributors 
+
 Philippe Apparcio, Laboratoire d'Équité Environnemental INRS (CANADA), Email: philippe.apparicio@ucs.inrs.ca
 
 ## About the package

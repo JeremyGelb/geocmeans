@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 ## An R package to perform Spatial Fuzzy C-means.
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/JeremyGelb/geocmeans/workflows/R-CMD-check/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions)
+[![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 

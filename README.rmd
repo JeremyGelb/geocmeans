@@ -52,9 +52,9 @@ Approaches for visualising uncertainty in spatial data are presented in this pac
 Four Fuzzy classification algorithms are proposed : 
 
 * FCM: Fuzzy C-Means, with the function `CMeans`
-* GFCM: Generalized Fuzzy C-Means, with the function `GCMeans`
-* SFCM: Spatial Fuzzy C-Means, with the function `SCMeans`
-* SGFCM: Spatial Generalized Fuzzy C-Means, with the function `SGCMeans`
+* GFCM: Generalized Fuzzy C-Means, with the function `GFCMeans`
+* SFCM: Spatial Fuzzy C-Means, with the function `SFCMeans`
+* SGFCM: Spatial Generalized Fuzzy C-Means, with the function `SGFCMeans`
 
 Each function return a membership matrix, the data used for the classification (scaled if required) and the centers of the clusters.
 

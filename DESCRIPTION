@@ -23,8 +23,8 @@ Depends:
     R (>= 3.5)
 Suggests:
     knitr (>= 1.28),
-    rmarkdown (>= 1.1),
-    markdown (>= 2.1),
+    rmarkdown (>= 2.1),
+    markdown (>= 1.1),
     maptools (>= 0.9-5),
     rgeos (>= 0.5-2),
     future (>= 1.16.0),

@@ -42,7 +42,7 @@ RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Description: Provides functions to apply Spatial Fuzzy c-means 
     Algorithm, visualize and interpret results. This method is 
-    particulary revelant when the user wants to analyze data with a 
+    well suited when the user wants to analyze data with a 
     fuzzy clustering algorithm and to account for the spatial dimension of 
     the dataset. Tests for estimating the spatial consistency and classification 
     quality are proposed in addition.

@@ -1,3 +1,95 @@
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#### intermediate general functions ####
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#' @title Lagged Data
+#'
+#' @description Calculate Wx, the spatially lagged version of x, by a neighbouring matrix W.
+#'
+#' @param x A dataframe with only numeric columns
+#' @param nblistw The listw object (spdep like) used to calculate WY
+#' @param method A string indicating if a classical lag must be used
+#' ("mean") or if a weighted median must be used ("median")
+#' @return A lagged version of x
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
+calcLaggedData <- function(x,nblistw,method="mean"){
+  if (method=="mean"){
+    wx <- x
+    for (Name in names(x)) {
+      wx[[Name]] <- spdep::lag.listw(nblistw, x[[Name]])
+    }
+    return(wx)
+  }else if (method=="median"){
+    nb <- nblistw$neighbours
+    weights <- nblistw$weights
+    all_values <- lapply(1:length(nblistw$neighbours),function(i){
+      ids <- nb[[i]]
+      w <- weights[[i]]
+      obs <- x[ids,]
+      values <- apply(obs,2,function(column){
+        return(reldist::wtd.quantile(column,q=0.5,weight=w))
+      })
+    })
+    wx <- data.frame(do.call(rbind,all_values))
+    return(wx)
+  }else {
+    stop("The method used to calculate lagged values must be mean or median")
+  }
+}
+
+
+
+#' @title Calculate the Euclidean distance
+#'
+#' @description Calculate the euclidean distance between a numeric matrix n * p and a numeric
+#' vector of length p
+#' @param m A n * p matrix or dataframe with only numeric columns
+#' @param v A numeric vector of length p
+#' @return A vector of length n giving the euclidean distance between all matrix
+#'   row and the vector p
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
+calcEuclideanDistance <- function(m, v) {
+  v <- as.numeric(v)
+  alldistances <-colSums((t(m)-v)**2)
+  return(alldistances)
+}
+
+
+#' @title Matrix evaluation
+#'
+#' @description Evaluate if the algorithm converged by comparing two successive membership
+#' matrices. Calculate the absolute difference between the matrices and then
+#' calculate the max of each row. If all the values of the final vector are
+#' below the fixed tolerance, then return True, else return False
+#'
+#' @param mat1 A n X k matrix giving for each observation n, its probability to
+#'   belong to the cluster k at iteration i
+#' @param mat2 A n X k matrix giving for each observation n, its probability to
+#'   belong to the cluster k at iteration i+1
+#' @param tol A float representing the algorithm tolerance
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
+evaluateMatrices <- function(mat1, mat2, tol) {
+  mat1 < -as.matrix(mat1)
+  mat2 <- as.matrix(mat2)
+  differ <- abs(mat1 - mat2)
+  diffobs <- apply(differ, 1,max)
+  if (length(diffobs[diffobs >= tol]) > 0) {
+    return(FALSE)
+  } else (return(TRUE))
+}
+
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#### Main worker function ####
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 #' @title Main worker function
 #'
 #' @description Execution of the classification algorithm
@@ -144,13 +236,14 @@ sanity_check <- function(dots,data){
     }
   }
 
-
-
 }
+
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #### Adapter functions ####
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# This set of function is used to provide the parameters in the right order
+# to the intermediate functions
 
 belongsFCM <- function(data, centers ,dots){
   return(calcBelongMatrix(centers,data,dots$m))

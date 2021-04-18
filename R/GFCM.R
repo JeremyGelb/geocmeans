@@ -56,6 +56,9 @@ calcFGCMBelongMatrix <- function(centers, data, m, beta ){
 #' @param standardize A boolean to specify if the variables must be centered and
 #'   reduced (default = True)
 #' @param verbose A boolean to specify if the messages should be displayed
+#' @param init A string indicating how the initial centers must be selected. "random"
+#' indicates that random observations are used as centers. "kpp" use a distance based method
+#' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @return A named list with :
@@ -72,7 +75,7 @@ calcFGCMBelongMatrix <- function(centers, data, m, beta ){
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- LyonIris@data[AnalysisFields]
 #' result <- GCMeans(dataset,k = 5, m = 1.5, beta = 0.5, standardize = TRUE)
-GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
+GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
   # standardize data if required
   if (standardize) {
     if (verbose){
@@ -88,7 +91,7 @@ GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = T
                          k = k, m = m, beta = beta,
                          maxiter = maxiter, tol = tol,
                          standardize = standardize, verbose = verbose,
-                         seed = seed)
+                         seed = seed, init = init)
   return(results)
 }
 
@@ -189,6 +192,9 @@ calcSFGCMBelongMatrix <- function(centers, data, wdata, m, alpha, beta ){
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduced (default = True)
 #' @param verbose A boolean to specify if the progress bar should be displayed
+#' @param init A string indicating how the initial centers must be selected. "random"
+#' indicates that random observations are used as centers. "kpp" use a distance based method
+#' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @return A named list with
@@ -207,7 +213,7 @@ calcSFGCMBelongMatrix <- function(centers, data, wdata, m, alpha, beta ){
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = TRUE)
-SGFCMeans <- function(data, nblistw, k, m, alpha, beta, lag_method="mean", maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, seed = NULL) {
+SGFCMeans <- function(data, nblistw, k, m, alpha, beta, lag_method="mean", maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
 
   if(class(nblistw)[[1]] != "listw"){
     stop("the nblistw must be a listw object from spdep package")
@@ -238,7 +244,7 @@ SGFCMeans <- function(data, nblistw, k, m, alpha, beta, lag_method="mean", maxit
                          nblistw = nblistw, k = k, m = m, alpha = alpha,
                          beta = beta, lag_method=lag_method, maxiter = maxiter,
                          tol = tol, standardize = standardize, verbose = verbose,
-                         seed = seed)
+                         seed = seed, init = init)
   return(results)
 }
 

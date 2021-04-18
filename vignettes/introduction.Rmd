@@ -256,6 +256,7 @@ $$u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m
 $$v_{i} = \frac{\sum_{k=1}^N u_{ik}^m(x_{k} + \alpha\bar{x_{k}})}{(1 + \alpha)\sum_{k=1}^N u_{ik}^m}$$
 with $\bar{x}$ the lagged version of x and $\alpha \geq 0$
 
+
 As the formula suggests, the *SFCM* can be seen as a spatially smoothed version of the classical c-means and *alpha* controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the classical c-means. 
 
 To select *alpha*, we propose to check all possible values between 0 and 2 with a step of 0.05.

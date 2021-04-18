@@ -85,6 +85,31 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 }
 
 
+#' @title kpp centers selection
+#'
+#' @description Select the inital centers of centroids by using the k++ approach
+#' as suggested in this article: http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf
+#'
+#' @param data The dataset used in the classification
+#' @param k The number of groups for the classification
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
+kppCenters <- function(data,k){
+  # step1: select the first center at random
+  centers <- as.matrix(data[sample(1:nrow(data),size = 1),])
+  # select the other centers
+  for (i in 2:k){
+    dists <- apply(centers,1,function(ci){
+      return(calcEuclideanDistance(data,ci))
+    })
+    Dx <- apply(dists,1,min)
+    probs <- (Dx**2) / sum((Dx**2))
+    new_center <- data[sample(1:nrow(data),size = 1,prob = probs),]
+    centers <- rbind(centers,new_center)
+  }
+  return(centers)
+}
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #### Main worker function ####
@@ -142,7 +167,13 @@ main_worker <- function(algo, ...){
   if (is.null(dots$seed)==F){
     set.seed(dots$seed)
   }
-  centers <- data[sample(nrow(data), k), ]
+
+  if(dots$init == "random"){
+    centers <- data[sample(nrow(data), k), ]
+  }else if (dots$init == "kpp") {
+    centers <- kppCenters(data,k)
+  }
+
 
   # calculating the first belonging matrix
   belongmatrix <- update_belongs(data, centers, dots)
@@ -204,6 +235,10 @@ sanity_check <- function(dots,data){
     if (dots$alpha < 0){
       stop("alpha parameter must be stricktly superior to 0")
     }
+  }
+
+  if(dots$init %in% c("random","kpp") == FALSE){
+    stop("the init parameter must be one of 'random' or 'kpp'")
   }
 
   if(is.null(dots$beta) == FALSE){

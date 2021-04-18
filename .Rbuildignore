@@ -7,3 +7,8 @@
 ^Meta$
 ^cran-comments\.md$
 ^\.github$
+^\.JOSS$
+^CONDUCT\.md$
+^CONTRIBUTING\.md$
+^LICENSE\.txt$
+^README\.rmd$

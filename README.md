@@ -22,6 +22,8 @@ the command below.
 Jeremy Gelb, Laboratoire d’Équité Environnemental INRS (CANADA), Email:
 <jeremy.gelb@ucs.inrs.ca>
 
+## Contributors
+
 Philippe Apparcio, Laboratoire d’Équité Environnemental INRS (CANADA),
 Email: <philippe.apparicio@ucs.inrs.ca>
 

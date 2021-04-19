@@ -1,6 +1,6 @@
 Package: geocmeans
 Type: Package
-Title: Implementing Methods for Spatial Fuzzy C-Means Algorithm
+Title: Implementing Methods for Spatial Fuzzy unsupervised classification
 Version: 0.1.1
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
@@ -42,11 +42,11 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
-Description: Provides functions to apply Spatial Fuzzy c-means 
-    Algorithm, visualize and interpret results. This method is 
+Description: Provides functions to apply Spatial Fuzzy unsupervised 
+    classification, visualize and interpret results. This method is 
     well suited when the user wants to analyze data with a 
     fuzzy clustering algorithm and to account for the spatial dimension of 
-    the dataset. Tests for estimating the spatial consistency and classification 
+    the dataset. Indexes for estimating the spatial consistency and classification 
     quality are proposed in addition.
 URL: https://github.com/JeremyGelb/geocmeans
 BugReports: https://github.com/JeremyGelb/geocmeans/issues

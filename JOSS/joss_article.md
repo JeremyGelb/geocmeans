@@ -21,7 +21,7 @@ affiliations:
 
 # Summary
 
-Unsupervised classification methods like *k-means* or the *Hierarchical Ascendant Classification* (HAC) are widely used in geography even though they are not well suited for spatial data. Yet, recent development has been proposed to include the geographical dimension into clustering. As an example, `ClustGeo` [@chavent2018clustgeo] is a spatial extension of the HAC, available in the R package with the same name. We propose in the R package `geocmeans` a spatial extension of the *Fuzzy C-Means* (FCM) algorithm to complete the growing toolbox with a fuzzy approach. The package provides also several helper functions to assess and compare quality of classifications, select appropriate hyperparameters, and interpret the final groups.
+Unsupervised classification methods like *k-means* or the *Hierarchical Cluster Analysis* (HCA) are widely used in geography even though they are not well suited for spatial data. Yet, recent development has been proposed to include the geographical dimension into clustering. As an example, `ClustGeo` [@chavent2018clustgeo] is a spatial extension of the HAC, available in the R package with the same name. We propose here in the R package `geocmeans` a spatial extension of the *Fuzzy C-Means* (FCM) algorithm to complete the growing toolbox with a fuzzy approach. The package provides also several helper functions to assess and compare quality of classifications, select appropriate hyperparameters, and interpret the final groups.
 
 # Statement of need
 

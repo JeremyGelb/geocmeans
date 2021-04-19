@@ -1,6 +1,6 @@
 Package: geocmeans
 Type: Package
-Title: Implementing Methods for Spatial Fuzzy unsupervised classification
+Title: Implementing Methods for Spatial Fuzzy Unsupervised Classification
 Version: 0.1.1
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),

@@ -43,7 +43,7 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
-Description: Provides functions to apply spatial fuzzy unsupervised 
+Description: Provides functions to apply spatial fuzzy unsupervised
     classification, visualize and interpret results. This method is 
     well suited when the user wants to analyze data with a 
     fuzzy clustering algorithm and to account for the spatial dimension of 

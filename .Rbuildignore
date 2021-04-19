@@ -12,3 +12,4 @@
 ^CONTRIBUTING\.md$
 ^LICENSE\.txt$
 ^README\.rmd$
+^codemeta\.json$

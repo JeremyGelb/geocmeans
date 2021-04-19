@@ -1181,4 +1181,8 @@ cat_to_belongings <- function(categories){
     return(mat)
 }
 
+#' @rdname cat_to_belongings
+#' @export
+catToBelongings <- cat_to_belongings
+
 

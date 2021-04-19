@@ -1,0 +1,71 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/JeremyGelb/geocmeans",
+  "datePublished": "2021-04-18",
+  "dateModified": "2021-04-18",
+  "dateCreated": "2021-04-18",
+  "description": "Provides functions to apply Spatial Fuzzy c-means  Algorithm, visualize and interpret results. This method is  well suited when the user wants to analyze data with a  fuzzy clustering algorithm and to account for the spatial dimension of  the dataset. Tests for estimating the spatial consistency and classification  quality are proposed in addition.",
+  "keywords": "R, unsupervised classification, cmeans, fuzzy classification, spatial analysis",
+  "license": "GPL v2.0",
+  "title": "geocmeans",
+  "version": "0.1.0"
+}
+
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",,
+  "@type": "SoftwareSourceCode",
+  "identifier": "geocmeans",
+  "description": "Provides functions to apply Spatial Fuzzy c-means  Algorithm, visualize and interpret results. This method is  well suited when the user wants to analyze data with a  fuzzy clustering algorithm and to account for the spatial dimension of  the dataset. Tests for estimating the spatial consistency and classification  quality are proposed in addition.",
+  "name": "geocmeans",
+  "codeRepository": "https://github.com/JeremyGelb/geocmeans",
+  "issueTracker": "https://github.com/JeremyGelb/geocmeans/issues",
+  "license": "GPL v2.0",
+  "version": "0.1.0",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.0.4 (2021-02-15)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Jeremy",
+      "familyName": "Gelb",
+      "email": "jeremy.gelb@ucs.inrs.ca",
+      "@id": "https://orcid.org/0000-0002-7114-2714"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Philippe",
+      "familyName": "Apparicio",
+      "@id": "https://orcid.org/0000-0001-6466-9342"
+    }
+  ],
+  "funder": {},
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Jeremy",
+      "familyName": "Gelb",
+      "email": "jeremy.gelb@ucs.inrs.ca",
+      "@id": "https://orcid.org/0000-0002-7114-2714"
+    }
+  ],
+
+  "readme": "https://github.com/JeremyGelb/geocmeans/blob/master/README.md",
+  "keywords": [
+    "r",
+    "unsupervised classification",
+    "cmeans",
+    "spatial analysis",
+	"fuzzy classification"
+  ]
+}

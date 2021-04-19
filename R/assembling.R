@@ -81,7 +81,9 @@ evaluateMatrices <- function(mat1, mat2, tol) {
   diffobs <- apply(differ, 1,max)
   if (length(diffobs[diffobs >= tol]) > 0) {
     return(FALSE)
-  } else (return(TRUE))
+  } else{
+    return(TRUE)
+  }
 }
 
 
@@ -145,7 +147,7 @@ main_worker <- function(algo, ...){
   #checking if the parameters are ok
   sanity_check(dots,data)
 
-  # selection des fonctions de calcul
+  #selecting the functions for calculus
   if(algo == "FCM"){
     update_belongs <- belongsFCM
     udpdate_centers <- centersFCM
@@ -175,7 +177,7 @@ main_worker <- function(algo, ...){
   }
 
 
-  # calculating the first belonging matrix
+  # calculating the first membership matrix
   belongmatrix <- update_belongs(data, centers, dots)
   CriterioReached <- FALSE
 
@@ -203,7 +205,6 @@ main_worker <- function(algo, ...){
       break
     }
   }
-  # calculating the most likely group of earch data point
   if(CriterioReached==FALSE){
     warning("The convergence criterion was not reached within the specified number of steps")
   }

@@ -11,4 +11,9 @@
 Note : not ran on macOS devel, the package sf required by spdep can not be found.
 
 ## R CMD check results
-0 ERRORs | 0 WARNINGs | 0 NOTES.
+0 ERRORs | 0 WARNINGs | 1 NOTES.
+
+```
+checking CRAN incoming feasibility ... NOTE
+  Maintainer: 'Jeremy Gelb <jeremy.gelb@ucs.inrs.ca>'
+```

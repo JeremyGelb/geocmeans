@@ -7,7 +7,9 @@ tags:
 - spatial analysis
 - fuzzy classification
 date: "20 Avril 2021"
-output: word_document
+output:
+  html_document:
+    df_print: paged
 authors:
 - name: Gelb Jeremy
   orcid: 0000-0002-7114-2714
@@ -22,6 +24,8 @@ affiliations:
 # Summary
 
 Unsupervised classification methods like *k-means* or the *Hierarchical Cluster Analysis* (HCA) are widely used in geography even though they are not well suited for spatial data. Yet, recent development has been proposed to include the geographical dimension into clustering. As an example, `ClustGeo` [@chavent2018clustgeo] is a spatial extension of the HAC, available in the R package with the same name. We propose here in the R package `geocmeans` a spatial extension of the *Fuzzy C-Means* (FCM) algorithm to complete the growing toolbox with a fuzzy approach. The package provides also several helper functions to assess and compare quality of classifications, select appropriate hyperparameters, and interpret the final groups.
+
+![geocmeans logo.\label{fig:example}](../man/figures/geocmeans_logo.png){ width=20% }
 
 # Statement of need
 
@@ -117,9 +121,9 @@ for (Col in names(Data)){
 
 #considering k = 4 and m = 1.5, find an optimal value for alpha
 DFindices_SFCM <- selectParameters(algo = "SFCM", data = Data,
-                               k = 4, m = 1.5, alpha = seq(0,2,0.05),
-                               nblistw = WMat, standardize = FALSE,
-                               tol = 0.0001, verbose = FALSE, seed = 456)
+            k = 4, m = 1.5, alpha = seq(0,2,0.05),
+            nblistw = WMat, standardize = FALSE,
+            tol = 0.0001, verbose = FALSE, seed = 456)
 
 #keeping alpha = 0.7
 SFCM_results <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
@@ -131,6 +135,10 @@ calcqualityIndexes(Data, SFCM_results$Belongings)
 
 #mapping the results
 mapClusters(LyonIris, SFCM_results$Belongings)
+
+#ploting a radar chart
+spiderPlots(LyonIris@data[AnalysisFields],
+            belongmatrix = SFCM_results$Belongings)
 
 ```
 

@@ -32,9 +32,9 @@ Email: <philippe.apparicio@ucs.inrs.ca>
 Provides functions to apply Spatial Fuzzy c-means Algorithm, visualize
 and interpret results. This method is well suited when the user wants to
 analyze data with a fuzzy clustering algorithm and to account for the
-spatial dimension of the dataset. Tests for estimating the spatial
+spatial dimension of the dataset. Indexes for measuring the spatial
 consistency and classification quality are proposed in addition. The
-algorithms were developped first for brain imagery as described in the
+algorithms were developed first for brain imagery as described in the
 articles of [Cai and
 al. 2007](https://doi.org/10.1016/j.patcog.2006.07.011) and [Zaho and
 al. 2013](https://doi.org/10.1016/j.dsp.2012.09.016). [Gelb and

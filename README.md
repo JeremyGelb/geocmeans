@@ -127,12 +127,14 @@ include `INSTALL_opts = "--install-tests"` in the installation code.
 ## Contribute
 
 To contribute to `geocmeans`, please follow these
-[guidelines](CONTRIBUTING.md).
+[guidelines](https://github.com/JeremyGelb/geocmeans/blob/master/CONTRIBUTING.md).
 
 Please note that the `geocmeans` project is released with a [Contributor
-Code of Conduct](CONDUCT.md). By contributing to this project, you agree
-to abide by its terms.
+Code of
+Conduct](https://github.com/JeremyGelb/geocmeans/blob/master/CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.
 
 ## License
 
-`geocmeans` version 0.1.0 is licensed under [GPL2 License](LICENSE.txt).
+`geocmeans` version 0.1.0 is licensed under [GPL2
+License](https://github.com/JeremyGelb/geocmeans/blob/master/LICENSE.txt).

@@ -17,3 +17,18 @@ Note : not ran on macOS devel, the package sf required by spdep can not be found
 checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Jeremy Gelb <jeremy.gelb@ucs.inrs.ca>'
 ```
+
+# Round 1 (after automatic checks and human validation) the 19/04/2021
+
+**problem**:
+
+ Found the following (possibly) invalid file URIs:
+     URI: CONTRIBUTING.md
+       From: README.md
+     URI: CONDUCT.md
+       From: README.md
+     URI: LICENSE.txt
+       From: README.md
+
+**correction** : 
+The three local links have been replaced by fully specified URLs.

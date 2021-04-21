@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/",
   out.width = "100%"
 )
+library(badger)
 ```
 
 # geocmeans <img src='man/figures/geocmeans_logo.png' align="right" height="138.5" />

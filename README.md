@@ -8,9 +8,17 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
+[![](https://img.shields.io/badge/devel%20version-0.1.1-green.svg)](https://github.com/JeremyGelb/geocmeans)
+[![](https://www.r-pkg.org/badges/version/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 <!-- badges: end -->
 
 ## Installation
+
+The stable version of `geocmeans` is available on CRAN. You can install
+it with the command below.
+
+    install.packages("geocmeans")
 
 You can install a development version of the `geocmeans` package using
 the command below.

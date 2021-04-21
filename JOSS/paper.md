@@ -74,7 +74,7 @@ $0 \leq \alpha \leq \infty$ \
 $v_i$ the cluster *i* \
 $\bar{x}$ the spatially lagged version of *x* \
 
-As the formula suggests, the SFCM can be seen as a spatially smoothed version of the FCM and \alpha controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the FCM. 
+As the formula suggests, the SFCM can be seen as a spatially smoothed version of the FCM and $\alpha$ controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the FCM. 
 
 * `SGFCMeans`, the SGFCM algorithm, combining SFCM and SGFCM and thus requiring the definition of three extra parameters *W*, $\alpha$ and $\beta$. Only the formula to calculate the membership matrix is different from the SFCM.
 

@@ -1,5 +1,5 @@
 ---
-title: 'geocmeans: A R package for spatial fuzzy c-means'
+title: 'geocmeans: An R package for spatial fuzzy c-means'
 tags:
 - R
 - unsupervised classification

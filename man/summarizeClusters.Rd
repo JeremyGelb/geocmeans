@@ -4,7 +4,7 @@
 \alias{summarizeClusters}
 \title{Descriptive statistics by group}
 \usage{
-summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3, silent = T)
+summarizeClusters(data, belongmatrix, weighted = TRUE, dec = 3, silent = TRUE)
 }
 \arguments{
 \item{data}{The original dataframe used for the classification}

@@ -11,6 +11,9 @@ violinPlots(data, groups)
 
 \item{groups}{A vector indicating the group of each observation}
 }
+\value{
+A list of plots created with ggplot2
+}
 \description{
 Return violin plots to compare the distribution of each variable for each
 group.

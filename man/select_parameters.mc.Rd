@@ -14,9 +14,9 @@ select_parameters.mc(
   beta = NA,
   nblistw = NULL,
   lag_method = "mean",
-  spconsist = T,
-  classidx = T,
-  standardize = T,
+  spconsist = TRUE,
+  classidx = TRUE,
+  standardize = TRUE,
   maxiter = 500,
   tol = 0.01,
   seed = NULL,
@@ -33,9 +33,9 @@ selectParameters.mc(
   beta = NA,
   nblistw = NULL,
   lag_method = "mean",
-  spconsist = T,
-  classidx = T,
-  standardize = T,
+  spconsist = TRUE,
+  classidx = TRUE,
+  standardize = TRUE,
   maxiter = 500,
   tol = 0.01,
   seed = NULL,
@@ -93,7 +93,7 @@ This version of the function allows to use a plan defined with the package
 future to reduce calculation time.
 }
 \examples{
-\dontrun{
+\donttest{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
@@ -110,7 +110,7 @@ values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 }
 }
-\dontrun{
+\donttest{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")

@@ -359,7 +359,7 @@ mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
 #' #No example provided, this is an internal function, use the general wrapper function mapClusters
 mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
-    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = T)
+    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
     geodata@data <- belongmatrix
     geodata$OID <- as.character(1:nrow(geodata@data))
 
@@ -428,7 +428,7 @@ mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
 #' #No example provided, this is an internal function, use the general wrapper function mapClusters
 mapLines <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
-    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = T)
+    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
     geodata@data <- cbind(geodata@data, belongmatrix)
     invisible(capture.output(FortiData <- broom::tidy(geodata, region = "OID")))
 
@@ -497,7 +497,7 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
 #' #No example provided, this is an internal function, use the general wrapper function mapClusters
 mapPoints <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
-    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = T)
+    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
     geodata@data <- cbind(geodata@data, belongmatrix)
     Coords <- sp::coordinates(geodata)
     geodata$X__ <- Coords[,1]
@@ -575,7 +575,7 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' summarizeClusters(dataset, result$Belongings)
-summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, silent=T) {
+summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, silent=TRUE) {
     belongmatrix <- as.data.frame(belongmatrix)
     if (weighted) {
         Summaries <- lapply(1:ncol(belongmatrix), function(c) {
@@ -596,7 +596,7 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
                             Mean = Mean, Std = Std))
             })
             DF <- do.call(cbind, Values)
-            if(silent==F){
+            if(silent==FALSE){
                 print(paste("Statistic summary for cluster ", c, sep = ""))
                 print(DF)
             }
@@ -627,7 +627,7 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
                             Mean = Mean, Std = Std))
             })
             DF <- do.call(cbind, Values)
-            if(silent==F){
+            if(silent==FALSE){
                 print(paste("Statistic summary for cluster ", c, sep = ""))
                 print(DF)
             }
@@ -683,7 +683,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 #' @param data A dataframe with numeric columns
 #' @param belongmatrix A membership matrix
 #' @param chartcolors A vector of color names used for the spider plot
-#'
+#' @return NULL, the plots are displayed directly by the function (see fmsb::radarchart)
 #' @importFrom grDevices rgb colors col2rgb
 #' @importFrom graphics legend
 #' @importFrom stats weighted.mean
@@ -725,7 +725,7 @@ spiderPlots<- function(data, belongmatrix, chartcolors=NULL){
     }
 
     tocolors <- sapply(selcolors,function(i){
-        v1 <- as.list(col2rgb(i,alpha=T))
+        v1 <- as.list(col2rgb(i,alpha=TRUE))
         v1[[length(v1)]] <- 100
         v1$maxColorValue <- 255
         new_color <- do.call(rgb,v1)
@@ -750,7 +750,7 @@ spiderPlots<- function(data, belongmatrix, chartcolors=NULL){
 #'
 #' @param data A dataframe with numeric columns
 #' @param groups A vector indicating the group of each observation
-#'
+#' @return A list of plots created with ggplot2
 #' @importFrom dplyr %>%
 #' @importFrom grDevices rgb
 #' @export
@@ -790,6 +790,7 @@ violinPlots <- function(data,groups){
 #' @param belongmatrix A membership matrix
 #' @param what Can be "mean" (default) or "median"
 #' @param ncol An integer indicating the number of columns for the bar plot
+#' @return a barplot created with ggplot2
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -855,6 +856,8 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
 #' @param verbose A boolean indicating if a progressbar should be displayed
+#' @return a DataFrame containing for each combinations of parameters several clustering
+#' quality indexes.
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @keywords internal
 #' @examples
@@ -891,9 +894,6 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
         }
         cnt <<- cnt+1
         templistw <- nblistw[[row$listsw]]
-        # invisible(capture.output(result <- SFCMeans(data,templistw,k=as.numeric(row[[1]]),m=as.numeric(row[[2]]),
-        #                 alpha=as.numeric(row[[3]]),lag_method=row[[5]],
-        #                 maxiter=maxiter ,verbose=F, standardize=standardize, seed=seed, tol=tol)))
         result <- exefun(data,row,templistw)
         #calculating the quality indexes
         indices <- list()
@@ -955,7 +955,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
 #' @return A dataframe with indicators assessing the quality of classifications
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
@@ -967,9 +967,9 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
 #' values <- select_parameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 #' }
-select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed=NULL, verbose = TRUE){
+select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", spconsist = TRUE, classidx = TRUE, standardize = TRUE, maxiter = 500, tol = 0.01, seed=NULL, verbose = TRUE){
 
-    if(spconsist==F & classidx==F){
+    if(spconsist==FALSE & classidx==FALSE){
         stop("one of spconsist and classidx must be TRUE")
     }
 
@@ -986,7 +986,7 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
 
 #' @rdname select_parameters
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
@@ -1036,7 +1036,7 @@ selectParameters <- select_parameters
 #' @export
 #' @importFrom utils setTxtProgressBar txtProgressBar capture.output
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
@@ -1053,9 +1053,9 @@ selectParameters <- select_parameters
 #'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #' }
 #'}
-select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw = NULL, lag_method="mean",  spconsist = T, classidx = T, standardize = T, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
+select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw = NULL, lag_method="mean",  spconsist = TRUE, classidx = TRUE, standardize = TRUE, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
 
-    if(spconsist==F & classidx==F){
+    if(spconsist==FALSE & classidx==FALSE){
         stop("one of spconsist and classidx must be TRUE")
     }
 
@@ -1091,7 +1091,7 @@ select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw =
             parameters <- chunks[[i]]
             indices <- eval_parameters(algo, parameters, data, nblistw, standardize,
                                                     spconsist, classidx, tol, maxiter,
-                                       verbose = F)
+                                       verbose = FALSE)
             return(indices)
         },future.seed = seed)
     }
@@ -1102,7 +1102,7 @@ select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw =
 
 #' @rdname select_parameters.mc
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")

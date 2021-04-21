@@ -11,6 +11,9 @@ sanity_check(dots, data)
 
 \item{data}{A numeric and complete dataframe}
 }
+\value{
+A boolean, TRUE if all the tests are passed, FALSE otherwise
+}
 \description{
 Check that the provided parameters are valid
 }

@@ -15,6 +15,9 @@ belong to the cluster k at iteration i+1}
 
 \item{tol}{A float representing the algorithm tolerance}
 }
+\value{
+A boolean, TRUE if the test is passed, FALSE otherwise
+}
 \description{
 Evaluate if the algorithm converged by comparing two successive membership
 matrices. Calculate the absolute difference between the matrices and then

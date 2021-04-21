@@ -15,6 +15,9 @@ barPlots(data, belongmatrix, ncol = 3, what = "mean")
 
 \item{what}{Can be "mean" (default) or "median"}
 }
+\value{
+a barplot created with ggplot2
+}
 \description{
 Return bar plots to compare groups
 }

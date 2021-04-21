@@ -176,7 +176,7 @@ To select an appropriate value for this parameter, we will try all the possible 
 
 ```{r warning=FALSE, eval = FALSE}
 beta_values <- selectParameters("GFCM",data = Data, k = 4, m = 1.5,
-                                 beta = seq(0,1,0.05), spconsist = F,
+                                 beta = seq(0,1,0.05), spconsist = FALSE,
                                  tol = 0.00001, seed = 456)
 ```
 
@@ -487,7 +487,7 @@ One can obtain a lot of descriptive information about the final groups with thre
 
 ```{r warning=FALSE}
 summarizeClusters(LyonIris@data[AnalysisFields],belongmatrix = SGFCM$Belongings,
-                  weighted = T,dec = 3)
+                  weighted = TRUE, dec = 3)
 ```
 
 ```{r warning=FALSE, eval = FALSE}

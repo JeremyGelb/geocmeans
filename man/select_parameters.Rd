@@ -14,9 +14,9 @@ select_parameters(
   beta = NA,
   nblistw = NULL,
   lag_method = "mean",
-  spconsist = T,
-  classidx = T,
-  standardize = T,
+  spconsist = TRUE,
+  classidx = TRUE,
+  standardize = TRUE,
   maxiter = 500,
   tol = 0.01,
   seed = NULL,
@@ -32,9 +32,9 @@ selectParameters(
   beta = NA,
   nblistw = NULL,
   lag_method = "mean",
-  spconsist = T,
-  classidx = T,
-  standardize = T,
+  spconsist = TRUE,
+  classidx = TRUE,
+  standardize = TRUE,
   maxiter = 500,
   tol = 0.01,
   seed = NULL,
@@ -87,7 +87,7 @@ A dataframe with indicators assessing the quality of classifications
 Function to select the parameters for a clustering algorithm.
 }
 \examples{
-\dontrun{
+\donttest{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
@@ -99,7 +99,7 @@ Wqueen <- spdep::nb2listw(queen,style="W")
 values <- select_parameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 }
-\dontrun{
+\donttest{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")

@@ -44,5 +44,6 @@ LazyData: true
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Description: Provides functions to apply spatial fuzzy unsupervised classification, visualize and interpret results. This method is well suited when the user wants to analyze data with a fuzzy clustering algorithm and to account for the spatial dimension of the dataset. Indexes for estimating the spatial consistency and classification quality are proposed in addition.
+    The methods were originally proposed in the field of brain imagerie (seed Cai and al. 2007 <doi:10.1016/j.patcog.2006.07.011> and Zaho and al. 2013 <doi:10.1016/j.dsp.2012.09.016>) and recently applied in geography (see Gelb and Apparicio <doi:10.4000/cybergeo.36414>).
 URL: https://github.com/JeremyGelb/geocmeans
 BugReports: https://github.com/JeremyGelb/geocmeans/issues

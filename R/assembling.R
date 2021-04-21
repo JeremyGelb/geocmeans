@@ -71,6 +71,7 @@ calcEuclideanDistance <- function(m, v) {
 #' @param mat2 A n X k matrix giving for each observation n, its probability to
 #'   belong to the cluster k at iteration i+1
 #' @param tol A float representing the algorithm tolerance
+#' @return A boolean, TRUE if the test is passed, FALSE otherwise
 #' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
@@ -94,6 +95,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #'
 #' @param data The dataset used in the classification
 #' @param k The number of groups for the classification
+#' @return a DataFrame, each row is the center of a cluster
 #' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
@@ -166,7 +168,7 @@ main_worker <- function(algo, ...){
   }
 
   # selecting the original centers from observations
-  if (is.null(dots$seed)==F){
+  if (is.null(dots$seed)==FALSE){
     set.seed(dots$seed)
   }
 
@@ -225,6 +227,7 @@ main_worker <- function(algo, ...){
 #'
 #' @param dots A list of parameters used
 #' @param data A numeric and complete dataframe
+#' @return A boolean, TRUE if all the tests are passed, FALSE otherwise
 #' @importFrom stats complete.cases
 #' @keywords internal
 #' @examples
@@ -259,7 +262,7 @@ sanity_check <- function(dots,data){
   }
 
   ## checking if the dataset is complete
-  tot <- sum(complete.cases(data)==F)
+  tot <- sum(complete.cases(data)==FALSE)
   if(tot > 0){
     stop("the dataset provided has missing values...")
   }

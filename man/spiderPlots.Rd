@@ -13,6 +13,9 @@ spiderPlots(data, belongmatrix, chartcolors = NULL)
 
 \item{chartcolors}{A vector of color names used for the spider plot}
 }
+\value{
+NULL, the plots are displayed directly by the function (see fmsb::radarchart)
+}
 \description{
 Display spider charts to quickly compare values between groups
 }

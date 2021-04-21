@@ -47,6 +47,10 @@ start centers will be the same if the same integer is selected.}
 
 \item{verbose}{A boolean indicating if a progressbar should be displayed}
 }
+\value{
+a DataFrame containing for each combinations of parameters several clustering
+quality indexes.
+}
 \description{
 Worker function for select_parameters and select_parameters.mc
 }

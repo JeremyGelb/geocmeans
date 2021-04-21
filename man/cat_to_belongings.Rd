@@ -2,9 +2,12 @@
 % Please edit documentation in R/side_functions.R
 \name{cat_to_belongings}
 \alias{cat_to_belongings}
+\alias{catToBelongings}
 \title{Convert categories to membership matrix}
 \usage{
 cat_to_belongings(categories)
+
+catToBelongings(categories)
 }
 \arguments{
 \item{categories}{A vector with the categories of each observation}

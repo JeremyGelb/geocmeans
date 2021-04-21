@@ -19,10 +19,22 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
+```{r echo=FALSE, results='asis'}
+cat(
+  badge_github_version(color = "green"),
+  badge_cran_release(color = "blue"),
+  badge_cran_download(color = "blue", type = "grand-total")
+)
+```
 <!-- badges: end -->
 
 
 ## Installation
+
+The stable version of `geocmeans` is available on CRAN. You can install it with the command below.
+```
+install.packages("geocmeans")
+```
 
 You can install a development version of the `geocmeans` package using the command below.
 

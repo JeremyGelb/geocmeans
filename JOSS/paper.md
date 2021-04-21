@@ -50,7 +50,7 @@ The `geocmeans` package has been built to be self-sufficient and minimize the co
 
 * `CMeans`, the original c-means algorithm, requiring two hyper parameters, *m* (fuzzyness degree) and *k* (number of groups).
 
-* `GFCMeans`, the so-called generalized c-means algorithm. It is known to accelerate convergence and yield less fuzzy result by adjusting the membership matrix at each iteration. It requires an extra *β* parameter controlling the strength of the modification. The modification only affects the formula updating the membership matrix.
+* `GFCMeans`, the so-called generalized c-means algorithm. It is known to accelerate convergence and yield less fuzzy result by adjusting the membership matrix at each iteration. It requires an extra \beta parameter controlling the strength of the modification. The modification only affects the formula updating the membership matrix.
 
 $$u_{ik} = \frac{(||x_{k} - v{_i}||^{2} - \beta_k) ^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 - \beta_k)^{(-1/(m-1))}}$$
 
@@ -62,7 +62,7 @@ $x_k$ the observation *k* in the dataset *x* \
 $v_i$ the cluster *i* \
 *m* the fuzzyness parameter
 
-* `SFCMeans`, the SFCM algorithm, requiring two more parameters *W* and *α*. *W* is a spatial weight matrix used to calculate a spatially lagged version of the dataset *x*. *α* is used to control the weight of the spatially lagged dataset. If $\alpha = 0$ then SFCM degenerates to a simple FCM. If $\alpha = 1$ the same weight is given to the original and lagged dataset. If $\alpha = 2$ then the spatially lagged dataset has a weight doubled in comparison with the original dataset, and so on... The integration of the spatially lagged dataset modifies the formula updating the membership matrix and the formula updating the centers of clusters.
+* `SFCMeans`, the SFCM algorithm, requiring two more parameters *W* and \alpha. *W* is a spatial weight matrix used to calculate a spatially lagged version of the dataset *x*. \alpha is used to control the weight of the spatially lagged dataset. If $\alpha = 0$ then SFCM degenerates to a simple FCM. If $\alpha = 1$ the same weight is given to the original and lagged dataset. If $\alpha = 2$ then the spatially lagged dataset has a weight doubled in comparison with the original dataset, and so on... The integration of the spatially lagged dataset modifies the formula updating the membership matrix and the formula updating the centers of clusters.
 
 $$u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}$$
 
@@ -74,9 +74,9 @@ $0 \leq \alpha \leq \infty$ \
 $v_i$ the cluster *i* \
 $\bar{x}$ the spatially lagged version of *x* \
 
-As the formula suggests, the SFCM can be seen as a spatially smoothed version of the FCM and *α* controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the FCM. 
+As the formula suggests, the SFCM can be seen as a spatially smoothed version of the FCM and \alpha controls the degree of spatial smoothness. This smoothing can be interpreted as an attempt to reduce spatial overfitting of the FCM. 
 
-* `SGFCMeans`, the SGFCM algorithm, combining SFCM and SGFCM and thus requiring the definition of three extra parameters *W*, *α* and *β*. Only the formula to calculate the membership matrix is different from the SFCM.
+* `SGFCMeans`, the SGFCM algorithm, combining SFCM and SGFCM and thus requiring the definition of three extra parameters *W*, \alpha and \beta. Only the formula to calculate the membership matrix is different from the SFCM.
 
 $$u_{ik} = \frac{(||x_{k} - v{_i}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}$$
 

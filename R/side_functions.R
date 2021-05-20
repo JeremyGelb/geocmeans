@@ -324,12 +324,14 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' MyMaps <- mapClusters(LyonIris, result$Belongings)
 mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
+    copied <- geodata
+    copied$OID <- 1:nrow(copied)
     if(class(geodata)[[1]]=="SpatialPolygonsDataFrame"){
-        return(mapPolygons(geodata, belongmatrix, undecided))
+        return(mapPolygons(copied, belongmatrix, undecided))
     }else if(class(geodata)[[1]]=="SpatialPointsDataFrame"){
-        return(mapPoints(geodata, belongmatrix, undecided))
+        return(mapPoints(copied, belongmatrix, undecided))
     }else if(class(geodata)[[1]]=="SpatialLinesDataFrame"){
-        return(mapLines(geodata, belongmatrix, undecided))
+        return(mapLines(copied, belongmatrix, undecided))
     }else {
         stop("The object passed in geodata argument is not supported.
               Supported classes are : SpatialPolygonsDataFrame,

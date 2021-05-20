@@ -324,14 +324,13 @@ spConsistency <- function(belongmatrix, nblistw, nrep = 999) {
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' MyMaps <- mapClusters(LyonIris, result$Belongings)
 mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
-    copied <- geodata
-    copied$OID <- 1:nrow(copied)
+    geodata$OID <- as.character(1:nrow(geodata@data))
     if(class(geodata)[[1]]=="SpatialPolygonsDataFrame"){
-        return(mapPolygons(copied, belongmatrix, undecided))
+        return(mapPolygons(geodata, belongmatrix, undecided))
     }else if(class(geodata)[[1]]=="SpatialPointsDataFrame"){
-        return(mapPoints(copied, belongmatrix, undecided))
+        return(mapPoints(geodata, belongmatrix, undecided))
     }else if(class(geodata)[[1]]=="SpatialLinesDataFrame"){
-        return(mapLines(copied, belongmatrix, undecided))
+        return(mapLines(geodata, belongmatrix, undecided))
     }else {
         stop("The object passed in geodata argument is not supported.
               Supported classes are : SpatialPolygonsDataFrame,
@@ -363,7 +362,6 @@ mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
     names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
     geodata@data <- belongmatrix
-    geodata$OID <- as.character(1:nrow(geodata@data))
 
     # attribution des groupes
     Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
@@ -375,8 +373,10 @@ mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
     }
     geodata$Cluster <- Groups
     geodata$Undecided <- Undecided
-    FortiData <- broom::tidy(geodata, region = "OID")
-    FortiData <- merge(FortiData, geodata@data, by.x = "id", by.y = "OID")
+    FortiData <- ggplot2::fortify(geodata, region = "OID")
+    FortiData$OID <- FortiData$id
+    geodata$OID <- rownames(geodata@data)
+    FortiData <- dplyr::left_join(FortiData, geodata@data, by = "OID")
     # realisation des cartes de probabilites
     ProbaPlots <- lapply(names(belongmatrix), function(Name) {
         Plot <- ggplot2::ggplot(FortiData) +
@@ -432,7 +432,6 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
     names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
     geodata@data <- cbind(geodata@data, belongmatrix)
-    invisible(capture.output(FortiData <- broom::tidy(geodata, region = "OID")))
 
     # attribution des groupes
     Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
@@ -443,9 +442,10 @@ mapLines <- function(geodata, belongmatrix, undecided = NULL){
         Undecided <- rep("Ok", length(Groups))
     }
     geodata$Cluster <- Groups
-    geodata$Undecided <- Undecided
-    FortiData <- broom::tidy(geodata, region = "OID")
-    FortiData <- merge(FortiData, geodata@data, by.x = "id", by.y = "OID")
+    FortiData <- ggplot2::fortify(geodata, region = "OID")
+    FortiData$OID <- FortiData$id
+    geodata$OID <- rownames(geodata@data)
+    FortiData <- dplyr::left_join(FortiData, geodata@data, by = "OID")
     # realisation des cartes de probabilites
     ProbaPlots <- lapply(names(belongmatrix), function(Name) {
         Plot <- ggplot2::ggplot(FortiData) +

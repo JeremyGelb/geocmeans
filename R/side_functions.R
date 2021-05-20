@@ -361,7 +361,7 @@ mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
 mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
     belongmatrix <- as.data.frame(belongmatrix)
     names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
-    geodata@data <- belongmatrix
+    geodata@data <- cbind(geodata@data,belongmatrix)
 
     # attribution des groupes
     Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]

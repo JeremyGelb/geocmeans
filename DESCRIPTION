@@ -13,7 +13,6 @@ Imports:
     dplyr (>= 0.8.3),
     fclust (>= 2.1.1),
     fmsb (>= 0.7.0),
-    broom (>= 0.5.2),
     future.apply (>= 1.4.0),
     progressr (>= 0.4.0),
     reshape2 (>= 1.4.4),

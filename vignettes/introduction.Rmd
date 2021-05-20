@@ -75,7 +75,7 @@ for (Col in names(Data)){
 
 #preparing some elements for further mapping
 LyonIris$OID <- as.character(1:nrow(LyonIris))
-FortiData <- broom::tidy(LyonIris,region="OID")
+FortiData <- ggplot2::fortify(LyonIris,region="OID")
 ```
 
 ```{r include=FALSE}

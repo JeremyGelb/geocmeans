@@ -50,13 +50,6 @@ Apparicio](https://doi.org/10.4000/cybergeo.36414) proposed to apply the
 method to perform a socio-residential and environmental taxonomy in Lyon
 (France).
 
-Approaches for visualising uncertainty in spatial data are presented in
-this package. These include the three approaches developed in [Lucchesi
-and Wikle
-(2017)](http://faculty.missouri.edu/~wiklec/LucchesiWikle2017Stat) and a
-fourth approach presented in [Kuhnert et
-al. (2018)](https://publications.csiro.au/publications/#publication/PIcsiro:EP168206).
-
 #### Fuzzy classification algorithms
 
 Four Fuzzy classification algorithms are proposed :

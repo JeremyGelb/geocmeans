@@ -60,7 +60,6 @@ the dataset. Indexes for measuring the spatial consistency and classification
 quality are proposed in addition. The algorithms were developed first for 
 brain imagery as described in the articles of [Cai and al. 2007](https://doi.org/10.1016/j.patcog.2006.07.011) and [Zaho and al. 2013](https://doi.org/10.1016/j.dsp.2012.09.016). [Gelb and Apparicio](https://doi.org/10.4000/cybergeo.36414) proposed to apply the method to perform a socio-residential and environmental taxonomy in Lyon (France).
 
-Approaches for visualising uncertainty in spatial data are presented in this package. These include the three approaches developed in [Lucchesi and Wikle (2017)](http://faculty.missouri.edu/~wiklec/LucchesiWikle2017Stat) and a fourth approach presented in [Kuhnert et al. (2018)](https://publications.csiro.au/publications/#publication/PIcsiro:EP168206).
 
 #### Fuzzy classification algorithms
 

@@ -97,6 +97,10 @@ Several functions are also available to facilitate the interpration of the class
 * violin plots: `violinPlots`
 * maps of the membership matrix: `mapClusters` (support polygon, points and polylines)
 
+There is also a shiny app that can be used to go deeper in the result interpretation.
+
+![Alt Text](https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif) 
+
 #### Spatial inconsistency
 
 We proposed an index to quantify the spatial inconsistency of a classification ([Gelb and Apparicio](https://doi.org/10.4000/cybergeo.36414)). If in a classification close observations tend to belong to the same group, then the value of the index is close to 0. If the index is close to 1, then the belonging to groups is randomly distributed in space. A value higher than one can happen in the case of negative spatial autocorrelation. The index is described in the vignette `adjustinconsistency`. The function `spatialDiag` does a complete spatial diagnostic of the membership matrix resulting from a classification.

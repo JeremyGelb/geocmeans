@@ -65,8 +65,6 @@ shiny_server <- function(input, output, session) {
   output$bivar_plot <- renderPlotly({
     params <- bivar_params()
     gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
-    print(dataset[[params$x]])
-    print(dataset[[params$y]])
     plot_ly(
       x = dataset[[params$x]],
       y = dataset[[params$y]],
@@ -122,7 +120,6 @@ shiny_server <- function(input, output, session) {
       violin <- base_violinplots[[i]]
       varname <- variables[[i]]
       value <- dataset[p$id,varname][[1]]
-      print(value)
       violin2 <- violin %>% layout(shapes = list(hline(value, color = "red")))
       return(violin2)
     })
@@ -266,28 +263,27 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' @export
 #' @examples
 #' \dontrun{
-#' data(LyonIris)
-#'
+#' #data(LyonIris)
+#' #
 #' #selecting the columns for the analysis
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
-#'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-#'
+#' #AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
+#' #                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+#' #
 #' #rescaling the columns
-#' Data <- LyonIris@data[AnalysisFields]
-#' for (Col in names(Data)){
-#'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
-#' }
-#'
-#' Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
-#'
-#' sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
+#' #Data <- LyonIris@data[AnalysisFields]
+#' #for (Col in names(Data)){
+#' #   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
+#' #}
+#' #
+#' #Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
+#' #
+#' #sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
 #' }
 sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
 
   ## enregistrement des principaux objets dans un environnement
   ## shiny env qui pourra etre utilise dans l'UI et dans le SERVER
   shiny_env <- new.env()
-  print('Classification explorer')
   assign('belongings', belongings, shiny_env)
   assign('dataset', dataset, shiny_env)
   assign('spatial', spatial, shiny_env)

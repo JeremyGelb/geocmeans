@@ -97,6 +97,8 @@ the classification:
 -   violin plots: `violinPlots`
 -   maps of the membership matrix: `mapClusters` (support polygon,
     points and polylines)
+    
+![Alt Text](https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif)
 
 #### Spatial inconsistency
 

@@ -97,6 +97,8 @@ the classification:
 -   violin plots: `violinPlots`
 -   maps of the membership matrix: `mapClusters` (support polygon,
     points and polylines)
+    
+One can also explore the results more in depth and interactively with a shiny app, see the function `sp_clust_explorer` 
 
 #### Spatial inconsistency
 

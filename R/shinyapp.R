@@ -265,7 +265,7 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' @importFrom plotly plot_ly layout
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' data(LyonIris)
 #'
 #' #selecting the columns for the analysis

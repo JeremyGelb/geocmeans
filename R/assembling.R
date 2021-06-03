@@ -153,18 +153,46 @@ main_worker <- function(algo, ...){
   if(algo == "FCM"){
     update_belongs <- belongsFCM
     udpdate_centers <- centersFCM
+    params <- list(
+      k = k,
+      m = dots$m,
+      algo = "FCM"
+    )
 
   }else if(algo=="GFCM"){
     update_belongs <- belongsGFCM
     udpdate_centers <- centersGFCM
+    params <- list(
+      k = k,
+      m = dots$m,
+      beta = dots$beta,
+      algo = "GFCM"
+    )
 
   }else if (algo=="SFCM"){
     update_belongs <- belongsSFCM
     udpdate_centers <- centersSFCM
+    params <- list(
+      k = k,
+      m = dots$m,
+      alpha = dots$alpha,
+      nblistw = dots$nblistw,
+      lag_method = dots$lag_method,
+      algo = "SFCM"
+    )
 
   }else if (algo=="SGFCM"){
     update_belongs <- belongsSGFCM
     udpdate_centers <- centersSGFCM
+    params <- list(
+      k = k,
+      m = dots$m,
+      alpha = dots$alpha,
+      nblistw = dots$nblistw,
+      beta = dots$beta,
+      lag_method = dots$lag_method,
+      algo = "SGFCM"
+    )
   }
 
   # selecting the original centers from observations
@@ -212,8 +240,11 @@ main_worker <- function(algo, ...){
   }
   DF <- as.data.frame(newbelongmatrix)
   Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
-  return(list(Centers = centers, Belongings = newbelongmatrix,
-              Groups = Groups, Data = data))
+
+  results <- c(list(Centers = centers, Belongings = newbelongmatrix,
+                  Groups = Groups, Data = data),params)
+
+  return(results)
 
 }
 

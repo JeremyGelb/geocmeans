@@ -1,7 +1,7 @@
 Package: geocmeans
 Type: Package
 Title: Implementing Methods for Spatial Fuzzy Unsupervised Classification
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
@@ -17,7 +17,12 @@ Imports:
     progressr (>= 0.4.0),
     reshape2 (>= 1.4.4),
     sp (>= 1.4-4),
-    stats (>= 3.5)
+    stats (>= 3.5),
+    rgeos (>= 0.5-5),
+    leaflet (>= 2.0.4.1),
+    plotly (>= 4.9.3),
+    grDevices (>= 3.5),
+    shiny (>= 1.6.0)
 Depends:
     R (>= 3.5)
 Suggests:
@@ -25,7 +30,6 @@ Suggests:
     rmarkdown (>= 2.1),
     markdown (>= 1.1),
     maptools (>= 0.9-5),
-    rgeos (>= 0.5-2),
     future (>= 1.16.0),
     ppclust (>= 1.1.0),
 	  ClustGeo (>= 2.0),

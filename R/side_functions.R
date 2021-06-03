@@ -1161,6 +1161,83 @@ adjustSpatialWeights <- function(data,listw,style){
 }
 
 
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+##### prediction functions #####
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+#' @title Predict matrix membership for new observations
+#'
+#' @description Function predict the membership matrix of a new set of observations
+#'
+#' @param results A list as produced by one of the following functions: CMeans,
+#' GCMeans, SFCMeans, SGFCMeans
+#' @param new_data A DataFrame with the new observations
+#' @param listw A nb object from spdep (for the new data)
+#' @param standardize  A boolean to specify if the variable must be centered and
+#'   reduced (default = True)
+#'
+#' @return A numeric matrix with the membership values for each new observation
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#'
+#' # rescaling all the variables used in the analysis
+#' for (field in AnalysisFields) {
+#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
+#' }
+#'
+#' # doing the initial clustering
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)
+#'
+#' # using a subset of the original dataframe as "new data"
+#' new_data <- LyonIris[c(1, 27, 36, 44, 73),]
+#' new_dataset <- new_data@data[AnalysisFields]
+#' new_nb <- spdep::poly2nb(new_data,queen=TRUE)
+#' new_Wqueen <- spdep::nb2listw(new_nb,style="W")
+#'
+#' # doing the prediction
+#' predictions <- predict_membership(result, new_dataset, new_Wqueen, standardize = FALSE)
+predict_membership <- function(results, new_data, listw = NULL, standardize = TRUE){
+
+    ## standardize the data if required
+    if (standardize){
+        for (i in 1:ncol(new_data)) {
+            new_data[, i] <- scale(new_data[, i])
+        }
+    }
+
+    ## calculating the lagged dataset if required
+    if(results$algo %in% c("SFCM", "SGFCM")){
+        if(is.null(listw)){
+            stop("With a spatial clustering method like SFCM or SGFCM, the spatial matrix listw
+                 associated with the new dataset must be provided")
+        }
+        wdata <- calcLaggedData(new_data, listw, results$lag_method)
+    }
+
+    ## selecting the appropriate function for prediction
+    if(results$algo == "FCM"){
+        pred_values <- calcBelongMatrix(results$Centers, new_data, results$m)
+    }else if(results$algo == "GFCM"){
+        pred_values <- calcFGCMBelongMatrix(results$Centers, new_data,
+                                            results$m, results$beta)
+    }else if(results$algo == "SFCM"){
+        pred_values <- calcSFCMBelongMatrix(results$Centers, new_data,
+                                            wdata,results$m, results$alpha)
+    }else if(results$algo == "SGFCM"){
+        pred_values <- calcSFGCMBelongMatrix(results$Centers, new_data,
+                                            wdata,results$m, results$alpha, results$beta)
+    }
+
+    return(pred_values)
+}
+
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ##### Utilitary functions #####

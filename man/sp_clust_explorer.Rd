@@ -22,7 +22,7 @@ SpatialLinesDataFrame) used to map the observations}
 Stat a local Shiny App to explore the results of a classification
 }
 \examples{
-\donttest{
+\dontrun{
 data(LyonIris)
 
 #selecting the columns for the analysis

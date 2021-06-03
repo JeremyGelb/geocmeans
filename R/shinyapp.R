@@ -263,21 +263,21 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' @export
 #' @examples
 #' \dontrun{
-#' #data(LyonIris)
-#' #
+#' data(LyonIris)
+#'
 #' #selecting the columns for the analysis
-#' #AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
-#' #                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-#' #
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
+#'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+#'
 #' #rescaling the columns
-#' #Data <- LyonIris@data[AnalysisFields]
-#' #for (Col in names(Data)){
-#' #   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
-#' #}
-#' #
-#' #Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
-#' #
-#' #sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
+#' Data <- LyonIris@data[AnalysisFields]
+#' for (Col in names(Data)){
+#'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
+#' }
+#'
+#' Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
+#'
+#' sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
 #' }
 sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
 

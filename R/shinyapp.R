@@ -26,8 +26,6 @@ hline <- function(y = 0, color = "blue") {
   )
 }
 
-
-
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #### SERVER FUNCTION ####
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,15 +63,27 @@ shiny_server <- function(input, output, session) {
   output$bivar_plot <- renderPlotly({
     params <- bivar_params()
     gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
-    plot_ly(
-      x = dataset[[params$x]],
-      y = dataset[[params$y]],
-      color = belongings[,gpcol],
+    idx <- order(belongings[,gpcol])
+    biplot <- plot_ly(
+      x = dataset[[params$x]][idx],
+      y = dataset[[params$y]][idx],
+      color = belongings[,gpcol][idx],
       colors = colorRampPalette(c("white", colors[[gpcol]]))(10),
       type = "scatter",
       mode = "markers",
       size = 2
     )
+
+    # adjusting the color with the theme
+    if(is.null(light) == FALSE){
+      if (isTRUE(input$dark_mode)){
+        biplot <- biplot %>% layout(
+          font = list(color = "white"),
+          paper_bgcolor = "#303030",
+          plot_bgcolor = "#303030")
+      }
+    }
+    biplot
   })
 
 
@@ -120,7 +130,16 @@ shiny_server <- function(input, output, session) {
       violin <- base_violinplots[[i]]
       varname <- variables[[i]]
       value <- dataset[p$id,varname][[1]]
-      violin2 <- violin %>% layout(shapes = list(hline(value, color = "red")))
+      if (isTRUE(input$dark_mode)){
+        violin2 <- violin %>% layout(
+          font = list(color = "white"),
+          paper_bgcolor = "#303030",
+          plot_bgcolor = "#303030",
+          shapes = list(hline(value, color = "red")))
+      }else{
+        violin2 <- violin %>% layout(shapes = list(hline(value, color = "red")))
+      }
+
       return(violin2)
     })
     lapply(1:length(new_violins), function(i){
@@ -144,6 +163,139 @@ shiny_server <- function(input, output, session) {
 
 
   })
+
+  ## ----------here is an observer listening for the ellipsis--------------
+  observeEvent(input$show_ellipsis,{
+
+    # redraw the biplot
+    output$bivar_plot <- renderPlotly({
+      params <- bivar_params()
+      gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
+      idx <- order(belongings[,gpcol])
+      biplot <- plot_ly(
+        x = dataset[[params$x]][idx],
+        y = dataset[[params$y]][idx],
+        color = belongings[,gpcol][idx],
+        colors = colorRampPalette(c("white", colors[[gpcol]]))(10),
+        type = "scatter",
+        mode = "markers",
+        size = 2
+      )
+
+      # adjusting the color with the theme
+      if (is.null(light) == FALSE){
+        if (isTRUE(input$dark_mode)){
+          biplot <- biplot %>% layout(
+            font = list(color = "white"),
+            paper_bgcolor = "#303030",
+            plot_bgcolor = "#303030")
+        }
+      }
+
+      # adding the ellipsis if required
+      if(isTRUE(input$show_ellipsis)){
+        for(j in 1:ncol(belongings)){
+          coords <- car::dataEllipse(dataset[[params$x]],
+                                     dataset[[params$y]],
+                                     weights = belongings[,j],
+                                     levels = 0.75,
+                                     draw = FALSE,
+          )
+          coords <- coords[1:(nrow(coords)-1),]
+          coords <- rbind(coords,coords[1,])
+          biplot <- biplot %>%
+            add_paths(
+              x = coords[,1],
+              y = coords[,2],
+              line = list(width = 2),
+              color = I(colors[[j]]),
+
+            )
+        }
+      }
+
+      biplot
+    })
+
+  })
+
+  ## ----------here is an observer if we can theme switch--------------
+  if(is.null(light) == FALSE){
+    observe(session$setCurrentTheme(
+      {
+      # adjust the map (remove a previous overlay)
+      if(firsttime == FALSE){
+        firsttime <- TRUE
+        leafletProxy('mymap') %>%
+          removeShape("highlighter")
+      }
+
+      # set the right colors for the biplot
+      output$bivar_plot <- renderPlotly({
+        params <- bivar_params()
+        gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
+        idx <- order(belongings[,gpcol])
+        biplot <- plot_ly(
+          x = dataset[[params$x]][idx],
+          y = dataset[[params$y]][idx],
+          color = belongings[,gpcol][idx],
+          colors = colorRampPalette(c("white", colors[[gpcol]]))(10),
+          type = "scatter",
+          mode = "markers",
+          size = 2
+        )
+
+        # adjusting the color with the theme
+        if (isTRUE(input$dark_mode)){
+          biplot <- biplot %>% layout(
+            font = list(color = "white"),
+            paper_bgcolor = "#303030",
+            plot_bgcolor = "#303030")
+        }
+
+        # adding the ellipsis if required
+        if(isTRUE(input$show_ellipsis)){
+          for(j in 1:ncol(belongings)){
+            coords <- car::dataEllipse(dataset[[params$x]],
+                                       dataset[[params$y]],
+                                       weights = belongings[,j],
+                                       levels = 0.75,
+                                       draw = FALSE,
+                                       )
+            coords <- coords[1:(nrow(coords)-1),]
+            coords <- rbind(coords,coords[1,])
+            biplot <- biplot %>%
+              add_paths(
+                x = coords[,1],
+                y = coords[,2],
+                line = list(width = 2),
+                color = I(colors[[j]])
+              )
+          }
+        }
+
+        biplot
+      })
+
+      # set the right colors for violin plots
+      new_violins <- lapply(1:length(variables), function(i){
+        violin <- base_violinplots[[i]]
+        if (isTRUE(input$dark_mode)){
+          violin2 <- violin %>% layout(
+            font = list(color = "white"),
+            paper_bgcolor = "#303030",
+            plot_bgcolor = "#303030")
+        }else{
+          violin2 <- violin
+        }
+        output[[paste("violinplots",i,sep="")]] <- renderPlotly({violin2})
+
+      })
+
+      if (isTRUE(input$dark_mode)) dark else light
+      }
+    ))
+  }
 
 }
 
@@ -209,7 +361,13 @@ shiny_ui <- function() {
         titlePanel('Interactive map'),
 
         # Grid Layout
-        fluidRow(wellPanel("Welcome in the classification explorer ! Please, click on a feature on the map to start exploring the results of your classification")),
+        {if(is.null(light)){
+          fluidRow(wellPanel("Welcome in the classification explorer ! Please, click on a feature on the map to start exploring the results of your classification"))
+        }else{
+          fluidRow(column(width = 4, wellPanel("Welcome in the classification explorer ! Please, click on a feature on the map to start exploring the results of your classification")),
+                   column(width = 2, checkboxInput("dark_mode", "Dark mode"))
+                   )
+        }},
         fluidRow(column(width = 8, wellPanel(leafletOutput("mymap"))),
                  column(width = 4, wellPanel(plotlyOutput("barplot1")))
                  ),
@@ -222,16 +380,22 @@ shiny_ui <- function() {
                titlePanel('Interactive bivariate plots'),
 
                # Grid Layout
-               fluidRow(wellPanel("Welcome in the classification explorer ! Please, click on a feature on the map to start exploring the results of your classification")),
+               fluidRow(wellPanel("In this panel, you can explore bivariate relationships for the different groups obtained")),
                fluidRow(column(width = 2,
                                selectInput("var1_biplot", "X axis variable", variables, selected = variables[[1]]),
                                selectInput("var2_biplot", "Y axis variable", variables, selected = variables[[2]]),
                                selectInput("group_biplot", "group membership for color", paste("group ", 1:ncol(belongings), sep = "")),
+                               {
+                                 if("car" %in% installed.packages()){
+                                   checkboxInput("show_ellipsis", "show ellipsis")
+                                 }
+                               },
                                ),
                         column(width = 10,plotlyOutput("bivar_plot", height = "800px")),
                ),
       )
-    )
+    ),
+    theme = light
   )
 }
 
@@ -243,7 +407,7 @@ shiny_ui <- function() {
 
 # the variables used in the shiny environment must be declared as globalVariables
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
-                  "dataset", "base_violinplots"
+                  "dataset", "base_violinplots", "dark", "light"
                   ))
 
 #' @title Classification result explorer
@@ -281,9 +445,28 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' }
 sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
 
+  shiny_env <- new.env()
+
+  # the colors to use for the groups
+  colors <- c("#1F77B4","#FF7F0E","#2CA02C","#D62728","#9467BD","#8C564B",
+              "#E377C2","#7F7F7F","#BCBD22","#17BECF","#AEC7E8","#FFBB78",
+              "#98DF8A","#FF9896","#C5B0D5","#C49C94","#F7B6D2","#C7C7C7",
+              "#DBDB8D","#9EDAE5")[1:ncol(belongings)]
+
+  # the available themes
+  if("bslib" %in% installed.packages()){
+    dark <-  bslib::bs_theme(bootswatch = "darkly", version = "3")
+    light <- bslib::bs_theme(version = "3")
+  }else{
+    dark <- NULL
+    light <- NULL
+  }
+
+  assign('dark', dark, shiny_env)
+  assign('light', light, shiny_env)
+
   ## enregistrement des principaux objets dans un environnement
   ## shiny env qui pourra etre utilise dans l'UI et dans le SERVER
-  shiny_env <- new.env()
   assign('belongings', belongings, shiny_env)
   assign('dataset', dataset, shiny_env)
   assign('spatial', spatial, shiny_env)
@@ -299,9 +482,6 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   spatial4326 <- sp::spTransform(spatial, ref)
 
   ## preparer la carte leaflet ***************************************
-  bins <- seq(0,1,0.1)
-  cols <- colorRamp(c("#FFFFFF", "#3514ff"), interpolate = "spline")
-  pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
 
   mymap <- leaflet(height = "600px") %>%
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite")
@@ -319,26 +499,34 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
 
   # ajouter les layers
   for (i in 1:ncol(belongings)){
+
+    bins <- seq(0,1,0.1)
+    cols <- colorRamp(c("#FFFFFF", colors[[i]]), interpolate = "spline")
+    pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
+
     mymap <- mymap %>% mapfun(data = spatial4326,
                                    weight = 1,
                                    group = paste("group ",i,sep=""),
                                    color = "black",
                                    fillColor = ~pal(belongings[,i]),
                                    fillOpacity = 0.7,
-                                   layerId = 1:nrow(spatial4326)
-    )
-    if(i > 1){
-      mymap <- mymap %>% hideGroup(paste("group ",i,sep=""))
-    }
+                                   layerId = 1:nrow(spatial4326)) %>%
+                                addLegend(pal = pal, values = bins, opacity = 0.7,
+                                          title = NULL, group=paste("group ",i,sep=""),
+                                          position = "bottomright")
   }
 
   # ajouter les enjolivages
   mymap <- mymap %>%
     addLayersControl(
-      overlayGroups = c("Toner Lite",paste("group ", 1:ncol(belongings), sep = "")),
-      options = leaflet::layersControlOptions(collapsed = FALSE)) %>%
-    addLegend(pal = pal, values = bins, opacity = 0.7, title = NULL,
-              position = "bottomright")
+      position = "bottomleft",
+      baseGroups = c("Toner Lite"),
+      overlayGroups  = paste("group ", 1:ncol(belongings), sep = ""),
+      options = leaflet::layersControlOptions(collapsed = FALSE))
+
+  for(i in 2:ncol(belongings)){
+    mymap <- mymap %>% hideGroup(paste("group ",i,sep=""))
+  }
 
   assign('mymap', mymap, shiny_env)
   assign('mapfun', mapfun, shiny_env)
@@ -350,10 +538,6 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   group_names <- paste("group ", 1:ncol(belongings))
   best_cat <-group_names[max.col(belongings, ties.method = "first")]
   dataset$tmpgrp <- as.factor(best_cat)
-  colors <- c("#1F77B4","#FF7F0E","#2CA02C","#D62728","#9467BD","#8C564B",
-              "#E377C2","#7F7F7F","#BCBD22","#17BECF","#AEC7E8","#FFBB78",
-              "#98DF8A","#FF9896","#C5B0D5","#C49C94","#F7B6D2","#C7C7C7",
-              "#DBDB8D","#9EDAE5")[1:ncol(belongings)]
 
   base_violinplots <- lapply(variables, function(i){
 
@@ -388,12 +572,16 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
 }
 
 
-#library(geocmeans)
-# library(leaflet)
-# library(ggplot2)
-# library(plotly)
-# library(ggsci)
-#
+# to add some ellipsis on the plots
+# https://www.rdocumentation.org/packages/car/versions/3.0-10/topics/Ellipses
+
+
+# #library(geocmeans)
+# # library(leaflet)
+# # library(ggplot2)
+# # library(plotly)
+# # library(ggsci)
+# #
 # data(LyonIris)
 #
 # #selecting the columns for the analysis
@@ -409,5 +597,5 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
 # Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 #
 # sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
-
-# for a chloroplet map : https://rstudio.github.io/leaflet/choropleths.html
+#
+# # for a chloroplet map : https://rstudio.github.io/leaflet/choropleths.html

@@ -341,7 +341,7 @@ calcQualIdx <- function(name, ...){
     }
   }
   if(name == "FukuyamaSugeno.index"){
-    val <- calcFukuyamaSugeno(dots$data, dots$belongmatrix, dots$centers, dot$sm)
+    val <- calcFukuyamaSugeno(dots$data, dots$belongmatrix, dots$centers, dots$sm)
   }
 
   if(name == "CalinskiHarabasz.index"){

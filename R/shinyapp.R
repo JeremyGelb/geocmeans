@@ -40,7 +40,7 @@ hline <- function(y = 0, color = "blue") {
 #'
 #' @importFrom shiny reactive observeEvent
 #' @importFrom leaflet renderLeaflet leafletProxy removeShape
-#' @importFrom plotly renderPlotly plot_ly layout
+#' @importFrom plotly renderPlotly plot_ly layout add_paths
 #' @importFrom grDevices colorRampPalette
 #' @examples
 #' #This is an internal function, no example provided
@@ -204,7 +204,7 @@ shiny_server <- function(input, output, session) {
           coords <- coords[1:(nrow(coords)-1),]
           coords <- rbind(coords,coords[1,])
           biplot <- biplot %>%
-            add_paths(
+            plotly::add_paths(
               x = coords[,1],
               y = coords[,2],
               line = list(width = 2),
@@ -265,7 +265,7 @@ shiny_server <- function(input, output, session) {
             coords <- coords[1:(nrow(coords)-1),]
             coords <- rbind(coords,coords[1,])
             biplot <- biplot %>%
-              add_paths(
+              plotly::add_paths(
                 x = coords[,1],
                 y = coords[,2],
                 line = list(width = 2),
@@ -365,7 +365,13 @@ shiny_ui <- function() {
           fluidRow(wellPanel("Welcome in the classification explorer ! Please, click on a feature on the map to start exploring the results of your classification"))
         }else{
           fluidRow(column(width = 4, wellPanel("Welcome in the classification explorer ! Please, click on a feature on the map to start exploring the results of your classification")),
-                   column(width = 2, checkboxInput("dark_mode", "Dark mode"))
+                   {
+                     if("shinyWidgets" %in% installed.packages()){
+                       column(width = 2, shinyWidgets::materialSwitch(inputId = "dark_mode", label = "Dark mode", status = "primary"))
+                     }else{
+                       column(width = 2, checkboxInput("dark_mode", "Dark mode"))
+                     }
+                   }
                    )
         }},
         fluidRow(column(width = 8, wellPanel(leafletOutput("mymap"))),
@@ -387,7 +393,11 @@ shiny_ui <- function() {
                                selectInput("group_biplot", "group membership for color", paste("group ", 1:ncol(belongings), sep = "")),
                                {
                                  if("car" %in% installed.packages()){
-                                   checkboxInput("show_ellipsis", "show ellipsis")
+                                   if("shinyWidgets" %in% installed.packages()){
+                                     shinyWidgets::materialSwitch(inputId = "show_ellipsis", label = "show ellipsis", status = "primary")
+                                   }else{
+                                     checkboxInput("show_ellipsis", "show ellipsis")
+                                   }
                                  }
                                },
                                ),
@@ -444,6 +454,17 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
 #' }
 sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
+  mandatory_packages <- c("shiny", "leaflet", "plotly")
+  if(all(mandatory_packages %in% installed.packages()) == FALSE){
+    stop("The shiny app can be used only if the packages shiny, leaflet and plotly are installed ! \n
+         We also recommand to install shinyWidgets, bslib and car for an optimal experience.
+         ")
+  }
+  secondary_packages <- c("shinyWidgets", "bslib", "car")
+  if(all(secondary_packages %in% installed.packages()) == FALSE){
+    warning("We recommand to install the packages shinyWidgets, bslib and car for an optimal experience with
+            this shiny app")
+  }
 
   shiny_env <- new.env()
 
@@ -570,32 +591,3 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   )
   shiny::runApp(app, ...)
 }
-
-
-# to add some ellipsis on the plots
-# https://www.rdocumentation.org/packages/car/versions/3.0-10/topics/Ellipses
-
-
-# #library(geocmeans)
-# # library(leaflet)
-# # library(ggplot2)
-# # library(plotly)
-# # library(ggsci)
-# #
-# data(LyonIris)
-#
-# #selecting the columns for the analysis
-# AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
-#                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-#
-# #rescaling the columns
-# Data <- LyonIris@data[AnalysisFields]
-# for (Col in names(Data)){
-#   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
-# }
-#
-# Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
-#
-# sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
-#
-# # for a chloroplet map : https://rstudio.github.io/leaflet/choropleths.html

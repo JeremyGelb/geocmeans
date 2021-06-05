@@ -244,6 +244,9 @@ main_worker <- function(algo, ...){
   results <- c(list(Centers = centers, Belongings = newbelongmatrix,
                   Groups = Groups, Data = data),params)
 
+  ## setting the class of the results
+  results <- FCMres(results)
+
   return(results)
 
 }

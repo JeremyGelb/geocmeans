@@ -80,24 +80,29 @@ The algorithms available require different parameters to be fixed by the user. T
 
 Many indices of classification quality can be calculated with the function `calcqualityIndexes`: 
 
-* *Silhouette.index*: the silhouette index (fclust::SIL.F)
-* *Partition.entropy*: the partition entropy index (fclust::PE)
-* *Partition.coeff*: the partition entropy coefficient (fclust::PC)
-* *Modified.partition.coeff*: the modified partition entropy coefficient (fclust::MPC)
-* *XieBeni.index* : the Xie and Beni index (fclust::XB)
-* *FukuyamaSugeno.index* : the Fukuyama and Sugeno index (geocmeans::calcFukuyamaSugeno)
+* *Silhouette.index*: the silhouette index (`fclust::SIL.F`)
+* *Partition.entropy*: the partition entropy index (`fclust::PE`)
+* *Partition.coeff*: the partition entropy coefficient (`fclust::PC`)
+* *Modified.partition.coeff*: the modified partition entropy coefficient (`fclust::MPC`)
+* *XieBeni.index*: the Xie and Beni index (`fclust::XB`)
+* *FukuyamaSugeno.index*: the Fukuyama and Sugeno index (`geocmeans::calcFukuyamaSugeno`)
+* *DavidBoulin.index*: the David-Boulin index (`geocmeans::calcDavidBouldin`)
+* *CalinskiHarabasz.index*: the Calinski-Harabasz index (`geocmeans::calcCalinskiHarabasz`)
+* *GD43.index* and *GD53.index*: two version of the generalized Dunn index (`geocmeans::calcGD43` and `calcGD45`)
+* *Negentropy.index*: the Negentropy Increment index (`geocmeans::calcNegentropyI`)
 * *Explained.inertia*: the percentage of total inertia explained by the solution
+
 
 #### Interpretation
 
 Several functions are also available to facilitate the interpration of the classification: 
 
-* summary statistics for each cluster: `summarizeClusters`
+* summary statistics for each cluster: `summarizeClusters` (also accessible with the generic function `summary`)
 * spider charts: `spiderPlots`
 * violin plots: `violinPlots`
 * maps of the membership matrix: `mapClusters` (support polygon, points and polylines)
 
-There is also a shiny app that can be used to go deeper in the result interpretation.
+There is also a shiny app that can be used to go deeper in the result interpretation. It requires the packages `shiny`, `leaflet`, `bslib`, `plotly`, `shinyWidgets`, `car`.
 
 ![Alt Text](https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif) 
 

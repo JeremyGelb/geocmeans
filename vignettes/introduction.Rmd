@@ -480,14 +480,16 @@ ggplot(data=DFmapping)+
 
 One can obtain a lot of descriptive information about the final groups with three functions of **geocmeans** : 
 
-* *summarizeClusters* : calculate summary statistics for each group for a given dataset by using the membership matrix as weights (sticking with the fuzzy spirit).
-* *spiderPlots* : display a spider plot allowing to compare quickly the differences between groups.
-* *violinPlots* : display a violin plot for each variable in a given dataset. Observations must be grouped before.
+* `summarizeClusters` : calculate summary statistics for each group for a given dataset by using the membership matrix as weights (sticking with the fuzzy spirit). One can also use the generic function `summary`
+* `spiderPlots` : display a spider plot allowing to compare quickly the differences between groups.
+* `violinPlots` : display a violin plot for each variable in a given dataset. Observations must be grouped before.
 
 
 ```{r warning=FALSE}
 summarizeClusters(LyonIris@data[AnalysisFields],belongmatrix = SGFCM$Belongings,
                   weighted = TRUE, dec = 3)
+# equivalent to : 
+# summary(SGFCM, LyonIris@data[AnalysisFields])
 ```
 
 ```{r warning=FALSE, eval = FALSE}

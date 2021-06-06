@@ -454,14 +454,15 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
 #' }
 sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
+
   mandatory_packages <- c("shiny", "leaflet", "plotly")
-  if(all(mandatory_packages %in% installed.packages()) == FALSE){
+  if(requireNamespace(mandatory_packages) == FALSE){
     stop("The shiny app can be used only if the packages shiny, leaflet and plotly are installed ! \n
          We also recommand to install shinyWidgets, bslib and car for an optimal experience.
          ")
   }
   secondary_packages <- c("shinyWidgets", "bslib", "car")
-  if(all(secondary_packages %in% installed.packages()) == FALSE){
+  if(requireNamespace(secondary_packages) == FALSE){
     warning("We recommand to install the packages shinyWidgets, bslib and car for an optimal experience with
             this shiny app")
   }

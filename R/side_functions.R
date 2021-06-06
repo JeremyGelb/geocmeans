@@ -354,7 +354,7 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
 #' @description Calculate some descriptive statistics of each group of a
 #' FCMres object
 #'
-#' @param obj A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
+#' @param object A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
 #' @param data A dataframe to use for the summary statistics instead of obj$data
 #' @param weighted A boolean indicating if the summary statistics must use the
 #'   membership matrix columns as weights (TRUE) or simply assign each
@@ -363,6 +363,7 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
 #' @param dec An integer indicating the number of digits to keep when rounding
 #' (default is 3)
 #' @param silent A boolean indicating if the results must be printed or silently returned
+#' @param ... Not used
 #' @return A list of length k (the number of group). Each element of the list is
 #'   a dataframe with summary statistics for the variables of data for each
 #'   group
@@ -380,13 +381,13 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' summary(result)
-summary.FCMres <- function(obj, data = NULL, weighted = TRUE, dec = 3, silent=TRUE) {
+summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent=TRUE, ...) {
     if(is.null(data)){
-        df <- obj$Data
+        df <- object$Data
     }else{
         df <- as.matrix(data)
     }
-    return(summarizeClusters(df, obj$Belongings, weighted, dec, silent))
+    return(summarizeClusters(df, object$Belongings, weighted, dec, silent))
 }
 
 
@@ -918,12 +919,13 @@ adjustSpatialWeights <- function(data,listw,style){
 #'
 #' @description Function predict the membership matrix of a new set of observations
 #'
-#' @param results An FCMres object as produced by one of the following functions: CMeans,
+#' @param object An FCMres object as produced by one of the following functions: CMeans,
 #' GCMeans, SFCMeans, SGFCMeans
 #' @param new_data A DataFrame with the new observations
 #' @param listw A nb object from spdep (for the new data)
 #' @param standardize  A boolean to specify if the variable must be centered and
 #'   reduced (default = True)
+#' @param ... not used
 #'
 #' @return A numeric matrix with the membership values for each new observation
 #' @export
@@ -951,8 +953,9 @@ adjustSpatialWeights <- function(data,listw,style){
 #'
 #' # doing the prediction
 #' predictions <- predict_membership(result, new_dataset, new_Wqueen, standardize = FALSE)
-predict_membership <- function(results, new_data, listw = NULL, standardize = TRUE){
+predict_membership <- function(object, new_data, listw = NULL, standardize = TRUE, ...){
 
+    results <- object
     ## standardize the data if required
     if (standardize){
         for (i in 1:ncol(new_data)) {
@@ -991,12 +994,13 @@ predict_membership <- function(results, new_data, listw = NULL, standardize = TR
 #'
 #' @description Function predict the membership matrix of a new set of observations
 #'
-#' @param results An FCMres object as produced by one of the following functions: CMeans,
+#' @param object An FCMres object as produced by one of the following functions: CMeans,
 #' GCMeans, SFCMeans, SGFCMeans
 #' @param new_data A DataFrame with the new observations
 #' @param listw A nb object from spdep (for the new data)
 #' @param standardize  A boolean to specify if the variable must be centered and
 #'   reduced (default = True)
+#' @param ... not used
 #'
 #' @return A numeric matrix with the membership values for each new observation
 #' @export

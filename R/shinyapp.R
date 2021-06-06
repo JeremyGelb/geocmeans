@@ -38,7 +38,7 @@ hline <- function(y = 0, color = "blue") {
 #' @param output The shiny output object
 #' @param session The shiny session object
 #'
-#' @importFrom shiny reactive observeEvent
+#' @importFrom shiny reactive observeEvent observe
 #' @importFrom leaflet renderLeaflet leafletProxy removeShape
 #' @importFrom plotly renderPlotly plot_ly layout add_paths
 #' @importFrom grDevices colorRampPalette
@@ -337,9 +337,10 @@ violinplots_ui <- function(n, nr, nc){
 #'
 #' @description Set the UI for the Shiny App
 #'
-#' @importFrom shiny fluidPage tabsetPanel tabPanel titlePanel fluidRow wellPanel column selectInput
+#' @importFrom shiny fluidPage tabsetPanel tabPanel titlePanel fluidRow wellPanel column selectInput checkboxInput
 #' @importFrom leaflet leafletOutput
 #' @importFrom plotly plotlyOutput
+#' @importFrom utils installed.packages
 #' @examples
 #' #This is an internal function, no example provided
 shiny_ui <- function() {
@@ -434,6 +435,7 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' @importFrom leaflet colorBin leaflet addPolygons addCircles addLayersControl hideGroup addLegend addProviderTiles
 #' @importFrom grDevices colorRamp
 #' @importFrom plotly plot_ly layout
+#' @importFrom utils installed.packages
 #' @export
 #' @examples
 #' \dontrun{

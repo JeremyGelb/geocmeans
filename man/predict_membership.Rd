@@ -4,10 +4,10 @@
 \alias{predict_membership}
 \title{Predict matrix membership for new observations}
 \usage{
-predict_membership(results, new_data, listw = NULL, standardize = TRUE)
+predict_membership(object, new_data, listw = NULL, standardize = TRUE, ...)
 }
 \arguments{
-\item{results}{An FCMres object as produced by one of the following functions: CMeans,
+\item{object}{An FCMres object as produced by one of the following functions: CMeans,
 GCMeans, SFCMeans, SGFCMeans}
 
 \item{new_data}{A DataFrame with the new observations}
@@ -16,6 +16,8 @@ GCMeans, SFCMeans, SGFCMeans}
 
 \item{standardize}{A boolean to specify if the variable must be centered and
 reduced (default = True)}
+
+\item{...}{not used}
 }
 \value{
 A numeric matrix with the membership values for each new observation

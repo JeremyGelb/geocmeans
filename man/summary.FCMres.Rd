@@ -4,10 +4,10 @@
 \alias{summary.FCMres}
 \title{Summary method for FCMres}
 \usage{
-\method{summary}{FCMres}(obj, data = NULL, weighted = TRUE, dec = 3, silent = TRUE)
+\method{summary}{FCMres}(object, data = NULL, weighted = TRUE, dec = 3, silent = TRUE, ...)
 }
 \arguments{
-\item{obj}{A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
+\item{object}{A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
 
 \item{data}{A dataframe to use for the summary statistics instead of obj$data}
 
@@ -20,6 +20,8 @@ subset (FALSE)}
 (default is 3)}
 
 \item{silent}{A boolean indicating if the results must be printed or silently returned}
+
+\item{...}{Not used}
 }
 \value{
 A list of length k (the number of group). Each element of the list is

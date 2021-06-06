@@ -33,9 +33,9 @@ calcNegentropyI <- function(data, belongmatrix, centers){
 
   # calculer les matrices de covariances
   Si <- sapply(1:ncol(belongmatrix), function(i){
-    det(cov.wt(data, wt = belongmatrix[,i])$cov)
+    det(stats::cov.wt(data, wt = belongmatrix[,i])$cov)
   })
-  Sdata <- cov(data)
+  Sdata <- stats::cov(data)
 
   p1 <- (sum(pi * log(Si))) / 2
   p2 <- log(det(Sdata)) / 2
@@ -85,7 +85,7 @@ calcGD53 <- function(data, belongmatrix, centers){
     })
   }))
 
-  num <- apply(seps, 1, min)
+  num <- min(seps)
 
   # calculate the compactness
   compacts <- sapply(cols, function(i){
@@ -93,7 +93,7 @@ calcGD53 <- function(data, belongmatrix, centers){
     cp <- sum(sweep(data, 2, ct, `-`)**2 * belongmatrix[,i]) ** (1/2)
     2*cp / sum(belongmatrix[,i])
   })
-  denom <- apply(compacts, 1, max)
+  denom <- max(compacts)
 
   return(num/denom)
 }
@@ -133,7 +133,7 @@ calcGD43 <- function(data, belongmatrix, centers){
       return(Mij)
     })
   }))
-  num <- apply(seps, 1, min)
+  num <- min(seps)
 
   # calculate the compactness
   compacts <- sapply(cols, function(i){
@@ -141,7 +141,7 @@ calcGD43 <- function(data, belongmatrix, centers){
     cp <- sum(sweep(data, 2, ct, `-`)**2 * belongmatrix[,i]) ** (1/2)
     2*cp / sum(belongmatrix[,i])
   })
-  denom <- apply(compacts, 1, max)
+  denom <- max(compacts)
 
   return(num/denom)
 }
@@ -171,10 +171,11 @@ calcGD43 <- function(data, belongmatrix, centers){
 #' calcDavidBouldin(result$Data, result$Belongings, result$Centers)
 calcDavidBouldin <- function(data, belongmatrix, centers){
   # using this formula : https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
-  c <- apply(Data,2,mean)
+  c <- apply(data,2,mean)
   data <- as.matrix(data)
 
   Si <- sapply(1:ncol(belongmatrix), function(i){
+    ct <- centers[i,]
     (sum((sweep(data, 2, ct, `-`))**2) / sum(belongmatrix[,i]))**(1/2)
   })
 

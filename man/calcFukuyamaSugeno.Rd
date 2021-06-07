@@ -21,6 +21,13 @@ A float : the Fukuyama and Sugeno index
 \description{
 Calculate Fukuyama and Sugeno index of clustering quality
 }
+\details{
+The Fukuyama and Sugeno index \insertCite{fukuyama1989new}{geocmeans} is the difference between the compacity of clusters and the separation of clusters. The formula is:
+
+\deqn{J_{m}=\sum_{j=1}^{n} \sum_{i=1}^{k}\left(\mu_{i j}\right)^{m}\left\|x_{j}-c_{i}\right\|^{2}-\sum_{i=1}^{k}\left\|c_{i}-\bar{c}\right\|^{2}}
+
+with \emph{n} the number of observations, \emph{k} the number of clusters and \eqn{\bar{c}} the mean of the centers of the clusters.
+}
 \examples{
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
@@ -30,4 +37,7 @@ queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 calcFukuyamaSugeno(result$Data,result$Belongings, result$Centers, 1.5)
+}
+\references{
+\insertAllCited{}
 }

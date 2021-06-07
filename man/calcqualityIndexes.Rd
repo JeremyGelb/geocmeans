@@ -21,7 +21,7 @@ calcqualityIndexes(
 
 \item{indices}{A character vector with the names of the indices to calculate, default is :
 c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index",
-"Explained.inertia"). Other available indices are : "DavidBoulin.index", "CalinskiHarabasz.index",
+"Explained.inertia"). Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
 "GD43.index", "GD53.index" and "Negentropy.index"}
 }
 \value{

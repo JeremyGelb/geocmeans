@@ -26,6 +26,69 @@ hline <- function(y = 0, color = "blue") {
   )
 }
 
+
+draw_byplot <- function(x, y, col_values, colors, gpcol, belongings, input, qual = FALSE, qual_colors = NULL){
+
+  if (qual == FALSE){
+    tx <-  x[idx]
+    ty <-  y[idx]
+    tcol <- col_values[idx]
+    ramp <- colorRampPalette(c("white", colors[[gpcol]]))(10)
+  }else{
+    tx <- x
+    ty <- y
+    tcol <- col_values
+    ramp <- qual_colors
+  }
+
+  idx <- order(belongings[,gpcol])
+  biplot <- plot_ly(
+    x = tx,
+    y = ty,
+    color = tcol,
+    colors = ramp,
+    type = "scatter",
+    mode = "markers",
+    size = 2
+  )
+
+  if(isTRUE(input$show_ellipsis) & qual == FALSE){
+    for(j in 1:ncol(belongings)){
+      coords <- car::dataEllipse(x,
+                                 y,
+                                 weights = belongings[,j],
+                                 levels = 0.75,
+                                 draw = FALSE,
+      )
+      coords <- coords[1:(nrow(coords)-1),]
+      coords <- rbind(coords,coords[1,])
+      biplot <- biplot %>%
+        plotly::add_paths(
+          x = coords[,1],
+          y = coords[,2],
+          line = list(width = 2),
+          color = I(colors[[j]]),
+
+        )
+    }
+  }
+
+  return(biplot)
+}
+
+
+adj_bg_color <- function(plot, light, input){
+  if(is.null(light) == FALSE){
+    if (isTRUE(input$dark_mode)){
+      plot <- plot %>% layout(
+        font = list(color = "white"),
+        paper_bgcolor = "#303030",
+        plot_bgcolor = "#303030")
+    }
+  }
+  plot
+}
+
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #### SERVER FUNCTION ####
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,7 +102,7 @@ hline <- function(y = 0, color = "blue") {
 #' @param session The shiny session object
 #'
 #' @importFrom shiny reactive observeEvent observe
-#' @importFrom leaflet renderLeaflet leafletProxy removeShape
+#' @importFrom leaflet renderLeaflet leafletProxy removeShape clearGroup
 #' @importFrom plotly renderPlotly plot_ly layout add_paths
 #' @importFrom grDevices colorRampPalette
 #' @examples
@@ -51,8 +114,12 @@ shiny_server <- function(input, output, session) {
     mymap
   })
 
-  ## and the first bivariate plot
+  ## and the map on the third pannel
+  output$uncertainmap <- renderLeaflet({
+    uncertainMap
+  })
 
+  ## and the first bivariate plot
   bivar_params <- reactive({
     list(x = input$var1_biplot,
          y = input$var2_biplot,
@@ -63,27 +130,53 @@ shiny_server <- function(input, output, session) {
   output$bivar_plot <- renderPlotly({
     params <- bivar_params()
     gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
-    idx <- order(belongings[,gpcol])
-    biplot <- plot_ly(
-      x = dataset[[params$x]][idx],
-      y = dataset[[params$y]][idx],
-      color = belongings[,gpcol][idx],
-      colors = colorRampPalette(c("white", colors[[gpcol]]))(10),
-      type = "scatter",
-      mode = "markers",
-      size = 2
+
+    biplot <- draw_byplot(
+      x = dataset[[params$x]],
+      y = dataset[[params$y]],
+      col_values = belongings[,gpcol],
+      colors = colors,
+      gpcol = gpcol,
+      belongings = belongings,
+      input = input
     )
 
     # adjusting the color with the theme
-    if(is.null(light) == FALSE){
-      if (isTRUE(input$dark_mode)){
-        biplot <- biplot %>% layout(
-          font = list(color = "white"),
-          paper_bgcolor = "#303030",
-          plot_bgcolor = "#303030")
-      }
+    adj_bg_color(biplot, light, input)
+  })
+
+  ## and the second bivariate plot
+  bivar_params2 <- reactive({
+    list(x = input$var1_biplot2,
+         y = input$var2_biplot2,
+         proba = input$uncertain1)
+  })
+
+
+  output$bivar_plot2 <- renderPlotly({
+    params <- bivar_params2()
+    test <- apply(belongings, 1, max) < params$proba
+    col_values <- factor(ifelse(test, "uncertain", "classified"))
+    if(length(unique(col_values)) == 1){
+      qual_colors <- "grey"
+    }else{
+      qual_colors <- c("grey","red")
     }
-    biplot
+
+    biplot <- draw_byplot(
+      x = dataset[[params$x]][order(col_values)],
+      y = dataset[[params$y]][order(col_values)],
+      col_values = col_values[order(col_values)],
+      colors = colors,
+      gpcol = 1,
+      belongings = belongings,
+      input = input,
+      qual = TRUE,
+      qual_colors = qual_colors
+    )
+
+    # adjusting the color with the theme
+    adj_bg_color(biplot, light, input)
   })
 
 
@@ -105,7 +198,7 @@ shiny_server <- function(input, output, session) {
 
 
   firsttime <- TRUE
-  ## ----------here is an observer working when we click on the map--------------
+  ## ----------here is an observer working when we click on the map of the first pannel--------------
   observeEvent(input$mymap_shape_click, {
     p <- input$mymap_shape_click
 
@@ -130,18 +223,13 @@ shiny_server <- function(input, output, session) {
       violin <- base_violinplots[[i]]
       varname <- variables[[i]]
       value <- dataset[p$id,varname][[1]]
-      if (isTRUE(input$dark_mode)){
-        violin2 <- violin %>% layout(
-          font = list(color = "white"),
-          paper_bgcolor = "#303030",
-          plot_bgcolor = "#303030",
-          shapes = list(hline(value, color = "red")))
-      }else{
-        violin2 <- violin %>% layout(shapes = list(hline(value, color = "red")))
-      }
 
+      violin2 <-
+        adj_bg_color(violin, light, input) %>%
+        layout(shapes = list(hline(value, color = "red")))
       return(violin2)
     })
+
     lapply(1:length(new_violins), function(i){
       vplot <- new_violins[[i]]
       output[[paste("violinplots",i,sep="")]] <- renderPlotly({vplot})
@@ -171,53 +259,48 @@ shiny_server <- function(input, output, session) {
     output$bivar_plot <- renderPlotly({
       params <- bivar_params()
       gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
-      idx <- order(belongings[,gpcol])
-      biplot <- plot_ly(
-        x = dataset[[params$x]][idx],
-        y = dataset[[params$y]][idx],
-        color = belongings[,gpcol][idx],
-        colors = colorRampPalette(c("white", colors[[gpcol]]))(10),
-        type = "scatter",
-        mode = "markers",
-        size = 2
+
+      biplot <- draw_byplot(
+        x = dataset[[params$x]],
+        y = dataset[[params$y]],
+        col_values = belongings[,gpcol],
+        colors = colors,
+        gpcol = gpcol,
+        belongings = belongings,
+        input = input
       )
 
       # adjusting the color with the theme
-      if (is.null(light) == FALSE){
-        if (isTRUE(input$dark_mode)){
-          biplot <- biplot %>% layout(
-            font = list(color = "white"),
-            paper_bgcolor = "#303030",
-            plot_bgcolor = "#303030")
-        }
-      }
-
-      # adding the ellipsis if required
-      if(isTRUE(input$show_ellipsis)){
-        for(j in 1:ncol(belongings)){
-          coords <- car::dataEllipse(dataset[[params$x]],
-                                     dataset[[params$y]],
-                                     weights = belongings[,j],
-                                     levels = 0.75,
-                                     draw = FALSE,
-          )
-          coords <- coords[1:(nrow(coords)-1),]
-          coords <- rbind(coords,coords[1,])
-          biplot <- biplot %>%
-            plotly::add_paths(
-              x = coords[,1],
-              y = coords[,2],
-              line = list(width = 2),
-              color = I(colors[[j]]),
-
-            )
-        }
-      }
+      biplot <- adj_bg_color(biplot, light, input)
 
       biplot
     })
 
   })
+
+  ## ----------here is an observer working when we set the slider of the third pannel--------------
+  observeEvent(input$uncertain1,{
+
+    # we have to redraw the second layer of this map
+    # step1 : selecting the appropriate new features
+    tol <- input$uncertain1
+    values <- apply(belongings, 1, max) < tol
+    spdf <- subset(spatial4326, values)
+
+    ## Step2 : remove the previous layer and add the new one
+    leafletProxy('uncertainmap') %>%
+      clearGroup(group = "binaryUncertain") %>%
+      mapfun(data = spdf,
+             weight = 1,
+             group = "binaryUncertain",
+             color = "black",
+             fillColor = "red",
+             fillOpacity = 0.7,
+             layerId = 1:nrow(spdf))
+
+  })
+
+
 
   ## ----------here is an observer if we can theme switch--------------
   if(is.null(light) == FALSE){
@@ -234,45 +317,19 @@ shiny_server <- function(input, output, session) {
       output$bivar_plot <- renderPlotly({
         params <- bivar_params()
         gpcol <- as.numeric(strsplit(params$color," ", fixed = TRUE)[[1]][[2]])
-        idx <- order(belongings[,gpcol])
-        biplot <- plot_ly(
-          x = dataset[[params$x]][idx],
-          y = dataset[[params$y]][idx],
-          color = belongings[,gpcol][idx],
-          colors = colorRampPalette(c("white", colors[[gpcol]]))(10),
-          type = "scatter",
-          mode = "markers",
-          size = 2
+
+        biplot <- draw_byplot(
+          x = dataset[[params$x]],
+          y = dataset[[params$y]],
+          col_values = belongings[,gpcol],
+          colors = colors,
+          gpcol = gpcol,
+          belongings = belongings,
+          input = input
         )
 
         # adjusting the color with the theme
-        if (isTRUE(input$dark_mode)){
-          biplot <- biplot %>% layout(
-            font = list(color = "white"),
-            paper_bgcolor = "#303030",
-            plot_bgcolor = "#303030")
-        }
-
-        # adding the ellipsis if required
-        if(isTRUE(input$show_ellipsis)){
-          for(j in 1:ncol(belongings)){
-            coords <- car::dataEllipse(dataset[[params$x]],
-                                       dataset[[params$y]],
-                                       weights = belongings[,j],
-                                       levels = 0.75,
-                                       draw = FALSE,
-                                       )
-            coords <- coords[1:(nrow(coords)-1),]
-            coords <- rbind(coords,coords[1,])
-            biplot <- biplot %>%
-              plotly::add_paths(
-                x = coords[,1],
-                y = coords[,2],
-                line = list(width = 2),
-                color = I(colors[[j]])
-              )
-          }
-        }
+        biplot <- adj_bg_color(biplot, light, input)
 
         biplot
       })
@@ -280,14 +337,7 @@ shiny_server <- function(input, output, session) {
       # set the right colors for violin plots
       new_violins <- lapply(1:length(variables), function(i){
         violin <- base_violinplots[[i]]
-        if (isTRUE(input$dark_mode)){
-          violin2 <- violin %>% layout(
-            font = list(color = "white"),
-            paper_bgcolor = "#303030",
-            plot_bgcolor = "#303030")
-        }else{
-          violin2 <- violin
-        }
+        violin2 <- adj_bg_color(violin, light, input)
         output[[paste("violinplots",i,sep="")]] <- renderPlotly({violin2})
 
       })
@@ -337,7 +387,7 @@ violinplots_ui <- function(n, nr, nc){
 #'
 #' @description Set the UI for the Shiny App
 #'
-#' @importFrom shiny fluidPage tabsetPanel tabPanel titlePanel fluidRow wellPanel column selectInput checkboxInput
+#' @importFrom shiny fluidPage tabsetPanel tabPanel titlePanel fluidRow wellPanel column selectInput checkboxInput sliderInput
 #' @importFrom leaflet leafletOutput
 #' @importFrom plotly plotlyOutput
 #' @importFrom utils installed.packages
@@ -404,7 +454,24 @@ shiny_ui <- function() {
                                ),
                         column(width = 10,plotlyOutput("bivar_plot", height = "800px")),
                ),
+      ),
+
+      tabPanel("Uncertain observations", fluid = TRUE,
+               ##------------------- PANNEL 3 : Uncertainty analysis------------------
+               titlePanel('Analysis of uncertain observations'),
+
+               # Grid Layout
+               fluidRow(wellPanel("In this panel, you can explore the observations that are not well classified")),
+               fluidRow(column(width = 2,sliderInput("uncertain1", "minimum probability", min = 0, max = 1, value = 0.45))),
+               fluidRow(column(width = 5, leafletOutput("uncertainmap", height = "600px")),
+                        column(width = 1,
+                               selectInput("var1_biplot2", "X axis variable", variables, selected = variables[[1]]),
+                               selectInput("var2_biplot2", "Y axis variable", variables, selected = variables[[2]]),
+                               ),
+                        column(width = 6, plotlyOutput("bivar_plot2", height = "600px")),
+                        ),
       )
+
     ),
     theme = light
   )
@@ -418,7 +485,7 @@ shiny_ui <- function() {
 
 # the variables used in the shiny environment must be declared as globalVariables
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
-                  "dataset", "base_violinplots", "dark", "light"
+                  "dataset", "base_violinplots", "dark", "light", "uncertainMap"
                   ))
 
 #' @title Classification result explorer
@@ -505,7 +572,7 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   ref <- sp::CRS("+init=epsg:4326")
   spatial4326 <- sp::spTransform(spatial, ref)
 
-  ## preparer la carte leaflet ***************************************
+  ## preparer la carte leaflet du premier panneau ***************************************
 
   mymap <- leaflet(height = "600px") %>%
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite")
@@ -555,6 +622,52 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   assign('mymap', mymap, shiny_env)
   assign('mapfun', mapfun, shiny_env)
   assign('spatial4326', spatial4326, shiny_env)
+
+  ## preparer la carte leaflet du troisieme panneau ***************************************
+  uncertainMap <- leaflet(height = "600px") %>%
+    addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite")
+
+  bins <- c(0,0.3,0.6,0.9,1)
+  cols <- colorRamp(c("#FFFFFF", "#D30000"), interpolate = "linear")
+  pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
+
+  # layer of uncertaintyvalues
+  uncertain_values <- calcUncertaintyIndex(belongings)
+
+  uncertainMap <- uncertainMap %>% mapfun(data = spatial4326,
+                            weight = 1,
+                            group = "UncertaintyIdx",
+                            color = "black",
+                            fillColor = ~pal(uncertain_values),
+                            fillOpacity = 0.7,
+                            layerId = 1:nrow(spatial4326)) %>%
+    addLegend(pal = pal, values = bins, opacity = 0.7,
+              title = NULL, group="UncertaintyIdx",
+              position = "bottomright")
+
+  # binary layer of uncertain values
+  values <- apply(belongings, 1, max) < 0.45
+  spdf <- subset(spatial4326, values)
+  uncertainMap <- uncertainMap %>% mapfun(data = spdf,
+                                          weight = 1,
+                                          group = "binaryUncertain",
+                                          color = "black",
+                                          fillColor = "red",
+                                          fillOpacity = 0.7,
+                                          layerId = 1:nrow(spdf)) %>%
+    addLegend(opacity = 0.7,
+              colors = c("#D30000"),
+              labels = "uncertain observations",
+              title = NULL, group="binaryUncertain",
+              position = "bottomright") %>%
+    addLayersControl(
+      position = "bottomleft",
+      baseGroups = c("Toner Lite"),
+      overlayGroups  = c("UncertaintyIdx","binaryUncertain"),
+      options = leaflet::layersControlOptions(collapsed = FALSE)) %>%
+    hideGroup("UncertaintyIdx")
+
+  assign('uncertainMap', uncertainMap, shiny_env)
   ##******************************************************************
 
 

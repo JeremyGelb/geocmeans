@@ -14,13 +14,32 @@ calcGD53(data, belongmatrix, centers)
 \item{centers}{The centers of the clusters}
 }
 \value{
-A float : the David-Bouldin index
+A float: the  Generalized Dunn’s index (53)
 }
 \description{
 Calculate the Generalized Dunn’s index (v53) of clustering quality.
-This index is a ratio of the worst pair-wise separation of clusters and the
-worst pair-wise compactness of clusters. Thus a higher value indicates a
-better clustering.
+}
+\details{
+The Generalized Dunn’s index  \insertCite{da2020incremental}{geocmeans} is a
+ratio of the worst pair-wise separation of clusters and the worst compactness
+of clusters. Thus a higher value indicates a better clustering. The formula
+is:
+
+\deqn{GD_{r s}=\frac{\min_{i \neq j}\left[\delta_{r}\left(\omega_{i}, \omega_{j}\right)\right]}{\max_{k}\left[\Delta_{s}\left(\omega_{k}\right)\right]}}
+
+The numerator is a measure of the minimal separation between all the clusters
+\emph{i} and \emph{j} given by the formula:
+
+\deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\frac{\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}} . u_{il}+\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{j}}\right\|^{\frac{1}{2}} . u_{jl}}{\sum{u_{i}} + \sum{u_{j}}}}
+
+where \emph{u} is the membership matrix and \eqn{u_{i}} is the column of
+\emph{u} desrbing the membership of the \emph{n} observations to cluster
+\emph{i}. \eqn{c_{i}} is the center of the cluster \emph{i}.
+
+The denominator is a measure of the maximal dispersion of all clusters, given
+by the formula:
+
+\deqn{\frac{2*\sum_{l=1}^{n}\left\|\boldsymbol{x}_{l}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}}}{\sum{u_{i}}}}
 }
 \examples{
 data(LyonIris)
@@ -31,4 +50,7 @@ queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 calcGD53(result$Data, result$Belongings, result$Centers)
+}
+\references{
+\insertAllCited{}
 }

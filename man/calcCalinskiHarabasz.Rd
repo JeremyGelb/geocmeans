@@ -17,9 +17,11 @@ calcCalinskiHarabasz(data, belongmatrix, centers)
 A float : the Calinski-Harabasz index
 }
 \description{
-Calculate the Calinski-Harabasz index of clustering quality. This index
-is the ratio between the clusters separation and the clusters cohesion. A greater
-value indicates eithermore separated clusters or more cohesive clusters.
+Calculate the Calinski-Harabasz index of clustering quality.
+}
+\details{
+the Calinski-Harabasz index \insertCite{da2020incremental}{geocmeans} is the ratio between the clusters separation (between groups sum of squares) and the clusters cohesion (within groups sum of squares). A greater
+value indicates either more separated clusters or more cohesive clusters.
 }
 \examples{
 data(LyonIris)
@@ -30,4 +32,7 @@ queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 calcCalinskiHarabasz(result$Data, result$Belongings, result$Centers)
+}
+\references{
+\insertAllCited{}
 }

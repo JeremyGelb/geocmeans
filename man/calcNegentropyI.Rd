@@ -14,14 +14,27 @@ calcNegentropyI(data, belongmatrix, centers)
 \item{centers}{The centers of the clusters}
 }
 \value{
-A float : the David-Bouldin index
+A float : the Negentropy Increment index
 }
 \description{
 Calculate the Negentropy Increment index of clustering quality.
-This index based on the assumption that a normally shapped cluster is more
+}
+\details{
+The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shapped cluster is more
 desirable. It uses the difference between the average negentropy
 of all the clusters in the partition, and that of the  whole partition.
-a smaller value indicates a better partition.
+a smaller value indicates a better partition. The formula is:
+
+\deqn{NI=\frac{1}{2} \sum_{j=1}^{k} p_{i} \ln \left|{\boldsymbol{\Sigma}}_{j}\right|-\frac{1}{2} \ln \left|\boldsymbol{\Sigma}_{d a t a}\right|-\sum_{j=1}^{k} p_{j} \ln p_{j}}
+
+with  a cluster, \emph{|.|} the determinant of a matrix,
+\itemize{
+ \item \emph{j} a cluster
+ \item \emph{|.|} the determinant of a matrix
+ \item \eqn{\left|{\boldsymbol{\Sigma}}_{j}\right|} the covariance matrix of the dataset weighted by the membership values to cluster \emph{j}
+ \item \eqn{\left|\boldsymbol{\Sigma}_{d a t a}\right|} the covariance matrix of the dataset
+ \item \eqn{p_{j}} the sum of the membership values to cluster \emph{j} divided by the number of observations.
+}
 }
 \examples{
 data(LyonIris)
@@ -32,4 +45,7 @@ queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 calcNegentropyI(result$Data, result$Belongings, result$Centers)
+}
+\references{
+\insertAllCited{}
 }

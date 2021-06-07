@@ -391,36 +391,6 @@ summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent
 }
 
 
-#' @title Undecided observations
-#'
-#' @description Identify the observation for with the classification is uncertain
-#'
-#' @param belongmatrix The membership matrix obtained at the end of the algorithm
-#' @param tol A float indicating the minimum required level of membership to be
-#'   not considered as undecided
-#' @return A vector indicating the most likely group for each observation or
-#'   "Undecided" if the maximum probability for the observation does not reach
-#'   the value of the tol parameter
-#' @export
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' undecidedUnits(result$Belongings, tol = 0.45)
-undecidedUnits <- function(belongmatrix, tol = 0.1) {
-    belongmatrix <- as.data.frame(belongmatrix)
-    groups <- colnames(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
-    rowMax <- do.call(pmax, belongmatrix)
-    DF <- data.frame(groups = groups, maxprob = rowMax)
-    return(ifelse(DF$maxprob < tol, "Undecided", DF$groups))
-}
-
-
-
 #' @title Spider chart
 #'
 #' @description Display spider charts to quickly compare values between groups

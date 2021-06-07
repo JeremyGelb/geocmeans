@@ -5,15 +5,30 @@
 #' @title Negentropy Increment index
 #'
 #' @description Calculate the Negentropy Increment index of clustering quality.
-#' This index based on the assumption that a normally shapped cluster is more
+#'
+#' @details
+#' The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shapped cluster is more
 #' desirable. It uses the difference between the average negentropy
 #' of all the clusters in the partition, and that of the  whole partition.
-#' a smaller value indicates a better partition.
+#' a smaller value indicates a better partition. The formula is:
+#'
+#' \deqn{NI=\frac{1}{2} \sum_{j=1}^{k} p_{i} \ln \left|{\boldsymbol{\Sigma}}_{j}\right|-\frac{1}{2} \ln \left|\boldsymbol{\Sigma}_{d a t a}\right|-\sum_{j=1}^{k} p_{j} \ln p_{j}}
+#'
+#' with  a cluster, \emph{|.|} the determinant of a matrix,
+#' \itemize{
+#'  \item \emph{j} a cluster
+#'  \item \emph{|.|} the determinant of a matrix
+#'  \item \eqn{\left|{\boldsymbol{\Sigma}}_{j}\right|} the covariance matrix of the dataset weighted by the membership values to cluster \emph{j}
+#'  \item \eqn{\left|\boldsymbol{\Sigma}_{d a t a}\right|} the covariance matrix of the dataset
+#'  \item \eqn{p_{j}} the sum of the membership values to cluster \emph{j} divided by the number of observations.
+#' }
+#' @references
+#' \insertAllCited{}
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
-#' @return A float : the David-Bouldin index
+#' @return A float : the Negentropy Increment index
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -48,14 +63,36 @@ calcNegentropyI <- function(data, belongmatrix, centers){
 #' @title Generalized Dunn’s index (53)
 #'
 #' @description Calculate the Generalized Dunn’s index (v53) of clustering quality.
-#' This index is a ratio of the worst pair-wise separation of clusters and the
-#' worst pair-wise compactness of clusters. Thus a higher value indicates a
-#' better clustering.
+#'
+#' @details
+#' The Generalized Dunn’s index  \insertCite{da2020incremental}{geocmeans} is a
+#' ratio of the worst pair-wise separation of clusters and the worst compactness
+#' of clusters. Thus a higher value indicates a better clustering. The formula
+#' is:
+#'
+#' \deqn{GD_{r s}=\frac{\min_{i \neq j}\left[\delta_{r}\left(\omega_{i}, \omega_{j}\right)\right]}{\max_{k}\left[\Delta_{s}\left(\omega_{k}\right)\right]}}
+#'
+#' The numerator is a measure of the minimal separation between all the clusters
+#' \emph{i} and \emph{j} given by the formula:
+#'
+#' \deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\frac{\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}} . u_{il}+\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{j}}\right\|^{\frac{1}{2}} . u_{jl}}{\sum{u_{i}} + \sum{u_{j}}}}
+#'
+#' where \emph{u} is the membership matrix and \eqn{u_{i}} is the column of
+#' \emph{u} desrbing the membership of the \emph{n} observations to cluster
+#' \emph{i}. \eqn{c_{i}} is the center of the cluster \emph{i}.
+#'
+#' The denominator is a measure of the maximal dispersion of all clusters, given
+#' by the formula:
+#'
+#' \deqn{\frac{2*\sum_{l=1}^{n}\left\|\boldsymbol{x}_{l}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}}}{\sum{u_{i}}}}
+#'
+#'@references
+#' \insertAllCited{}
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
-#' @return A float : the David-Bouldin index
+#' @return A float: the  Generalized Dunn’s index (53)
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -102,14 +139,34 @@ calcGD53 <- function(data, belongmatrix, centers){
 #' @title Generalized Dunn’s index (43)
 #'
 #' @description Calculate the Generalized Dunn’s index (v43) of clustering quality.
-#' This index is a ratio of the worst pair-wise separation of clusters and the
-#' worst pair-wise compactness of clusters. Thus a higher value indicates a
-#' better clustering.
+#'
+#' @details
+#' The Generalized Dunn’s index  \insertCite{da2020incremental}{geocmeans} is a
+#' ratio of the worst pair-wise separation of clusters and the worst compactness
+#' of clusters. Thus a higher value indicates a better clustering. The formula
+#' is:
+#'
+#' \deqn{GD_{r s}=\frac{\min_{i \neq j}\left[\delta_{r}\left(\omega_{i}, \omega_{j}\right)\right]}{\max_{k}\left[\Delta_{s}\left(\omega_{k}\right)\right]}}
+#'
+#' The numerator is a measure of the minimal separation between all the clusters
+#' \emph{i} and \emph{j} given by the formula:
+#'
+#' \deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\left\|\boldsymbol{c}_{i}-\boldsymbol{c}_{j}\right\|}
+#'
+#' which is basically the Euclidean distance between the centers of clusters \eqn{c_{i}} and \eqn{c_{j}}
+#'
+#' The denominator is a measure of the maximal dispersion of all clusters, given
+#' by the formula:
+#'
+#' \deqn{\frac{2*\sum_{l=1}^{n}\left\|\boldsymbol{x}_{l}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}}}{\sum{u_{i}}}}
+#'
+#'@references
+#' \insertAllCited{}
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
-#' @return A float : the David-Bouldin index
+#' @return A float: the  Generalized Dunn’s index (43)
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -148,17 +205,35 @@ calcGD43 <- function(data, belongmatrix, centers){
 
 
 
-#' @title David-Bouldin index
+#' @title Davies-Bouldin index
 #'
-#' @description Calculate the David-Bouldin index of clustering quality. This index
-#' can be seen as a ratio between the within cluster dispersion and the
+#' @description Calculate the Davies-Bouldin index of clustering quality.
+#'
+#' @details
+#' The Davies-Bouldin index \insertCite{da2020incremental}{geocmeans} can be seen as a ratio between the within cluster dispersion and the
 #' between cluster separation. A lower value indicates a higher cluster compacity
-#' or a higher cluster separation.
+#' or a higher cluster separation. The formula is:
+#'
+#' \deqn{DB = \frac{1}{k}\sum_{i=1}^k{R_{i}}}
+#'
+#' with:
+#'
+#' \deqn{R_{i} =\max_{i \neq j}\left(\frac{S_{i}+S_{j}}{M_{i, j}}\right)}
+#' \deqn{S_{l} =\left[\frac{1}{n_{l}} \sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|*u_{i}\right]^{\frac{1}{2}}}
+#' \deqn{M_{i, j} =\sum\left\|\boldsymbol{c}_{i}-\boldsymbol{c}_{j}\right\|}
+#'
+#' So, the value of the index is an average of \eqn{R_{i}} values. They represent
+#' for each cluster its worst comparison with all the other clusters, calculated
+#' as the ratio between the compactness of the two clusters and the separation
+#' of the two clusters.
+#'
+#'@references
+#' \insertAllCited{}
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
-#' @return A float : the David-Bouldin index
+#' @return A float : the Davies-Bouldin index
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -168,8 +243,8 @@ calcGD43 <- function(data, belongmatrix, centers){
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' calcDavidBouldin(result$Data, result$Belongings, result$Centers)
-calcDavidBouldin <- function(data, belongmatrix, centers){
+#' calcDaviesBouldin(result$Data, result$Belongings, result$Centers)
+calcDaviesBouldin <- function(data, belongmatrix, centers){
   # using this formula : https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
   c <- apply(data,2,mean)
   data <- as.matrix(data)
@@ -199,9 +274,14 @@ calcDavidBouldin <- function(data, belongmatrix, centers){
 
 #' @title Calinski-Harabasz index
 #'
-#' @description Calculate the Calinski-Harabasz index of clustering quality. This index
-#' is the ratio between the clusters separation and the clusters cohesion. A greater
-#' value indicates eithermore separated clusters or more cohesive clusters.
+#' @description Calculate the Calinski-Harabasz index of clustering quality.
+#'
+#' @details
+#' the Calinski-Harabasz index \insertCite{da2020incremental}{geocmeans} is the ratio between the clusters separation (between groups sum of squares) and the clusters cohesion (within groups sum of squares). A greater
+#' value indicates either more separated clusters or more cohesive clusters.
+#'
+#'@references
+#' \insertAllCited{}
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
@@ -235,6 +315,16 @@ calcCalinskiHarabasz <- function(data, belongmatrix, centers){
 #'
 #' @description Calculate Fukuyama and Sugeno index of clustering quality
 #'
+#' @details
+#' The Fukuyama and Sugeno index \insertCite{fukuyama1989new}{geocmeans} is the difference between the compacity of clusters and the separation of clusters. The formula is:
+#'
+#' \deqn{J_{m}=\sum_{j=1}^{n} \sum_{i=1}^{k}\left(\mu_{i j}\right)^{m}\left\|x_{j}-c_{i}\right\|^{2}-\sum_{i=1}^{k}\left\|c_{i}-\bar{c}\right\|^{2}}
+#'
+#' with \emph{n} the number of observations, \emph{k} the number of clusters and \eqn{\bar{c}} the mean of the centers of the clusters.
+#'
+#' @references
+#' \insertAllCited{}
+#'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
@@ -258,8 +348,6 @@ calcFukuyamaSugeno <- function(data,belongmatrix,centers,m){
     v <- centers[i,]
     t1 <- calcEuclideanDistance(data,v)
     t2 <- sum((v - v_hat)**2)
-    #t3 <- calcEuclideanDistance(wdata,v) ajouter l'espace dans l'indice ?
-    #dists <- ((t1+alpha*t3)/(1+alpha) - t2)*w
     dists <- (t1 - t2)*w
     return(sum(dists))
   })
@@ -346,11 +434,11 @@ calcQualIdx <- function(name, ...){
   }
 
   if(name == "CalinskiHarabasz.index"){
-    val <- calcDavidBouldin(dots$data, dots$belongmatrix, dots$centers)
+    val <- calcDaviesBouldin(dots$data, dots$belongmatrix, dots$centers)
   }
 
-  if(name == "DavidBoulin.index"){
-    val <- calcDavidBouldin(dots$data, dots$belongmatrix, dots$centers)
+  if(name == "DaviesBoulin.index"){
+    val <- calcDaviesBouldin(dots$data, dots$belongmatrix, dots$centers)
   }
 
   if(name == "Explained.inertia"){
@@ -372,7 +460,7 @@ calcQualIdx <- function(name, ...){
   if(is.null(val)){
     stop('The index name must be one of "Silhouette.index", "Partition.entropy",
     "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index","Explained.inertia",
-    "DavidBoulin.index", "CalinskiHarabasz.index", "GD43.index", "GD53.index",
+    "DaviesBoulin.index", "CalinskiHarabasz.index", "GD43.index", "GD53.index",
     "Negentropy.index"')
   }
   return(val)
@@ -390,7 +478,7 @@ calcQualIdx <- function(name, ...){
 #' @param m The fuzziness parameter used for the classification
 #' @param indices A character vector with the names of the indices to calculate, default is :
 #' c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index",
-#' "Explained.inertia"). Other available indices are : "DavidBoulin.index", "CalinskiHarabasz.index",
+#' "Explained.inertia"). Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
 #' "GD43.index", "GD53.index" and "Negentropy.index"
 #' @return A named list with with the values of the required indices
 #' @export
@@ -425,7 +513,7 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
   # idxmpc <- fclust::MPC(belongmatrix)  #look for maximum
   # idxfukusu <- calcFukuyamaSugeno(data, belongmatrix, centers, m) # look for minimum
   # idxHC <- calcCalinskiHarabasz(data, belongmatrix, centers) # look for maximum
-  # idxDB <- calcDavidBouldin(data, belongmatrix, centers) # look for minimum
+  # idxDB <- calcDaviesBouldin(data, belongmatrix, centers) # look for minimum
   # if(m>1){
   #   idxXB <- fclust::XB(data,belongmatrix,centers,m) # look for minimum
   # }else{
@@ -442,7 +530,7 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
 #               XieBeni.index = idxXB,
 #               FukuyamaSugeno.index = idxfukusu,
 #               CalinskiHarabasz.index = idxHC,
-#               DavidBoulin.index = idxDB,
+#               DaviesBoulin.index = idxDB,
 #               Explained.inertia = explainedinertia))
 }
 

@@ -19,3 +19,4 @@ Set the server for the Shiny App
 \examples{
 #This is an internal function, no example provided
 }
+\keyword{interal}

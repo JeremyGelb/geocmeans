@@ -26,10 +26,26 @@ hline <- function(y = 0, color = "blue") {
   )
 }
 
-
+#' @title Draw the scatter plot of pannel 2 and 3
+#'
+#' @description Draw the scatter plot of pannel 2 and 3
+#' @param x The values for the x axis
+#' @param y The values for the y axis
+#' @param col_values The values for the color
+#' @param colors A vector with the colors to use
+#' @param gpvol The index of the color to use
+#' @param belongings the membership matrix
+#' @param input the shiny app input
+#' @param qual A boolean indicating if the plot must be drawn for pannel 2
+#' (FALSE) or 3 (TRUE)
+#' @param qual_colors The colors to use if qual = TRUE
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
 draw_byplot <- function(x, y, col_values, colors, gpcol, belongings, input, qual = FALSE, qual_colors = NULL){
 
   if (qual == FALSE){
+    idx <- order(col_values)
     tx <-  x[idx]
     ty <-  y[idx]
     tcol <- col_values[idx]
@@ -76,7 +92,68 @@ draw_byplot <- function(x, y, col_values, colors, gpcol, belongings, input, qual
   return(biplot)
 }
 
+#' @title Draw the box plots of pannel 3
+#'
+#' @description Draw the box plots of pannel 3
+#' @param dataset The dataset used
+#' @param variables The variables names used for clustering
+#' @param values A boolean vector indicating which observations must
+#' be put in red on the chart
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
+draw_boxplots <- function(dataset, variables, values){
 
+  new_boxplots <- lapply(variables, function(i){
+    dataset$myx <- 0
+    df1 <- dataset[!values,]
+    df2 <- dataset[values,]
+
+    bxplot <- dataset %>%
+      plot_ly(
+        x = dataset$myx,
+        y = dataset[[i]],
+        type = 'box',
+        boxpoints = FALSE
+      ) %>%
+      layout(xaxis = list(title = i), showlegend = FALSE)
+
+    if (nrow(df1) > 0){
+      bxplot <- bxplot %>%
+        add_markers(
+          x = ~jitter(df1$myx, factor = 5),
+          y = df1[[i]],
+          marker = list(size = 4,
+                        color = "grey")
+        )
+    }
+
+    if(nrow(df2) > 0){
+      bxplot <- bxplot %>%
+        add_markers(
+          x = ~jitter(df2$myx, factor = 5),
+          y = df2[[i]],
+          marker = list(size = 8,
+                        color = "red")
+        )
+    }
+
+    return(bxplot)
+  })
+
+  return(new_boxplots)
+}
+
+
+#' @title Adjust the background of plot
+#'
+#' @description Adjust the background of plot (light or dark mode)
+#' @param plot The plot (plotly) to adjust
+#' @param ligght The actual theme used
+#' @param input The shiny app input object
+#' @keywords internal
+#' @examples
+#' #This is an internal function, no example provided
 adj_bg_color <- function(plot, light, input){
   if(is.null(light) == FALSE){
     if (isTRUE(input$dark_mode)){
@@ -88,6 +165,9 @@ adj_bg_color <- function(plot, light, input){
   }
   plot
 }
+
+
+
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #### SERVER FUNCTION ####
@@ -105,6 +185,8 @@ adj_bg_color <- function(plot, light, input){
 #' @importFrom leaflet renderLeaflet leafletProxy removeShape clearGroup
 #' @importFrom plotly renderPlotly plot_ly layout add_paths
 #' @importFrom grDevices colorRampPalette
+#'
+#' @keywords interal
 #' @examples
 #' #This is an internal function, no example provided
 shiny_server <- function(input, output, session) {
@@ -193,6 +275,12 @@ shiny_server <- function(input, output, session) {
   lapply(1:length(base_violinplots), function(i){
     vplot <- base_violinplots[[i]]
     output[[paste("violinplots",i,sep="")]] <- renderPlotly({vplot})
+  })
+
+  ## putting the original boxplots
+  lapply(1:length(base_boxplots), function(i){
+    vplot <- base_boxplots[[i]]
+    output[[paste("boxplots",i,sep="")]] <- renderPlotly({vplot})
   })
 
 
@@ -298,6 +386,14 @@ shiny_server <- function(input, output, session) {
              fillOpacity = 0.7,
              layerId = 1:nrow(spdf))
 
+    ## we also have to redraw the box plots
+    new_boxplots <- draw_boxplots(dataset, variables, values)
+
+    lapply(1:length(new_boxplots), function(i){
+      vplot <- adj_bg_color(new_boxplots[[i]], light, input)
+      output[[paste("boxplots",i,sep="")]] <- renderPlotly({vplot})
+    })
+
   })
 
 
@@ -360,7 +456,7 @@ shiny_server <- function(input, output, session) {
 #' @param n The number of plots
 #' @param nr The number of rows
 #' @param nc The number of columns
-#'
+#' @keywords interal
 #' @examples
 #' #This is an internal function, no example provided
 violinplots_ui <- function(n, nr, nc){
@@ -382,6 +478,34 @@ violinplots_ui <- function(n, nr, nc){
 }
 
 
+#' @title Set the box plot pannel
+#'
+#' @description A simple function to prepare the box plot pannel in uncertainty
+#' analysis
+#' @param n The number of plots
+#' @keywords interal
+#' @examples
+#' #This is an internal function, no example provided
+boxplots_ui <- function(n){
+  nc <- 6
+  nr <- ceiling(n / nc)
+  # NOTE : each plot will have a width of 2
+  fulltxt <- "wellPanel("
+  cnt <- 1
+  for(i in 1:nr){
+    new_row <-"fluidRow("
+    for(j in 1:nc){
+      new_col <- paste("column(plotlyOutput('boxplots",cnt,"'), width = 2),",sep="")
+      new_row <- paste(new_row, new_col, sep = "")
+      cnt <- cnt + 1
+    }
+    new_row <- paste(substr(new_row,1,nchar(new_row)-1),")",sep="")
+    fulltxt <- paste(fulltxt, new_row, ",", sep = "")
+  }
+  fulltxt <- paste(substr(fulltxt,1,nchar(fulltxt)-1),")",sep="")
+  return(eval(parse(text=fulltxt)))
+}
+
 
 #' @title Shiny App UI
 #'
@@ -391,6 +515,7 @@ violinplots_ui <- function(n, nr, nc){
 #' @importFrom leaflet leafletOutput
 #' @importFrom plotly plotlyOutput
 #' @importFrom utils installed.packages
+#' @keywords interal
 #' @examples
 #' #This is an internal function, no example provided
 shiny_ui <- function() {
@@ -470,6 +595,7 @@ shiny_ui <- function() {
                                ),
                         column(width = 6, plotlyOutput("bivar_plot2", height = "600px")),
                         ),
+               fluidRow(boxplots_ui(nv)),
       )
 
     ),
@@ -485,7 +611,8 @@ shiny_ui <- function() {
 
 # the variables used in the shiny environment must be declared as globalVariables
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
-                  "dataset", "base_violinplots", "dark", "light", "uncertainMap"
+                  "dataset", "base_violinplots", "dark", "light", "uncertainMap",
+                  "base_boxplots"
                   ))
 
 #' @title Classification result explorer
@@ -501,7 +628,7 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' SpatialLinesDataFrame) used to map the observations
 #' @importFrom leaflet colorBin leaflet addPolygons addCircles addLayersControl hideGroup addLegend addProviderTiles
 #' @importFrom grDevices colorRamp
-#' @importFrom plotly plot_ly layout
+#' @importFrom plotly plot_ly layout add_markers
 #' @importFrom utils installed.packages
 #' @export
 #' @examples
@@ -699,6 +826,12 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   assign('colors', colors, shiny_env)
   ##******************************************************************
 
+
+  ## preparer les boxplot de base *******************************
+  base_boxplots <- draw_boxplots(dataset, variables, values)
+  assign('base_boxplots', base_boxplots, shiny_env)
+
+  ##******************************************************************
   environment(shiny_ui) <- shiny_env
   environment(shiny_server) <- shiny_env
   app <- shiny::shinyApp(

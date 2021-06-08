@@ -89,7 +89,7 @@ function `calcqualityIndexes`:
 -   *CalinskiHarabasz.index*: the Calinski-Harabasz index
     (`geocmeans::calcCalinskiHarabasz`)
 -   *GD43.index* and *GD53.index*: two version of the generalized Dunn
-    index (`geocmeans::calcGD43` and `calcGD45`)
+    index (`geocmeans::calcGD43` and `calcGD53`)
 -   *Negentropy.index*: the Negentropy Increment index
     (`geocmeans::calcNegentropyI`)
 -   *Explained.inertia*: the percentage of total inertia explained by

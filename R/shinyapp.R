@@ -208,6 +208,10 @@ shiny_server <- function(input, output, session) {
          color = input$group_biplot)
   })
 
+  ## and the radarchart
+  output$radarchart <- renderPlotly({
+    radarchart
+  })
 
   output$bivar_plot <- renderPlotly({
     params <- bivar_params()
@@ -328,13 +332,13 @@ shiny_server <- function(input, output, session) {
     if(firsttime){
       leafletProxy('mymap') %>%
         mapfun(data = feat, weight = 2, opacity = 1.0, fillOpacity = 0, color = "red",
-                    layerId = "highlighter")
+                    layerId = "highlighter", fillColor = NULL, group = "")
       firsttime <- FALSE
     }else{
       leafletProxy('mymap') %>%
         removeShape("highlighter") %>%
         mapfun(data = feat, weight = 2, opacity = 1.0, fillOpacity = 0, color = "red",
-                    layerId = "highlighter")
+               fillColor = NULL, layerId = "highlighter", group = "")
     }
 
 
@@ -436,6 +440,23 @@ shiny_server <- function(input, output, session) {
         violin2 <- adj_bg_color(violin, light, input)
         output[[paste("violinplots",i,sep="")]] <- renderPlotly({violin2})
 
+      })
+
+      # set the right colors for boxplots plots
+      tol <- input$uncertain1
+      values <- apply(belongings, 1, max) < tol
+
+      new_boxplots <- draw_boxplots(dataset, variables, values)
+
+      lapply(1:length(new_boxplots), function(i){
+        vplot <- adj_bg_color(new_boxplots[[i]], light, input)
+        output[[paste("boxplots",i,sep="")]] <- renderPlotly({vplot})
+      })
+
+
+      # set the right colors for the radar
+      output$radarchart <- renderPlotly({
+        adj_bg_color(radarchart, light, input)
       })
 
       if (isTRUE(input$dark_mode)) dark else light
@@ -551,7 +572,18 @@ shiny_ui <- function() {
                    )
         }},
         fluidRow(column(width = 8, wellPanel(leafletOutput("mymap"))),
-                 column(width = 4, wellPanel(plotlyOutput("barplot1")))
+                 column(width = 4,
+                        tabsetPanel(
+                        tabPanel("membership values", fluid = TRUE,
+                                 wellPanel(plotlyOutput("barplot1", height = "360px"))
+                                 ),
+                        tabPanel("radar chart", fluid = TRUE,
+                                 wellPanel(plotlyOutput("radarchart", height = "360px"))
+                        ),
+                        tabPanel("general informations", fluid = TRUE,
+                                 wellPanel("some information about your clustering")
+                        )
+                        ))
                  ),
         ## for the violin plots, with have to build a more complex environment
         fluidRow(violinplots_ui(n, nr, nc), height = paste(200*nc,"px",sep="")),
@@ -612,7 +644,7 @@ shiny_ui <- function() {
 # the variables used in the shiny environment must be declared as globalVariables
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
                   "dataset", "base_violinplots", "dark", "light", "uncertainMap",
-                  "base_boxplots"
+                  "base_boxplots","radarchart"
                   ))
 
 #' @title Classification result explorer
@@ -626,9 +658,9 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' @param ... Other parameters passed to the function runApp
 #' @param spatial A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
 #' SpatialLinesDataFrame) used to map the observations
-#' @importFrom leaflet colorBin leaflet addPolygons addCircles addLayersControl hideGroup addLegend addProviderTiles
+#' @importFrom leaflet colorBin leaflet addPolygons addPolylines addCircles addLayersControl hideGroup addLegend addProviderTiles colorFactor
 #' @importFrom grDevices colorRamp
-#' @importFrom plotly plot_ly layout add_markers
+#' @importFrom plotly plot_ly layout add_markers add_trace
 #' @importFrom utils installed.packages
 #' @export
 #' @examples
@@ -664,6 +696,15 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   }
 
   shiny_env <- new.env()
+
+  if(is.matrix(dataset)){
+    oldnames <- colnames(dataset)
+    dataset <- as.data.frame(dataset)
+    if(is.null(oldnames)){
+      oldnames <- paste("var",1:ncol(dataset),sep="")
+    }
+    names(dataset) <- oldnames
+  }
 
   # the colors to use for the groups
   colors <- c("#1F77B4","#FF7F0E","#2CA02C","#D62728","#9467BD","#8C564B",
@@ -705,12 +746,35 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite")
 
   if(class(spatial)[[1]] == "SpatialPolygonsDataFrame"){
-    mapfun <- addPolygons
+    mapfun <- function(map, data, weight, group, color, fillColor, layerId, ...){
+
+      map %>% addPolygons(
+        data = data,
+        weight = weight,
+        group = group,
+        color = color,
+        fillColor = fillColor,
+        layerId = layerId,
+        ...
+      )
+    }
   }else if (class(spatial)[[1]] == "SpatialPointsDataFrame"){
     mapfun <- addCircles
   }else if (class(spatial)[[1]] == "SpatialLinesDataFrame"){
-    mapfun <- addPolygons
-    spatial <- rgeos::gBuffer(spatial, width = 0.01, byid = TRUE)
+    mapfun <- function(map, data, weight, group, color, fillColor, layerId, ...){
+      if(is.null(fillColor)){
+        fillColor <- "red"
+      }
+      map %>% addPolylines(
+        data = data,
+        weight = 3,
+        group = group,
+        color = fillColor,
+        layerId = layerId,
+        ...
+      )
+    }
+    #spatial <- rgeos::gBuffer(spatial, width = 0.01, byid = TRUE)
   }else{
     stop("spatial must be one of SpatialPolygonsDataFrame, SpatialPointsDataFrame, SpatialLinesDataFrame")
   }
@@ -734,17 +798,37 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
                                           position = "bottomright")
   }
 
+  ## ajouter un layer de hard clustering
+  colnames(belongings) <- paste("group",1:ncol(belongings), sep = " ")
+  groups <- colnames(belongings)[max.col(belongings, ties.method = "first")]
+  spatial4326$group <- as.factor(groups)
+
+  factpal <- colorFactor(colors, spatial4326$group)
+
+  mymap <- mymap %>% mapfun(data = spatial4326,
+                            weight = 1,
+                            group = "Most likely group",
+                            color = "black",
+                            fillColor = ~factpal(spatial4326$group),
+                            fillOpacity = 0.7,
+                            layerId = 1:nrow(spatial4326)) %>%
+    addLegend(pal = factpal, values = spatial4326$group, opacity = 0.7,
+              title = NULL, group= "Most likely group",
+              position = "bottomright")
+
+
   # ajouter les enjolivages
   mymap <- mymap %>%
     addLayersControl(
       position = "bottomleft",
       baseGroups = c("Toner Lite"),
-      overlayGroups  = paste("group ", 1:ncol(belongings), sep = ""),
+      overlayGroups  = c(paste("group ", 1:ncol(belongings), sep = ""),"Most likely group"),
       options = leaflet::layersControlOptions(collapsed = FALSE))
 
   for(i in 2:ncol(belongings)){
     mymap <- mymap %>% hideGroup(paste("group ",i,sep=""))
   }
+  mymap <- mymap %>% hideGroup("Most likely group")
 
   assign('mymap', mymap, shiny_env)
   assign('mapfun', mapfun, shiny_env)
@@ -797,6 +881,53 @@ sp_clust_explorer <- function(belongings, dataset, spatial, ...) {
   assign('uncertainMap', uncertainMap, shiny_env)
   ##******************************************************************
 
+  ## preparer le radar chart *****************************************
+
+  # step1 : calculating the values (min and max normalisation)
+  clustmeans <- apply(belongings, 2, function(w){
+    means <- apply(dataset, 2, function(d){
+      sum(d*w) / sum(w)
+    })
+  })
+
+  sc_clustmeans <- do.call(rbind,lapply(1:nrow(clustmeans), function(i){
+    x <- clustmeans[i,]
+    return((x-min(x))/(max(x)-min(x)))
+  }))
+  rownames(sc_clustmeans) <- rownames(clustmeans)
+  colnames(sc_clustmeans) <- colnames(clustmeans)
+
+  # step2 : drawing the radarchart
+  radarchart <- plot_ly(
+    type = 'scatterpolar',
+    fill = 'toself'
+  )
+  for(i in 1:ncol(sc_clustmeans)){
+    radarchart <- radarchart %>%
+      add_trace(
+        r = sc_clustmeans[,i],
+        theta = rownames(sc_clustmeans),
+        name = paste('Group ', i, sep=""),
+        fillcolor = colors[[i]],
+        opacity = 0.4,
+        marker=list(color = colors[[i]])
+      )
+  }
+
+  radarchart <- radarchart %>%
+    layout(
+      polar = list(
+        radialaxis = list(
+          visible = T,
+          range = c(0,1)
+        )
+      )
+    )
+
+  assign('radarchart', radarchart, shiny_env)
+
+
+  ##******************************************************************
 
   ## preparer les violinplots de base *******************************
   group_names <- paste("group ", 1:ncol(belongings))

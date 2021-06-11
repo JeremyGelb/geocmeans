@@ -6,6 +6,7 @@
 * Added a shiny app (function : *sp_clust_explorer*) for result exploration
 * The results of the functions *CMeans*, *GCMeans*, *SFCMeans*, *SGFCMeans* are now objects of class *FCMres* and the generic functions *predict* and *summary* can be used on them.
 * Added some cluster quality indices : Negentropy Increment index, Generalized Dunn’s index (43 and 53), David-Bouldin index, Calinski-Harabasz index
+* Added a function to perform clustering validation by boostrap (see function *bstp_group_validation*)
 
 ## corrected bugs
 

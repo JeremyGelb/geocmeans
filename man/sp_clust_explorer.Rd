@@ -4,7 +4,7 @@
 \alias{sp_clust_explorer}
 \title{Classification result explorer}
 \usage{
-sp_clust_explorer(belongings, dataset, spatial, ...)
+sp_clust_explorer(belongings, dataset, spatial, port = 8100, ...)
 }
 \arguments{
 \item{belongings}{A matrix or a dataframe representing the membership values
@@ -15,6 +15,9 @@ classification}
 
 \item{spatial}{A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
 SpatialLinesDataFrame) used to map the observations}
+
+\item{port}{A integer of length 4 indicating the port on which starting the
+shiny app. Default is 8100}
 
 \item{...}{Other parameters passed to the function runApp}
 }

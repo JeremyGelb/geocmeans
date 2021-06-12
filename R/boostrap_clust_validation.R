@@ -24,9 +24,11 @@
 #' @param init A string indicating how the initial centers must be selected. "random"
 #' indicates that random observations are used as centers. "kpp" use a distance based method
 #' resulting in more dispersed centers at the beginning. Both of them are heuristic.
+#' @param verbose A boolean to specify if the progress bar should be displayed.
 #' @return  A list of two values: group_consistency, a dataframe indicating for each cluster its
 #' consistency accross simulations. group_centers a list with a dataframe for each cluster. The values
 #' in the dataframes are the centers of the clusters at each simulation.
+#' @export
 #' @examples
 #' \dontrun{
 #' data(LyonIris)
@@ -43,9 +45,9 @@
 #'
 #' Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 #'
-#' validation <- bstp_group_validation(Cmean, nsim = 1000, maxiter = 1000, tol = 0.01, init = "random")
+#' validation <- boot_group_validation(Cmean, nsim = 1000, maxiter = 1000, tol = 0.01, init = "random")
 #' }
-bstp_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.01, init = "random"){
+boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.01, init = "random", verbose = TRUE){
 
   ## calulating the lagged dataset if necessary -----------------------
   if(object$algo %in% c("SGFCM", "SFCM")){
@@ -57,6 +59,10 @@ bstp_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   k <- ncol(object$Belongings)
 
   ## Starting the iteration of the boostraping -----------------------
+  if(verbose){
+    pb <- txtProgressBar(1, nsim, style = 3)
+    print("Starting the bootstrap iterations...")
+  }
 
   all_perm <- lapply(1:nsim, function(i){
 
@@ -81,6 +87,10 @@ bstp_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
       Belongings = results$Belongings,
       idx = idx
     )
+    if (verbose){
+      setTxtProgressBar(pb, i)
+    }
+
     return(su_res)
   })
 
@@ -89,6 +99,7 @@ bstp_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   # the format of this table is :
   # rows are the permutated clusters
   # columns are the original clusters
+  print("Calculating the Jaccard values...")
   cons_values <- lapply(all_perm, function(results){
     qual_mat <- matrix(-1, nrow = k, ncol = k)
     for(ii in 1:k){
@@ -139,6 +150,7 @@ bstp_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   mat_idx <- do.call(rbind, lapply(cons_values, function(v){v[[2]]}))
 
   ## creatin a list with the centers values boostraped of clusters -----------------------
+  print("Extracting the centers of the clusters...")
   clust_centers <- lapply(1:k, function(i){
     idx <- mat_idx[,i]
     clust_table <- do.call(rbind,lapply(1:nsim, function(j){
@@ -146,10 +158,11 @@ bstp_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
     }))
     clust_table <- data.frame(clust_table)
     names(clust_table) <- colnames(object$Data)
+    return(clust_table)
   })
-  names(clust_centers) <- paste("group ",1:k, sep = "")
+  names(clust_centers) <- paste("group",1:k, sep = "")
   mat_valid <- data.frame(mat_valid)
-  names(mat_valid) <- paste("group ",1:k, sep = "")
+  names(mat_valid) <- paste("group",1:k, sep = "")
 
 
   return(

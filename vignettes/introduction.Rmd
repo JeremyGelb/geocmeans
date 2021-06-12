@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This document is a short introduction to the package **geocmeans**. It implements a fuzzy classification method bringing spatial information and neighbouring in its calculation
+This document is a short introduction to the package **geocmeans**. It implements fuzzy classification methods bringing spatial information and neighbouring in its calculation
 
 In their article, @cai2007fast described the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by @zhao2013kernel.
 
@@ -39,12 +39,18 @@ However, this method belongs to the category of "hard-clustering" algorithms. Ea
 
 The algorithms SFCM (spatial fuzzy c-means) and SGFCM (spatial generalized fuzzy c-means) propose to combine the best of both worlds.
 
-The package **geocmeans** is an implementation in R of these methods (originally developed for analysis of brain imagery). It comes with a set of functions to facilitate the analysis of the final membership matrices : 
+The package **geocmeans** is an implementation in R of these methods. It comes with a set of functions to facilitate the analysis of the final membership matrices: 
 
 * calculating many quality indices (coming mainly from the package *fclust*)
 * mapping the results
-* giving summary statistics for each cluster/group.
+* giving summary statistics for each cluster/group
+* a shiny app to investigate dynamically the results.
 
+The general workflow for applying a spatial fuzzy clustering algorithm with **geocmeans** is described with the following figure.
+
+<center>
+![Image Title](images/workflow.png){height=800px}
+</center>
 
 ## Loading the packages and the data
 
@@ -478,11 +484,12 @@ ggplot(data=DFmapping)+
 
 ## Interpreting the results of the final classification
 
-One can obtain a lot of descriptive information about the final groups with three functions of **geocmeans** : 
+One can obtain a lot of descriptive information about the final groups with four functions of **geocmeans** : 
 
-* `summarizeClusters` : calculate summary statistics for each group for a given dataset by using the membership matrix as weights (sticking with the fuzzy spirit). One can also use the generic function `summary`
-* `spiderPlots` : display a spider plot allowing to compare quickly the differences between groups.
-* `violinPlots` : display a violin plot for each variable in a given dataset. Observations must be grouped before.
+* `summarizeClusters`: calculate summary statistics for each group for a given dataset by using the membership matrix as weights (sticking with the fuzzy spirit). One can also use the generic function `summary`
+* `spiderPlots`: display a spider plot allowing to compare quickly the differences between groups.
+* `violinPlots`: display a violin plot for each variable in a given dataset. Observations must be grouped before.
+* `sp_clust_explorer`: launch a shiny app to investigate the results dynamically.
 
 
 ```{r warning=FALSE}
@@ -498,13 +505,53 @@ spiderPlots(LyonIris@data[AnalysisFields], SGFCM$Belongings,
 violinPlots(LyonIris@data[AnalysisFields], SGFCM$Groups)
 ```
 
+## Ensuring clustering stability
+
+All the clustering algorithms of this package depends on a initial state that might influence the results. A good pratice is to check the results to ensure that the groups obtained are stable if we replicate the analysis. The function `boost_group_validation` proposes an approach based on boostraping.
+
+```{r warning=FALSE, eval = FALSE}
+bootvalues <- boot_group_validation(SGFCM, nsim = 1000, maxiter = 1000, 
+                                     tol = 0.01, verbose = FALSE)
+```
+
+We can now check if the groups are stable accross simualtions.
+
+```{r warning=FALSE, eval = FALSE}
+melted_df <- reshape2::melt(bootvalues$group_consistency)
+melted_df$variable <- as.factor(melted_df$variable)
+
+ggplot() +
+  geom_histogram(mapping = aes(x = value), data = melted_df, bins = 30) +
+  labs(title = "stability of clusters", subtitle = "for 1000 iterations",
+       x = "Jaccard index") +
+  facet_wrap(vars(variable), ncol=2)
+```
+
+The Jaccard index is calculated. A greater value means a more stable cluter. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster wiht some uncertainty. Under 0.5, the cluster tend to dissolve during the iterations. In the presented case, the group 3 seems to be less stable and tends to dissolve. In that context, retaining only three clusters could be a solution.
+
+We can aslo check the values of the centers of the group 3 accross the 1000 iterations.
+
+```{r warning=FALSE, eval = FALSE}
+df_gp3 <- bootvalues$group_centers[["group3"]]
+
+melted_df <- reshape2::melt(df_gp3)
+melted_df$variable <- as.factor(melted_df$variable)
+
+ggplot() +
+  geom_histogram(mapping = aes(x = value), data = melted_df, bins = 30) +
+  labs(title = "stability of group 3 centers", subtitle = "for 1000 iterations") +
+  xlim(-3,3)+
+  facet_wrap(vars(variable), ncol=3)
+```
+It appears that the center values for NO2 and PM2.5 are bimodal, that might explain why this group tends to dissolve.
+
+# Final words
+
 That's all, folks ! Following are the enhancements for the next version
 
 * introduce other methods of spatial c-means
 * open some other parameters to the user (such as the function defining the convergence criterion)
 * work on documentation
 * improve calculus speed by dropping some *apply* in the code
-* adding the manhattan distance (useful when data have a high dimensionality)
-
 
 

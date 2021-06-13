@@ -2,7 +2,7 @@
 % Please edit documentation in R/boostrap_clust_validation.R
 \name{boot_group_validation}
 \alias{boot_group_validation}
-\title{Boostrap check the robustness of a classification}
+\title{Bootstrap check the robustness of a classification}
 \usage{
 boot_group_validation(
   object,
@@ -16,7 +16,7 @@ boot_group_validation(
 \arguments{
 \item{object}{A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
 
-\item{nsim}{The number of replications to do for the boostrap evaluation}
+\item{nsim}{The number of replications to do for the bootstrap evaluation}
 
 \item{maxiter}{An integer for the maximum number of iteration}
 
@@ -31,11 +31,11 @@ resulting in more dispersed centers at the beginning. Both of them are heuristic
 }
 \value{
 A list of two values: group_consistency, a dataframe indicating for each cluster its
-consistency accross simulations. group_centers a list with a dataframe for each cluster. The values
+consistency across simulations. group_centers a list with a dataframe for each cluster. The values
 in the dataframes are the centers of the clusters at each simulation.
 }
 \description{
-Check that the obtained groups are stable by boostrap
+Check that the obtained groups are stable by bootstrap
 }
 \details{
 Considering that the classification produced by a FCM like algorithm depends on
@@ -47,7 +47,7 @@ mots similar group is identified by calculating the Jaccard similarity index bet
 of the two membership matrices. This index is comprised between 0 (exact difference) and 1 (perfect
 similarity) and a value is calculated for each group at each iteration. One can investigate the values
 obtained to determine if the groups are stable. Values under 0.5 are worrisome and indicate that the
-group is disolving. Values between 0.6 and 0.75 indicate a pattern in the data, but an important
+group is dissolving. Values between 0.6 and 0.75 indicate a pattern in the data, but an important
 uncertainty. Values above 0.8 indicate strong groups. The values of the centers obtained at
 each iteration are also returned, it is important to check the they follow approximately a normal
 distribution and are at least unimodal.

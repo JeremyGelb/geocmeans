@@ -1,6 +1,6 @@
-#' @title Boostrap check the robustness of a classification
+#' @title Bootstrap check the robustness of a classification
 #'
-#' @description Check that the obtained groups are stable by boostrap
+#' @description Check that the obtained groups are stable by bootstrap
 #'
 #' @details Considering that the classification produced by a FCM like algorithm depends on
 #' its initial state, it is important to check if the groups obtained are stable. This function
@@ -11,13 +11,13 @@
 #' of the two membership matrices. This index is comprised between 0 (exact difference) and 1 (perfect
 #' similarity) and a value is calculated for each group at each iteration. One can investigate the values
 #' obtained to determine if the groups are stable. Values under 0.5 are worrisome and indicate that the
-#' group is disolving. Values between 0.6 and 0.75 indicate a pattern in the data, but an important
+#' group is dissolving. Values between 0.6 and 0.75 indicate a pattern in the data, but an important
 #' uncertainty. Values above 0.8 indicate strong groups. The values of the centers obtained at
 #' each iteration are also returned, it is important to check the they follow approximately a normal
 #' distribution and are at least unimodal.
 #'
 #' @param object A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
-#' @param nsim The number of replications to do for the boostrap evaluation
+#' @param nsim The number of replications to do for the bootstrap evaluation
 #' @param maxiter An integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
@@ -26,7 +26,7 @@
 #' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param verbose A boolean to specify if the progress bar should be displayed.
 #' @return  A list of two values: group_consistency, a dataframe indicating for each cluster its
-#' consistency accross simulations. group_centers a list with a dataframe for each cluster. The values
+#' consistency across simulations. group_centers a list with a dataframe for each cluster. The values
 #' in the dataframes are the centers of the clusters at each simulation.
 #' @export
 #' @examples
@@ -172,6 +172,104 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   )
 }
 
+
+#' @title Match the groups obtained from two classifications
+#'
+#' @description Match the groups obtained from two classifications based on
+#' the Jaccard index calculated on the membership matrices.
+#'
+#' @details We can not expect to obtain the groups in the same order in every runs
+#' of a classification algorithm. This function can be used to find for two results
+#' the most similar clusters in a pairwise fashion and to reorder the results. Thus
+#' it might be easier to compare the results of two algorithms or two runs of the
+#' same algorithm.
+#'
+#' @param object.x A FCMres object, or a simple membership matrix. It is used as the reference
+#' for the ordering of the groups
+#' @param object.y A FCMres object, or a simple membership matrix. The order of its groups will
+#' bu updated to match with the groups of object.x
+#' @return The FCMres object or the membership matrix provided for the parameter object.y with
+#' the order of the groups updated.
+#' @export
+#' @examples
+#' data(LyonIris)
+#'
+#' #selecting the columns for the analysis
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
+#'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
+#'
+#' #rescaling the columns
+#' Data <- LyonIris@data[AnalysisFields]
+#' for (Col in names(Data)){
+#'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
+#' }
+#'
+#' Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
+#' Cmean2 <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 789, tol = 0.00001, verbose = FALSE)
+#' ordered_Cmean2 <- groups_matching(Cmean,Cmean2)
+groups_matching <- function(object.x,object.y){
+
+  if(is.matrix(object.x)){
+    matX <- object.x
+    matY <- object.y
+  }else{
+    matX <- object.x$Belongings
+    matY <- object.y$Belongings
+  }
+
+  k <- ncol(matX)
+
+  qual_mat <- matrix(-1, nrow = k, ncol = k)
+  for(ii in 1:k){
+    for(jj in 1:k){
+      if(qual_mat[ii,jj] == -1){
+        x <- matY[,ii]
+        y <- matX[,jj]
+        val <- calc_jaccard_idx(x,y)
+        qual_mat[ii,jj] <- val
+      }
+    }
+  }
+
+  colnames(qual_mat) <- 1:ncol(qual_mat)
+  rownames(qual_mat) <- 1:nrow(qual_mat)
+
+  clst_consist <- rep(-1, times = k)
+  matidx <- rep(-1, times = k)
+
+  for (j in 1:(k-1)){
+    d <- j-1
+    best <- which(qual_mat == max(qual_mat), arr.ind = TRUE)
+    if(length(best) > 2){
+      best <- best[1,]
+    }
+    c1 <- as.numeric(colnames(qual_mat)[[best[[2]]]])
+    r1 <- as.numeric(rownames(qual_mat)[[best[[1]]]])
+
+    clst_consist[[c1]] <- qual_mat[best[[1]], best[[2]]]
+    matidx[[c1]] <- r1
+    rkeep <- 1:(k-j+1)
+    rkeep <- rkeep != best[[1]]
+    ckeep <- 1:(k-j+1)
+    ckeep <- ckeep != best[[2]]
+    qual_mat <- qual_mat[rkeep,ckeep]
+  }
+
+  missing <- (1:k)[(1:k) %in% matidx == F]
+  clst_consist[clst_consist == -1] <- qual_mat
+  matidx[matidx == -1] <- missing
+
+  if(is.matrix(object.x)){
+    return(matY[,matidx])
+  }else{
+    object.y$Centers <- object.y$Centers[matidx,]
+    object.y$Belongings <- object.y$Belongings[,matidx]
+    DF <- as.data.frame(object.y$Belongings)
+    names(DF) <- paste("group",1:k,sep = "")
+    object.y$Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
+    return(object.y)
+  }
+}
 
 
 

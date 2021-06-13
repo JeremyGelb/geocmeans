@@ -20,7 +20,7 @@ A float : the Negentropy Increment index
 Calculate the Negentropy Increment index of clustering quality.
 }
 \details{
-The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shapped cluster is more
+The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shaped cluster is more
 desirable. It uses the difference between the average negentropy
 of all the clusters in the partition, and that of the  whole partition.
 a smaller value indicates a better partition. The formula is:

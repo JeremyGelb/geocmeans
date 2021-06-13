@@ -84,7 +84,7 @@ function `calcqualityIndexes`:
 -   *XieBeni.index*: the Xie and Beni index (`fclust::XB`)
 -   *FukuyamaSugeno.index*: the Fukuyama and Sugeno index
     (`geocmeans::calcFukuyamaSugeno`)
--   *DavidBoulin.index*: the David-Boulin index
+-   *DavidBoudlin.index*: the David-Bouldin index
     (`geocmeans::calcDavidBouldin`)
 -   *CalinskiHarabasz.index*: the Calinski-Harabasz index
     (`geocmeans::calcCalinskiHarabasz`)
@@ -97,7 +97,7 @@ function `calcqualityIndexes`:
 
 #### Interpretation
 
-Several functions are also available to facilitate the interpration of
+Several functions are also available to facilitate the interpretation of
 the classification:
 
 -   summary statistics for each cluster: `summarizeClusters` (also

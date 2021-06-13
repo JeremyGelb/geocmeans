@@ -90,7 +90,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 
 #' @title kpp centers selection
 #'
-#' @description Select the inital centers of centroids by using the k++ approach
+#' @description Select the initial centers of centroids by using the k++ approach
 #' as suggested in this article: http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf
 #'
 #' @param data The dataset used in the classification

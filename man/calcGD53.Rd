@@ -33,7 +33,7 @@ The numerator is a measure of the minimal separation between all the clusters
 \deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\frac{\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}} . u_{il}+\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{j}}\right\|^{\frac{1}{2}} . u_{jl}}{\sum{u_{i}} + \sum{u_{j}}}}
 
 where \emph{u} is the membership matrix and \eqn{u_{i}} is the column of
-\emph{u} desrbing the membership of the \emph{n} observations to cluster
+\emph{u} describing the membership of the \emph{n} observations to cluster
 \emph{i}. \eqn{c_{i}} is the center of the cluster \emph{i}.
 
 The denominator is a measure of the maximal dispersion of all clusters, given

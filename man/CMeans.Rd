@@ -50,7 +50,7 @@ A named list with :
 }
 }
 \description{
-The clasical c-mean algorithm
+The classical c-mean algorithm
 }
 \examples{
 data(LyonIris)

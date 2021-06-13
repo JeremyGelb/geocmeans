@@ -62,7 +62,7 @@ calcCentroids <- function(data, belongmatrix, m){
 
 #' @title C-means
 #'
-#' @description The clasical c-mean algorithm
+#' @description The classical c-mean algorithm
 #'
 #' @param data A dataframe with only numerical variable
 #' @param k An integer describing the number of cluster to find
@@ -240,7 +240,7 @@ calcSWFCCentroids <- function(data, wdata, belongmatrix, m, alpha) {
 #' @return A named list with
 #' \itemize{
 #'         \item Centers: a dataframe describing the final centers of the groups
-#'         \item Belongings: the final bmembership matrix
+#'         \item Belongings: the final membership matrix
 #'         \item Groups: a vector with the names of the most likely group for each observation
 #'         \item Data: the dataset used to perform the clustering (might be standardized)
 #' }

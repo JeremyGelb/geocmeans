@@ -6,11 +6,12 @@
 * Added a shiny app (function : *sp_clust_explorer*) for result exploration
 * The results of the functions *CMeans*, *GCMeans*, *SFCMeans*, *SGFCMeans* are now objects of class *FCMres* and the generic functions *predict* and *summary* can be used on them.
 * Added some cluster quality indices : Negentropy Increment index, Generalized Dunn’s index (43 and 53), David-Bouldin index, Calinski-Harabasz index
-* Added a function to perform clustering validation by boostrap (see function *bstp_group_validation*)
+* Added a function to perform clustering validation by bootstrap (see function *bstp_group_validation*)
+* Added a function to reorder the results of a classification to match the most similar groups in a second classification (*groups_matching*)
 
 ## corrected bugs
 
-* issue 1 fixed by editing the mapping functions. A bug arrised when the fid of a SpatialDataFrame read from a shapefile was different from 1:nrow(df)
+* issue 1 fixed by editing the mapping functions. A bug occurred when the fid of a SpatialDataFrame read from a shapefile was different from 1:nrow(df)
 
 
 # geocmeans 0.1.1

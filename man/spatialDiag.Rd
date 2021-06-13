@@ -21,7 +21,7 @@ the random distribution of the spatial inconsistency}
 \value{
 A named list with :
 \itemize{
-        \item MoranValues : the moran I values fo each column of the membership
+        \item MoranValues : the moran I values for each column of the membership
          matrix (spdep::MoranI)
         \item JoinCounts : the result of the join count test calculated with
          the most likely group for each datapoint (spdep::joincount.multi)

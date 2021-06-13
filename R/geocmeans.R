@@ -1,4 +1,4 @@
-#' geocmeans: A package implementing methods for spatially constrained c-ceans
+#' geocmeans: A package implementing methods for spatially constrained c-means
 #' algorithm
 #'
 #' The geocmeans package implements a modified c-means algorithm more suited to

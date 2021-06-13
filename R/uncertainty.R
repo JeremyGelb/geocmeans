@@ -27,7 +27,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1) {
 }
 
 
-#' @title Diveristy index
+#' @title Diversity index
 #'
 #' @description Calculate the diversity (or entropy) index.
 #'

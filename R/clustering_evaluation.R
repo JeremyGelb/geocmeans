@@ -7,7 +7,7 @@
 #' @description Calculate the Negentropy Increment index of clustering quality.
 #'
 #' @details
-#' The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shapped cluster is more
+#' The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shaped cluster is more
 #' desirable. It uses the difference between the average negentropy
 #' of all the clusters in the partition, and that of the  whole partition.
 #' a smaller value indicates a better partition. The formula is:
@@ -78,7 +78,7 @@ calcNegentropyI <- function(data, belongmatrix, centers){
 #' \deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\frac{\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|^{\frac{1}{2}} . u_{il}+\sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{j}}\right\|^{\frac{1}{2}} . u_{jl}}{\sum{u_{i}} + \sum{u_{j}}}}
 #'
 #' where \emph{u} is the membership matrix and \eqn{u_{i}} is the column of
-#' \emph{u} desrbing the membership of the \emph{n} observations to cluster
+#' \emph{u} describing the membership of the \emph{n} observations to cluster
 #' \emph{i}. \eqn{c_{i}} is the center of the cluster \emph{i}.
 #'
 #' The denominator is a measure of the maximal dispersion of all clusters, given
@@ -328,7 +328,7 @@ calcCalinskiHarabasz <- function(data, belongmatrix, centers){
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
 #' @param centers The centers of the clusters
-#' @param m The fuzzyness parameter
+#' @param m The fuzziness parameter
 #' @return A float : the Fukuyama and Sugeno index
 #' @export
 #' @examples
@@ -557,7 +557,7 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
 #'   the random distribution of the spatial inconsistency
 #' @return A named list with :
 #' \itemize{
-#'         \item MoranValues : the moran I values fo each column of the membership
+#'         \item MoranValues : the moran I values for each column of the membership
 #'          matrix (spdep::MoranI)
 #'         \item JoinCounts : the result of the join count test calculated with
 #'          the most likely group for each datapoint (spdep::joincount.multi)
@@ -636,7 +636,7 @@ spatialDiag <- function(belongmatrix, nblistw, undecided = NULL, nrep = 50) {
 #'  \itemize{
 #'         \item Mean : the mean of the spatial consistency index
 #'         \item prt05 : the 5th percentile of the spatial consistency index
-#'         \item prt95 : the 95th percentule of the spatial consistency index
+#'         \item prt95 : the 95th percentile of the spatial consistency index
 #'         \item samples : all the value of the spatial consistency index
 #' }
 #' @export

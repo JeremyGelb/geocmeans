@@ -13,7 +13,7 @@ calcFukuyamaSugeno(data, belongmatrix, centers, m)
 
 \item{centers}{The centers of the clusters}
 
-\item{m}{The fuzzyness parameter}
+\item{m}{The fuzziness parameter}
 }
 \value{
 A float : the Fukuyama and Sugeno index

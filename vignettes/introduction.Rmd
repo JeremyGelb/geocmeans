@@ -314,7 +314,7 @@ ggplot(DFindices_SFCM)+
 
 ```
 
-The detail of the meaning of these indicators is beyond the scope of this vignette. Let us just stress that a larger silhouette index indicates a better classification, and a smaller Xie and beni index indicates a better classification.
+The detail of the meaning of these indicators is beyond the scope of this vignette. Let us just stress that a larger silhouette index indicates a better classification, and a smaller Xie and Beni index indicates a better classification.
 
 After considering all the previous charts, we decide to keep alpha = 0.7 as it seems to provide a good balance between spatial consistency and classification quality in this case.
 
@@ -363,7 +363,7 @@ ggplot(DFindices_SFGCM) +
 
 ```
 
-The first two plots indicate that some pairs of *alpha* and *beta* in particulat yield good results in the range 0.8 < *alpha* < 1.2 and 0.6 < *beta* < 0.8. The last plot shows that the selection of *beta* has no impact on the spatial consistency.
+The first two plots indicate that some specific pairs of *alpha* and *beta*  yield good results in the range 0.8 < *alpha* < 1.2 and 0.6 < *beta* < 0.8. The last plot shows that the selection of *beta* has no impact on the spatial consistency.
 
 Considering the previous plots, we decide to retain the solution with *beta* = 0.65 and *alpha* = 0.95 which yield very good results for all the indices considered.
 
@@ -448,7 +448,7 @@ Not surprisingly, the Moran I values calculated on the membership matrices are h
 print(c(spdiag_1$SpConsist, spdiag_2$SpConsist,spdiag_3$SpConsist,spdiag_4$SpConsist))
 ```
 
-Considering the values of spatial inconsistency, we could check if the value obtained for SGFCM is significantly lower than the one of SFCM. Considering the previous `r length(spdiag_3$SpConsistSamples)` permutated values, we can calculate a pseudo p-value:
+Considering the values of spatial inconsistency, we could check if the value obtained for SGFCM is significantly lower than the one of SFCM. Considering the previous `r length(spdiag_3$SpConsistSamples)` values obtained by permutations, we can calculate a pseudo p-value:
 
 ```{r warning=FALSE}
 sum(spdiag_4$SpConsist > spdiag_3$SpConsistSamples) / length(spdiag_3$SpConsistSamples)
@@ -507,14 +507,14 @@ violinPlots(LyonIris@data[AnalysisFields], SGFCM$Groups)
 
 ## Ensuring clustering stability
 
-All the clustering algorithms of this package depends on a initial state that might influence the results. A good pratice is to check the results to ensure that the groups obtained are stable if we replicate the analysis. The function `boost_group_validation` proposes an approach based on boostraping.
+All the clustering algorithms of this package depends on a initial state that might influence the results. A good practice is to check the results to ensure that the groups obtained are stable if we replicate the analysis. The function `boost_group_validation` proposes an approach based on bootstraping.
 
 ```{r warning=FALSE, eval = FALSE}
 bootvalues <- boot_group_validation(SGFCM, nsim = 1000, maxiter = 1000, 
                                      tol = 0.01, verbose = FALSE)
 ```
 
-We can now check if the groups are stable accross simualtions.
+We can now check if the groups are stable across simulations.
 
 ```{r warning=FALSE, eval = FALSE}
 melted_df <- reshape2::melt(bootvalues$group_consistency)
@@ -527,9 +527,9 @@ ggplot() +
   facet_wrap(vars(variable), ncol=2)
 ```
 
-The Jaccard index is calculated. A greater value means a more stable cluter. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster wiht some uncertainty. Under 0.5, the cluster tend to dissolve during the iterations. In the presented case, the group 3 seems to be less stable and tends to dissolve. In that context, retaining only three clusters could be a solution.
+The Jaccard index is calculated. A greater value means a more stable cluster. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster with some uncertainty. Under 0.5, the cluster tend to dissolve during the iterations. In the presented case, the group 3 seems to be less stable and tends to dissolve. In that context, retaining only three clusters could be a solution.
 
-We can aslo check the values of the centers of the group 3 accross the 1000 iterations.
+We can also check the values of the centers of the group 3 across the 1000 iterations.
 
 ```{r warning=FALSE, eval = FALSE}
 df_gp3 <- bootvalues$group_centers[["group3"]]
@@ -543,7 +543,7 @@ ggplot() +
   xlim(-3,3)+
   facet_wrap(vars(variable), ncol=3)
 ```
-It appears that the center values for NO2 and PM2.5 are bimodal, that might explain why this group tends to dissolve.
+It appears that the center values for NO<sub>2</sub> and PM<sub>2.5</sub> are bimodal, that might explain why this group tends to dissolve.
 
 # Final words
 

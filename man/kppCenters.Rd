@@ -15,7 +15,7 @@ kppCenters(data, k)
 a DataFrame, each row is the center of a cluster
 }
 \description{
-Select the inital centers of centroids by using the k++ approach
+Select the initial centers of centroids by using the k++ approach
 as suggested in this article: http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf
 }
 \examples{

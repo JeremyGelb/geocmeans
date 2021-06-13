@@ -3,7 +3,7 @@
 \docType{package}
 \name{geocmeans}
 \alias{geocmeans}
-\title{geocmeans: A package implementing methods for spatially constrained c-ceans
+\title{geocmeans: A package implementing methods for spatially constrained c-means
 algorithm}
 \description{
 The geocmeans package implements a modified c-means algorithm more suited to

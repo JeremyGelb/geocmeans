@@ -2,7 +2,7 @@
 % Please edit documentation in R/uncertainty.R
 \name{calcUncertaintyIndex}
 \alias{calcUncertaintyIndex}
-\title{Diveristy index}
+\title{Diversity index}
 \usage{
 calcUncertaintyIndex(belongmatrix)
 }

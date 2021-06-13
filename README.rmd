@@ -86,7 +86,7 @@ Many indices of classification quality can be calculated with the function `calc
 * *Modified.partition.coeff*: the modified partition entropy coefficient (`fclust::MPC`)
 * *XieBeni.index*: the Xie and Beni index (`fclust::XB`)
 * *FukuyamaSugeno.index*: the Fukuyama and Sugeno index (`geocmeans::calcFukuyamaSugeno`)
-* *DavidBoulin.index*: the David-Boulin index (`geocmeans::calcDavidBouldin`)
+* *DavidBoudlin.index*: the David-Bouldin index (`geocmeans::calcDavidBouldin`)
 * *CalinskiHarabasz.index*: the Calinski-Harabasz index (`geocmeans::calcCalinskiHarabasz`)
 * *GD43.index* and *GD53.index*: two version of the generalized Dunn index (`geocmeans::calcGD43` and `calcGD53`)
 * *Negentropy.index*: the Negentropy Increment index (`geocmeans::calcNegentropyI`)
@@ -95,7 +95,7 @@ Many indices of classification quality can be calculated with the function `calc
 
 #### Interpretation
 
-Several functions are also available to facilitate the interpration of the classification: 
+Several functions are also available to facilitate the interpretation of the classification: 
 
 * summary statistics for each cluster: `summarizeClusters` (also accessible with the generic function `summary`)
 * spider charts: `spiderPlots`

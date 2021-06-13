@@ -20,7 +20,7 @@ A named list with
  \itemize{
         \item Mean : the mean of the spatial consistency index
         \item prt05 : the 5th percentile of the spatial consistency index
-        \item prt95 : the 95th percentule of the spatial consistency index
+        \item prt95 : the 95th percentile of the spatial consistency index
         \item samples : all the value of the spatial consistency index
 }
 }

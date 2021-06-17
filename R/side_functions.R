@@ -769,10 +769,8 @@ selectParameters <- select_parameters
 #' #FALSE here to reduce the time during package check
 #' values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
-#' \dontshow{
-#'    ## R CMD check: make sure any open connections are closed afterward
-#'    if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
-#' }
+#' ## make sure any open connections are closed afterward
+#' if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #'}
 select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw = NULL, lag_method="mean",  spconsist = TRUE, classidx = TRUE, standardize = TRUE, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
 

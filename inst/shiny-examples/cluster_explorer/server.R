@@ -193,7 +193,7 @@ server <- function(input, output, session) {
 
   values <- apply(belongings, 1, max) < 0.45
 
-  ## preparer le radar chart *****************************************
+  ## preparing the radar chart *****************************************
 
   # step1 : calculating the values (min and max normalisation)
   clustmeans <- apply(belongings, 2, function(w){
@@ -240,7 +240,7 @@ server <- function(input, output, session) {
 
   ##******************************************************************
 
-  ## preparer le tableaux avec les infos generales*********************
+  ## preparing the table with general information *********************
   N <- nrow(dataset)
   K <- ncol(belongings)
   inertia <- round(inertia,2)
@@ -264,7 +264,7 @@ server <- function(input, output, session) {
 
   ##******************************************************************
 
-  ## preparer les violinplots de base *******************************
+  ## preparing the violinplots *******************************
   group_names <- paste("group ", 1:ncol(belongings))
   best_cat <-group_names[max.col(belongings, ties.method = "first")]
   dataset$tmpgrp <- as.factor(best_cat)
@@ -292,7 +292,7 @@ server <- function(input, output, session) {
   ##******************************************************************
 
 
-  ## preparer les boxplot de base *******************************
+  ## preparing the boxplot *******************************
   base_boxplots <- draw_boxplots(dataset, variables, values)
   assign('base_boxplots', base_boxplots, .GlobalEnv)
 

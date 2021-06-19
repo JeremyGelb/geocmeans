@@ -36,3 +36,53 @@ FCMres <- function(obj){
   class(obj) <- c("FCMres","list")
   return(obj)
 }
+
+
+#' @title is method for FCMres
+#'
+#' @description Check if an object can me considered as a FCMres object
+#'
+#' @param x A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
+#' @return A boolean, TRUE if x can be considered as a FCMres object, FALSE otherwise
+#'   group
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
+#' is.FCMres(result)
+is.FCMres <- function(x){
+  attrs <- names(x)
+
+  # the object must have this three attributes
+  necessary <- c("Centers", "Belongings", "Data")
+  if (sum(necessary %in% attrs) < 3){
+    return(FALSE)
+  }
+
+  # Data, Belongings and Centers must be coercible to matrices
+  tryCatch({
+    as.matrix(x$Data)
+    as.matrix(x$Centers)
+    as.matrix(x$Belongings)
+    },error = function(e)return(FALSE))
+
+  # the number of rows of Data and Belongings must match
+  if(nrow(x$Data) != nrow(x$Belongings)){
+    return(FALSE)
+  }
+
+  # the number of columns of Data and Centers must match
+  if(ncol(x$Data) != ncol(x$Centers)){
+    return(FALSE)
+  }
+
+  # if we pass all these steps, then the object could be considered as
+  # a FCMres
+  return(TRUE)
+
+}

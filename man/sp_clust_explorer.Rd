@@ -7,7 +7,7 @@
 sp_clust_explorer(
   spatial,
   object = NULL,
-  belongings = NULL,
+  membership = NULL,
   dataset = NULL,
   port = 8100,
   ...
@@ -20,7 +20,7 @@ SpatialLinesDataFrame) used to map the observations}
 \item{object}{A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans}
 
-\item{belongings}{A matrix or a dataframe representing the membership values
+\item{membership}{A matrix or a dataframe representing the membership values
 obtained for each observation. If NULL, then the matrix is extracted from
 object.}
 

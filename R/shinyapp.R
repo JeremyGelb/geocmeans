@@ -17,7 +17,7 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' SpatialLinesDataFrame) used to map the observations
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans
-#' @param belongings A matrix or a dataframe representing the membership values
+#' @param membership A matrix or a dataframe representing the membership values
 #' obtained for each observation. If NULL, then the matrix is extracted from
 #' object.
 #' @param dataset A dataframe or matrix representing the data used for the
@@ -48,23 +48,40 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #'
 #' sp_clust_explorer(LyonIris, Cmean)
 #' }
-sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset = NULL, port = 8100, ...) {
-  print("launching the app")
+sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset = NULL, port = 8100, ...) {
+
+
+  # checking if the directory of hte shiny app is here  ---------------------------------------
   appDir <- system.file("shiny-examples", "cluster_explorer", package = "geocmeans")
   if (appDir == "") {
-    stop("Could not find example directory. Try re-installing `mypackage`.", call. = FALSE)
+    stop("Could not find example directory. Try re-installing `geocmeans`.", call. = FALSE)
   }
 
+  # checking if the mandatory packages are installed ----------------------------------------
   mandatory_packages <- c("shiny", "leaflet", "plotly")
   if(requireNamespace(mandatory_packages) == FALSE){
     stop("The shiny app can be used only if the packages shiny, leaflet and plotly are installed ! \n
          We also recommand to install shinyWidgets, bslib and car for an optimal experience.
          ")
   }
+
+  # checking if the not necessary but usefull packages are installed ----------------------------------------
   secondary_packages <- c("shinyWidgets", "bslib", "car")
   if(requireNamespace(secondary_packages) == FALSE){
     warning("We recommand to install the packages shinyWidgets, bslib and car for an optimal experience with
             this shiny app")
+  }
+
+  # checking if the objects given have the right informations ----------------------------------------
+  if(is.null(object) == FALSE){
+    if(is.FCMres(object) == FALSE){
+      stop("If object is not NULL, it must be an object of class FCMres (see help(is.FCMres))")
+    }
+  }
+
+  ok_sp <- c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")
+  if(class(spatial) %in% ok_sp == FALSE){
+    stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")')
   }
 
   if(is.null(object) & (is.null(belongings) | is.null(dataset))){
@@ -75,8 +92,10 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
     if(is.null(dataset)){
       dataset <- object$Data
     }
-    if(is.null(belongings)){
+    if(is.null(membership)){
       belongings <- object$Belongings
+    }else{
+      belongings <- membership
     }
     inertia <- calcexplainedInertia(object$Data, object$Belongings)
   }else{
@@ -87,6 +106,7 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
   assign('inertia', inertia, .GlobalEnv)
 
 
+  # Preparing some global variables for the app ----------------------------------------
   if(is.matrix(dataset)){
     oldnames <- colnames(dataset)
     dataset <- as.data.frame(dataset)
@@ -116,23 +136,22 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
   assign('dark', dark, .GlobalEnv)
   assign('light', light, .GlobalEnv)
 
-  ## enregistrement des principaux objets dans un environnement
-  ## shiny env qui pourra etre utilise dans l'UI et dans le SERVER
+  ## saving the main objets in the global environment for them to
+  ## be used in the main functions UI and SERVER
   assign('belongings', belongings, .GlobalEnv)
   assign('dataset', dataset, .GlobalEnv)
   assign('spatial', spatial, .GlobalEnv)
 
-  ## determiner les groupes que dont on dispose et les donnees
   groups <- paste("group ", 1:ncol(belongings), sep = "")
   variables <- names(dataset)
   assign('groups', groups, .GlobalEnv)
   assign('variables', variables, .GlobalEnv)
 
-  ## pour leaflet, les coordonnees doivent etre en 4326
+  ## for leaflet, the CRS must be 4326
   ref <- sp::CRS("+init=epsg:4326")
   spatial4326 <- sp::spTransform(spatial, ref)
 
-  ## preparer la carte leaflet du premier panneau ***************************************
+  ## prepare the leaflet maps in the first pannel ***************************************
 
   mymap <- leaflet(height = "600px") %>%
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
@@ -171,7 +190,7 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
     stop("spatial must be one of SpatialPolygonsDataFrame, SpatialPointsDataFrame, SpatialLinesDataFrame")
   }
 
-  # ajouter les layers
+  # adding the layers
   for (i in 1:ncol(belongings)){
 
     bins <- seq(0,1,0.1)
@@ -190,7 +209,7 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
                 position = "bottomright")
   }
 
-  ## ajouter un layer de hard clustering
+  ## and a layer for the hard partition
   colnames(belongings) <- paste("group",1:ncol(belongings), sep = " ")
   groups <- colnames(belongings)[max.col(belongings, ties.method = "first")]
   spatial4326$group <- as.factor(groups)
@@ -209,7 +228,7 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
               position = "bottomright")
 
 
-  # ajouter les enjolivages
+  # adding some tools for the map
   mymap <- mymap %>%
     addLayersControl(
       position = "bottomleft",
@@ -226,7 +245,7 @@ sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset
   assign('mapfun', mapfun, .GlobalEnv)
   assign('spatial4326', spatial4326, .GlobalEnv)
 
-  ## preparer la carte leaflet du troisieme panneau ***************************************
+  ## preparing the map for the third pannel ***************************************
   uncertainMap <- leaflet(height = "600px") %>%
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
     addProviderTiles(leaflet::providers$OpenStreetMap, group = "Open Street Map", layerId = "back2")

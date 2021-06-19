@@ -116,7 +116,7 @@ ui <- fluidPage(
                                           wellPanel(plotlyOutput("radarchart", height = "360px"))
                                  ),
                                  tabPanel("general informations", fluid = TRUE,
-                                          wellPanel("some information about your clustering")
+                                          tableOutput("general_infos")
                                  )
                                ))
                ),

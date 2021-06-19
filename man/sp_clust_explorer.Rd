@@ -4,17 +4,28 @@
 \alias{sp_clust_explorer}
 \title{Classification result explorer}
 \usage{
-sp_clust_explorer(belongings, dataset, spatial, port = 8100, ...)
+sp_clust_explorer(
+  spatial,
+  object = NULL,
+  belongings = NULL,
+  dataset = NULL,
+  port = 8100,
+  ...
+)
 }
 \arguments{
-\item{belongings}{A matrix or a dataframe representing the membership values
-obtained for each observation}
-
-\item{dataset}{A dataframe or matrix representing the data used for the
-classification}
-
 \item{spatial}{A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
 SpatialLinesDataFrame) used to map the observations}
+
+\item{object}{A FCMres object, typically obtained from functions CMeans,
+GCMeans, SFCMeans, SGFCMeans}
+
+\item{belongings}{A matrix or a dataframe representing the membership values
+obtained for each observation. If NULL, then the matrix is extracted from
+object.}
+
+\item{dataset}{A dataframe or matrix representing the data used for the
+classification. If NULL, then the matrix is extracted from object.}
 
 \item{port}{A integer of length 4 indicating the port on which starting the
 shiny app. Default is 8100}
@@ -40,6 +51,6 @@ for (Col in names(Data)){
 
 Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 
-sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
+sp_clust_explorer(LyonIris, Cmean)
 }
 }

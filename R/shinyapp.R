@@ -13,14 +13,17 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #'
 #' @description Stat a local Shiny App to explore the results of a classification
 #'
-#' @param belongings A matrix or a dataframe representing the membership values
-#' obtained for each observation
-#' @param dataset A dataframe or matrix representing the data used for the
-#' classification
-#' @param port A integer of length 4 indicating the port on which starting the
-#' shiny app. Default is 8100
 #' @param spatial A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
 #' SpatialLinesDataFrame) used to map the observations
+#' @param object A FCMres object, typically obtained from functions CMeans,
+#'   GCMeans, SFCMeans, SGFCMeans
+#' @param belongings A matrix or a dataframe representing the membership values
+#' obtained for each observation. If NULL, then the matrix is extracted from
+#' object.
+#' @param dataset A dataframe or matrix representing the data used for the
+#' classification. If NULL, then the matrix is extracted from object.
+#' @param port A integer of length 4 indicating the port on which starting the
+#' shiny app. Default is 8100
 #' @param ... Other parameters passed to the function runApp
 #' @importFrom leaflet colorBin leaflet addPolygons addPolylines addCircles addLayersControl hideGroup addLegend addProviderTiles colorFactor
 #' @importFrom grDevices colorRamp
@@ -43,9 +46,9 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #'
 #' Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 #'
-#' sp_clust_explorer(Cmean$Belongings, Data, LyonIris)
+#' sp_clust_explorer(LyonIris, Cmean)
 #' }
-sp_clust_explorer <- function(belongings, dataset, spatial, port = 8100, ...) {
+sp_clust_explorer <- function(spatial, object = NULL, belongings = NULL, dataset = NULL, port = 8100, ...) {
   print("launching the app")
   appDir <- system.file("shiny-examples", "cluster_explorer", package = "geocmeans")
   if (appDir == "") {
@@ -64,7 +67,25 @@ sp_clust_explorer <- function(belongings, dataset, spatial, port = 8100, ...) {
             this shiny app")
   }
 
-  shiny_env <- new.env()
+  if(is.null(object) & (is.null(belongings) | is.null(dataset))){
+    stop("either object or both dataset and belongings must be specified")
+  }
+
+  if(is.null(object) == FALSE){
+    if(is.null(dataset)){
+      dataset <- object$Data
+    }
+    if(is.null(belongings)){
+      belongings <- object$Belongings
+    }
+    inertia <- calcexplainedInertia(object$Data, object$Belongings)
+  }else{
+    inertia <- calcexplainedInertia(dataset, belongings)
+  }
+
+  print("passed this step man")
+  assign('inertia', inertia, .GlobalEnv)
+
 
   if(is.matrix(dataset)){
     oldnames <- colnames(dataset)

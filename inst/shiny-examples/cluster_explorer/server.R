@@ -240,6 +240,29 @@ server <- function(input, output, session) {
 
   ##******************************************************************
 
+  ## preparer le tableaux avec les infos generales*********************
+  N <- nrow(dataset)
+  K <- ncol(belongings)
+  inertia <- round(inertia,2)
+  df <- data.frame(
+    label = c("number of observations", "number of groups", "explained inertia"),
+    values = c(N,K,inertia)
+  )
+  df2 <- data.frame(
+    label = paste("group", 1:K, sep = " "),
+    values = round(colSums(belongings))
+  )
+
+  df3 <- rbind(df, c("Groups weights",NA), df2)
+  output$general_infos <- renderTable(df3,
+                                      colnames = FALSE,
+                                      align = "lc",
+                                      rownames = FALSE,
+                                      na = ""
+                                      )
+
+
+  ##******************************************************************
 
   ## preparer les violinplots de base *******************************
   group_names <- paste("group ", 1:ncol(belongings))

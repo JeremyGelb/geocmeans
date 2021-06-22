@@ -189,9 +189,20 @@ library(shiny)
 library(leaflet)
 library(plotly)
 
+## check here if the shiny helper is ready !
+add_helper <- "shinyhelper" %in% installed.packages()
+if(add_helper){
+  library(shinyhelper)
+}
+
+
 server <- function(input, output, session) {
 
   values <- apply(belongings, 1, max) < 0.45
+
+  if(add_helper){
+    observe_helpers()
+  }
 
   ## preparing the radar chart *****************************************
 

@@ -66,9 +66,9 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
   }
 
   # checking if the not necessary but usefull packages are installed ----------------------------------------
-  secondary_packages <- c("shinyWidgets", "bslib", "car")
+  secondary_packages <- c("shinyWidgets", "bslib", "car", "shinyhelper")
   if(requireNamespace(secondary_packages) == FALSE){
-    warning("We recommand to install the packages shinyWidgets, bslib and car for an optimal experience with
+    warning("We recommand to install the packages shinyWidgets, bslib, car and shinyhelper for an optimal experience with
             this shiny app")
   }
 
@@ -84,8 +84,8 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
     stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")')
   }
 
-  if(is.null(object) & (is.null(belongings) | is.null(dataset))){
-    stop("either object or both dataset and belongings must be specified")
+  if(is.null(object) & (is.null(membership) | is.null(dataset))){
+    stop("either object or both dataset and membership must be specified")
   }
 
   if(is.null(object) == FALSE){

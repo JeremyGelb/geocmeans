@@ -80,6 +80,26 @@ library(plotly)
 welcome_message <- "Welcome in the classification explorer! Click on a feature on the map to start exploring the results of your classification,
 The application is designed to help you to investigate the meaning of the groups obtained after a spatial fuzzy classification."
 
+## check here if the shiny helper is ready !
+add_helper <- "shinyhelper" %in% installed.packages()
+
+if(add_helper){
+  library(shinyhelper)
+  helper_folder <- system.file("shiny-examples/cluster_explorer/www/help_mds",
+                               package = "geocmeans", mustWork = TRUE)
+
+
+  # loading the helper documentation
+  filname <- paste(helper_folder, "map1", sep = "/")
+  map1_string <- readChar(filname, file.info(filname)$size)
+  filname <- paste(helper_folder, "radarchart", sep = "/")
+  radar_string <- readChar(filname, file.info(filname)$size)
+  filname <- paste(helper_folder, "bivariatechart", sep = "/")
+  bivariate_string <- readChar(filname, file.info(filname)$size)
+  filname <- paste(helper_folder, "uncertainpanel", sep = "/")
+  uncertain_string <- readChar(filname, file.info(filname)$size)
+}
+
 ui <- fluidPage(
     tabsetPanel(
       tabPanel("Interactive map", fluid = TRUE,
@@ -106,14 +126,29 @@ ui <- fluidPage(
                           column(width = 6, img(src = "images/logo.png", height = 150, style = "float: right;")),
                  )
                }},
-               fluidRow(column(width = 8, wellPanel(leafletOutput("mymap"))),
+               fluidRow(column(width = 8, wellPanel(
+                 {
+                   if(add_helper){
+                     helper(leafletOutput("mymap"), type = "inline", content = map1_string)
+                   }else{
+                     leafletOutput("mymap")
+                   }
+                 }
+                 )),
                         column(width = 4,
                                tabsetPanel(
                                  tabPanel("membership values", fluid = TRUE,
                                           wellPanel(plotlyOutput("barplot1", height = "360px"))
                                  ),
                                  tabPanel("radar chart", fluid = TRUE,
-                                          wellPanel(plotlyOutput("radarchart", height = "360px"))
+                                          {
+                                            if(add_helper){
+                                              helper(wellPanel(plotlyOutput("radarchart", height = "360px")), type = "inline", content = radar_string)
+                                            }else{
+                                              wellPanel(plotlyOutput("radarchart", height = "360px"))
+                                            }
+                                          }
+
                                  ),
                                  tabPanel("general informations", fluid = TRUE,
                                           tableOutput("general_infos")
@@ -130,22 +165,44 @@ ui <- fluidPage(
 
                # Grid Layout
                fluidRow(wellPanel("In this panel, you can explore bivariate relationships for the different groups obtained")),
-               fluidRow(column(width = 2,
-                               selectInput("var1_biplot", "X axis variable", variables, selected = variables[[1]]),
-                               selectInput("var2_biplot", "Y axis variable", variables, selected = variables[[2]]),
-                               selectInput("group_biplot", "group membership for color", paste("group ", 1:ncol(belongings), sep = "")),
-                               {
-                                 if("car" %in% installed.packages()){
-                                   if("shinyWidgets" %in% installed.packages()){
-                                     shinyWidgets::materialSwitch(inputId = "show_ellipsis", label = "show ellipsis", status = "primary")
-                                   }else{
-                                     checkboxInput("show_ellipsis", "show ellipsis")
-                                   }
-                                 }
-                               },
-               ),
-               column(width = 10,plotlyOutput("bivar_plot", height = "800px")),
-               ),
+               {
+                 if(add_helper){
+                   helper(fluidRow(column(width = 2,
+                                   selectInput("var1_biplot", "X axis variable", variables, selected = variables[[1]]),
+                                   selectInput("var2_biplot", "Y axis variable", variables, selected = variables[[2]]),
+                                   selectInput("group_biplot", "group membership for color", paste("group ", 1:ncol(belongings), sep = "")),
+                                   {
+                                     if("car" %in% installed.packages()){
+                                       if("shinyWidgets" %in% installed.packages()){
+                                         shinyWidgets::materialSwitch(inputId = "show_ellipsis", label = "show ellipsis", status = "primary")
+                                       }else{
+                                         checkboxInput("show_ellipsis", "show ellipsis")
+                                       }
+                                     }
+                                   },
+                   ),
+                   column(width = 10,plotlyOutput("bivar_plot", height = "800px")),
+                   ), type = "inline", content = bivariate_string)
+
+                 }else{
+                   fluidRow(column(width = 2,
+                                   selectInput("var1_biplot", "X axis variable", variables, selected = variables[[1]]),
+                                   selectInput("var2_biplot", "Y axis variable", variables, selected = variables[[2]]),
+                                   selectInput("group_biplot", "group membership for color", paste("group ", 1:ncol(belongings), sep = "")),
+                                   {
+                                     if("car" %in% installed.packages()){
+                                       if("shinyWidgets" %in% installed.packages()){
+                                         shinyWidgets::materialSwitch(inputId = "show_ellipsis", label = "show ellipsis", status = "primary")
+                                       }else{
+                                         checkboxInput("show_ellipsis", "show ellipsis")
+                                       }
+                                     }
+                                   },
+                   ),
+                   column(width = 10,plotlyOutput("bivar_plot", height = "800px")),
+                   )
+                 }
+               },
       ),
 
       tabPanel("Uncertain observations", fluid = TRUE,
@@ -154,7 +211,13 @@ ui <- fluidPage(
 
                # Grid Layout
                fluidRow(wellPanel("In this panel, you can explore the observations that are not well classified")),
-               fluidRow(column(width = 2,sliderInput("uncertain1", "minimum probability", min = 0, max = 1, value = 0.45))),
+               {
+                 if(add_helper){
+                   helper(fluidRow(column(width = 2,sliderInput("uncertain1", "minimum probability", min = 0, max = 1, value = 0.45))), type = "inline", content = uncertain_string)
+                 }else{
+                   fluidRow(column(width = 2,sliderInput("uncertain1", "minimum probability", min = 0, max = 1, value = 0.45)))
+                 }
+               },
                fluidRow(column(width = 5, leafletOutput("uncertainmap", height = "600px")),
                         column(width = 1,
                                selectInput("var1_biplot2", "X axis variable", variables, selected = variables[[1]]),

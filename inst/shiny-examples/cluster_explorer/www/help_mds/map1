@@ -1,0 +1,5 @@
+<h1>Main map</h1>
+
+<p>This map shows the membership values of each observation to each cluster. You can select the layers you want to display by using the panel at the bottom left corner of the map.</p>
+<p>You can also click on a feature on the map to see its membership values in a bar plot on the right panel.</p>
+<p>When you click on a feature, the violin plots below are update and the red bars added represent the values of the selected feature.</p>

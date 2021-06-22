@@ -1,0 +1,4 @@
+<h1>Bivariate exploration chart</h1>
+
+<p>This bivariate chart can be used to investigate the bivariate relationships between the variables used in the classification. You can select the variables to use on th X and Y axis. The color is used to show the probability to belong to the selected cluster.</p>
+<p>You can also display ellipses. They use the membership values to clusters as weights and are calculated with the function <em>dataEllipse</em> from the package <strong>car</strong> with a confidence level of 75% (normal).</p>

@@ -1,0 +1,10 @@
+<h1>Radar chart</h1>
+
+<p>A radar chart is useful to quickly distinguish the clusters with the variables used to create them. This one is created with the following method: </p>
+ <ol type="1">
+  <li>Calculating for each cluster its weighted means for each variable (the center of the cluster)</li>
+  <li>Rescaling the obtained means using the lowest among clusters as 0 and the highest among clusters as 1</li>
+  <li>Ploting the obtained rescaled means</li>
+</ol>
+
+<p>Please, note that because of the rescaling operation, the differences on an axis are relative and not absolute.</p>

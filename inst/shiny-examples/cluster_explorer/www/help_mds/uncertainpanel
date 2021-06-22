@@ -1,0 +1,5 @@
+<h1>Uncertainty analysis panel</h1>
+
+<p>This panel is dedicated to the analysis of uncertain observations. If your classification is fuzzy, then some observations might not strongly belong to a specific group, we call them <em>uncertain observations</em>. To identify them, one can define a threshold for the most likely cluster for the observations under which the observations are considered uncertain.</p>
+<p>The proposed default value in the slider is 0.45, so if an observation have a probability to belong to its most likely group below 0.45, it is considered as uncertain. Feel free to try other values.</p>
+<p>Uncertain observations are displayed in red on the map and on the plots. If you can detect a patern in your uncertain observations, then running a new classification with one more cluster could be useful/p>

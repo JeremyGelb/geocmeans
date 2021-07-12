@@ -100,7 +100,20 @@ if(add_helper){
   uncertain_string <- readChar(filname, file.info(filname)$size)
 }
 
+## check here if the shiny helper is ready !
+add_waiter <- "waiter" %in% installed.packages()
+
+if(add_waiter){
+  library(waiter)
+}
+
 ui <- fluidPage(
+    {
+      if(add_waiter){use_waiter(spinners = 4)}
+    },
+    {
+      if(add_waiter){waiter_preloader(html =  spin_hexdots())}
+    },
     tabsetPanel(
       tabPanel("Interactive map", fluid = TRUE,
                ##------------------- PANNEL 1 : for the interactive map------------------

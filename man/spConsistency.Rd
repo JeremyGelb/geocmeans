@@ -4,16 +4,20 @@
 \alias{spConsistency}
 \title{Spatial consistency index}
 \usage{
-spConsistency(belongmatrix, nblistw, nrep = 999)
+spConsistency(object, nblistw = NULL, window = NULL, nrep = 999)
 }
 \arguments{
-\item{belongmatrix}{A membership matrix}
+\item{object}{A FCMres object, typically obtained from functions CMeans,
+GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.}
 
-\item{nblistw}{A list.w object describing the neighbours (spdep package)
-observation must get in the membership matrix to not be considered as
-uncertain (default = NULL)}
+\item{nblistw}{A list.w object describing the neighbours (spdep package)}
 
-\item{nrep}{An integer indicating the number of permutation to do to simulate}
+\item{window}{if rasters were used for the classification, the window must be
+specified instead of a list.w object. If NULL and object$isRaster is TRUE then
+the window in object$window is used.}
+
+\item{nrep}{An integer indicating the number of permutation to do to simulate
+spatial randomness. Note that if rasters are used, each permutation can be very long.}
 }
 \value{
 A named list with
@@ -57,5 +61,5 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-spConsistency(result$Belongings, Wqueen, nrep=50)
+spConsistency(result$Belongings, nblistw = Wqueen, nrep=50)
 }

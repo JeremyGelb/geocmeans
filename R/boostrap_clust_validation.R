@@ -1,4 +1,4 @@
-#' @title Bootstrap check the robustness of a classification
+#' @title Check the robustness of a classification by Bootstrap
 #'
 #' @description Check that the obtained groups are stable by bootstrap
 #'
@@ -32,7 +32,7 @@
 #'   beginning. Both of them are heuristic.
 #' @param verbose A boolean to specify if the progress bar should be displayed.
 #' @param seed An integer to control randomness, default is NULL
-#' @return  A list of two values: group_consistency, a dataframe indicating for
+#' @return A list of two values: group_consistency, a dataframe indicating for
 #'   each cluster its consistency across simulations. group_centers a list with
 #'   a dataframe for each cluster. The values in the dataframes are the centers
 #'   of the clusters at each simulation.
@@ -170,7 +170,7 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 
 
 
-#' @title Bootstrap check the robustness of a classification (multicore)
+#' @title Check that the obtained groups are stable by bootstrap (multicore)
 #'
 #' @description Check that the obtained groups are stable by bootstrap with
 #'   multicore support

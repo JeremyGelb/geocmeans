@@ -28,7 +28,7 @@ c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "
 A named list with with the values of the required indices
 }
 \description{
-calculate several clustering quality indexes (most of them come from fclust
+calculate several clustering quality indexes (some of them come from fclust
 package)
 }
 \examples{

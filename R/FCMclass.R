@@ -29,7 +29,7 @@ FCMres <- function(obj){
 
 
   if("Groups" %in% attrs == FALSE){
-    DF <- as.data.frame(obj$newbelongmatrix)
+    DF <- as.data.frame(obj$Belongings)
     obj$Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
   }
 

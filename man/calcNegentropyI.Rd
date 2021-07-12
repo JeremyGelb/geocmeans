@@ -14,7 +14,7 @@ calcNegentropyI(data, belongmatrix, centers)
 \item{centers}{The centers of the clusters}
 }
 \value{
-A float : the Negentropy Increment index
+A float: the Negentropy Increment index
 }
 \description{
 Calculate the Negentropy Increment index of clustering quality.
@@ -23,7 +23,7 @@ Calculate the Negentropy Increment index of clustering quality.
 The Negentropy Increment index \insertCite{da2020incremental}{geocmeans} is based on the assumption that a normally shaped cluster is more
 desirable. It uses the difference between the average negentropy
 of all the clusters in the partition, and that of the  whole partition.
-a smaller value indicates a better partition. The formula is:
+A smaller value indicates a better partition. The formula is:
 
 \deqn{NI=\frac{1}{2} \sum_{j=1}^{k} p_{i} \ln \left|{\boldsymbol{\Sigma}}_{j}\right|-\frac{1}{2} \ln \left|\boldsymbol{\Sigma}_{d a t a}\right|-\sum_{j=1}^{k} p_{j} \ln p_{j}}
 

@@ -2,6 +2,7 @@
 
 ## New Features
 
+* Added support to use raster data for clustering
 * Added a function to predict the membership matrix of a new set of observations (*predict.gcm*)
 * Added a shiny app (function : *sp_clust_explorer*) for result exploration
 * The results of the functions *CMeans*, *GCMeans*, *SFCMeans*, *SGFCMeans* are now objects of class *FCMres* and the generic functions *predict* and *summary* can be used on them.
@@ -13,6 +14,10 @@
 
 * issue 1 fixed by editing the mapping functions. A bug occurred when the fid of a SpatialDataFrame read from a shapefile was different from 1:nrow(df)
 
+## performance
+
+* an important performance gain can be observed for large dataset, the function to compare matrices between two iterations is now significantly faster.
+* Core functions rewritten with Rcpp for massive time gain
 
 # geocmeans 0.1.1
 

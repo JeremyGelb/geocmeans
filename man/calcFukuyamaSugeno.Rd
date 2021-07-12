@@ -16,13 +16,14 @@ calcFukuyamaSugeno(data, belongmatrix, centers, m)
 \item{m}{The fuzziness parameter}
 }
 \value{
-A float : the Fukuyama and Sugeno index
+A float: the Fukuyama and Sugeno index
 }
 \description{
 Calculate Fukuyama and Sugeno index of clustering quality
 }
 \details{
-The Fukuyama and Sugeno index \insertCite{fukuyama1989new}{geocmeans} is the difference between the compacity of clusters and the separation of clusters. The formula is:
+The Fukuyama and Sugeno index \insertCite{fukuyama1989new}{geocmeans} is the difference between the compacity of clusters and the separation of clusters. A smaller value indicates a better clustering.
+The formula is:
 
 \deqn{J_{m}=\sum_{j=1}^{n} \sum_{i=1}^{k}\left(\mu_{i j}\right)^{m}\left\|x_{j}-c_{i}\right\|^{2}-\sum_{i=1}^{k}\left\|c_{i}-\bar{c}\right\|^{2}}
 

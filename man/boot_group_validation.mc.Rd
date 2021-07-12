@@ -2,7 +2,7 @@
 % Please edit documentation in R/boostrap_clust_validation.R
 \name{boot_group_validation.mc}
 \alias{boot_group_validation.mc}
-\title{Bootstrap check the robustness of a classification (multicore)}
+\title{Check that the obtained groups are stable by bootstrap (multicore)}
 \usage{
 boot_group_validation.mc(
   object,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/boostrap_clust_validation.R
 \name{boot_group_validation}
 \alias{boot_group_validation}
-\title{Bootstrap check the robustness of a classification}
+\title{Check the robustness of a classification by Bootstrap}
 \usage{
 boot_group_validation(
   object,

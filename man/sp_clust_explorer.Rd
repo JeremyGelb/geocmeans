@@ -5,8 +5,8 @@
 \title{Classification result explorer}
 \usage{
 sp_clust_explorer(
-  spatial,
   object = NULL,
+  spatial = NULL,
   membership = NULL,
   dataset = NULL,
   port = 8100,
@@ -14,11 +14,12 @@ sp_clust_explorer(
 )
 }
 \arguments{
-\item{spatial}{A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
-SpatialLinesDataFrame) used to map the observations}
-
 \item{object}{A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans}
+
+\item{spatial}{A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
+SpatialLinesDataFrame) used to map the observations. Only needed if object was not created
+from rasters.}
 
 \item{membership}{A matrix or a dataframe representing the membership values
 obtained for each observation. If NULL, then the matrix is extracted from

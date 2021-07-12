@@ -4,13 +4,16 @@
 \alias{undecidedUnits}
 \title{Undecided observations}
 \usage{
-undecidedUnits(belongmatrix, tol = 0.1)
+undecidedUnits(belongmatrix, tol = 0.1, out = "character")
 }
 \arguments{
 \item{belongmatrix}{The membership matrix obtained at the end of the algorithm}
 
 \item{tol}{A float indicating the minimum required level of membership to be
 not considered as undecided}
+
+\item{out}{The format of the output vector. Default is "character". If
+"numeric", then the undecided units are set to -1.}
 }
 \value{
 A vector indicating the most likely group for each observation or

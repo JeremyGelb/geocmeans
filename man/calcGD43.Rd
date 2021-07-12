@@ -22,7 +22,7 @@ Calculate the Generalized Dunn’s index (v43) of clustering quality.
 \details{
 The Generalized Dunn’s index  \insertCite{da2020incremental}{geocmeans} is a
 ratio of the worst pair-wise separation of clusters and the worst compactness
-of clusters. Thus a higher value indicates a better clustering. The formula
+of clusters. A higher value indicates a better clustering. The formula
 is:
 
 \deqn{GD_{r s}=\frac{\min_{i \neq j}\left[\delta_{r}\left(\omega_{i}, \omega_{j}\right)\right]}{\max_{k}\left[\Delta_{s}\left(\omega_{k}\right)\right]}}

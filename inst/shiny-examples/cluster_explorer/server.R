@@ -406,59 +406,100 @@ server <- function(input, output, session) {
 
 
   firsttime <- TRUE
-  ## ----------here is an observer working when we click on the map of the first pannel--------------
-  observeEvent(input$mymap_shape_click, {
-    p <- input$mymap_shape_click
+  ## ----------here is an observer working when we click on the map of the first pannel in vector mode--------------
+  if(rasterMode == FALSE){
+    observeEvent(input$mymap_shape_click, {
+      p <- input$mymap_shape_click
 
-    ## Step1 : rendering the plot for the belongings
-    df <- data.frame(
-      values = belongings[p$id,],
-      groups = paste("group ", 1:length(belongings[p$id,]), sep = "")
-    )
-
-    output$barplot1 <- renderPlotly({
-      plot_ly(
-        x = df$groups,
-        y = df$values,
-        type = "bar",
-        name = "Groups membership values"
+      ## Step1 : rendering the plot for the belongings
+      df <- data.frame(
+        values = belongings[p$id,],
+        groups = paste("group ", 1:length(belongings[p$id,]), sep = "")
       )
 
+      output$barplot1 <- renderPlotly({
+        plot_ly(
+          x = df$groups,
+          y = df$values,
+          type = "bar",
+          name = "Groups membership values"
+        )
+
+      })
+
+      ## Step3 : updating the violin plots
+      new_violins <- lapply(1:length(variables), function(i){
+        violin <- base_violinplots[[i]]
+        varname <- variables[[i]]
+        value <- dataset[p$id,varname][[1]]
+
+        violin2 <-
+          adj_bg_color(violin, light, input) %>%
+          layout(shapes = list(hline(value, color = "red")))
+        return(violin2)
+      })
+
+      lapply(1:length(new_violins), function(i){
+        vplot <- new_violins[[i]]
+        output[[paste("violinplots",i,sep="")]] <- renderPlotly({vplot})
+      })
+
+      ## Step4 : adding the highlight on the selected feature
+      feat <- spatial4326[p$id,]
+      if(firsttime){
+        leafletProxy('mymap') %>%
+          mapfun(data = feat, weight = 2, opacity = 1.0, fillOpacity = 0, color = "red",
+                 layerId = "highlighter", fillColor = NULL, group = "")
+        firsttime <- FALSE
+      }else{
+        leafletProxy('mymap') %>%
+          removeShape("highlighter") %>%
+          mapfun(data = feat, weight = 2, opacity = 1.0, fillOpacity = 0, color = "red",
+                 fillColor = NULL, layerId = "highlighter", group = "")
+      }
+
+
     })
+  }
 
-    # ## Step3 : updating the violin plots
-    new_violins <- lapply(1:length(variables), function(i){
-      violin <- base_violinplots[[i]]
-      varname <- variables[[i]]
-      value <- dataset[p$id,varname][[1]]
+  # IF WE ARE IN RASTER MODE
+  if(rasterMode){
+    observeEvent(input$mymap_click, {
+      click <- input$mymap_click
+      if(!is.null(click)){
+        pt <- sp::SpatialPoints(data.frame(click$lng, click$lat))
+        raster::crs(pt) <- sp::CRS("+init=epsg:4326")
+        pt2 <- sp::spTransform(pt, sp::CRS("+init=epsg:3857"))
+        #step 1 : finding the cell and the values associated
+        cell <- raster::cellFromXY(object$rasters[[1]], c(pt2@coords[[1]], pt2@coords[[2]]))
+        vals <- sapply(1:ncol(belongings), function(i){
+          object$rasters[[i]][cell]
+        })
 
-      violin2 <-
-        adj_bg_color(violin, light, input) %>%
-        layout(shapes = list(hline(value, color = "red")))
-      return(violin2)
+        ## Step 2 : rendering the plot for the belongings
+        df <- data.frame(
+          values = vals,
+          groups = paste("group ", 1:ncol(belongings), sep = "")
+        )
+
+        output$barplot1 <- renderPlotly({
+          plot_ly(
+            x = df$groups,
+            y = df$values,
+            type = "bar",
+            name = "Groups membership values"
+          )
+        })
+
+        ## Step 3 : updating the violin plots
+        ## TODO, NO update for the moment considering that I need to reproject the original dataset to...
+        ## ALSO NO highligts
+
+
+      }
+
     })
-
-    lapply(1:length(new_violins), function(i){
-      vplot <- new_violins[[i]]
-      output[[paste("violinplots",i,sep="")]] <- renderPlotly({vplot})
-    })
-
-    ## Step4 : adding the highlight on the selected feature
-    feat <- spatial4326[p$id,]
-    if(firsttime){
-      leafletProxy('mymap') %>%
-        mapfun(data = feat, weight = 2, opacity = 1.0, fillOpacity = 0, color = "red",
-               layerId = "highlighter", fillColor = NULL, group = "")
-      firsttime <- FALSE
-    }else{
-      leafletProxy('mymap') %>%
-        removeShape("highlighter") %>%
-        mapfun(data = feat, weight = 2, opacity = 1.0, fillOpacity = 0, color = "red",
-               fillColor = NULL, layerId = "highlighter", group = "")
-    }
-
-
-  })
+  }
 
   ## ----------here is an observer listening for the ellipsis--------------
   observeEvent(input$show_ellipsis,{
@@ -486,25 +527,52 @@ server <- function(input, output, session) {
 
   })
 
-  ## ----------here is an observer working when we set the slider of the third pannel--------------
+  ## ----------here is an observer working when we set the slider of the third pannel in vector mode--------------
   observeEvent(input$uncertain1,{
 
     # we have to redraw the second layer of this map
     # step1 : selecting the appropriate new features
     tol <- input$uncertain1
     values <- apply(belongings, 1, max) < tol
-    spdf <- subset(spatial4326, values)
 
     ## Step2 : remove the previous layer and add the new one
-    leafletProxy('uncertainmap') %>%
-      clearGroup(group = "binaryUncertain") %>%
-      mapfun(data = spdf,
-             weight = 1,
-             group = "binaryUncertain",
-             color = "black",
-             fillColor = "red",
-             fillOpacity = 0.7,
-             layerId = 1:nrow(spdf))
+    if(rasterMode == FALSE){
+      # IF WE ARE IN VECTOR MODE
+      spdf <- subset(spatial4326, values)
+      leafletProxy('uncertainmap') %>%
+        clearGroup(group = "binaryUncertain") %>%
+        mapfun(data = spdf,
+               weight = 1,
+               group = "binaryUncertain",
+               color = "black",
+               fillColor = "red",
+               fillOpacity = 0.7,
+               layerId = 1:nrow(spdf))
+    }else{
+      # IF WE ARE IN RASTER MODE
+      name <- names(object$rasters)
+      ok_names <- name[grepl("group",name, fixed = TRUE)]
+      all_values <- lapply(object$rasters[ok_names], function(rast){
+        raster::values(rast)[object$missing]
+      })
+      maxs <- do.call(pmax,all_values)
+      rast <- object$rasters[[1]]
+      vals <- rep(0, times = raster::ncell(rast))
+      vals[object$missing] <- maxs
+      vals <- ifelse(vals < tol, 1,0)
+      vals[!object$missing] <- NA
+      raster::values(rast) <- vals
+
+      pal <- leaflet::colorNumeric(c("#FFFFFF","#D30000"),
+                                   vals, na.color = "transparent")
+
+      leafletProxy('uncertainmap') %>%
+        clearGroup(group = "binaryUncertain") %>%
+        addRasterImage(rast, colors = pal, opacity = 0.8,
+                       group= "binaryUncertain")
+
+    }
+
 
     ## we also have to redraw the box plots
     new_boxplots <- draw_boxplots(dataset, variables, values)
@@ -515,6 +583,7 @@ server <- function(input, output, session) {
     })
 
   })
+
 
   ## ----------here is an observer when the input of the opacity slider is changed--------------
   observeEvent(input$bg_opacity,{

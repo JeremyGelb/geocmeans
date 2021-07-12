@@ -14,13 +14,13 @@ calcCalinskiHarabasz(data, belongmatrix, centers)
 \item{centers}{The centers of the clusters}
 }
 \value{
-A float : the Calinski-Harabasz index
+A float: the Calinski-Harabasz index
 }
 \description{
 Calculate the Calinski-Harabasz index of clustering quality.
 }
 \details{
-the Calinski-Harabasz index \insertCite{da2020incremental}{geocmeans} is the ratio between the clusters separation (between groups sum of squares) and the clusters cohesion (within groups sum of squares). A greater
+The Calinski-Harabasz index \insertCite{da2020incremental}{geocmeans} is the ratio between the clusters separation (between groups sum of squares) and the clusters cohesion (within groups sum of squares). A greater
 value indicates either more separated clusters or more cohesive clusters.
 }
 \examples{

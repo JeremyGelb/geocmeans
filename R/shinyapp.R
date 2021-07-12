@@ -5,7 +5,7 @@
 # the variables used in the shiny environment must be declared as globalVariables
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
                   "dataset", "base_violinplots", "dark", "light", "uncertainMap",
-                  "base_boxplots","radarchart"
+                  "base_boxplots","radarchart", 'rasterMode', "object"
                   ))
 
 
@@ -13,10 +13,11 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #'
 #' @description Stat a local Shiny App to explore the results of a classification
 #'
-#' @param spatial A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
-#' SpatialLinesDataFrame) used to map the observations
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans
+#' @param spatial A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
+#' SpatialLinesDataFrame) used to map the observations. Only needed if object was not created
+#' from rasters.
 #' @param membership A matrix or a dataframe representing the membership values
 #' obtained for each observation. If NULL, then the matrix is extracted from
 #' object.
@@ -25,7 +26,7 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #' @param port A integer of length 4 indicating the port on which starting the
 #' shiny app. Default is 8100
 #' @param ... Other parameters passed to the function runApp
-#' @importFrom leaflet colorBin leaflet addPolygons addPolylines addCircles addLayersControl hideGroup addLegend addProviderTiles colorFactor
+#' @importFrom leaflet addRasterImage colorBin leaflet addPolygons addPolylines addCircles addLayersControl hideGroup addLegend addProviderTiles colorFactor
 #' @importFrom grDevices colorRamp
 #' @importFrom plotly plot_ly layout add_markers add_trace
 #' @importFrom utils installed.packages
@@ -48,8 +49,11 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #'
 #' sp_clust_explorer(LyonIris, Cmean)
 #' }
-sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset = NULL, port = 8100, ...) {
+sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, dataset = NULL, port = 8100, ...) {
 
+  # if(object$isRaster){
+  #   stop("The shiny app can not be used currently to display results from raster data, sorry...")
+  # }
 
   # checking if the directory of hte shiny app is here  ---------------------------------------
   appDir <- system.file("shiny-examples", "cluster_explorer", package = "geocmeans")
@@ -79,9 +83,21 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
     }
   }
 
+  if(is.null(object) & is.null(spatial)){
+    stop("if object is NULL, spatial must be specified")
+  }
+
   ok_sp <- c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")
-  if(class(spatial) %in% ok_sp == FALSE){
-    stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")')
+  if(is.null(object) == FALSE){
+    if(object$isRaster == FALSE){
+      if(class(spatial) %in% ok_sp == FALSE){
+        stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame") because object was not created with rasters')
+      }
+    }
+  }else{
+    if(class(spatial) %in% ok_sp == FALSE){
+      stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")')
+    }
   }
 
   if(is.null(object) & (is.null(membership) | is.null(dataset))){
@@ -102,7 +118,6 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
     inertia <- calcexplainedInertia(dataset, belongings)
   }
 
-  print("passed this step man")
   assign('inertia', inertia, .GlobalEnv)
 
 
@@ -136,20 +151,51 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
   assign('dark', dark, .GlobalEnv)
   assign('light', light, .GlobalEnv)
 
-  ## saving the main objets in the global environment for them to
-  ## be used in the main functions UI and SERVER
-  assign('belongings', belongings, .GlobalEnv)
-  assign('dataset', dataset, .GlobalEnv)
-  assign('spatial', spatial, .GlobalEnv)
+  # check if we have to deal with rasters
+  rasterMode <- FALSE
+  if(is.null(object) == FALSE){
+    if(object$isRaster){
+      rasterMode <- TRUE
+    }
+  }
+
+  if(rasterMode){
+    ## saving the main objets in the global environment for them to
+    ## be used in the main functions UI and SERVER
+    ## but reduce there size
+    Ids <- sample(1:nrow(belongings), size = 1500, replace = FALSE)
+    assign('belongings', belongings[Ids,], .GlobalEnv)
+    assign('dataset', dataset[Ids,], .GlobalEnv)
+
+    ## creating a referencing raster with the right projection
+    ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sp::CRS("+init=epsg:3857"), method = "ngb")
+    assign('ref_raster', ref_raster, .GlobalEnv)
+    old_names <- names(object$rasters)
+    object$rasters <- lapply(object$rasters, function(rast){
+      raster::projectRaster(rast, crs = sp::CRS("+init=epsg:3857"), method = "ngb")
+    })
+    names(object$rasters) <- old_names
+
+  }else{
+    ## saving the main objets in the global environment for them to
+    ## be used in the main functions UI and SERVER
+    assign('belongings', belongings, .GlobalEnv)
+    assign('dataset', dataset, .GlobalEnv)
+    assign('spatial', spatial, .GlobalEnv)
+
+    ## for leaflet, the CRS must be 4326
+    ref <- sp::CRS("+init=epsg:4326")
+    spatial4326 <- sp::spTransform(spatial, ref)
+    assign('spatial4326', spatial4326, .GlobalEnv)
+  }
+
+  assign("rasterMode", rasterMode, .GlobalEnv)
+
 
   groups <- paste("group ", 1:ncol(belongings), sep = "")
   variables <- names(dataset)
   assign('groups', groups, .GlobalEnv)
   assign('variables', variables, .GlobalEnv)
-
-  ## for leaflet, the CRS must be 4326
-  ref <- sp::CRS("+init=epsg:4326")
-  spatial4326 <- sp::spTransform(spatial, ref)
 
   ## prepare the leaflet maps in the first pannel ***************************************
 
@@ -159,7 +205,6 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
 
   if(class(spatial)[[1]] == "SpatialPolygonsDataFrame"){
     mapfun <- function(map, data, weight, group, color, fillColor, layerId, ...){
-
       map %>% addPolygons(
         data = data,
         weight = weight,
@@ -186,47 +231,89 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
         ...
       )
     }
+  }else if (object$isRaster){
+    #nothing to do here if we have to plot rasters
+    i <- 1
   }else{
     stop("spatial must be one of SpatialPolygonsDataFrame, SpatialPointsDataFrame, SpatialLinesDataFrame")
   }
 
-  # adding the layers
-  for (i in 1:ncol(belongings)){
+  # adding the layers of we are in vector mode
+  if(rasterMode == FALSE){
+    for (i in 1:ncol(belongings)){
 
-    bins <- seq(0,1,0.1)
-    cols <- colorRamp(c("#FFFFFF", colors[[i]]), interpolate = "spline")
-    pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
+      bins <- seq(0,1,0.1)
+      cols <- colorRamp(c("#FFFFFF", colors[[i]]), interpolate = "spline")
+      pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
+
+      mymap <- mymap %>% mapfun(data = spatial4326,
+                                weight = 1,
+                                group = paste("group ",i,sep=""),
+                                color = "black",
+                                fillColor = ~pal(belongings[,i]),
+                                fillOpacity = 0.7,
+                                layerId = 1:nrow(spatial4326)) %>%
+        addLegend(pal = pal, values = bins, opacity = 0.7,
+                  title = NULL, group=paste("group ",i,sep=""),
+                  position = "bottomright")
+    }
+
+    ## and a layer for the hard partition
+    colnames(belongings) <- paste("group",1:ncol(belongings), sep = " ")
+    groups <- colnames(belongings)[max.col(belongings, ties.method = "first")]
+    spatial4326$group <- as.factor(groups)
+
+    factpal <- colorFactor(colors, spatial4326$group)
 
     mymap <- mymap %>% mapfun(data = spatial4326,
                               weight = 1,
-                              group = paste("group ",i,sep=""),
+                              group = "Most likely group",
                               color = "black",
-                              fillColor = ~pal(belongings[,i]),
+                              fillColor = ~factpal(spatial4326$group),
                               fillOpacity = 0.7,
                               layerId = 1:nrow(spatial4326)) %>%
-      addLegend(pal = pal, values = bins, opacity = 0.7,
-                title = NULL, group=paste("group ",i,sep=""),
+      addLegend(pal = factpal, values = spatial4326$group, opacity = 0.7,
+                title = NULL, group= "Most likely group",
                 position = "bottomright")
+
+    assign('mapfun', mapfun, .GlobalEnv)
+
+  }else{
+    # IF WE ARE IN RASTER MODE
+
+    # adding all the groups
+    name <- names(object$rasters)
+    i <- 1
+    ok_names <- name[grepl("group",name, fixed = TRUE)]
+    for (name in ok_names){
+      rast <- object$rasters[[name]]
+      vals <- raster::values(rast)
+      pal <- leaflet::colorNumeric(c("#FFFFFF", colors[[i]]),
+                                   vals, na.color = "transparent")
+      mymap <- mymap %>%
+        addRasterImage(rast, colors = pal, opacity = 0.8,
+                       group = paste("group ",i,sep="")) %>%
+        addLegend(pal = pal, values = vals, opacity = 0.7,
+                  title = NULL, group = paste("group ",i,sep=""),
+                  position = "bottomright")
+      i <- i + 1
+    }
+
+    # adding the last layer with the most likely groups
+    rast <- object$rasters$Groups
+    vals <- raster::values(rast)
+    pal <- leaflet::colorNumeric(colors[1:ncol(object$Belongings)],
+                                 vals, na.color = "transparent")
+    mymap <- mymap %>%
+      addRasterImage(rast, colors = pal, opacity = 0.8,
+                     group= "Most likely group",) %>%
+      addLegend(pal = pal, values = vals, opacity = 0.7,
+                title = NULL, group= "Most likely group",
+                position = "bottomright")
+
+    assign('mapfun', NULL, .GlobalEnv)
+
   }
-
-  ## and a layer for the hard partition
-  colnames(belongings) <- paste("group",1:ncol(belongings), sep = " ")
-  groups <- colnames(belongings)[max.col(belongings, ties.method = "first")]
-  spatial4326$group <- as.factor(groups)
-
-  factpal <- colorFactor(colors, spatial4326$group)
-
-  mymap <- mymap %>% mapfun(data = spatial4326,
-                            weight = 1,
-                            group = "Most likely group",
-                            color = "black",
-                            fillColor = ~factpal(spatial4326$group),
-                            fillOpacity = 0.7,
-                            layerId = 1:nrow(spatial4326)) %>%
-    addLegend(pal = factpal, values = spatial4326$group, opacity = 0.7,
-              title = NULL, group= "Most likely group",
-              position = "bottomright")
-
 
   # adding some tools for the map
   mymap <- mymap %>%
@@ -242,55 +329,87 @@ sp_clust_explorer <- function(spatial, object = NULL, membership = NULL, dataset
   mymap <- mymap %>% hideGroup("Most likely group")
 
   assign('mymap', mymap, .GlobalEnv)
-  assign('mapfun', mapfun, .GlobalEnv)
-  assign('spatial4326', spatial4326, .GlobalEnv)
+
 
   ## preparing the map for the third pannel ***************************************
   uncertainMap <- leaflet(height = "600px") %>%
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
     addProviderTiles(leaflet::providers$OpenStreetMap, group = "Open Street Map", layerId = "back2")
 
-  bins <- c(0,0.3,0.6,0.9,1)
-  cols <- colorRamp(c("#FFFFFF", "#D30000"), interpolate = "linear")
-  pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
+  if(rasterMode == FALSE){
+    bins <- c(0,0.3,0.6,0.9,1)
+    cols <- colorRamp(c("#FFFFFF", "#D30000"), interpolate = "linear")
+    pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
 
-  # layer of uncertaintyvalues
-  uncertain_values <- calcUncertaintyIndex(belongings)
+    # layer of uncertaintyvalues
+    uncertain_values <- calcUncertaintyIndex(belongings)
 
-  uncertainMap <- uncertainMap %>% mapfun(data = spatial4326,
-                                          weight = 1,
-                                          group = "UncertaintyIdx",
-                                          color = "black",
-                                          fillColor = ~pal(uncertain_values),
-                                          fillOpacity = 0.7,
-                                          layerId = 1:nrow(spatial4326)) %>%
-    addLegend(pal = pal, values = bins, opacity = 0.7,
-              title = NULL, group="UncertaintyIdx",
-              position = "bottomright")
+    uncertainMap <- uncertainMap %>% mapfun(data = spatial4326,
+                                            weight = 1,
+                                            group = "UncertaintyIdx",
+                                            color = "black",
+                                            fillColor = ~pal(uncertain_values),
+                                            fillOpacity = 0.7,
+                                            layerId = 1:nrow(spatial4326)) %>%
+      addLegend(pal = pal, values = bins, opacity = 0.7,
+                title = NULL, group="UncertaintyIdx",
+                position = "bottomright")
 
-  # binary layer of uncertain values
-  values <- apply(belongings, 1, max) < 0.45
-  spdf <- subset(spatial4326, values)
-  uncertainMap <- uncertainMap %>% mapfun(data = spdf,
-                                          weight = 1,
-                                          group = "binaryUncertain",
-                                          color = "black",
-                                          fillColor = "red",
-                                          fillOpacity = 0.7,
-                                          layerId = 1:nrow(spdf)) %>%
-    addLegend(opacity = 0.7,
-              colors = c("#D30000"),
-              labels = "uncertain observations",
-              title = NULL, group="binaryUncertain",
-              position = "bottomright") %>%
-    addLayersControl(
-      position = "bottomleft",
-      baseGroups = c("Toner Lite", "Open Street Map"),
-      overlayGroups  = c("UncertaintyIdx","binaryUncertain"),
-      options = leaflet::layersControlOptions(collapsed = FALSE)) %>%
-    hideGroup("UncertaintyIdx")
+    # binary layer of uncertain values
+    values <- apply(belongings, 1, max) < 0.45
+    spdf <- subset(spatial4326, values)
+    uncertainMap <- uncertainMap %>% mapfun(data = spdf,
+                                            weight = 1,
+                                            group = "binaryUncertain",
+                                            color = "black",
+                                            fillColor = "red",
+                                            fillOpacity = 0.7,
+                                            layerId = 1:nrow(spdf)) %>%
+      addLegend(opacity = 0.7,
+                colors = c("#D30000"),
+                labels = "uncertain observations",
+                title = NULL, group="binaryUncertain",
+                position = "bottomright") %>%
+      addLayersControl(
+        position = "bottomleft",
+        baseGroups = c("Toner Lite", "Open Street Map"),
+        overlayGroups  = c("UncertaintyIdx","binaryUncertain"),
+        options = leaflet::layersControlOptions(collapsed = FALSE)) %>%
+      hideGroup("UncertaintyIdx")
+
+  }else{
+    # IF WE ARE IN RASTER MODE
+    all_values <- lapply(object$rasters[ok_names], function(rast){
+      raster::values(rast)[object$missing]
+    })
+    maxs <- do.call(pmax,all_values)
+    rast <- object$rasters[[1]]
+    vals <- rep(0, times = raster::ncell(rast))
+    vals[object$missing] <- maxs
+    vals <- ifelse(vals < 0.45, 1,0)
+    vals[!object$missing] <- NA
+    raster::values(rast) <- vals
+
+    pal <- leaflet::colorNumeric(c("#FFFFFF","#D30000"),
+                                 vals, na.color = "transparent")
+    uncertainMap <- uncertainMap %>%
+      addRasterImage(rast, colors = pal, opacity = 0.8,
+                     group= "binaryUncertain") %>%
+      addLegend(pal = pal, values = vals, opacity = 0.7,
+                title = NULL, group= "binaryUncertain",
+                position = "bottomright",
+                labels = "uncertain observations") %>%
+      addLayersControl(
+        position = "bottomleft",
+        baseGroups = c("Toner Lite", "Open Street Map"),
+        overlayGroups  = c("binaryUncertain"),
+        options = leaflet::layersControlOptions(collapsed = FALSE))
+
+  }
+
 
   assign('uncertainMap', uncertainMap, .GlobalEnv)
+  assign('object', object, .GlobalEnv)
   ##******************************************************************
 
 

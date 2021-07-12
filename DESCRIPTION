@@ -21,9 +21,11 @@ Imports:
     rgeos (>= 0.5-5),
     grDevices (>= 3.5),
     shiny (>= 1.6.0),
-	  leaflet (>= 2.0.4.1),
+    leaflet (>= 2.0.4.1),
     plotly (>= 4.9.3),
-    Rdpack (>= 2.1.1)
+    Rdpack (>= 2.1.1),
+    matrixStats (>= 0.58.0),
+    Rcpp (>= 1.0.6)
 Depends:
     R (>= 3.5)
 Suggests:
@@ -44,7 +46,8 @@ Suggests:
 	  sf (>= 0.9-8),
 	  bslib (>= 0.2.5),
     shinyWidgets (>= 0.6),
-    shinyhelper (>= 0.3.2)
+    shinyhelper (>= 0.3.2),
+    waiter (>= 0.2.2)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -55,3 +58,7 @@ Description: Provides functions to apply spatial fuzzy unsupervised classificati
 URL: https://github.com/JeremyGelb/geocmeans
 BugReports: https://github.com/JeremyGelb/geocmeans/issues
 RdMacros: Rdpack
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
+SystemRequirements: C++11

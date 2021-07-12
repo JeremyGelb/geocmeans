@@ -9,9 +9,12 @@ eval_parameters(
   parameters,
   data,
   nblistw = NULL,
+  window = NULL,
   standardize = TRUE,
   spconsist = FALSE,
   classidx = TRUE,
+  nrep = 30,
+  indices = NULL,
   tol,
   maxiter,
   seed = NULL,
@@ -36,6 +39,16 @@ calculated}
 
 \item{classidx}{A boolean indicating if the quality of classification
 indices must be calculated}
+
+\item{nrep}{An integer indicating the number of permutation to do to simulate
+the random distribution of the spatial inconsistency. Only used if spconsist
+is TRUE.}
+
+\item{indices}{A character vector with the names of the indices to calculate, to
+evaluate clustering quality. default is :c("Silhouette.index", "Partition.entropy",
+"Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia").
+Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
+"GD43.index", "GD53.index" and "Negentropy.index".}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}

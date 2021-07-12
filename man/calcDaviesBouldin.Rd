@@ -14,7 +14,7 @@ calcDaviesBouldin(data, belongmatrix, centers)
 \item{centers}{The centers of the clusters}
 }
 \value{
-A float : the Davies-Bouldin index
+A float: the Davies-Bouldin index
 }
 \description{
 Calculate the Davies-Bouldin index of clustering quality.

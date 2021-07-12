@@ -49,12 +49,13 @@ calcLaggedData <- function(x,nblistw,method="mean"){
 #' @param v A numeric vector of length p
 #' @return A vector of length n giving the euclidean distance between all matrix
 #'   row and the vector p
+#' @importFrom matrixStats colSums2
 #' @keywords internal
 #' @examples
 #' #This is an internal function, no example provided
 calcEuclideanDistance <- function(m, v) {
   v <- as.numeric(v)
-  alldistances <-colSums((t(m)-v)**2)
+  alldistances <- colSums2((t(m)-v)**2)
   return(alldistances)
 }
 
@@ -73,19 +74,21 @@ calcEuclideanDistance <- function(m, v) {
 #' @param tol A float representing the algorithm tolerance
 #' @return A boolean, TRUE if the test is passed, FALSE otherwise
 #' @keywords internal
+#' @importFrom matrixStats rowMaxs
 #' @examples
 #' #This is an internal function, no example provided
 evaluateMatrices <- function(mat1, mat2, tol) {
-  mat1 < -as.matrix(mat1)
+  mat1 <- as.matrix(mat1)
   mat2 <- as.matrix(mat2)
   differ <- abs(mat1 - mat2)
-  diffobs <- apply(differ, 1,max)
+  diffobs <- rowMaxs(differ)
   if (length(diffobs[diffobs >= tol]) > 0) {
     return(FALSE)
   } else{
     return(TRUE)
   }
 }
+
 
 
 #' @title kpp centers selection
@@ -97,6 +100,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' @param k The number of groups for the classification
 #' @return a DataFrame, each row is the center of a cluster
 #' @keywords internal
+#' @importFrom matrixStats rowMins
 #' @examples
 #' #This is an internal function, no example provided
 kppCenters <- function(data,k){
@@ -105,9 +109,10 @@ kppCenters <- function(data,k){
   # select the other centers
   for (i in 2:k){
     dists <- apply(centers,1,function(ci){
-      return(calcEuclideanDistance(data,ci))
+      return(calcEuclideanDistance2(data,ci))
     })
-    Dx <- apply(dists,1,min)
+    #Dx <- apply(dists,1,min)
+    Dx <- rowMins(dists)
     probs <- (Dx**2) / sum((Dx**2))
     new_center <- data[sample(1:nrow(data),size = 1,prob = probs),]
     centers <- rbind(centers,new_center)
@@ -242,7 +247,9 @@ main_worker <- function(algo, ...){
   Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
 
   results <- c(list(Centers = centers, Belongings = newbelongmatrix,
-                  Groups = Groups, Data = data),params)
+                  Groups = Groups, Data = data,
+                  maxiter = maxiter, tol = tol,
+                  isRaster = FALSE),params)
 
   ## setting the class of the results
   results <- FCMres(results)
@@ -286,7 +293,7 @@ sanity_check <- function(dots,data){
   }
 
   if(dots$k < 2){
-    stop("k must be at leat 2")
+    stop("k must be at least 2")
   }
 
   if(is.null(dots$seed) == FALSE){

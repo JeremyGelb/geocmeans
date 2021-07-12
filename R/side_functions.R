@@ -6,10 +6,12 @@
 #'
 #' @description Build some maps to visualize the results of the clustering
 #'
-#' @param geodata A object of class spatialpolygonesdataframe /
+#' @param geodata An object of class spatialpolygonesdataframe /
 #' spatiallinesdataframe or spatialpointsdataframe ordered
-#' like the original data used for the clustering
-#' @param belongmatrix The membership matrix obtained at the end of the algorithm
+#' like the original data used for the clustering. Can be Null if object is
+#' a FCMres and has been created with rasters.
+#' @param object  A FCMres object, typically obtained from functions CMeans,
+#'   GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.
 #' @param undecided A float between 0 and 1 giving the minimum value that an
 #'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
@@ -30,19 +32,108 @@
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' MyMaps <- mapClusters(LyonIris, result$Belongings)
-mapClusters <- function(geodata, belongmatrix, undecided = NULL) {
-    geodata$OID <- as.character(1:nrow(geodata@data))
-    if(class(geodata)[[1]]=="SpatialPolygonsDataFrame"){
-        return(mapPolygons(geodata, belongmatrix, undecided))
-    }else if(class(geodata)[[1]]=="SpatialPointsDataFrame"){
-        return(mapPoints(geodata, belongmatrix, undecided))
-    }else if(class(geodata)[[1]]=="SpatialLinesDataFrame"){
-        return(mapLines(geodata, belongmatrix, undecided))
-    }else {
-        stop("The object passed in geodata argument is not supported.
+mapClusters <- function(geodata = NULL, object, undecided = NULL) {
+
+    if(class(object)[[1]] == "FCMres"){
+        belongmatrix <- object$Belongings
+    }else if(class(object)[[1]] == "matrix"){
+        belongmatrix <- object
+    }else{
+        stop("object must be one of matrix of FCMres")
+    }
+
+    if(object$isRaster){
+        return(mapRasters(object, undecided))
+    }else{
+        geodata$OID <- as.character(1:nrow(geodata@data))
+        if(class(geodata)[[1]]=="SpatialPolygonsDataFrame"){
+            return(mapPolygons(geodata, belongmatrix, undecided))
+        }else if(class(geodata)[[1]]=="SpatialPointsDataFrame"){
+            return(mapPoints(geodata, belongmatrix, undecided))
+        }else if(class(geodata)[[1]]=="SpatialLinesDataFrame"){
+            return(mapLines(geodata, belongmatrix, undecided))
+        }else {
+            stop("The object passed in geodata argument is not supported.
               Supported classes are : SpatialPolygonsDataFrame,
               SpatialPointsDataFrame and SpatialLinesDataFrame")
+        }
     }
+
+
+}
+
+#' @title Mapping the clusters (rasters)
+#'
+#' @description Internal function to realize maps based on rasters
+#'
+#' @param object A FCMres object
+#' @param undecided A float between 0 and 1 giving the minimum value that an
+#'   observation must get in the membership matrix to not be considered as
+#'   uncertain (default = NULL)
+#' @return A named list with :
+#' \itemize{
+#'         \item ProbaMaps : a list of ggplot maps showing for each group the
+#'         probability of the observations to belong to that group
+#'         \item ClusterMap : a ggplot map showing the most likely group for each observation
+#' }
+#' @keywords internal
+#' @examples
+#' #No example provided, this is an internal function, use the general wrapper function mapClusters
+mapRasters  <- function(object, undecided){
+
+    # realisation des cartes de probabilites
+    ProbaPlots <- lapply(1:ncol(object$Belongings), function(i) {
+        rast <- object$rasters[[i]]
+        spdf <- as(rast, "SpatialPixelsDataFrame")
+        df <- as.data.frame(spdf)
+        colnames(df) <- c("value", "x", "y")
+
+        Plot <- ggplot2::ggplot(df) +
+            ggplot2::geom_raster(ggplot2::aes_string(x="x", y="y", fill="value"), alpha=0.8) +
+            ggplot2::scale_fill_gradient(low = "white", high = "blue") +
+            ggplot2::coord_fixed(ratio = 1)+
+            ggplot2::theme(
+                axis.title = ggplot2::element_blank(),
+                axis.text = ggplot2::element_blank(),
+                axis.ticks = ggplot2::element_blank()
+            ) +
+            ggplot2::labs(title = paste("membership values for group ",i,sep=""))
+        return(Plot)
+    })
+
+    #finding the uncertain pixels
+    if(is.null(undecided)){
+        undecided <- 0
+    }
+    #finding for each pixel the max probability
+    uncertain_vec <- undecidedUnits(object$Belongings, tol = undecided, out = "numeric")
+    rast <- object$rasters[[1]]
+    vec <- rep(NA, times = ncell(rast))
+    vec[object$missing] <- uncertain_vec
+    values(rast) <- vec
+
+    spdf <- as(rast, "SpatialPixelsDataFrame")
+    df <- as.data.frame(spdf)
+    colnames(df) <- c("value", "x", "y")
+    df$values <- as.character(df$value)
+    df$values <- ifelse(df$values == "-1", "undecided", paste("group", df$values, sep = " "))
+
+    colors <- RColorBrewer::brewer.pal(ncol(object$Belongings),"Set3")
+    if("undecided" %in% df$values){
+        colors <- c(colors, "black")
+    }
+
+    ClusterMap <- ggplot2::ggplot(df) +
+        ggplot2::geom_raster(ggplot2::aes_string(x = "x", y = "y", fill = "values")) +
+        ggplot2::scale_fill_discrete(type = colors) +
+        ggplot2::coord_fixed(ratio = 1)+
+        ggplot2::theme(
+            legend.title = ggplot2::element_blank(),
+            axis.title = ggplot2::element_blank(),
+            axis.text = ggplot2::element_blank(),
+            axis.ticks = ggplot2::element_blank()
+        )
+    return(list(ProbaMaps = ProbaPlots, ClusterPlot = ClusterMap))
 }
 
 
@@ -571,6 +662,14 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #' calculated
 #' @param classidx A boolean indicating if the quality of classification
 #' indices must be calculated
+#' @param nrep An integer indicating the number of permutation to do to simulate
+#'   the random distribution of the spatial inconsistency. Only used if spconsist
+#'   is TRUE.
+#' @param indices A character vector with the names of the indices to calculate, to
+#' evaluate clustering quality. default is :c("Silhouette.index", "Partition.entropy",
+#' "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia").
+#' Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
+#' "GD43.index", "GD53.index" and "Negentropy.index".
 #' @param maxiter An integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
@@ -583,22 +682,28 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #' @keywords internal
 #' @examples
 #' #No example provided, this is an internal function
-eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize = TRUE ,spconsist = FALSE, classidx = TRUE, tol, maxiter, seed=NULL, verbose = TRUE){
+eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NULL, standardize = TRUE,
+                            spconsist = FALSE, classidx = TRUE, nrep = 30, indices = NULL,
+                            tol, maxiter, seed=NULL, verbose = TRUE){
     if(algo == "FCM"){
-        exefun <- function(data,x, lw){
+        exefun <- function(data,x, ...){
             return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
         }
     }else if(algo == "GFCM"){
-        exefun <- function(data,x, lw){
+        exefun <- function(data,x,... ){
             return(GCMeans(data, x$k, x$m, x$beta, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
         }
     }else if(algo == "SFCM"){
-        exefun <- function(data,x, lw){
-            return(SFCMeans(data, lw, x$k, x$m, x$alpha, x$lag_method, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+        exefun <- function(data,x,...){
+            dots <- list(...)
+            return(SFCMeans(data, dots$lw, x$k, x$m, x$alpha, x$lag_method, window = dots$wd,
+                            maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
         }
     }else if(algo == "SGFCM"){
-        exefun <- function(data,x, lw){
-            return(SGFCMeans(data, lw, x$k, x$m, x$alpha, x$beta, x$lag_method, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+        exefun <- function(data,x,...){
+            dots <- list(...)
+            return(SGFCMeans(data, dots$lw, x$k, x$m, x$alpha, x$beta, x$lag_method, window = dots$wd,
+                             maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
         }
     }else{
         stop("The algo selected must be one in FCM, GFCM, SFCM, SGFCM")
@@ -610,26 +715,28 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
     cnt <- 1
     allIndices <- lapply(1:nrow(parameters), function(i){
         row <- parameters[i,]
-        if(verbose){
-            setTxtProgressBar(pb, cnt)
-        }
         cnt <<- cnt+1
         templistw <- nblistw[[row$listsw]]
-        result <- exefun(data,row,templistw)
+        tempwindow <- window[[row$window]]
+        result <- exefun(data, row, lw = templistw, wd = tempwindow)
         #calculating the quality indexes
-        indices <- list()
+        indices_values <- list()
         if(classidx){
-            indices <- calcqualityIndexes(result$Data,result$Belongings,as.numeric(row[[2]]))
+            indices_values <- calcqualityIndexes(result$Data,result$Belongings,as.numeric(row[[2]]),
+                                          indices = indices)
         }
         if(spconsist){
             #calculating spatial diag
-            consist <- spConsistency(result$Belongings, templistw, nrep = 30)
-            indices$spConsistency <- consist$Mean
-            indices$spConsistency_05 <- consist$prt05
-            indices$spConsistency_95 <- consist$prt95
+            consist <- spConsistency(result, templistw, nrep = nrep)
+            indices_values$spConsistency <- consist$Mean
+            indices_values$spConsistency_05 <- consist$prt05
+            indices_values$spConsistency_95 <- consist$prt95
+        }
+        if(verbose){
+            setTxtProgressBar(pb, cnt)
         }
 
-        return(unlist(indices))
+        return(unlist(indices_values))
     })
     dfIndices <- data.frame(do.call(rbind,allIndices))
     dfIndices$k <- parameters$k
@@ -637,6 +744,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
     if(algo %in% c("SFCM","SGFCM")){
         dfIndices$alpha <- parameters$alpha
         dfIndices$listw <- parameters$listsw
+        dfIndices$window <- parameters$window
         dfIndices$lag_method <- parameters$lag_method
     }
     if(algo %in% c("GFCM","SGFCM")){
@@ -651,7 +759,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
 #' @description Function to select the parameters for a clustering algorithm.
 #'
 #' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
-#' @param data A dataframe with numeric columns
+#' @param data A dataframe with numeric columns or a list of rasters.
 #' @param k A sequence of values for k to test (>=2)
 #' @param m A sequence of values for m to test
 #' @param alpha A sequence of values for alpha to test (NULL if not required)
@@ -660,13 +768,26 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
 #'  produced by the spdep package (NULL if not required)
 #' @param lag_method A string indicating if a classical lag must be used
 #' ("mean") or if a weighted median must be used ("median"). Both can be
-#' tested by specifying a vector : c("mean","median")
+#' tested by specifying a vector : c("mean","median"). When working with rasters,
+#' the string must be parsable to a function like mean, min, max, sum, etc. and will
+#' be applied to all the pixels values in the window designated by the parameter window
+#' and weighted according to the values of this matrix.
+#' @param window A list of windows to use to calculate neighbouring values if
+#' the rasters are used.
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param spconsist A boolean indicating if the spatial consistency must be
 #' calculated
 #' @param classidx A boolean indicating if the quality of classification
 #' indices must be calculated
+#' @param nrep An integer indicating the number of permutation to do to simulate
+#'   the random distribution of the spatial inconsistency. Only used if spconsist
+#'   is TRUE.
+#' @param indices A character vector with the names of the indices to calculate, to
+#' evaluate clustering quality. default is :c("Silhouette.index", "Partition.entropy",
+#' "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia").
+#' Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
+#' "GD43.index", "GD53.index" and "Negentropy.index".
 #' @param maxiter An integer for the maximum number of iteration
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
@@ -688,7 +809,9 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, standardize 
 #' values <- select_parameters(algo = "SFCM", dataset, k = 5, m = seq(2,3,0.1),
 #'     alpha = seq(0,2,0.1), nblistw = Wqueen, spconsist=FALSE)
 #' }
-select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", spconsist = TRUE, classidx = TRUE, standardize = TRUE, maxiter = 500, tol = 0.01, seed=NULL, verbose = TRUE){
+select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", window = NULL,
+                              spconsist = TRUE, classidx = TRUE, nrep = 30, indices = NULL,
+                              standardize = TRUE, maxiter = 500, tol = 0.01, seed=NULL, verbose = TRUE){
 
     if(spconsist==FALSE & classidx==FALSE){
         stop("one of spconsist and classidx must be TRUE")
@@ -697,11 +820,20 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
     if(class(nblistw)[[1]]!="list"){
         nblistw <- list(nblistw)
     }
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method)
+
+    if(class(window)[[1]] != "list"){
+        window <- list(window)
+    }
+    if(is.null(indices)){
+        indices <- c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia")
+    }
+
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method, window = 1:length(window))
 
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
-    dfIndices <- eval_parameters(algo,allcombinaisons, data, nblistw, standardize,
-        spconsist, classidx, tol, maxiter, seed, verbose)
+    dfIndices <- eval_parameters(algo, allcombinaisons, data, nblistw, window, standardize,
+        spconsist, classidx, nrep, indices,
+        tol, maxiter, seed, verbose)
 }
 
 
@@ -739,11 +871,24 @@ selectParameters <- select_parameters
 #'  produced by the spdep package (NULL if not required)
 #' @param lag_method A string indicating if a classical lag must be used
 #' ("mean") or if a weighted median must be used ("median"). Both can be
-#' tested by specifying a vector : c("mean","median")
+#' tested by specifying a vector : c("mean","median"). When working with rasters,
+#' the string must be parsable to a function like mean, min, max, sum, etc. and will
+#' be applied to all the pixels values in the window designated by the parameter window
+#' and weighted according to the values of this matrix.
+#' @param window A list of windows to use to calculate neighbouring values if
+#' the rasters are used.
 #' @param spconsist A boolean indicating if the spatial consistency must be
 #' calculated
 #' @param classidx A boolean indicating if the quality of classification
 #' indices must be calculated
+#' @param nrep An integer indicating the number of permutation to do to simulate
+#'   the random distribution of the spatial inconsistency. Only used if spconsist
+#'   is TRUE.
+#' @param indices A character vector with the names of the indices to calculate, to
+#' evaluate clustering quality. default is :c("Silhouette.index", "Partition.entropy",
+#' "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia").
+#' Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
+#' "GD43.index", "GD53.index" and "Negentropy.index".
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param maxiter An integer for the maximum number of iteration
@@ -772,7 +917,10 @@ selectParameters <- select_parameters
 #' ## make sure any open connections are closed afterward
 #' if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #'}
-select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw = NULL, lag_method="mean",  spconsist = TRUE, classidx = TRUE, standardize = TRUE, maxiter = 500, tol = 0.01, seed = NULL, chunk_size=100, verbose = FALSE){
+select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", window = NULL,
+                                 spconsist = TRUE, classidx = TRUE, nrep = 30, indices = NULL,
+                                 standardize = TRUE, maxiter = 500, tol = 0.01, chunk_size = 5,
+                                 seed=NULL, verbose = TRUE){
 
     if(spconsist==FALSE & classidx==FALSE){
         stop("one of spconsist and classidx must be TRUE")
@@ -781,15 +929,23 @@ select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw =
     if(class(nblistw)[[1]]!="list"){
         nblistw <- list(nblistw)
     }
-    if(is.null(seed)){
-        seed <- FALSE
+
+    if(class(window)[[1]] != "list"){
+        window <- list(window)
     }
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha, beta = beta, listsw=1:length(nblistw), lag_method=lag_method)
+    if(is.null(indices)){
+        indices <- c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia")
+    }
+
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method, window = 1:length(window))
+
+
     if (verbose){
         print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     }
     chunks <- split(1:nrow(allcombinaisons), rep(1:ceiling(nrow(allcombinaisons) / chunk_size),
                                        each = chunk_size, length.out = nrow(allcombinaisons)))
+
     chunks <- lapply(chunks,function(x){return(allcombinaisons[x,])})
     # step2 : starting the function
     iseq <- 1:length(chunks)
@@ -799,8 +955,9 @@ select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw =
             values <- future.apply::future_lapply(iseq, function(i) {
                 sprintf(algo)
                 parameters <- chunks[[i]]
-                indices <- eval_parameters(algo, parameters, data, nblistw, standardize,
-                                                             spconsist, classidx, tol, maxiter)
+                indices <- eval_parameters(algo, parameters, data, nblistw, window, standardize,
+                                           spconsist, classidx, nrep, indices,
+                                           tol, maxiter, verbose = FALSE)
                 p(sprintf("i=%g", i))
                 return(indices)
             }, future.seed = seed)
@@ -808,9 +965,9 @@ select_parameters.mc <- function(algo,data,k,m, alpha = NA, beta = NA, nblistw =
     }else{
         values <- future.apply::future_lapply(iseq, function(i) {
             parameters <- chunks[[i]]
-            indices <- eval_parameters(algo, parameters, data, nblistw, standardize,
-                                                    spconsist, classidx, tol, maxiter,
-                                       verbose = FALSE)
+            indices <- eval_parameters(algo, parameters, data, nblistw, window, standardize,
+                                       spconsist, classidx, nrep, indices,
+                                       tol, maxiter, verbose = FALSE)
             return(indices)
         },future.seed = seed)
     }
@@ -869,7 +1026,7 @@ adjustSpatialWeights <- function(data,listw,style){
     new_weights <- lapply(1:nrow(data),function(i){
         row <- data[i,]
         neighbours <- data[listw[[i]],]
-        dists <- 1/calcEuclideanDistance(neighbours,row)
+        dists <- 1/calcEuclideanDistance2(neighbours,row)
         weights <- dists / sum(dists)
         return(weights)
     })
@@ -889,13 +1046,16 @@ adjustSpatialWeights <- function(data,listw,style){
 #'
 #' @param object An FCMres object as produced by one of the following functions: CMeans,
 #' GCMeans, SFCMeans, SGFCMeans
-#' @param new_data A DataFrame with the new observations
-#' @param listw A nb object from spdep (for the new data)
+#' @param new_data A DataFrame with the new observations or a list of rasters if
+#' object$isRaster is TRUE
+#' @param listw A nblistw object from spdep (for the new data)
+#' @param window A window to use if the data provided are rasters
 #' @param standardize  A boolean to specify if the variable must be centered and
 #'   reduced (default = True)
 #' @param ... not used
 #'
-#' @return A numeric matrix with the membership values for each new observation
+#' @return A numeric matrix with the membership values for each new observation. If
+#' rasters were used, return a list of rasters with the membership values.
 #' @export
 #' @examples
 #' data(LyonIris)
@@ -921,9 +1081,18 @@ adjustSpatialWeights <- function(data,listw,style){
 #'
 #' # doing the prediction
 #' predictions <- predict_membership(result, new_dataset, new_Wqueen, standardize = FALSE)
-predict_membership <- function(object, new_data, listw = NULL, standardize = TRUE, ...){
+predict_membership <- function(object, new_data, listw = NULL, window = NULL, standardize = TRUE, ...){
 
     results <- object
+    # if we are in raster mode, we need to do some conversions.
+    if(results$isRaster == TRUE){
+        old_data <- new_data
+        new_data_tot <- do.call(cbind,lapply(new_data, function(rast){
+            return(raster::values(rast))
+        }))
+        missing <- complete.cases(new_data_tot)
+        new_data <- new_data_tot[missing,]
+    }
     ## standardize the data if required
     if (standardize){
         for (i in 1:ncol(new_data)) {
@@ -933,11 +1102,24 @@ predict_membership <- function(object, new_data, listw = NULL, standardize = TRU
 
     ## calculating the lagged dataset if required
     if(results$algo %in% c("SFCM", "SGFCM")){
-        if(is.null(listw)){
-            stop("With a spatial clustering method like SFCM or SGFCM, the spatial matrix listw
+        if(results$isRaster == FALSE){
+            if(is.null(listw)){
+                stop("With a spatial clustering method like SFCM or SGFCM, the spatial matrix listw
                  associated with the new dataset must be provided")
+            }
+            wdata <- calcLaggedData(new_data, listw, results$lag_method)
+        }else{
+            if(is.null(window)){
+                stop("With a spatial clustering method like SFCM or SGFCM, the spatial matrix window
+                 to use on the new dataset must be provided")
+            }
+            wdata_total <- do.call(cbind,lapply(dataset, function(band){
+                wraster <- focal(band, w, sum, na.rm = TRUE, pad = TRUE)
+                return(raster::values(wraster))
+            }))
+            wdata <- wdata_total[missing,]
         }
-        wdata <- calcLaggedData(new_data, listw, results$lag_method)
+
     }
 
     ## selecting the appropriate function for prediction
@@ -954,7 +1136,21 @@ predict_membership <- function(object, new_data, listw = NULL, standardize = TRU
                                             wdata,results$m, results$alpha, results$beta)
     }
 
-    return(pred_values)
+    if(results$isRaster == FALSE){
+        return(pred_values)
+    }else{
+        nc <- raster::ncell(rast)
+        rasters_membership <- lapply(1:ncol(pred_values), function(i){
+            rast <- old_data[[1]]
+            vec <- rep(NA,times = nc)
+            vec[missing] <- pred_values[,i]
+            raster::values(rast) <- vec
+            return(rast)
+        })
+        names(rasters_membership) <- paste("group",1:ncol(pred_values), sep = "")
+        return(rasters_membership)
+    }
+
 }
 
 
@@ -1005,7 +1201,7 @@ predict.FCMres <- predict_membership
 
 #' @title Convert categories to membership matrix
 #'
-#' @description Function to Convert categories to membership matrix (binary matrix)
+#' @description Function to convert a character vector to a membership matrix (binary matrix)
 #'
 #' @param categories A vector with the categories of each observation
 #'

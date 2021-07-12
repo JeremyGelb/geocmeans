@@ -4,7 +4,7 @@
 \alias{predict.FCMres}
 \title{Predict method for FCMres object}
 \usage{
-\method{predict}{FCMres}(object, new_data, listw = NULL, standardize = TRUE, ...)
+predict.FCMres(object, new_data, listw = NULL, standardize = TRUE, ...)
 }
 \arguments{
 \item{object}{An FCMres object as produced by one of the following functions: CMeans,

@@ -12,7 +12,7 @@ calcexplainedInertia(data, belongmatrix)
 \item{belongmatrix}{A membership matrix (n*k)}
 }
 \value{
-A float : the percentage of the total inertia explained
+A float: the percentage of the total inertia explained
 }
 \description{
 Calculate the explained inertia by a classification

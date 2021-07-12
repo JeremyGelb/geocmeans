@@ -6,11 +6,12 @@
 \usage{
 SFCMeans(
   data,
-  nblistw,
+  nblistw = NULL,
   k,
   m,
   alpha,
   lag_method = "mean",
+  window = NULL,
   maxiter = 500,
   tol = 0.01,
   standardize = TRUE,
@@ -20,10 +21,14 @@ SFCMeans(
 )
 }
 \arguments{
-\item{data}{A dataframe with only numerical variable}
+\item{data}{A dataframe with only numerical variables. Can also be a list of
+rasters (produced by the package raster). In that case, each raster is
+considered as a variable and each pixel is an observation. Pixels with NA
+values are not used during the classification.}
 
 \item{nblistw}{A list.w object describing the neighbours typically produced
-by the spdep package}
+by the spdep package. Required if data is a dataframe, see the parameter window
+if you use a list of rasters for data.}
 
 \item{k}{An integer describing the number of cluster to find}
 
@@ -34,7 +39,19 @@ is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 
 \item{lag_method}{A string indicating if a classical lag must be used
-("mean") or if a weighted median must be used ("median")}
+("mean") or if a weighted median must be used ("median"). When working with rasters, a function
+can be given (or a string which will be parsed) and will be applied to all the pixels values
+in the window designated by the parameter window and weighted according to the values of this matrix.
+Typically, to obtain an average of the pixels in a 3x3 matrix one could use the function sum (or "sum")
+and set the window as: window <- matrix(1/9,nrow = 3, ncol = 3).
+The function will be passed to the function raster::focal
+to calculate the lagged raster.}
+
+\item{window}{If data is a list of rasters, then a window must be specified instead of
+a list.w object. It will be used to calculate a focal function on each raster. The
+window must be a square numeric matrix with odd dimensions (like 3x3). The values in
+the matrix indicate the weight to give to each pixel and the center of the matrix is
+the center of the focal function.}
 
 \item{maxiter}{An integer for the maximum number of iteration}
 

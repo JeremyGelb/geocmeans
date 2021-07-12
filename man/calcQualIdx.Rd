@@ -12,7 +12,7 @@ calcQualIdx(name, ...)
 \item{...}{The parameters needed to calculate the index}
 }
 \value{
-A float : the value of the index
+A float: the value of the index
 }
 \description{
 A selector function to get the right quality index

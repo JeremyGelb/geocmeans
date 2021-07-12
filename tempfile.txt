@@ -1,0 +1,1582 @@
+iterating on columns : 0
+These are range for window rows 2 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 2 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 2 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 2 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 2 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 2 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 2 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 2 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 2 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 2 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 1 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 1 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 1 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 1 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 1 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 1 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 1 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 1 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 1 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 1 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 4
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 4
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 4
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 4
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 4
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 3
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+ 0  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 3
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+ 0  0  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 3
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 3
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 3
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 3
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 3
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 3
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+ 0  0  0  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 3
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+ 0  0  0  0
+
+iterating on columns : 9
+These are range for window rows 0 : 3
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+ 0  0  0
+
+iterating on columns : 0
+These are range for window rows 0 : 2
+These are range for window cols 2 : 4
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+-1  0  0
+
+iterating on columns : 1
+These are range for window rows 0 : 2
+These are range for window cols 1 : 4
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0 -1  0  0
+
+iterating on columns : 2
+These are range for window rows 0 : 2
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+
+iterating on columns : 3
+These are range for window rows 0 : 2
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+
+iterating on columns : 4
+These are range for window rows 0 : 2
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+
+iterating on columns : 5
+These are range for window rows 0 : 2
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+
+iterating on columns : 6
+These are range for window rows 0 : 2
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+
+iterating on columns : 7
+These are range for window rows 0 : 2
+These are range for window cols 0 : 4
+This is subwindow 
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0  0
+ 0  0  0  0  0
+ 0  0 -1  0  0
+
+iterating on columns : 8
+These are range for window rows 0 : 2
+These are range for window cols 0 : 3
+This is subwindow 
+1 1 1 1
+1 1 1 1
+1 1 1 1
+
+This is submatrix : 
+ 0  0  0  0
+ 0  0  0  0
+ 0  0 -1  0
+
+iterating on columns : 9
+These are range for window rows 0 : 2
+These are range for window cols 0 : 2
+This is subwindow 
+1 1 1
+1 1 1
+1 1 1
+
+This is submatrix : 
+ 0  0  0
+ 0  0  0
+ 0  0 -1
+
+  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ [62] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0

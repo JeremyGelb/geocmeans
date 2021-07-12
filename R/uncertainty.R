@@ -5,6 +5,8 @@
 #' @param belongmatrix The membership matrix obtained at the end of the algorithm
 #' @param tol A float indicating the minimum required level of membership to be
 #'   not considered as undecided
+#' @param out The format of the output vector. Default is "character". If
+#' "numeric", then the undecided units are set to -1.
 #' @return A vector indicating the most likely group for each observation or
 #'   "Undecided" if the maximum probability for the observation does not reach
 #'   the value of the tol parameter
@@ -18,12 +20,21 @@
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' undecidedUnits(result$Belongings, tol = 0.45)
-undecidedUnits <- function(belongmatrix, tol = 0.1) {
+undecidedUnits <- function(belongmatrix, tol = 0.1, out = "character") {
   belongmatrix <- as.data.frame(belongmatrix)
-  groups <- colnames(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
+  if(out == "character"){
+    choose_from <- colnames(belongmatrix)
+    alt <- "Undecided"
+  }else if(out == "numeric"){
+    choose_from <- 1:ncol(belongmatrix)
+    alt <- -1
+  }else{
+    stop("The argument out must be one of c('numeric', 'character')")
+  }
+  groups <- choose_from[max.col(belongmatrix, ties.method = "first")]
   rowMax <- do.call(pmax, belongmatrix)
   DF <- data.frame(groups = groups, maxprob = rowMax)
-  return(ifelse(DF$maxprob < tol, "Undecided", DF$groups))
+  return(ifelse(DF$maxprob < tol, alt , DF$groups))
 }
 
 

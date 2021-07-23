@@ -105,7 +105,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
 #' #This is an internal function, no example provided
 kppCenters <- function(data,k){
   # step1: select the first center at random
-  centers <- as.matrix(data[sample(1:nrow(data),size = 1),])
+  centers <- t(as.matrix(data[sample(1:nrow(data),size = 1),], nrow = 1))
   # select the other centers
   for (i in 2:k){
     dists <- apply(centers,1,function(ci){
@@ -325,33 +325,82 @@ sanity_check <- function(dots,data){
 # This set of function is used to provide the parameters in the right order
 # to the intermediate functions
 
+#' @title membership matrix calculator for FCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new membership values
+#' @keywords internal
 belongsFCM <- function(data, centers ,dots){
   return(calcBelongMatrix(centers,data,dots$m))
 }
+#' @title center matrix calculator for FCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param belongmatrix a matrix with the membership values
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new centers
+#' @keywords internal
 centersFCM <- function(data, centers, belongmatrix, dots){
   return(calcCentroids(data,belongmatrix, dots$m))
 }
 
-
+#' @title membership matrix calculator for GFCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new membership values
+#' @keywords internal
 belongsGFCM <- function(data,centers,dots){
   return(calcFGCMBelongMatrix(centers,data,dots$m,dots$beta))
 }
+#' @title center matrix calculator for GFCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param belongmatrix a matrix with the membership values
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new centers
+#' @keywords internal
 centersGFCM <- function(data, centers, belongmatrix, dots){
   return(calcCentroids(data,belongmatrix, dots$m))
 }
 
-
+#' @title membership matrix calculator for SFCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new membership values
+#' @keywords internal
 belongsSFCM <- function(data,centers,dots){
   return(calcSFCMBelongMatrix(centers,data,dots$wdata,dots$m,dots$alpha))
 }
+#' @title center matrix calculator for SFCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param belongmatrix a matrix with the membership values
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new centers
+#' @keywords internal
 centersSFCM <- function(data, centers, belongmatrix, dots){
   return(calcSWFCCentroids(data,dots$wdata,belongmatrix,dots$m,dots$alpha))
 }
 
-
+#' @title membership matrix calculator for SGFCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new membership values
+#' @keywords internal
 belongsSGFCM <- function(data,centers,dots){
   return(calcSFGCMBelongMatrix(centers,data,dots$wdata,dots$m,dots$alpha,dots$beta))
 }
+#' @title center matrix calculator for SGFCM algorithm
+#' @param data a matrix (the dataset used for clustering)
+#' @param centers a matrix (the centers of the clusters)
+#' @param belongmatrix a matrix with the membership values
+#' @param dots a list of other arguments specific to FCM
+#' @return a matrix with the new centers
+#' @keywords internal
 centersSGFCM <- function(data, centers, belongmatrix, dots){
   return(calcSWFCCentroids(data,dots$wdata,belongmatrix,dots$m,dots$alpha))
 }

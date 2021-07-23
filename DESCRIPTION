@@ -25,6 +25,9 @@ Imports:
     plotly (>= 4.9.3),
     Rdpack (>= 2.1.1),
     matrixStats (>= 0.58.0),
+    raster (>= 3.4-10),
+    rgdal (>= 1.5-23),
+    methods (>= 3.5),
     Rcpp (>= 1.0.6)
 Depends:
     R (>= 3.5)
@@ -47,6 +50,7 @@ Suggests:
 	  bslib (>= 0.2.5),
     shinyWidgets (>= 0.6),
     shinyhelper (>= 0.3.2),
+    tmap (>= 3.3-1),
     waiter (>= 0.2.2)
 License: GPL-2
 Encoding: UTF-8
@@ -62,3 +66,4 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 SystemRequirements: C++11
+Language: en-CA

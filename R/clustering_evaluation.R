@@ -2,14 +2,22 @@
 ##### Indices of clustering quality #####
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-# a version of the silhouette index when the dataset is really too big.
+#' @title Fuzzy Silhouette index
+#' @description Calculate the Silhouette index of clustering quality.
+#' @details
+#' The index is calculated with the function SIL.F from the package fclust.
+#' When the dataset is to big, an approach by subsampling is used to avoid
+#' crash.
+#' @param data The original dataframe used for the clustering (n*p)
+#' @param belongings A membership matrix (n*k)
+#' @return A float, the fuzzy Silhouette index
 calcSilhouetteIdx <- function(data, belongings){
   FS <- tryCatch(
     fclust::SIL.F(data, belongings, alpha = 1),
     error = function(e){
         warning("impossible to calculate Silhouette index with fclust::SIL.F, This is
  most likely due to a large dataset. We use here an approximation by subsampling...")
-        FS <- median(sapply(1:10, function(i){
+        FS <- stats::median(sapply(1:10, function(i){
           ids <- sample(1:nrow(data), size = 1000)
           fclust::SIL.F(data[ids,], belongings[ids,], alpha = 1)
         }))
@@ -520,6 +528,8 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
     return(values)
   }))
 
+  data <- as.matrix(data)
+
   idxs <- lapply(indices, function(name){
     val <- calcQualIdx(name, data = data, belongmatrix = belongmatrix,
                        centers = centers, m = m)
@@ -545,13 +555,14 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
 #' statistic is not calculated and no p-values are provided for the Moran I
 #' indices.
 #'
-#' @template FCMresobj_arg
-#' @template nblistw-arg. Can also be NULL if object is a FCMres object
-#' @param window if rasters were used for the classification, the window must be
+#' @template FCMresobj-arg
+#' @template nblistw2-arg
+#' @param window If rasters were used for the classification, the window must be
 #' specified instead of a list.w object. Can also be NULL if object is a FCMres object.
-#' @param centers If object is not a FCMres object, then centers of the clusters must
-#' be given. A hard partition will be created by using the membership matrix given as
-#' obejct and the ELSA statistic will be calculate.
+#' @param undecided A float giving the threslhod to detect undecided observations. An
+#' observation is undecided if its maximum membership value is bellow this float. If
+#' null, no observations are undecided.
+#' @template matdist-arg
 #' @param nrep An integer indicating the number of permutation to do to simulate
 #'   the random distribution of the spatial inconsistency
 #' @return A named list with :
@@ -573,15 +584,21 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' spatialDiag(result, undecided=0.45, nrep=30)
-spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL, centers = NULL, nrep = 50) {
+spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL, matdist = NULL, nrep = 50) {
 
+  cls <- class(object)[[1]]
   ## prior check of parameters
-  if(class(object)[[1]] != "FCMres") {
+  if(cls != "FCMres") {
     if(is.null(nblistw)){
       stop("if object is not a FCMres object, nblistw must be provided")
     }
+    if(is.null(matdist)){
+      warning("if object is not a FCMres object, matdist must be provided, otherwise ELSA will not be calculated")
+    }else{
+      check_matdist(matdist)
+    }
     if(is.null(window) == FALSE){
-      stop("When object is not a FCMres object, window can not be specified by hand")
+      warning("When object is not a FCMres object, it is assumed that the data used are not rasters, window is not used in that context")
     }
   }else{
     if(object$isRaster){
@@ -593,43 +610,42 @@ spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL,
         stop("The FCMres object was created with a SpatialDataFrame or a dataframe, but does not contain a nblistw slot and the nblistw parameter is NULL. Please specify a nblistw")
       }
     }
+    if(is.null(matdist)){
+      matdist <- as.matrix(stats::dist(object$Centers))
+    }
 
   }
 
   ## check if we are in rasterMode
   rasterMode <- FALSE
-  if(class(object)[[1]] == "FCMres"){
+  if(cls == "FCMres"){
     rasterMode <- object$isRaster
   }
 
-  # calcul de la coherence spatiale et de ELSA
-  if(is.null(nblistw == FALSE)){
-    Consist <- spConsistency(object, nblistw = nblistw, nrep = nrep)
-    if(class(object)[[1]] == "FCMres"){
-      Elsa <- calcELSA(object, nblistw = nblistw)
+  ## WE ARE NOT IN RASTERMODE ##
+  if(rasterMode == FALSE){
+    if(cls != "FCMres"){
+      membership <- object
+      Groups <- (1:ncol(membership))[max.col(membership, ties.method = "first")]
     }else{
-      if(is.null(centers) == FALSE){
-        Groups <- (1:ncol(object))[max.col(object, ties.method = "first")]
-        Elsa <- calcELSA(Groups, nblistw = nblistw, centers = centers)
-      }else{
-        warning("impossible to calculate ELSA if object is not from FCMres class and centers are not given.")
-        Elsa <- NULL
+      membership <- object$Belongings
+      Groups <- as.numeric(gsub("V","",object$Groups, fixed = TRUE))
+      if(is.null(nblistw)){
+        nblistw <- object$nblistw
       }
     }
-  }else if (is.null(window) == FALSE){
-    Consist <- spConsistency(object, window = window, nrep = nrep)
-    Elsa <- calcELSA(object, w = window)
-  }else{
-    Consist <- spConsistency(object, nrep = nrep)
-    Elsa <- calcELSA(object)
-  }
 
-  ## IF WE ARE NOT IN RASTERMODE
-  if(rasterMode == FALSE){
-    belongmatrix <- as.data.frame(belongmatrix)
-    # calcul des I de Moran pour les appartenances
-    Values <- sapply(1:ncol(belongmatrix), function(i) {
-      x <- belongmatrix[, i]
+    # calculating spconsistency
+    Consist <- spConsistency(membership, nblistw = nblistw, nrep = nrep)
+    # calculating ELSA
+    if(is.null(matdist) == FALSE){
+      Elsa <- calcELSA(Groups, nblistw = nblistw, matdist = matdist)
+    }else{
+      Elsa <- NULL
+    }
+    # calculating MORAN I
+    Values <- sapply(1:ncol(membership), function(i) {
+      x <- membership[, i]
       morantest <- spdep::moran.mc(x, nblistw, nsim = 999)
       return(list(MoranI = morantest$statistic, pvalue = morantest$p.value,
                   Cluster = paste("Cluster_", i, sep = "")))
@@ -638,432 +654,44 @@ spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL,
     for(col in colnames(morandf)){
       morandf[[col]] <- unlist(morandf[[col]])
     }
-    # attribution des groupes
-    groups <- colnames(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
+    # calculating join count test
+    Groups <- as.character(Groups)
     if (is.null(undecided) == FALSE) {
-      Maximums <- do.call(pmax, belongmatrix)
-      groups[Maximums < undecided] <- "undecided"
+      Maximums <- do.call(pmax, as.data.frame(membership))
+      Groups[Maximums < undecided] <- "undecided"
     }
-    groups <- as.factor(groups)
+    Groups <- as.factor(Groups)
     # calcul des join count test
-    spjctetst <- spdep::joincount.multi(groups, nblistw, zero.policy = TRUE)
+    spjctetst <- spdep::joincount.multi(Groups, nblistw, zero.policy = TRUE)
+
+    #returning the results
     return(list(MoranValues = morandf, JoinCounts = spjctetst,
                 SpConsist = Consist$Mean, SpConsistSamples = Consist$samples,
                 Elsa = Elsa))
 
   }else{
-    # IF WE ARE IN rasterMODE
-    # calculating the morans I for membership values
-    name <- names(object$rasters)
-    ok_names <- name[grepl("group",name, fixed = TRUE)]
-
-    MoranI_vals <- sapply(object$rasters[ok_names], function(rast){
+    ## WE ARE IN RASTERMODE ##
+    if(is.null(window)){
+      window <- object$window
+    }
+    ## calculating spconsistency
+    Consist <- spConsistency(object, window = window, nrep = nrep)
+    ## calculating ELSA
+    if(is.null(matdist) == FALSE){
+      Elsa <- calcELSA(object, window = window, matdist = matdist)
+    }else{
+      Elsa <- NULL
+    }
+    ## calculating Moran I
+    MoranI_vals <- sapply(object$rasters[1:object$k], function(rast){
       calc_moran_raster(rast,window)
     })
     morandf <- data.frame(
       Cluster = paste("Cluster_", 1:length(MoranI_vals), sep = ""),
       MoranI = MoranI_vals
     )
+    ## returning the results
     return(list(MoranValues = morandf, SpConsist = Consist$Mean,
                 SpConsistSamples = Consist$samples, Elsa = Elsa))
-
   }
-
 }
-
-
-#' @title Spatial consistency index
-#'
-#' @description Calculate a spatial consistency index
-#'
-#' @details This index is experimental, it aims to measure how much a clustering solution
-#' is spatially consistent. A classification is spatially inconsistent if
-#' neighbouring observation do not belong to the same group. See detail for
-#' a description of its calculation
-#'
-#' The total spatial inconsistency (*Scr*) is calculated as follow
-#'
-#' \deqn{isp = \sum_{i}\sum_{j}\sum_{k} (u_{ik} - u_{jk})^{2} * W_{ij}}
-#'
-#' With U the membership matrix, i an observation, k the neighbours of i and W
-#' the spatial weight matrix This represents the total spatial inconsistency of
-#' the solution (true inconsistency) We propose to compare this total with
-#' simulated values obtained by permutations (simulated inconsistency). The
-#' values obtained by permutation are an approximation of the spatial
-#' inconsistency obtained in a random context Ratios between the true
-#' inconsistency and simulated inconsistencies are calculated A value of 0
-#' depict a situation where all observations are identical to their neighbours
-#' A value of 1 depict a situation where all observations are as much different
-#' as their neighbours that what randomness can produce A classification
-#' solution able to reduce this index has a better spatial consistency
-#'
-#' @template FCMresobj_arg
-#' @template nblistw-arg. Can also be NULL if object is a FCMres object
-#' @param window if rasters were used for the classification, the window must be
-#' specified instead of a list.w object. Can also be NULL if object is a FCMres object.
-#' @param nrep An integer indicating the number of permutation to do to simulate
-#' spatial randomness. Note that if rasters are used, each permutation can be very long.
-#' @return A named list with
-#'  \itemize{
-#'         \item Mean : the mean of the spatial consistency index
-#'         \item prt05 : the 5th percentile of the spatial consistency index
-#'         \item prt95 : the 95th percentile of the spatial consistency index
-#'         \item samples : all the value of the spatial consistency index
-#' }
-#' @export
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' spConsistency(result$Belongings, nblistw = Wqueen, nrep=50)
-spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999) {
-
-  if(class(object)[[1]] == "FCMres"){
-    belongmat <- as.matrix(object$Belongings)
-    if(object$isRaster & is.null(window)){
-      window <- object$window
-      if(is.null(window)){
-        stop("impossible to find a window in the given object, please
-             specify one by hand.")
-      }
-    }
-  }else{
-    belongmat <- as.matrix(object)
-  }
-
-  # if we are not in raster mode
-
-  if(is.null(window)){
-
-    if(is.null(nblistw)){
-      stop("The nblistw must be provided if spatial vector data is used")
-    }
-    weights <- nblistw$weights
-    neighbours <- nblistw$neighbours
-    ## calcul de l'inconsistence spatiale actuelle
-    obsdev <- sapply(1:nrow(belongmat), function(i) {
-      row <- belongmat[i, ]
-      idneighbour <- neighbours[[i]]
-      neighbour <- belongmat[idneighbour, ]
-      if (length(idneighbour) == 1){
-        neighbour <- t(as.matrix(neighbour))
-      }
-      W <- weights[[i]]
-      diff <- (neighbour-row[col(neighbour)])**2
-      tot <- sum(rowSums(diff) * W)
-      return(tot)
-    })
-
-    totalcons <- sum(obsdev)
-
-    ## simulation de l'inconsistance spatiale
-    belongmat <- t(belongmat)
-    n <- ncol(belongmat)
-    simulated <- vapply(1:nrep, function(d) {
-      belong2 <- belongmat[,sample(n)]
-      simvalues <- vapply(1:ncol(belong2), function(i) {
-        row <- belong2[,i]
-        idneighbour <- neighbours[[i]]
-        neighbour <- belong2[,neighbours[[i]]]
-        if (length(idneighbour) == 1){
-          neighbour <- t(as.matrix(neighbour))
-        }
-        W <- weights[[i]]
-        diff <- (neighbour-row)
-        tot <- sum(diff^2 * W)
-        return(tot)
-      }, FUN.VALUE = 1)
-      return(sum(simvalues))
-    },FUN.VALUE = 1)
-    ratio <- totalcons / simulated
-
-  # if we are using a raster mode.
-  }else{
-
-    # we must calculate for each pixel its distance to its neighbours
-    # on the membership matrix. So we will calculate the distance for each
-    # raster in object$rasters and then sum them all group
-    rastnames <- names(object$rasters)
-    ok_names <- rastnames[grepl("group",rastnames, fixed = TRUE)]
-    rasters <- object$rasters[ok_names]
-    matrices <- lapply(rasters, raster::as.matrix)
-    totalcons <- calc_raster_spinconsistency(matrices,window)
-
-    # we must now do the same thing but with resampled values
-    warning("Calculating the permutation for the spatial inconsistency
-            when using raster can be long, depending on the raster size.
-            Note that the high number of cell in a raster reduces the need of
-            a great number of replications.")
-    all_ids <- 1:raster::ncell(rasters[[1]])
-
-    datavecs <- lapply(rasters, function(rast){
-      mat <- raster::as.matrix(rast)
-      dim(mat) <- NULL
-      return(mat)
-    })
-    mat_dim <- dim(raster::as.matrix(rasters[[1]]))
-    simulated <- sapply(1:nrep, function(i){
-      Ids <- sample(all_ids)
-      # resampling the matrices
-      new_matrices <- lapply(datavecs, function(vec){
-        new_vec <- vec[Ids];
-        dim(new_vec) <- mat_dim
-        return(new_vec)
-      })
-
-      # calculating the index value
-      inconsist <-  calc_raster_spinconsistency(new_matrices, window)
-      return(inconsist)
-    })
-    ratio <- totalcons / simulated
-  }
-
-  return(list(Mean = mean(ratio), Median = quantile(ratio, probs = c(0.5)),
-              prt05 = quantile(ratio, probs = c(0.05)),
-              prt95 = quantile(ratio, probs = c(0.95)),
-              samples = ratio))
-}
-
-
-#' @title calculate ELSA statistic for a hard partition
-#'
-#' @description Calculate ELSA statistic for a hard partition. This local indicator of
-#' spatial autocorrelation can be used to determine where observations belong to different
-#' clusters.
-#'
-#' @details The ELSA index \insertCite{naimi2019elsa}{geocmeans} can be used to measure
-#' local autocorrelation for a categorical variable. It varies between 0 and 1, 0 indicating
-#' a perfect positive spatial autocorrelation and 1 a perfect heterogeneity. It is based on
-#' the Shanon entropy index, and uses a measure of difference between categories. Thus it
-#' can reflect that proximity of two similar categories is still a form of positive
-#' autocorellation. The authors suggest to calculate the mean of the index at several lag
-#' distance to create an entrogram which quantifies global spatial structure and
-#' represents as a variogram-like graph.
-#'
-#' @param object A FCMres object, typically obtained from functions CMeans,
-#'   GCMeans, SFCMeans, SGFCMeans. Can also be a vector of categories. This vector must
-#'   be filled with integers starting from 1. -1 can be used to indicate missing categories.
-#' @template nblistw-arg
-#' @param w The size of the padding to create the window if working with raster data or a matrix
-#' representing the window. This matrix must be binary (0 and 1).
-#' @param centers A dataframe or a matrix. Each row must represent the center of a cluster.
-#' An euclidean distance matrix will be calculated on them to weight the ELSA statistic.
-#' @return A float: the sum of spatial inconsistency
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' elsa_valus <- calcELSA(result)
-calcELSA <- function(object, nblistw = NULL, w = NULL, centers = NULL){
-
-  # testing if we have all the required parameters
-  if(class(object)[[1]] != "FCMres"){
-
-    if(class(object) != "numeric"){
-      stop("if object is not a FCMres object, it must be a numeric vector")
-    }
-
-    vec <- object[[object != -1]]
-    if(min(vec) != 1){
-      stop("if object is a numeric vector, its lower value must be 1")
-    }
-
-    if(length(unique(vec)) != length(1:max(vec))){
-      stop("if object is a numeric vector, its values must be like 1,2,3,4,...m, -1 can be used to indicate missing values")
-    }
-
-    if(!isSymmetric(centers)){
-      stop("centers must be a symetric matrix")
-    }
-
-    if(nrow(centers) != length(unique(vec))){
-      stop("the dimension of centers must equal the number of categories in object.")
-    }
-
-    if(is.null(nblistw)){
-      stop("if object is not a FCMres object, nblistw must be provided.")
-    }
-    if(is.null(centers)){
-      stop("if object is not a FCMres object, centers must be provided.")
-    }
-  }else{
-    if(object$isRaster){
-      if(is.null(object$window) & is.null(w)){
-        stop("impossible to extract window from object, w must be given.")
-      }
-    }else{
-      if(is.null(object$nblistw) & is.null(nblistw)){
-        stop("impossible to extract nblistw from object, nblistw must be given.")
-      }
-    }
-  }
-
-  # case 1 : object is a simple vector of categories
-  if(class(object)[[1]] != "FCMres"){
-    matdist <- as.matrix(dist(centers))
-    vals <- elsa_vector(object, nblistw, matdist)
-  }else{
-  # case 2 : the object is a FCMres object
-    if(is.null(centers)){
-      matdist <- as.matrix(dist(object$Centers))
-    }else{
-      matdist <- as.matrix(dist(Centers))
-    }
-
-    if(object$isRaster){
-      if(is.null(w)){
-        w <- object$window
-      }
-      vals <- elsa_raster(object$rasters$Groups, w, matdist)
-    }else{
-      vec <- as.numeric(gsub("V","",object$Groups,fixed = TRUE))
-      if(is.null(nblistw)){
-        vals <- elsa_vector(vec, object$nblistw, matdist)
-      }else{
-        vals <- elsa_vector(vec, nblistw, matdist)
-      }
-    }
-  }
-  return(vals)
-}
-
-
-#' @title calculate spatial inconsistency for raster
-#'
-#' @description Calculate the spatial inconsistenct sum for a set of rasters
-#'
-#' @param matrices A list of matrices
-#' @param window The window to use to define spatial neighbouring
-#' @return A float: the sum of spatial inconsistency
-#' @keywords internal
-#' @examples
-#' # this is an internal function, no example provided
-calc_raster_spinconsistency <- function(matrices, window){
-  totalcons <- sum(focal_euclidean_list(matrices,window), na.rm = T)
-  return(totalcons)
-}
-
-#' @title calculate ELSA spatial statistic for vector dataset
-#'
-#' @description calculate ELSA spatial statistic for vector dataset
-#'
-#' @param categories An integer vector representing the m categories (1,2,3,..., m),
-#' -1 is used to indicate missing values.
-#' @param nblistw A listw object from spdep representing neighbour relations
-#' @param dist A numeric matrix (m*m) representing the distances between categories
-#' @return A vector: the local values of ELSA
-#' @keywords internal
-#' @examples
-#' # this is an internal function, no example provided
-elsa_vector <- function(categories, nblistw, dist){
-  d <- max(dist)
-  m <- length(unique(categories))
-  values <- sapply(1:length(categories), function(i){
-
-    xi <- categories[[i]]
-    if(xi == -1){
-      return(-1)
-    }else{
-      neighbours <- nblistw$neighbours[[i]]
-      w <- nblistw$weights[[i]]
-      xjs <- categories[neighbours]
-      Eai <- sum(dist[xi,xjs] * w) / (d * sum(w))
-
-      nn <- length(w) # the number of observations in the area...
-      if(nn  > m){
-        mi <- m
-      }else{
-        mi <- nn
-      }
-
-      probs <- table(c(xjs,xi)) / (length(xjs)+1)
-      Eci <- -1 * (sum(probs * log2(probs)) / log2(mi))
-      return(Eai * Eci)
-    }
-
-  })
-  return(values)
-
-}
-
-
-#' @title calculate ELSA spatial statistic for raster dataset
-#'
-#' @description calculate ELSA spatial statistic for vector dataset
-#'
-#' @param rast An integer raster or matrix representing the m categories (0,1,2,..., m)
-#' @param w The size of the window to apply, or a binary matrix to define a window.
-#' @param dist A numeric matrix (m*m) representing the distances between categories
-#' @return A raster or a matrix: the local values of ELSA
-#' @keywords internal
-#' @examples
-#' # this is an internal function, no example provided
-elsa_raster <- function(rast, w, dist){
-
-  if(class(w)[[1]] == "matrix"){
-    u <- unique(w)
-    if(length(union(c(0,1),u)) > 2){
-      stop("The provided matrix to calculate ELSA is not a binary matrix (0,1)")
-    }
-    fun <- Elsa_categorical_matrix_window
-  }else if (class(w)[[1]] == "numeric"){
-    fun <- Elsa_categorical_matrix
-  }else{
-    stop("for calculating ELSA on raster, w must be either a binary matrix or an integer")
-  }
-
-  isRaster <- class(rast)[[1]] == "RasterLayer"
-
-  if(isRaster){
-    mat <- raster::as.matrix(rast)
-  }else{
-    mat <- rast
-  }
-
-  mat <- ifelse(is.na(mat),-1,mat)
-  # let us check if the lowest value beside -1 is 0
-  vec <- c(mat)
-  m <- min(vec[vec!=-1])
-  if(m > 0){
-    mat<- ifelse(mat > 0, mat-1,mat)
-  }
-  cats <- unique(c(mat))
-  refcats <- 0:max(cats)
-  cats <- cats[cats != -1]
-  cats <- cats[order(cats)]
-  if(refcats != cats){
-    stop(paste("the values of the raster used for ELSA calculation must be integers starting from 0 (or 1).
- There must be no jumps between categories. The categories in the actual raster are : ", paste(cats,collapse = ","),sep=""))
-  }
-  mat2 <- fun(mat, w, dist)
-  mat2 <- ifelse(mat2 == -1, NA, mat2)
-  if(isRaster){
-    raster::values(rast) <- mat2
-    return(rast)
-  }else{
-    return(mat2)
-  }
-
-}
-
-#
-# categories <- rep(1, times = 9)
-# categories[[5]] <- 2
-# dist <- rbind(c(0,1), c(1,0))
-# neighmat <- matrix(0, ncol = 9, nrow = 9)
-# p1 <- c(1,1,1,2,2,2,2,2,3,3,3,4,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,7,7,7,8,8,8,8,8,9,9,9)
-# p2 <- c(2,4,5,1,4,5,6,3,2,5,6,1,2,5,7,8,1,2,3,4,6,7,8,9,2,3,4,8,9,4,5,8,4,5,6,7,9,5,6,8)
-# for(i in 1:length(p1)){
-#   neighmat[p1[[i]], p2[[i]]] <- 1
-# }
-# nb <- spdep::mat2listw(neighmat)
-#
-# elsa_vector(categories, nb, dist)

@@ -1,47 +1,3 @@
-# # https://rdrr.io/bioc/OLIN/man/ma.matrix.html
-# # https://www.rdocumentation.org/packages/raster/versions/3.4-10/topics/focal
-# # example de jeu de donnees : https://www.r-exercises.com/2018/02/28/advanced-techniques-with-raster-data-part-1-unsupervised-classification/?__cf_chl_jschl_tk__=703ae8c7214fe36addfe12006afebc7442de2077-1624418523-0-AQOrJJeKBwWikYZcyrzGFdsNhq2ERFu4EIyPoPuvPuVd77RyG-ppxAcA-KJizHAhNWTVXc7crst9Hs-IBtbOl1yfjSzVGcRFzlsof2sCbYRPk4F5GrKrhn64zm5fOGhiMi25RcoqrnuYbjLpu5QFzyVtBlWiSvQ_IF1SO27b388v_IXyW5G-BHA1htk5vJeHBHnUZDDmDQNUeVhRDzgVrZVjCSP1akW5P854dj0ILOKNcYoqrAQVxvpUaonarM38I6QiQaTcgTpnXxSPXkNYaOAmLkReEjcpYXTTT4gETRH5Ymnd8fDElBBq9pkmvKxjGc-Sx5-Y15o-iAGKenGYWQSdXrypzaML-mMAJSSM7GEgL2a6dJ1HRtOHcxwmVAW6MuUPR2cabYkEzyTlWgfZsWk_l92jaiaqo_7KCo92WZRxWk3s3f3CfKhLenCglEjXJ-F9Rkn-LDPD-Iuh4NDABe8YHHs_F7Gbrb9TL__ii50bNlx9rN03RBV4H4ZZcRaSiw
-
-# # # # # #TODO : add waiter package to have a nice waiting pannel !
-# library(raster)
-# raster1 <- raster(".Rproj.user/raster_data_test/estuary_LC.tif")
-#
-# data <- lapply(1:nbands(raster1), function(i){
-#   myband <- raster(".Rproj.user/raster_data_test/estuary_LC.tif", band = i)
-#   return(myband)
-# })
-#
-# #names(data) <- paste("band",1:nbands(raster1), sep="")
-#
-# window <- matrix(1, nrow = 3, ncol = 3)
-# window <- window / sum(window)
-#
-# lag_method  <- "sum"
-# standardize <- TRUE
-# na.rm <- TRUE
-#
-# k = 5
-# m = 1.5
-# alpha = 1
-# lag_method=sum
-# maxiter = 1000
-# tol = 0.001
-# standardize = TRUE
-# verbose = TRUE
-# seed = 123
-# init = "random"
-#
-# object <- SFCMeans(data = data, k = k, m = m,
-#                    window = window,
-#                    alpha = alpha, lag_method = lag_method, maxiter = maxiter,
-#                    tol = tol, standardize = standardize)
-
-# titi <- select_parameters("SFCM", data = data, k = k, m = m, alpha = c(1,2),
-#                           lag_method = "sum", maxiter = maxiter, tol = tol,
-#                           standardize = standardize, window  = window
-#                           )
-
-
 #' @title Check the shape of a window
 #'
 #' @description Check is a window is squarred and have odd dimensions
@@ -60,6 +16,27 @@ check_window <- function(w){
   }
 }
 
+#' @title Check dimensions of a list of rasters
+#'
+#' @description Check if all the rasters in a list have the same dimensions
+#'
+#' @param rasters A list of rasters
+#' @keywords internal
+#' @examples
+#' # this is an internal function, no example provided
+check_raters_dims <- function(rasters){
+  dims <- lapply(rasters, function(i){
+    return(c(raster::nrow(i), raster::ncol(i)))
+  })
+  dims <- do.call(rbind, dims)
+  ref <- dims[1,]
+  test1 <- !dims[,1] == ref[[1]]
+  test2 <- !dims[,2] == ref[[2]]
+  if(any(test1) | any(test2)){
+    stop("The rasters provided do not have the same dimensions")
+  }
+}
+
 #' @title Raster data preparation
 #'
 #' @description Prepare a raster dataset
@@ -70,13 +47,15 @@ check_window <- function(w){
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduced (default = True)
 #' @return A list with the required elements to perform clustering
-#' @importFrom raster focal
+#' @importFrom raster focal ncell
 #' @keywords internal
 #' @examples
 #' # this is an internal function, no example provided
 input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
 
   if(is.null(w) == FALSE){
+
+    check_raters_dims(dataset)
 
     check_window(w)
 

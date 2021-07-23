@@ -70,7 +70,6 @@ calcSWFCCentroids <- function(data, wdata, belongmatrix, m, alpha) {
 #' @return A n * k matrix representing the belonging probabilities of each
 #'   observation to each cluster
 #' @keywords internal
-#' #This is an internal function, no example provided
 #'
 calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
     .Call(`_geocmeans_calcSFCMBelongMatrix`, centers, data, wdata, m, alpha)
@@ -119,7 +118,7 @@ calcSFGCMBelongMatrix <- function(centers, data, wdata, m, alpha, beta) {
 #' @title focal euclidean distance on a matrix with a given window
 #' @name focal_euclidean_mat_window
 #' @param mat a matrix
-#' @param window a numeric matrix (squarred)
+#' @param window a numeric matrix (squared)
 #' @return a matrix with the euclidean distance of each cell to
 #' its neighbours.
 #' @keywords internal
@@ -140,6 +139,42 @@ focal_euclidean_mat_window <- function(mat, window) {
 #'
 focal_euclidean_list <- function(matrices, window) {
     .Call(`_geocmeans_focal_euclidean_list`, matrices, window)
+}
+
+#' @title focal euclidean distance on a matrix with a given window for a cube
+#' @name focal_euclidean_arr_window
+#' @param mat an array (cube)
+#' @param window a numeric matrix (squared)
+#' @return a matrix with the euclidean distance of each cell to
+#' its neighbours.
+#' @keywords internal
+#' @export
+#'
+focal_euclidean_arr_window <- function(mat, window) {
+    .Call(`_geocmeans_focal_euclidean_arr_window`, mat, window)
+}
+
+#' @title Jaccard similarity coefficient
+#' @name calc_jaccard_idx
+#' @description Calculate the Jaccard similarity coefficient
+#' @param x A vector of positive reals
+#' @param y A vector of positive reals
+#' @return A double: the Jaccard similarity coefficient
+#' @keywords internal
+calc_jaccard_idx <- function(x, y) {
+    .Call(`_geocmeans_calc_jaccard_idx`, x, y)
+}
+
+#' @title Jaccard similarity coefficient between columns of two matrices
+#' @name calc_jaccard_mat
+#' @description Calculate the Jaccard similarity coefficient between the
+#' columns of two matrices
+#' @param matX A matrix
+#' @param matY A matrix
+#' @return A matrix with the Jaccard index values
+#' @keywords internal
+calc_jaccard_mat <- function(matX, matY) {
+    .Call(`_geocmeans_calc_jaccard_mat`, matX, matY)
 }
 
 #' @title Moran I calculated on a matrix
@@ -206,6 +241,33 @@ Elsa_categorical_matrix_window <- function(mat, window, dist) {
     .Call(`_geocmeans_Elsa_categorical_matrix_window`, mat, window, dist)
 }
 
+#' @title Fuzzy Elsa statistic calculated on a matrix with a given window
+#' @name Elsa_fuzzy_matrix_window
+#' @description This is an extension to the fuzzy classification case for the Elsa statistic
+#' @param mats An array, each slice must contains the membership values of one group
+#' @param window the window to use to define neighbours. 0 can be used to indicate that a cell is not a neighbour
+#' @param dist a distance matrix between the groups
+#' @return a NumericVector : the local values of ELSA
+#' @keywords internal
+#' @export
+#'
+Elsa_fuzzy_matrix_window <- function(mats, window, dist) {
+    .Call(`_geocmeans_Elsa_fuzzy_matrix_window`, mats, window, dist)
+}
+
+#' @title Adjusted spatial inconsistency index for rasters
+#' @name adj_spconsist_arr_window_globstd
+#' @param data an arma cube of dimension nr,nc,ns
+#' @param memberships an arma cube of dimension nr, nc, ks
+#' @param a matrix representing the neighbouring of each pixel
+#' @return a double, the adjusted spatial inconsitency index
+#' @keywords internal
+#' @export
+#'
+adj_spconsist_arr_window_globstd <- function(data, memberships, window) {
+    .Call(`_geocmeans_adj_spconsist_arr_window_globstd`, data, memberships, window)
+}
+
 #' @title minimum of a vector
 #' @name vecmin
 #' @param x a NumericVector
@@ -250,6 +312,18 @@ power_mat <- function(x, p) {
 #'
 calcEuclideanDistance2 <- function(y, x) {
     .Call(`_geocmeans_calcEuclideanDistance2`, y, x)
+}
+
+#' @title euclidean distance between rows of a matrix and a vector (arma mode)
+#' @name calcEuclideanDistance3
+#' @param y a matrix
+#' @param x a vector (same length as ncol(matrix))
+#' @return a vector (same length as nrow(matrix))
+#' @export
+#' @keywords internal
+#'
+calcEuclideanDistance3 <- function(y, x) {
+    .Call(`_geocmeans_calcEuclideanDistance3`, y, x)
 }
 
 #' @title sum of two matrices by column
@@ -355,5 +429,16 @@ max_mat <- function(x) {
 #'
 test_inferior_mat <- function(mat, t) {
     .Call(`_geocmeans_test_inferior_mat`, mat, t)
+}
+
+#' @title create a matrix by multiplying a vector by its elements one by one as rows
+#' @name vector_out_prod
+#' @param x a vector
+#' @return a NumericMatrix
+#' @keywords internal
+#' @export
+#'
+vector_out_prod <- function(x) {
+    .Call(`_geocmeans_vector_out_prod`, x)
 }
 

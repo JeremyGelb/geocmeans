@@ -4,7 +4,7 @@
 #'
 #' @details Considering that the classification produced by a FCM like algorithm
 #'   depends on its initial state, it is important to check if the groups
-#'   obtained are stable. This function use a bootstrap method to do so. During
+#'   obtained are stable. This function uses a bootstrap method to do it. During
 #'   a selected number of iterations (at least 1000), a sample of size n (with
 #'   replacement) is drawn from the original dataset. For each sample, the same
 #'   classification algorithm is applied and the results are compared with the
@@ -97,17 +97,20 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   }
 
   cons_values <- lapply(all_perm, function(results){
-    qual_mat <- matrix(-1, nrow = k, ncol = k)
-    for(ii in 1:k){
-      for(jj in 1:k){
-        if(qual_mat[ii,jj] == -1){
-          x <- results$Belongings[,ii]
-          y <- object$Belongings[,jj][results$idx]
-          val <- calc_jaccard_idx(x,y)
-          qual_mat[ii,jj] <- val
-        }
-      }
-    }
+    # qual_mat <- matrix(-1, nrow = k, ncol = k)
+    # for(ii in 1:k){
+    #   for(jj in 1:k){
+    #     if(qual_mat[ii,jj] == -1){
+    #       x <- results$Belongings[,ii]
+    #       y <- object$Belongings[,jj][results$idx]
+    #       val <- calc_jaccard_idx(x,y)
+    #       qual_mat[ii,jj] <- val
+    #     }
+    #   }
+    # }
+    matX <- results$Belongings
+    matY <- object$Belongings[results$idx,]
+    qual_mat <- calc_jaccard_mat(matX,matY)
     colnames(qual_mat) <- 1:ncol(qual_mat)
     rownames(qual_mat) <- 1:nrow(qual_mat)
 
@@ -214,7 +217,7 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 #'
 #' future::plan(future::multiprocess(workers=2))
 #'
-#' validation.mc <- boot_group_validation(Cmean, nsim = 1000, maxiter = 1000,
+#' validation <- boot_group_validation.mc(Cmean, nsim = 1000, maxiter = 1000,
 #'     tol = 0.01, init = "random")
 #' ## make sure any open connections are closed afterward
 #' if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
@@ -263,17 +266,20 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
   }
 
   cons_values <- future.apply::future_lapply(all_perm, function(results){
-    qual_mat <- matrix(-1, nrow = k, ncol = k)
-    for(ii in 1:k){
-      for(jj in 1:k){
-        if(qual_mat[ii,jj] == -1){
-          x <- results$Belongings[,ii]
-          y <- object$Belongings[,jj][results$idx]
-          val <- calc_jaccard_idx(x,y)
-          qual_mat[ii,jj] <- val
-        }
-      }
-    }
+    # qual_mat <- matrix(-1, nrow = k, ncol = k)
+    # for(ii in 1:k){
+    #   for(jj in 1:k){
+    #     if(qual_mat[ii,jj] == -1){
+    #       x <- results$Belongings[,ii]
+    #       y <- object$Belongings[,jj][results$idx]
+    #       val <- calc_jaccard_idx(x,y)
+    #       qual_mat[ii,jj] <- val
+    #     }
+    #   }
+    # }
+    matX <- results$Belongings
+    matY <- object$Belongings[results$idx,]
+    qual_mat <- calc_jaccard_mat(matX,matY)
     colnames(qual_mat) <- 1:ncol(qual_mat)
     rownames(qual_mat) <- 1:nrow(qual_mat)
 
@@ -342,7 +348,7 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
 
 #' @title Bootstrap check the robustness of a classification (multicore)
 #'
-#' @description Worker function for cluster bootstraping
+#' @description Worker function for cluster bootstrapping
 #'
 #' @details The worker function for the functions boot_group_validation and boot_group_validation.mc
 #'
@@ -430,19 +436,7 @@ groups_matching <- function(object.x,object.y){
   }
 
   k <- ncol(matX)
-
-  qual_mat <- matrix(-1, nrow = k, ncol = k)
-  for(ii in 1:k){
-    for(jj in 1:k){
-      if(qual_mat[ii,jj] == -1){
-        x <- matY[,ii]
-        y <- matX[,jj]
-        val <- calc_jaccard_idx(x,y)
-        qual_mat[ii,jj] <- val
-      }
-    }
-  }
-
+  qual_mat <- calc_jaccard_mat(matX,matY)
   colnames(qual_mat) <- 1:ncol(qual_mat)
   rownames(qual_mat) <- 1:nrow(qual_mat)
 
@@ -479,27 +473,16 @@ groups_matching <- function(object.x,object.y){
     DF <- as.data.frame(object.y$Belongings)
     names(DF) <- paste("group",1:k,sep = "")
     object.y$Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
+    if(object.y$isRaster){
+      oldnames <- names(object.y$rasters)
+      #if we have rasters, we must update their order too
+      membership_rasts <- object.y$rasters[1:object.y$k]
+      membership_rasts <- membership_rasts[matidx]
+      i <- length(object.y$rasters)
+      membership_rasts[[i]] <- object.y$rasters[[i]]
+      object.y$rasters <- membership_rasts
+      names(object.y$rasters) <- oldnames
+    }
     return(object.y)
   }
-}
-
-
-
-#' @title Jaccard similarity coefficient
-#'
-#' @description Calculate the Jaccard similarity coefficient
-#'
-#' @details Considering that the classification produced by
-#'
-#' @param x A vector of positive reals
-#' @param y A vector of positive reals
-#' @return A float: the Jaccard similarity coefficient
-#' @keywords internal
-#' @examples
-#' # this is an internal function, no example provided
-calc_jaccard_idx <- function(x,y){
-  mat <- cbind(x,y)
-  num <- sum(apply(mat,1,min))
-  denom <- sum(apply(mat,1,max))
-  return(num/denom)
 }

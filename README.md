@@ -32,7 +32,7 @@ Jeremy Gelb, Laboratoire d’Équité Environnemental INRS (CANADA), Email:
 
 ## Contributors
 
-Philippe Apparcio, Laboratoire d’Équité Environnemental INRS (CANADA),
+Philippe Apparicio, Laboratoire d’Équité Environnemental INRS (CANADA),
 Email: <philippe.apparicio@ucs.inrs.ca>
 
 ## About the package

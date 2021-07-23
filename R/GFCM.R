@@ -71,7 +71,7 @@ GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = T
 #'
 #' @details The implementation is based on the following article : \doi{10.1016/j.dsp.2012.09.016}.\cr
 #'
-#' the matrix of belonging (u) is calculated as follow \cr
+#' the membership matrix (u) is calculated as follow \cr
 #' \deqn{u_{ik} = \frac{(||x_{k} - v{_i}||^2 -b_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -b_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}}
 #'
 #' the centers of the groups are updated with the following formula

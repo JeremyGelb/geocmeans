@@ -24,6 +24,7 @@
 #' }
 #' @export
 #' @examples
+#' \dontrun{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
@@ -32,17 +33,21 @@
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' MyMaps <- mapClusters(LyonIris, result$Belongings)
+#' }
 mapClusters <- function(geodata = NULL, object, undecided = NULL) {
 
-    if(class(object)[[1]] == "FCMres"){
+    cls <- class(object)[[1]]
+    isRaster <- FALSE
+    if(cls == "FCMres"){
         belongmatrix <- object$Belongings
+        isRaster <- object$isRaster
     }else if(class(object)[[1]] == "matrix"){
         belongmatrix <- object
     }else{
         stop("object must be one of matrix of FCMres")
     }
 
-    if(object$isRaster){
+    if(isRaster){
         return(mapRasters(object, undecided))
     }else{
         geodata$OID <- as.character(1:nrow(geodata@data))
@@ -76,6 +81,7 @@ mapClusters <- function(geodata = NULL, object, undecided = NULL) {
 #'         probability of the observations to belong to that group
 #'         \item ClusterMap : a ggplot map showing the most likely group for each observation
 #' }
+#' @importFrom methods as
 #' @keywords internal
 #' @examples
 #' #No example provided, this is an internal function, use the general wrapper function mapClusters
@@ -108,9 +114,9 @@ mapRasters  <- function(object, undecided){
     #finding for each pixel the max probability
     uncertain_vec <- undecidedUnits(object$Belongings, tol = undecided, out = "numeric")
     rast <- object$rasters[[1]]
-    vec <- rep(NA, times = ncell(rast))
+    vec <- rep(NA, times = raster::ncell(rast))
     vec[object$missing] <- uncertain_vec
-    values(rast) <- vec
+    raster::values(rast) <- vec
 
     spdf <- as(rast, "SpatialPixelsDataFrame")
     df <- as.data.frame(spdf)
@@ -345,143 +351,6 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 }
 
 
-#' @title Descriptive statistics by group
-#'
-#' @description Calculate some descriptive statistics of each group
-#'
-#' @param data The original dataframe used for the classification
-#' @param belongmatrix A membership matrix
-#' @param weighted A boolean indicating if the summary statistics must use the
-#'   membership matrix columns as weights (TRUE) or simply assign each
-#'   observation to its most likely cluster and compute the statistics on each
-#'   subset (FALSE)
-#' @param dec An integer indicating the number of digits to keep when rounding
-#' (default is 3)
-#' @param silent A boolean indicating if the results must be printed or silently returned
-#' @return A list of length k (the number of group). Each element of the list is
-#'   a dataframe with summary statistics for the variables of data for each
-#'   group
-#' @export
-#' @importFrom dplyr %>%
-#' @importFrom grDevices rgb
-#' @importFrom stats quantile sd weighted.mean
-#' @importFrom utils setTxtProgressBar txtProgressBar
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' summarizeClusters(dataset, result$Belongings)
-summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, silent=TRUE) {
-    belongmatrix <- as.data.frame(belongmatrix)
-    if (weighted) {
-        Summaries <- lapply(1:ncol(belongmatrix), function(c) {
-            W <- belongmatrix[, c]
-            Values <- apply(data, 2, function(x) {
-                Q5 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.05, na.rm = TRUE, weight = W),dec))
-                Q10 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.1, na.rm = TRUE, weight = W),dec))
-                Q25 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.25, na.rm = TRUE, weight = W),dec))
-                Q50 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.5, na.rm = TRUE, weight = W),dec))
-                Q75 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.75, na.rm = TRUE, weight = W),dec))
-                Q90 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.9, na.rm = TRUE, weight = W),dec))
-                Q95 <- as.numeric(round(reldist::wtd.quantile(x, q = 0.95, na.rm = TRUE, weight = W),dec))
-                Mean <- as.numeric(round(weighted.mean(x, W),dec))
-                Std <- round(sqrt(reldist::wtd.var(x, weight=W)),dec)
-                N <-
-                return(list(Q5 = Q5, Q10 = Q10, Q25 = Q25, Q50 = Q50,
-                            Q75 = Q75, Q90 = Q90, Q95 = Q95,
-                            Mean = Mean, Std = Std))
-            })
-            DF <- do.call(cbind, Values)
-            if(silent==FALSE){
-                print(paste("Statistic summary for cluster ", c, sep = ""))
-                print(DF)
-            }
-
-            return(DF)
-        })
-        names(Summaries) <- paste("Cluster_", c(1:ncol(belongmatrix)), sep = "")
-        return(Summaries)
-
-    } else {
-        Groups <- colnames(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
-        data$Groups <- Groups
-        Summaries <- lapply(unique(data$Groups), function(c) {
-            DF <- subset(data, data$Groups == c)
-            DF$Groups <- NULL
-            Values <- apply(DF, 2, function(x) {
-                Q5 <- as.numeric(round(quantile(x, probs = 0.05, na.rm = TRUE),dec))
-                Q10 <- as.numeric(round(quantile(x, probs = 0.1, na.rm = TRUE),dec))
-                Q25 <- as.numeric(round(quantile(x, probs = 0.25, na.rm = TRUE),dec))
-                Q50 <- as.numeric(round(quantile(x, probs = 0.5, na.rm = TRUE),dec))
-                Q75 <- as.numeric(round(quantile(x, probs = 0.75, na.rm = TRUE),dec))
-                Q90 <- as.numeric(round(quantile(x, probs = 0.9, na.rm = TRUE),dec))
-                Q95 <- as.numeric(round(quantile(x, probs = 0.95, na.rm = TRUE),dec))
-                Mean <- round(mean(x),dec)
-                Std <- round(sd(x),dec)
-                return(list(Q5 = Q5, Q10 = Q10, Q25 = Q25, Q50 = Q50,
-                            Q75 = Q75, Q90 = Q90, Q95 = Q95,
-                            Mean = Mean, Std = Std))
-            })
-            DF <- do.call(cbind, Values)
-            if(silent==FALSE){
-                print(paste("Statistic summary for cluster ", c, sep = ""))
-                print(DF)
-            }
-
-            return(DF)
-        })
-        names(Summaries) <- paste("Cluster_", c(1:ncol(belongmatrix)), sep = "")
-        return(Summaries)
-    }
-}
-
-
-#' @title Summary method for FCMres
-#'
-#' @description Calculate some descriptive statistics of each group of a
-#' FCMres object
-#'
-#' @param object A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
-#' @param data A dataframe to use for the summary statistics instead of obj$data
-#' @param weighted A boolean indicating if the summary statistics must use the
-#'   membership matrix columns as weights (TRUE) or simply assign each
-#'   observation to its most likely cluster and compute the statistics on each
-#'   subset (FALSE)
-#' @param dec An integer indicating the number of digits to keep when rounding
-#' (default is 3)
-#' @param silent A boolean indicating if the results must be printed or silently returned
-#' @param ... Not used
-#' @return A list of length k (the number of group). Each element of the list is
-#'   a dataframe with summary statistics for the variables of data for each
-#'   group
-#' @export
-#' @importFrom dplyr %>%
-#' @importFrom grDevices rgb
-#' @importFrom stats quantile sd weighted.mean
-#' @importFrom utils setTxtProgressBar txtProgressBar
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' summary(result)
-summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent=TRUE, ...) {
-    if(is.null(data)){
-        df <- object$Data
-    }else{
-        df <- as.matrix(data)
-    }
-    return(summarizeClusters(df, object$Belongings, weighted, dec, silent))
-}
-
-
 #' @title Spider chart
 #'
 #' @description Display spider charts to quickly compare values between groups
@@ -654,8 +523,8 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #' @param algo A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)
 #' @param parameters A dataframe of parameters with columns k,m and alpha
 #' @param data A dataframe with numeric columns
-#' @param nblistw A list.w object describing the neighbours typically produced
-#'   by the spdep package
+#' @template nblistw-arg
+#' @template window-arg
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param spconsist A boolean indicating if the spatial consistency must be
@@ -675,6 +544,9 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #'   convergence assessment
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
+#' @param init A string indicating how the initial centers must be selected. "random"
+#' indicates that random observations are used as centers. "kpp" use a distance based method
+#' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param verbose A boolean indicating if a progressbar should be displayed
 #' @return a DataFrame containing for each combinations of parameters several clustering
 #' quality indexes.
@@ -684,26 +556,30 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 #' #No example provided, this is an internal function
 eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NULL, standardize = TRUE,
                             spconsist = FALSE, classidx = TRUE, nrep = 30, indices = NULL,
-                            tol, maxiter, seed=NULL, verbose = TRUE){
+                            tol, maxiter, seed = NULL, init = "random", verbose = TRUE){
     if(algo == "FCM"){
         exefun <- function(data,x, ...){
-            return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+            return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize,
+                          verbose = FALSE, seed = seed, init = init))
         }
     }else if(algo == "GFCM"){
         exefun <- function(data,x,... ){
-            return(GCMeans(data, x$k, x$m, x$beta, maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+            return(GCMeans(data, x$k, x$m, x$beta, maxiter = maxiter, tol = tol, standardize = standardize,
+                           verbose = FALSE, seed = seed, init = init))
         }
     }else if(algo == "SFCM"){
         exefun <- function(data,x,...){
             dots <- list(...)
             return(SFCMeans(data, dots$lw, x$k, x$m, x$alpha, x$lag_method, window = dots$wd,
-                            maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+                            maxiter = maxiter, tol = tol, standardize = standardize,
+                            verbose = FALSE, seed = seed, init = init))
         }
     }else if(algo == "SGFCM"){
         exefun <- function(data,x,...){
             dots <- list(...)
             return(SGFCMeans(data, dots$lw, x$k, x$m, x$alpha, x$beta, x$lag_method, window = dots$wd,
-                             maxiter = maxiter, tol = tol, standardize = standardize, verbose = FALSE, seed = seed))
+                             maxiter = maxiter, tol = tol, standardize = standardize,
+                             verbose = FALSE, seed = seed, init = init))
         }
     }else{
         stop("The algo selected must be one in FCM, GFCM, SFCM, SGFCM")
@@ -727,7 +603,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
         }
         if(spconsist){
             #calculating spatial diag
-            consist <- spConsistency(result, templistw, nrep = nrep)
+            consist <- spConsistency(result, nrep = nrep)
             indices_values$spConsistency <- consist$Mean
             indices_values$spConsistency_05 <- consist$prt05
             indices_values$spConsistency_95 <- consist$prt95
@@ -773,7 +649,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
 #' be applied to all the pixels values in the window designated by the parameter window
 #' and weighted according to the values of this matrix.
 #' @param window A list of windows to use to calculate neighbouring values if
-#' the rasters are used.
+#' rasters are used.
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param spconsist A boolean indicating if the spatial consistency must be
@@ -793,6 +669,9 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
 #'   convergence assessment
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
+#' @param init A string indicating how the initial centers must be selected. "random"
+#' indicates that random observations are used as centers. "kpp" use a distance based method
+#' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param verbose A boolean indicating if a progressbar should be displayed
 #' @return A dataframe with indicators assessing the quality of classifications
 #' @export
@@ -811,7 +690,8 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
 #' }
 select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", window = NULL,
                               spconsist = TRUE, classidx = TRUE, nrep = 30, indices = NULL,
-                              standardize = TRUE, maxiter = 500, tol = 0.01, seed=NULL, verbose = TRUE){
+                              standardize = TRUE, maxiter = 500, tol = 0.01,
+                              seed=NULL, init = "random", verbose = TRUE){
 
     if(spconsist==FALSE & classidx==FALSE){
         stop("one of spconsist and classidx must be TRUE")
@@ -833,7 +713,7 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     dfIndices <- eval_parameters(algo, allcombinaisons, data, nblistw, window, standardize,
         spconsist, classidx, nrep, indices,
-        tol, maxiter, seed, verbose)
+        tol, maxiter, seed, init = init, verbose = verbose)
 }
 
 
@@ -876,7 +756,7 @@ selectParameters <- select_parameters
 #' be applied to all the pixels values in the window designated by the parameter window
 #' and weighted according to the values of this matrix.
 #' @param window A list of windows to use to calculate neighbouring values if
-#' the rasters are used.
+#' rasters are used.
 #' @param spconsist A boolean indicating if the spatial consistency must be
 #' calculated
 #' @param classidx A boolean indicating if the quality of classification
@@ -896,6 +776,9 @@ selectParameters <- select_parameters
 #'   convergence assessment
 #' @param seed An integer used for random number generation. It ensures that the
 #' start centers will be the same if the same integer is selected.
+#' @param init A string indicating how the initial centers must be selected. "random"
+#' indicates that random observations are used as centers. "kpp" use a distance based method
+#' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param chunk_size The size of a chunk used for multiprocessing. Default is 100.
 #' @param verbose A boolean indicating if a progressbar should be displayed
 #' @return A dataframe with indicators assessing the quality of classifications
@@ -920,7 +803,7 @@ selectParameters <- select_parameters
 select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", window = NULL,
                                  spconsist = TRUE, classidx = TRUE, nrep = 30, indices = NULL,
                                  standardize = TRUE, maxiter = 500, tol = 0.01, chunk_size = 5,
-                                 seed=NULL, verbose = TRUE){
+                                 seed=NULL, init = "random", verbose = TRUE){
 
     if(spconsist==FALSE & classidx==FALSE){
         stop("one of spconsist and classidx must be TRUE")
@@ -957,7 +840,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
                 parameters <- chunks[[i]]
                 indices <- eval_parameters(algo, parameters, data, nblistw, window, standardize,
                                            spconsist, classidx, nrep, indices,
-                                           tol, maxiter, verbose = FALSE)
+                                           tol, maxiter, init = init, verbose = FALSE)
                 p(sprintf("i=%g", i))
                 return(indices)
             }, future.seed = seed)
@@ -967,7 +850,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
             parameters <- chunks[[i]]
             indices <- eval_parameters(algo, parameters, data, nblistw, window, standardize,
                                        spconsist, classidx, nrep, indices,
-                                       tol, maxiter, verbose = FALSE)
+                                       tol, maxiter, init = init, verbose = FALSE)
             return(indices)
         },future.seed = seed)
     }
@@ -1023,6 +906,7 @@ selectParameters.mc <- select_parameters.mc
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' Wqueen2 <- adjustSpatialWeights(dataset,queen,style="C")
 adjustSpatialWeights <- function(data,listw,style){
+    data <- as.matrix(data)
     new_weights <- lapply(1:nrow(data),function(i){
         row <- data[i,]
         neighbours <- data[listw[[i]],]
@@ -1033,166 +917,6 @@ adjustSpatialWeights <- function(data,listw,style){
     new_listw <- spdep::nb2listw(listw,glist=new_weights,style = style)
     return(new_listw)
 }
-
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-##### prediction functions #####
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-#' @title Predict matrix membership for new observations
-#'
-#' @description Function predict the membership matrix of a new set of observations
-#'
-#' @param object An FCMres object as produced by one of the following functions: CMeans,
-#' GCMeans, SFCMeans, SGFCMeans
-#' @param new_data A DataFrame with the new observations or a list of rasters if
-#' object$isRaster is TRUE
-#' @param listw A nblistw object from spdep (for the new data)
-#' @param window A window to use if the data provided are rasters
-#' @param standardize  A boolean to specify if the variable must be centered and
-#'   reduced (default = True)
-#' @param ... not used
-#'
-#' @return A numeric matrix with the membership values for each new observation. If
-#' rasters were used, return a list of rasters with the membership values.
-#' @export
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#'
-#' # rescaling all the variables used in the analysis
-#' for (field in AnalysisFields) {
-#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
-#' }
-#'
-#' # doing the initial clustering
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)
-#'
-#' # using a subset of the original dataframe as "new data"
-#' new_data <- LyonIris[c(1, 27, 36, 44, 73),]
-#' new_dataset <- new_data@data[AnalysisFields]
-#' new_nb <- spdep::poly2nb(new_data,queen=TRUE)
-#' new_Wqueen <- spdep::nb2listw(new_nb,style="W")
-#'
-#' # doing the prediction
-#' predictions <- predict_membership(result, new_dataset, new_Wqueen, standardize = FALSE)
-predict_membership <- function(object, new_data, listw = NULL, window = NULL, standardize = TRUE, ...){
-
-    results <- object
-    # if we are in raster mode, we need to do some conversions.
-    if(results$isRaster == TRUE){
-        old_data <- new_data
-        new_data_tot <- do.call(cbind,lapply(new_data, function(rast){
-            return(raster::values(rast))
-        }))
-        missing <- complete.cases(new_data_tot)
-        new_data <- new_data_tot[missing,]
-    }
-    ## standardize the data if required
-    if (standardize){
-        for (i in 1:ncol(new_data)) {
-            new_data[, i] <- scale(new_data[, i])
-        }
-    }
-
-    ## calculating the lagged dataset if required
-    if(results$algo %in% c("SFCM", "SGFCM")){
-        if(results$isRaster == FALSE){
-            if(is.null(listw)){
-                stop("With a spatial clustering method like SFCM or SGFCM, the spatial matrix listw
-                 associated with the new dataset must be provided")
-            }
-            wdata <- calcLaggedData(new_data, listw, results$lag_method)
-        }else{
-            if(is.null(window)){
-                stop("With a spatial clustering method like SFCM or SGFCM, the spatial matrix window
-                 to use on the new dataset must be provided")
-            }
-            wdata_total <- do.call(cbind,lapply(dataset, function(band){
-                wraster <- focal(band, w, sum, na.rm = TRUE, pad = TRUE)
-                return(raster::values(wraster))
-            }))
-            wdata <- wdata_total[missing,]
-        }
-
-    }
-
-    ## selecting the appropriate function for prediction
-    if(results$algo == "FCM"){
-        pred_values <- calcBelongMatrix(results$Centers, new_data, results$m)
-    }else if(results$algo == "GFCM"){
-        pred_values <- calcFGCMBelongMatrix(results$Centers, new_data,
-                                            results$m, results$beta)
-    }else if(results$algo == "SFCM"){
-        pred_values <- calcSFCMBelongMatrix(results$Centers, new_data,
-                                            wdata,results$m, results$alpha)
-    }else if(results$algo == "SGFCM"){
-        pred_values <- calcSFGCMBelongMatrix(results$Centers, new_data,
-                                            wdata,results$m, results$alpha, results$beta)
-    }
-
-    if(results$isRaster == FALSE){
-        return(pred_values)
-    }else{
-        nc <- raster::ncell(rast)
-        rasters_membership <- lapply(1:ncol(pred_values), function(i){
-            rast <- old_data[[1]]
-            vec <- rep(NA,times = nc)
-            vec[missing] <- pred_values[,i]
-            raster::values(rast) <- vec
-            return(rast)
-        })
-        names(rasters_membership) <- paste("group",1:ncol(pred_values), sep = "")
-        return(rasters_membership)
-    }
-
-}
-
-
-#' @title Predict method for FCMres object
-#'
-#' @description Function predict the membership matrix of a new set of observations
-#'
-#' @param object An FCMres object as produced by one of the following functions: CMeans,
-#' GCMeans, SFCMeans, SGFCMeans
-#' @param new_data A DataFrame with the new observations
-#' @param listw A nb object from spdep (for the new data)
-#' @param standardize  A boolean to specify if the variable must be centered and
-#'   reduced (default = True)
-#' @param ... not used
-#'
-#' @return A numeric matrix with the membership values for each new observation
-#' @export
-#' @examples
-#' data(LyonIris)
-#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
-#' "TxChom1564","Pct_brevet","NivVieMed")
-#'
-#' # rescaling all the variables used in the analysis
-#' for (field in AnalysisFields) {
-#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
-#' }
-#'
-#' # doing the initial clustering
-#' dataset <- LyonIris@data[AnalysisFields]
-#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
-#' Wqueen <- spdep::nb2listw(queen,style="W")
-#' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)
-#'
-#' # using a subset of the original dataframe as "new data"
-#' new_data <- LyonIris[c(1, 27, 36, 44, 73),]
-#' new_dataset <- new_data@data[AnalysisFields]
-#' new_nb <- spdep::poly2nb(new_data,queen=TRUE)
-#' new_Wqueen <- spdep::nb2listw(new_nb,style="W")
-#'
-#' # doing the prediction
-#' predictions <- predict(result, new_dataset, new_Wqueen, standardize = FALSE)
-predict.FCMres <- predict_membership
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

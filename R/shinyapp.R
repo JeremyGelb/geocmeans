@@ -8,6 +8,9 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
                   "base_boxplots","radarchart", 'rasterMode', "object"
                   ))
 
+#see here to remove global environment variables
+#https://community.rstudio.com/t/alternative-to-global-for-passing-variable-to-shiny-app/26476/2
+
 
 #' @title Classification result explorer
 #'

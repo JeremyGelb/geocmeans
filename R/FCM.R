@@ -69,7 +69,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #'
 #' @details The implementation is based on the following article : \doi{10.1016/j.patcog.2006.07.011}.\cr
 #'
-#' the matrix of belonging (u) is calculated as follow \cr
+#' the membership matrix (u) is calculated as follow \cr
 #' \deqn{u_{ik} = \frac{(||x_{k} - v{_i}||^2 + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}}
 #'
 #' the centers of the groups are updated with the following formula

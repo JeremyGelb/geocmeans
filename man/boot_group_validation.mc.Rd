@@ -67,7 +67,7 @@ Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456,
 
 future::plan(future::multiprocess(workers=2))
 
-validation.mc <- boot_group_validation(Cmean, nsim = 1000, maxiter = 1000,
+validation <- boot_group_validation.mc(Cmean, nsim = 1000, maxiter = 1000,
     tol = 0.01, init = "random")
 ## make sure any open connections are closed afterward
 if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)

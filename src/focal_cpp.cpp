@@ -40,7 +40,7 @@ using namespace Rcpp;
 //' @title focal euclidean distance on a matrix with a given window
 //' @name focal_euclidean_mat_window
 //' @param mat a matrix
-//' @param window a numeric matrix (squarred)
+//' @param window a numeric matrix (squared)
 //' @return a matrix with the euclidean distance of each cell to
 //' its neighbours.
 //' @keywords internal
@@ -134,6 +134,89 @@ NumericMatrix focal_euclidean_list(List matrices, NumericMatrix window){
   return m2;
 }
 
+
+
+//' @title focal euclidean distance on a matrix with a given window for a cube
+//' @name focal_euclidean_arr_window
+//' @param mat an array (cube)
+//' @param window a numeric matrix (squared)
+//' @return a matrix with the euclidean distance of each cell to
+//' its neighbours.
+//' @keywords internal
+//' @export
+//'
+// [[Rcpp::export]]
+NumericMatrix focal_euclidean_arr_window(arma::cube mat, arma::mat window){
+
+  int nr = mat.n_rows;
+  int nc = mat.n_cols;
+  int nl = mat.n_slices;
+  int r,c,lr,hr,lc,hc,i,j;
+  int wr,wc;
+  int w1 = floor(float(window.n_rows)/2.0);
+  int w2 = floor(float(window.n_cols)/2.0);
+  int window_width = window.n_rows;
+  int window_height = window.n_cols;
+  int start_window_row = 0, end_window_row = window_width-1, start_window_col = 0, end_window_col = window_height-1;
+  arma::mat subwindow;
+  double distsums;
+  arma::vec xi,xj;
+  arma::cube subcube;
+  // creating an empty matrix
+  NumericMatrix m2(nr, nc);
+
+  for (r = 0; r < nr ; r++){
+    wr = w1;
+    lr = r - w1;
+    hr = r + w1;
+    start_window_row = 0;
+    end_window_row = window_width-1;
+    if(lr < 0){
+      wr = w1 + lr;
+      start_window_row = lr * -1;
+      lr = 0;
+    }
+    if(hr >= nr){
+      end_window_row = window_width - 2 - (hr - nr); // so the width of the window minus excess
+      hr = nr-1;
+    }
+    for(c = 0; c < nc; c++){
+      start_window_col = 0;
+      end_window_col = window_height-1;
+      wc = w2;
+      lc = c - w2;
+      hc = c + w2;
+      if(lc < 0){
+        wc = w2 + lc;
+        start_window_col = lc *-1;
+        lc = 0;
+      }
+      if(hc >= nc){
+        end_window_col = window_height - 2 - (hc - nc); // so the height of the window minus excess
+        hc = nc-1;
+      }
+      xi =  mat.tube(r,c);
+      if(!xi.has_nan()){
+        subcube = mat.subcube(lr, lc, 0, hr, hc, (nl-1));
+        distsums = 0;
+        subwindow = window.submat( start_window_row, start_window_col, end_window_row, end_window_col);
+        subwindow(wr,wc) = 0;
+
+        for(i = 0; i < subcube.n_rows; i++){
+          for(j = 0; j < subcube.n_cols; j++){
+            xj = subcube.tube(i,j);
+            distsums = distsums + accu(pow(xi - xj,2)) * subwindow(i,j);
+          }
+        }
+
+        m2(r,c) = distsums;
+      }else{
+        m2(r,c) = NA_REAL;
+      }
+    }
+  }
+  return m2;
+}
 
 
 

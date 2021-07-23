@@ -2,17 +2,24 @@
 % Please edit documentation in R/RcppExports.R
 \name{vecmin}
 \alias{vecmin}
+\alias{vecmax}
 \title{minimum of a vector}
 \usage{
 vecmin(x)
+
+vecmax(x)
 }
 \arguments{
 \item{x}{a NumericVector}
 }
 \value{
 a double
+
+a double
 }
 \description{
 minimum of a vector
+
+maximum of a vector
 }
 \keyword{internal}

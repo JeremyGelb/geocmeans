@@ -73,6 +73,21 @@ NumericVector calcEuclideanDistance2(NumericMatrix y, NumericVector x){
   return result;
 }
 
+//' @title euclidean distance between rows of a matrix and a vector (arma mode)
+//' @name calcEuclideanDistance3
+//' @param y a matrix
+//' @param x a vector (same length as ncol(matrix))
+//' @return a vector (same length as nrow(matrix))
+//' @export
+//' @keywords internal
+//'
+// [[Rcpp::export]]
+arma::mat calcEuclideanDistance3(arma::mat y, arma::mat x){
+  return arma::sum(arma::pow(y.each_row() - x,2),1);
+}
+
+
+
 //' @title sum of two matrices by column
 //' @name add_matrices_bycol
 //' @param x a matrix
@@ -248,4 +263,18 @@ LogicalMatrix test_inferior_mat(NumericMatrix mat, double t){
   return result;
 }
 
-
+//' @title create a matrix by multiplying a vector by its elements one by one as rows
+//' @name vector_out_prod
+//' @param x a vector
+//' @return a NumericMatrix
+//' @keywords internal
+//' @export
+//'
+// [[Rcpp::export]]
+NumericMatrix vector_out_prod(NumericVector x){
+  NumericMatrix res(x.length(),x.length());
+  for(int i = 0; i < x.length(); i++){
+      res(i,_) = x(i) * x;
+  }
+  return res;
+}

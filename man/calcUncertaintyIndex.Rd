@@ -7,7 +7,7 @@
 calcUncertaintyIndex(belongmatrix)
 }
 \arguments{
-\item{belongmatrix}{The membership matrix obtained at the end of the algorithm}
+\item{belongmatrix}{A membership matrix}
 }
 \value{
 A vector with the values of the diversity (entropy) index
@@ -16,10 +16,12 @@ A vector with the values of the diversity (entropy) index
 Calculate the diversity (or entropy) index.
 }
 \details{
-The diversity (or entropy) index \insertCite{theil1972statistical}{geocmeans} is calculated for each observation an vary between 0 and 1. When the value is close to 0, the
-observation belong to only one cluster (as in hard clustering). When the value is
-close to 1, the observation is undecided and tends to belong to each cluster. Values
-above 0.9 should be investigated. The formula is:
+The diversity (or entropy) index \insertCite{theil1972statistical}{geocmeans}
+is calculated for each observation an varies between 0 and 1. When the value
+is close to 0, the observation belong to only one cluster (as in hard
+clustering). When the value is close to 1, the observation is undecided and
+tends to belong to each cluster. Values above 0.9 should be investigated. The
+formula is:
 
 \deqn{H2_{i} = \frac{-\sum[u_{ij}\ln(u_{ij})]}{\ln(k)}.}
 

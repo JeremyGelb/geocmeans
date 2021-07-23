@@ -110,3 +110,7 @@ ggplot() +
                 label = round(consistIndex2$Mean,2))) + 
   labs(x = "Adjusted Spatial Inconsistency Index", y = "")
 ```
+
+When working with rasters, it is not efficient to update the window used to define neighbouring for each pixel and to store them. Instead, the function `spConsistency` can be used directly on an `FCMres` object with the parameter `adj` set to `TRUE` to obtain the adjusted spatial inconsistency index.
+
+## References

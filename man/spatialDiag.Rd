@@ -4,16 +4,32 @@
 \alias{spatialDiag}
 \title{Spatial diagnostic}
 \usage{
-spatialDiag(belongmatrix, nblistw, undecided = NULL, nrep = 50)
+spatialDiag(
+  object,
+  nblistw = NULL,
+  window = NULL,
+  undecided = NULL,
+  matdist = NULL,
+  nrep = 50
+)
 }
 \arguments{
-\item{belongmatrix}{A membership matrix}
+\item{object}{A FCMres object, typically obtained from functions CMeans,
+GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.}
 
-\item{nblistw}{A list.w  object describing the neighbours (spdep package)}
+\item{nblistw}{A list.w object describing the neighbours typically produced
+by the spdep package. Required if data is a dataframe, see the parameter window
+if you use a list of rasters as input. Can also be NULL if object is a FCMres object.}
 
-\item{undecided}{A float between 0 and 1 giving the minimum value that an
-observation must get in the membership matrix to not be considered as
-uncertain (default = NULL)}
+\item{window}{If rasters were used for the classification, the window must be
+specified instead of a list.w object. Can also be NULL if object is a FCMres object.}
+
+\item{undecided}{A float giving the threslhod to detect undecided observations. An
+observation is undecided if its maximum membership value is bellow this float. If
+null, no observations are undecided.}
+
+\item{matdist}{A matrix representing the dissimilarity between the clusters. The matrix must
+be squared and the diagonal must be filled with zeros.}
 
 \item{nrep}{An integer indicating the number of permutation to do to simulate
 the random distribution of the spatial inconsistency}
@@ -33,9 +49,12 @@ A named list with :
 Utility function to facilitate the spatial diagnostic of a classification
 
 Calculate the following indicators : Moran I index (spdep::moranI) for each
-column of the belonging matrix, Join count test (spdep::joincount.multi) for
+column of the membership matrix, Join count test (spdep::joincount.multi) for
 the most likely groups of each datapoint, Spatial consistency index (see
-function spConsistency)
+function spConsistency) and the Elsa statistic (see function calcElsa). Note
+that if the FCMres object given was constructed with rasters, the joincount
+statistic is not calculated and no p-values are provided for the Moran I
+indices.
 }
 \examples{
 data(LyonIris)
@@ -45,5 +64,5 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-spatialDiag(result$Belongings, Wqueen, undecided=0.45, nrep=30)
+spatialDiag(result, undecided=0.45, nrep=30)
 }

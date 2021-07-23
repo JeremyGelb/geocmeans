@@ -4,7 +4,7 @@
 \alias{is.FCMres}
 \title{is method for FCMres}
 \usage{
-is.FCMres(x)
+\method{is}{FCMres}(x)
 }
 \arguments{
 \item{x}{A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
@@ -14,7 +14,7 @@ A boolean, TRUE if x can be considered as a FCMres object, FALSE otherwise
   group
 }
 \description{
-Check if an object can me considered as a FCMres object
+Check if an object can be considered as a FCMres object
 }
 \examples{
 data(LyonIris)
@@ -24,5 +24,5 @@ dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-is.FCMres(result)
+is(result, "FCMres")
 }

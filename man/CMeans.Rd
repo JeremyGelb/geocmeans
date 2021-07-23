@@ -26,7 +26,7 @@ values are not used during the classification.}
 
 \item{m}{A float for the fuzziness degree}
 
-\item{maxiter}{A float for the maximum number of iteration}
+\item{maxiter}{An integer for the maximum number of iterations}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
@@ -34,22 +34,35 @@ convergence assessment}
 \item{standardize}{A boolean to specify if the variables must be centered and
 reduced (default = True)}
 
-\item{verbose}{A boolean to specify if the messages should be displayed}
+\item{verbose}{A boolean to specify if the progress should be printed}
 
 \item{init}{A string indicating how the initial centers must be selected. "random"
 indicates that random observations are used as centers. "kpp" use a distance based method
 resulting in more dispersed centers at the beginning. Both of them are heuristic.}
 
 \item{seed}{An integer used for random number generation. It ensures that the
-start centers will be the same if the same integer is selected.}
+start centers will be the same if the same value is selected.}
 }
 \value{
-A named list with :
- \itemize{
+An S3 object of class FCMres with the following slots
+\itemize{
         \item Centers: a dataframe describing the final centers of the groups
         \item Belongings: the final membership matrix
         \item Groups: a vector with the names of the most likely group for each observation
         \item Data: the dataset used to perform the clustering (might be standardized)
+        \item isRaster: TRUE if rasters were used as input data, FALSE otherwise
+        \item k: the number of groups
+        \item m: the fuzyness degree
+        \item alpha: the spatial weighting parameter (if SFCM or SGFCM)
+        \item beta: beta parameter for generalized version of FCM (GFCM or SGFCM)
+        \item algo: the name of the algorithm used
+        \item rasters: a list of rasters with membership values and the most likely group (if rasters were used)
+        \item missing: a boolean vector indicating raster cell with data (TRUE) and with NA (FALSE) (if rasters were used)
+        \item maxiter: the maximum number of iterations used
+        \item tol: the convergence criterio
+        \item lag_method: the lag function used (if SFCM or SGFCM)
+        \item nblistw: the neighbours list used (if vector data were used for SFCM or SGFCM)
+        \item window: the window used (if raster data were used for SFCM or SGFCM)
 }
 }
 \description{

@@ -5,12 +5,12 @@
 \alias{focal_euclidean_list}
 \title{focal euclidean distance on a list of matrices}
 \usage{
-focal_euclidean_list(matrices, w)
+focal_euclidean_list(matrices, window)
 }
 \arguments{
 \item{matrices}{a List of matrices with the same dimensions}
 
-\item{w}{an integer floor((nrow(window)/2))}
+\item{window}{a numeric matrix}
 }
 \value{
 a matrix with the euclidean distance of each cell to

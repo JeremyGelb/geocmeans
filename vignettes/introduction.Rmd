@@ -56,6 +56,8 @@ The general workflow for applying a spatial fuzzy clustering algorithm with **ge
 
 **geocmeans** comes with a toy dataset *LyonIris*, combining many demographic and environmental variables aggregated at the scale of the Iris (aggregated units for statistical information) in Lyon (France).
 
+Note that the dataset used for a fuzzy classification can only contain continuous variables. For dataset with categorical variables, one could start with a PCA (Principal Component Analysis), MCA (multiple Correspondence Analysis) or a MDFA (Mixed Data Factor Analysis) and uses the obtained factors as inputs for the clustering.
+
 Before starting the analysis, the data must be standardized because most of the calculus is based on Euclidean distance (we plan to also include Manhattan distance in a future release).
 
 ```{r message=FALSE, warning=FALSE}
@@ -237,7 +239,7 @@ As expected, the results are very similar, but the generalized version provides 
 
 ## Spatial c-means and generalized c-means
 
-### Selecting *alpha* for SFCM
+### Selecting alpha for SFCM
 
 Now we can use the *SFCM* function to perform a spatial c-means. The first step is to define a spatial weight matrix indicating which observations are neighbours and the strength of their relationship. We propose here to use a basic queen neighbour matrix (built with **spdep**). The matrix must be row-standardized to ensure that the interpretation of all the parameters remains clear.
 
@@ -378,9 +380,9 @@ Again, we compare here the generalized and the classical version of the spatial 
 r1 <- calcqualityIndexes(Data, SFCM$Belongings,m = 1.5)
 r2 <- calcqualityIndexes(Data, SGFCM$Belongings,m = 1.5)
 
-diagSFCM <- spatialDiag(belongmatrix = SFCM$Belongings, nblistw = WMat,
+diagSFCM <- spatialDiag(SFCM$Belongings, nblistw = WMat,
                         undecided = 0.45,nrep = 500)
-diagSGFCM <- spatialDiag(belongmatrix = SGFCM$Belongings, nblistw = WMat,
+diagSGFCM <- spatialDiag(SGFCM$Belongings, nblistw = WMat,
                          undecided = 0.45,nrep = 500)
 
 df <- cbind(
@@ -396,8 +398,8 @@ The solution of the SGFCM is better on the semantic and the spatial aspects.
 
 We can compare the maps
 ```{r warning=FALSE, fig.cap = "Probability of belonging to cluster 1", out.width="80%", fig.pos="H", fig.align="center"}
-SFCMMaps <- mapClusters(geodata = LyonIris,belongmatrix = SFCM$Belongings,undecided = 0.45)
-SGFCMMaps <- mapClusters(geodata = LyonIris,belongmatrix = SGFCM$Belongings,undecided = 0.45)
+SFCMMaps <- mapClusters(geodata = LyonIris, object = SFCM$Belongings,undecided = 0.45)
+SGFCMMaps <- mapClusters(geodata = LyonIris, object = SGFCM$Belongings,undecided = 0.45)
 
 ggarrange(SFCMMaps$ProbaMaps[[1]],SGFCMMaps$ProbaMaps[[1]], nrow = 1, ncol = 2,
           common.legend = TRUE, legend = "bottom")
@@ -424,10 +426,10 @@ ggarrange(SFCMMaps$ClusterPlot,SGFCMMaps$ClusterPlot, nrow = 1, ncol = 2,
 Now, we can  do a deeper spatial analysis and compare the spatial consistency of the four classifications realized (FCM, GFCM, SFCM, SGFCM). 
 
 ```{r warning=FALSE}
-spdiag_1 <- spatialDiag(Cmean$Belongings, nblistw = WMat,nrep=250)
-spdiag_2 <- spatialDiag(GCmean$Belongings, nblistw = WMat,nrep=250)
-spdiag_3 <- spatialDiag(SFCM$Belongings, nblistw = WMat,nrep=250)
-spdiag_4 <- spatialDiag(SGFCM$Belongings, nblistw = WMat,nrep=250)
+spdiag_1 <- spatialDiag(Cmean$Belongings, nblistw = WMat, nrep=250)
+spdiag_2 <- spatialDiag(GCmean$Belongings, nblistw = WMat, nrep=250)
+spdiag_3 <- spatialDiag(SFCM$Belongings, nblistw = WMat, nrep=250)
+spdiag_4 <- spatialDiag(SGFCM$Belongings, nblistw = WMat, nrep=250)
 
 #looking at the moran I values for each group
 moran_table <- data.frame(cbind(spdiag_1$MoranValues$MoranI,
@@ -456,7 +458,6 @@ sum(spdiag_4$SpConsist > spdiag_3$SpConsistSamples) / length(spdiag_3$SpConsistS
 
 It appears that out of `r length(spdiag_3$SpConsistSamples)` permutations, the observed values of spatial inconsistency of SGFCM are always lower than that of SFCM. The difference is significant at the threshold `r 1/length(spdiag_3$SpConsistSamples)` (=1/`r length(spdiag_3$SpConsistSamples)`)
 
-
 We can map the undecided observations of the final solution. These entities should be analyzed more precisely. Selecting them is easy with the function *undecidedUnits* of the **geocmeans** package.
 
 ```{r warning=FALSE}
@@ -477,6 +478,24 @@ ggplot(data=DFmapping)+
                                  "cluster_V5"="pink",
                                  "Undecided"=rgb(0,0,0,0.4)))+
   theme( axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank()
+    )
+```
+
+for a more detailed map of uncertainty, one could Calculate the Shanon entropy index and use it as a measure of uncertainty with the function `calcUncertaintyIndex.` A value of 1 indicates that an observation has equal membership values among groups and a value of 0 indicates that an observation belongs to only one group.
+
+```{r warning=FALSE}
+LyonIris$entropyidx  <- calcUncertaintyIndex(SGFCM$Belongings)
+
+#mapping the uncertainty
+DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
+
+ggplot(data=DFmapping)+
+  geom_polygon(aes(x=long,y=lat,group=group,fill=entropyidx),color=rgb(0,0,0,0))+
+  coord_fixed(ratio = 1)+
+  labs(title = "Uncertainty evaluation", fill = "entropy index") +
+  theme(axis.title = element_blank(),
     axis.text = element_blank(),
     axis.ticks = element_blank()
     )
@@ -507,7 +526,7 @@ violinPlots(LyonIris@data[AnalysisFields], SGFCM$Groups)
 
 ## Ensuring clustering stability
 
-All the clustering algorithms of this package depends on a initial state that might influence the results. A good practice is to check the results to ensure that the groups obtained are stable if we replicate the analysis. The function `boost_group_validation` proposes an approach based on bootstraping.
+All the clustering algorithms of this package depends on a initial state that might influence the results. A good practice is to check the results to ensure that the groups obtained are stable if we replicate the analysis. The function `boost_group_validation` proposes an approach based on bootstrapping.
 
 ```{r warning=FALSE, eval = FALSE}
 bootvalues <- boot_group_validation(SGFCM, nsim = 1000, maxiter = 1000, 
@@ -516,7 +535,7 @@ bootvalues <- boot_group_validation(SGFCM, nsim = 1000, maxiter = 1000,
 
 We can now check if the groups are stable across simulations.
 
-```{r warning=FALSE, eval = FALSE}
+```{r warning=FALSE}
 melted_df <- reshape2::melt(bootvalues$group_consistency)
 melted_df$variable <- as.factor(melted_df$variable)
 
@@ -527,11 +546,11 @@ ggplot() +
   facet_wrap(vars(variable), ncol=2)
 ```
 
-The Jaccard index is calculated. A greater value means a more stable cluster. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster with some uncertainty. Under 0.5, the cluster tend to dissolve during the iterations. In the presented case, the group 3 seems to be less stable and tends to dissolve. In that context, retaining only three clusters could be a solution.
+The Jaccard index is calculated at each replication and for each cluster in comparison with the original result. A greater value means a more stable cluster. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster with some uncertainty. Under 0.5, the cluster tends to dissolve during the iterations. In the presented case, the group 3 seems to be less stable and tends to dissolve.
 
 We can also check the values of the centers of the group 3 across the 1000 iterations.
 
-```{r warning=FALSE, eval = FALSE}
+```{r warning=FALSE}
 df_gp3 <- bootvalues$group_centers[["group3"]]
 
 melted_df <- reshape2::melt(df_gp3)
@@ -543,15 +562,15 @@ ggplot() +
   xlim(-3,3)+
   facet_wrap(vars(variable), ncol=3)
 ```
-It appears that the center values for NO<sub>2</sub> and PM<sub>2.5</sub> are bimodal, that might explain why this group tends to dissolve.
+It appears that the center values for NO<sub>2</sub> and PM<sub>2.5</sub> are bimodal, that might explain why this group tends to dissolve. This could mean that group three is the combination of two very similar sub-groups.
 
-# Final words
+## Final words
 
 That's all, folks ! Following are the enhancements for the next version
 
 * introduce other methods of spatial c-means
 * open some other parameters to the user (such as the function defining the convergence criterion)
 * work on documentation
-* improve calculus speed by dropping some *apply* in the code
 
 
+## References

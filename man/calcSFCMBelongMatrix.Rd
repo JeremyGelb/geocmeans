@@ -29,11 +29,4 @@ Calculate the membership matrix (spatial version) according to a set of
 centroids, the observed data, the fuzziness degree a neighbouring matrix and
 a spatial weighting term
 }
-\keyword{#This}
-\keyword{an}
-\keyword{example}
-\keyword{function,}
 \keyword{internal}
-\keyword{is}
-\keyword{no}
-\keyword{provided}

@@ -23,6 +23,7 @@ select_parameters(
   maxiter = 500,
   tol = 0.01,
   seed = NULL,
+  init = "random",
   verbose = TRUE
 )
 
@@ -44,6 +45,7 @@ selectParameters(
   maxiter = 500,
   tol = 0.01,
   seed = NULL,
+  init = "random",
   verbose = TRUE
 )
 }
@@ -71,7 +73,7 @@ be applied to all the pixels values in the window designated by the parameter wi
 and weighted according to the values of this matrix.}
 
 \item{window}{A list of windows to use to calculate neighbouring values if
-the rasters are used.}
+rasters are used.}
 
 \item{spconsist}{A boolean indicating if the spatial consistency must be
 calculated}
@@ -99,6 +101,10 @@ convergence assessment}
 
 \item{seed}{An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.}
+
+\item{init}{A string indicating how the initial centers must be selected. "random"
+indicates that random observations are used as centers. "kpp" use a distance based method
+resulting in more dispersed centers at the beginning. Both of them are heuristic.}
 
 \item{verbose}{A boolean indicating if a progressbar should be displayed}
 }

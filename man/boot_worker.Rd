@@ -24,7 +24,7 @@ resulting in more dispersed centers at the beginning. Both of them are heuristic
 A list, similar to a FCMres object, but with only necessary slots for cluster bootstraping.
 }
 \description{
-Worker function for cluster bootstraping
+Worker function for cluster bootstrapping
 }
 \details{
 The worker function for the functions boot_group_validation and boot_group_validation.mc

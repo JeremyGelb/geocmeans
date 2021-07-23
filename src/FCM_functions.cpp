@@ -19,25 +19,38 @@ using namespace Rcpp;
 //' @keywords internal
 //
 // [[Rcpp::export]]
-NumericMatrix calcCentroids(NumericMatrix data, NumericMatrix belongmatrix, double m){
-  NumericMatrix powered = power_mat(belongmatrix, m);
-  NumericMatrix centers(belongmatrix.cols(), data.cols());
-  int ncB = belongmatrix.cols();
-  int ncD = data.cols();
+NumericMatrix calcCentroids(arma::mat data, arma::mat belongmatrix, double m){
+  arma::mat powered = pow(belongmatrix, m);
+  NumericMatrix centers(belongmatrix.n_cols, data.n_cols);
+  int ncB = belongmatrix.n_cols;
+  int ncD = data.n_cols;
+  arma::vec pi;
+  NumericVector center(ncD);
+  double spi;
   int i;
   int j;
   for( i = 0; i < ncB ; i++){
-    NumericVector pi = powered(_,i);
-    double spi = sum(pi);
-    NumericVector center(ncD);
+    pi = powered.col(i);
+    spi = sum(pi);
     for(j = 0 ; j < ncD ; j++){
-      center(j) = (sum((data(_,j) * pi) / spi ));
+      center(j) = (sum((data.col(j) % pi) / spi ));
     }
     centers(i,_) = center;
   }
   return centers;
 }
 
+
+
+// data(LyonIris)
+// AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+// "TxChom1564","Pct_brevet","NivVieMed")
+// dataset <- LyonIris@data[AnalysisFields]
+// queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+// Wqueen <- spdep::nb2listw(queen,style="W")
+// result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
+// mat <- result$Belongings[1:5,]
+// df <- result$Data[1:5,]
 
 //' @title Calculate the membership matrix
 //' @name calcBelongMatrix
@@ -73,6 +86,8 @@ NumericMatrix calcBelongMatrix(NumericMatrix centers, NumericMatrix data, double
   return belongmat;
 }
 
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // For the spatial version of the classical FCM (SFCM)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,29 +108,28 @@ NumericMatrix calcBelongMatrix(NumericMatrix centers, NumericMatrix data, double
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-NumericMatrix calcSWFCCentroids(NumericMatrix data, NumericMatrix wdata, NumericMatrix belongmatrix, double m, double alpha){
-  NumericMatrix powered = power_mat(belongmatrix, m);
-  NumericMatrix centers(belongmatrix.cols(), data.cols());
-  NumericMatrix wdata_alpha = wdata * alpha;
-
-  int ncB = belongmatrix.cols();
-  int ncD = data.cols();
+NumericMatrix calcSWFCCentroids(arma::mat data, arma::mat wdata, arma::mat belongmatrix, double m, double alpha){
+  arma::mat powered = arma::pow(belongmatrix, m);
+  NumericMatrix centers(belongmatrix.n_cols, data.n_cols);
+  arma::mat wdata_alpha = wdata * alpha;
+  arma::vec pi;
+  double spi;
+  int ncB = belongmatrix.n_cols;
+  int ncD = data.n_cols;
   int i;
   int j;
   for( i = 0; i < ncB ; i++){
-    NumericVector pi = powered(_,i);
-    double spi = sum(pi);
+    pi = powered.col(i);
+    spi = accu(pi);
     NumericVector center(ncD);
     for(j = 0 ; j < ncD ; j++){
-      NumericVector x = data(_,j);
-      NumericVector wx = wdata_alpha(_,j);
-
-      center(j) = sum((x + wx) * pi) / ((1+alpha) * spi);
+      center(j) = sum((data.col(j) + wdata_alpha.col(j)) % pi) / ((1.0+alpha) * spi);
     }
     centers(i,_) = center;
   }
   return centers;
 }
+
 
 //' @title Calculate the membership matrix (spatial version)
 //' @name calcSFCMBelongMatrix
@@ -133,7 +147,6 @@ NumericMatrix calcSWFCCentroids(NumericMatrix data, NumericMatrix wdata, Numeric
 //' @return A n * k matrix representing the belonging probabilities of each
 //'   observation to each cluster
 //' @keywords internal
-//' #This is an internal function, no example provided
 //'
 // [[Rcpp::export]]
 NumericMatrix calcSFCMBelongMatrix(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha){

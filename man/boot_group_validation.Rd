@@ -46,7 +46,7 @@ Check that the obtained groups are stable by bootstrap
 \details{
 Considering that the classification produced by a FCM like algorithm
   depends on its initial state, it is important to check if the groups
-  obtained are stable. This function use a bootstrap method to do so. During
+  obtained are stable. This function uses a bootstrap method to do it. During
   a selected number of iterations (at least 1000), a sample of size n (with
   replacement) is drawn from the original dataset. For each sample, the same
   classification algorithm is applied and the results are compared with the

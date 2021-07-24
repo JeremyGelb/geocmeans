@@ -177,6 +177,41 @@ is.FCMres <- function(x){
   return(TRUE)
 }
 
+
+#' @title print method for FCMres
+#'
+#' @description print a FCMres object
+#'
+#' @param x A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
+#' @param ... not used
+#' @return A boolean, TRUE if x can be considered as a FCMres object, FALSE otherwise
+#'   group
+#' @importFrom methods print
+#' @method print FCMres
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#' dataset <- LyonIris@data[AnalysisFields]
+#' result <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE)
+#' print(result, "FCMres")
+print.FCMres <- function(x, ...){
+  if(x$isRaster){
+    part1 <- "FCMres object constructed from a raster dataset"
+    part2 <- paste("dimension of the raster : ",x$rasters[[1]]@nrows,"x",x$rasters[[1]]@cols,
+                   " and ", nrow(x$Data), " variables",sep="")
+  }else{
+    part1 <- "FCMres object constructed from a dataframe"
+    part2 <- paste(nrow(x$Data), " observations and ", ncol(x$Data), " variables", sep="")
+  }
+  elements <- c("algo","k", "m", "alpha", "beta")
+  params <- paste(paste(elements, x[elements], sep = "="), collapse = " ; ")
+  part3 <- paste("parameters of the classification: ",params, sep = "")
+  cat(part1,part2,part3,sep="\n")
+  invisible(x)
+}
+
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ####                      SUMMARY S3 METHOD                          ####
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

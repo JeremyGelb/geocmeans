@@ -186,7 +186,6 @@ is.FCMres <- function(x){
 #' @param ... not used
 #' @return A boolean, TRUE if x can be considered as a FCMres object, FALSE otherwise
 #'   group
-#' @importFrom methods print
 #' @method print FCMres
 #' @export
 #' @examples

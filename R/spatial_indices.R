@@ -795,35 +795,3 @@ calc_local_moran_raster <- function(rast, window){
   }
 
 }
-
-# test for the vector version of hard clustering elsa
-# categories <- rep(1, times = 9)
-# categories[[5]] <- 2
-# dist <- rbind(c(0,1), c(1,0))
-# neighmat <- matrix(0, ncol = 9, nrow = 9)
-# p1 <- c(1,1,1,2,2,2,2,2,3,3,3,4,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,7,7,7,8,8,8,8,8,9,9,9)
-# p2 <- c(2,4,5,1,4,5,6,3,2,5,6,1,2,5,7,8,1,2,3,4,6,7,8,9,2,3,4,8,9,4,5,8,4,5,6,7,9,5,6,8)
-# for(i in 1:length(p1)){
-#   neighmat[p1[[i]], p2[[i]]] <- 1
-# }
-# nb <- spdep::mat2listw(neighmat)
-#
-# elsa_vector(categories, nb, dist)
-
-
-# # test for the vector version of fuzzy clustering elsa
-# memberships <- matrix(0, nrow = 9, ncol = 2)
-# memberships[,2] <- 1
-# memberships[5,] <- c(1,0)
-# dists <- rbind(c(0,1), c(1,0))
-#
-# neighmat <- matrix(0, ncol = 9, nrow = 9)
-# p1 <- c(1,1,1,2,2,2,2,2,3,3,3,4,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,7,7,7,8,8,8,8,8,9,9,9)
-# p2 <- c(2,4,5,1,4,5,6,3,2,5,6,1,2,5,7,8,1,2,3,4,6,7,8,9,2,3,5,8,9,4,5,8,4,5,6,7,9,5,6,8)
-#
-# for(i in 1:length(p1)){
-#   neighmat[p1[[i]], p2[[i]]] <- 1
-# }
-# nb <- spdep::mat2listw(neighmat)
-#
-# elsa_fuzzy_vector(memberships, nb, dists)

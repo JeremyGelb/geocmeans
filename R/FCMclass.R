@@ -2,31 +2,111 @@
 #'
 #' @description Instantiate a FCMres object from a list
 #'
+#' @details Creating manually a FCMres object can be handy to use geocmeans functions
+#' on results from external algorithms. The list given to function FCMres must
+#' contain 5 necessary parameters:
+#' \itemize{
+#'         \item Centers: a dataframe or matrix describing the final centers of the groups
+#'         \item Belongings: a membership matrix
+#'         \item Data: the dataset used to perform the clustering.
+#' It must be a dataframe or a matrix. If a list is given, then the function
+#' assumes that the classification occured on rasters (see information below)
+#'         \item m: the fuzyness degree (1 if hard clustering is used)
+#'         \item algo: the name of the algorithm used
+#' }
+#'
+#' Note that the S3 method predict is available only for object created with the functions
+#' CMeans, GCMeans, SFCMeans, SGFCMeans.
+#'
+#' When working with rasters, Data must be a list of rasters, and a second list of rasters
+#' with the membership values must be provided is en extra slot named "rasters". In that
+#' case, Belongings has not to be defined and will be created automatically.
+#'
+#' Warning: the order of the elements is very important. The first row in the
+#' matrix "Centers", and the first column in the matrix "Belongings" must both
+#' be related to the same group and so on. When working with raster data, the
+#' first row in the matrix "Centers" must also match with the first rasterLayer
+#' in the list "rasters".
+#'
 #' @param obj A list, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
 #' @keywords internal
-#' @return A object of class FCMres
+#' @return An object of class FCMres
 #' @export
 #' @examples
 #' #This is an internal function, no example provided
 FCMres <- function(obj){
-  attrs <- names(obj)
-  necessary <- c("Centers", "Belongings", "Data")
-  if (sum(necessary %in% attrs) < 3){
-    stop("The three attributes Centers, Belongings and Data are necessary to create
+
+  rasterMode <- class(obj$Data)[[1]] == "list"
+  if(rasterMode){
+    necessary <- c("Centers", "Data", "m", "algo", "rasters")
+    attrs <- names(obj)
+    if (sum(necessary %in% attrs) < 5){
+      stop("The attributes Centers, Data, m, algo and rasters are necessary to create
+         an object with class FCMres from raster data (obj$Data is a list, see
+         details in help(FCMres))")
+    }
+  }else{
+    necessary <- c("Centers", "Belongings", "Data", "m", "algo")
+    attrs <- names(obj)
+    if (sum(necessary %in% attrs) < 5){
+      stop("The attributes Centers, Data, m, algo and Belongings are necessary to create
          an object with class FCMres")
+    }
+    obj$Belongings <- tryCatch(as.matrix(obj$Belongings),
+                               error = function(e)
+                                 print("Obj$Belongings must be coercible to a matrix with as.matrix"))
   }
 
   obj$Centers <- tryCatch(as.matrix(obj$Centers),
            error = function(e)
              print("Obj$Centers must be coercible to a matrix with as.matrix"))
 
-  obj$Belongings <- tryCatch(as.matrix(obj$Belongings),
-                      error = function(e)
-                        print("Obj$Belongings must be coercible to a matrix with as.matrix"))
 
-  obj$Data <- tryCatch(as.matrix(obj$Data),
-               error = function(e)
-                 print("Obj$Data must be coercible to a matrix with as.matrix"))
+
+  if(rasterMode){
+    # if we are in raster mode, the data are provided as a list of rasterLayers
+    check_raters_dims(obj$Data)
+
+    #step1 : prepare the regular dataset
+    datamatrix <- do.call(cbind,lapply(obj$Data, function(band){
+      raster::values(band)
+    }))
+
+    #step2 : only keep the non-missing values
+    missing_pxl <- complete.cases(datamatrix)
+    data_class <- datamatrix[missing_pxl,]
+    obj$Data <- data_class
+    obj$missing <- missing_pxl
+    obj$isRaster <- TRUE
+    if(is.null(obj$rasters) | class(obj$rasters)!="list"){
+      stop('When using raster data, the slot "raster" in obj must contains a list of the
+           rasterLayers representing the membership values')
+    }
+    #step3 : set up the membership matrix
+    belongmat <- do.call(cbind,lapply(obj$rasters, function(band){
+      raster::values(band)
+    }))
+    belongmat <- belongmat[missing_pxl,]
+    obj$Belongings <- belongmat
+
+    #step4 pimp a bit the raster object
+    old_raster <- obj$rasters
+    names(old_raster) <- paste("group",1:length(old_raster))
+
+    rst2 <- old_raster[[1]]
+    vec <- rep(NA,times = raster::ncell(rst2))
+    DF <- as.data.frame(obj$Belongings)
+    vec[obj$missing] <- max.col(DF, ties.method = "first")
+    raster::values(rst2) <- vec
+    old_raster[["Groups"]] <- rst2
+    obj$rasters <- old_raster
+
+  }else{
+    obj$Data <- tryCatch(as.matrix(obj$Data),
+                         error = function(e)
+                           print("Obj$Data must be coercible to a matrix with as.matrix"))
+    obj$isRaster <- FALSE
+  }
 
   obj$k <- ncol(obj$Belongings)
 
@@ -34,6 +114,12 @@ FCMres <- function(obj){
   if("Groups" %in% attrs == FALSE){
     DF <- as.data.frame(obj$Belongings)
     obj$Groups <- colnames(DF)[max.col(DF, ties.method = "first")]
+  }
+
+  # A quick check of the membership matrix
+  test <- round(rowSums(obj$Belongings),8) != 1
+  if(any(test)){
+    warning("some rows in the membership matrix does not sum up to 1... This should be checked")
   }
 
   class(obj) <- c("FCMres","list")
@@ -64,7 +150,7 @@ is.FCMres <- function(x){
   attrs <- names(x)
 
   # the object must have this three attributes
-  necessary <- c("Centers", "Belongings", "Data")
+  necessary <- c("Centers", "Belongings", "Data", "m", "algo")
   if (sum(necessary %in% attrs) < 3){
     return(FALSE)
   }
@@ -279,6 +365,12 @@ summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent
 #' # doing the prediction
 #' predictions <- predict_membership(result, new_dataset, new_Wqueen, standardize = FALSE)
 predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, standardize = TRUE, ...){
+
+  if(object$algo %in% c("FCM", "GFCM", "SFCM", "SGFCM") == FALSE){
+    stop('pred can only be performed for FCMres object
+         if algo is one of "FCM", "GFCM", "SFCM", "SGFCM"')
+  }
+
 
   results <- object
   # if we are in raster mode, we need to do some conversions.

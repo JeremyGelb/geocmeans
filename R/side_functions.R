@@ -445,6 +445,7 @@ spiderPlots<- function(data, belongmatrix, chartcolors=NULL){
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' violinPlots(dataset, result$Groups)
 violinPlots <- function(data,groups){
+    data <- as.data.frame(data)
     data$groups <- groups
     groupvar <- "groups"
     Plots <- list()

@@ -71,23 +71,23 @@ library(spdep)
 
 data(LyonIris)
 
-#selecting the columns for the analysis
+# selecting the columns for the analysis
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 
-#rescaling the columns
+# rescaling the columns
 Data <- LyonIris@data[AnalysisFields]
 for (Col in names(Data)){
   Data[[Col]] <- scale(Data[[Col]])
 }
 
-#preparing some elements for further mapping
+# preparing some elements for further mapping
 LyonIris$OID <- as.character(1:nrow(LyonIris))
 FortiData <- ggplot2::fortify(LyonIris,region="OID")
 ```
 
 ```{r include=FALSE}
-#loading the pre-calculated results
+# loading the pre-calculated results
 load(system.file("extdata", "results_vignette_intro.rda",
                            package = "geocmeans", mustWork = TRUE))
 ```
@@ -97,8 +97,8 @@ load(system.file("extdata", "results_vignette_intro.rda",
 To explore the dataset and choose the right number of cluster/groups (k) we propose to start with a classical kmeans.
 
 ```{r warning=FALSE, fig.cap = "Impact of the number of groups on the explained variance", out.width = "50%", fig.pos="H", fig.align="center"}
-#finding the best k by using the r2 of the classification
-#trying for k from 2 to 10
+# finding the best k by using the r2 of the classification
+# trying for k from 2 to 10
 R2s <- sapply(2:10,function(k){
   Clust <- kmeans(Data,centers=k,iter.max = 150)
   R2 <- Clust$betweenss / Clust$totss
@@ -123,7 +123,7 @@ Let us map the obtained groups.
 KMeanClust <-  kmeans(Data,centers=4,iter.max = 150)
 LyonIris$Cluster <-paste("cluster",KMeanClust$cluster,sep="_")
 
-#mapping the groups
+# mapping the groups
 DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
 
 ggplot(data=DFmapping)+
@@ -465,7 +465,7 @@ Undecided <- undecidedUnits(SGFCM$Belongings,0.45)
 LyonIris$FinalCluster <- ifelse(Undecided=="Undecided",
                                 "Undecided",paste("cluster",Undecided,sep="_"))
 
-#mapping the groups
+# mapping the groups
 DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
 
 ggplot(data=DFmapping)+
@@ -488,7 +488,7 @@ for a more detailed map of uncertainty, one could Calculate the Shanon entropy i
 ```{r warning=FALSE}
 LyonIris$entropyidx  <- calcUncertaintyIndex(SGFCM$Belongings)
 
-#mapping the uncertainty
+# mapping the uncertainty
 DFmapping <- merge(FortiData,LyonIris,by.x="id",by.y="OID")
 
 ggplot(data=DFmapping)+

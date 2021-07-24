@@ -13,7 +13,6 @@ A Large RasterBrick with 6 bands
   \item{near infrared}{Wavelength: 0.85-0.88}
   \item{shortwave infrared}{Wavelength: 1.57-1.65}
   \item{shortwave infrared}{Wavelength: 2.11-2.29}
-  ...
 }
 }
 \source{

@@ -616,10 +616,12 @@ spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL,
 
   }
 
-  ## check if we are in rasterMode
+  ## check if we are in rasterMode here is a mistake !
   rasterMode <- FALSE
   if(cls == "FCMres"){
-    rasterMode <- object$isRaster
+    if(object$isRaster){
+      rasterMode <- TRUE
+    }
   }
 
   ## WE ARE NOT IN RASTERMODE ##

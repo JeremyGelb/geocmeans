@@ -59,6 +59,11 @@
 #' }
 boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.01, init = "random", verbose = TRUE, seed = NULL){
 
+  if(object$algo %in% c("FCM", "GFCM", "SFCM", "SGFCM") == FALSE){
+    stop('bootstrap group validation can only be performed for FCMres object
+         if algo is one of "FCM", "GFCM", "SFCM", "SGFCM"')
+  }
+
   ## calulating the lagged dataset if necessary -----------------------
   if(object$algo %in% c("SGFCM", "SFCM")){
     wdata <- calcLaggedData(object$Data, object$listw, object$lag_method)
@@ -223,6 +228,11 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 #' if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 #' }
 boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 0.01, init = "random", verbose = TRUE, seed = NULL){
+
+  if(object$algo %in% c("FCM", "GFCM", "SFCM", "SGFCM") == FALSE){
+    stop('bootstrap group validation can only be performed for FCMres object
+         if algo is one of "FCM", "GFCM", "SFCM", "SGFCM"')
+  }
 
   ## calulating the lagged dataset if necessary -----------------------
   if(object$algo %in% c("SGFCM", "SFCM")){

@@ -10,10 +10,37 @@ FCMres(obj)
 \item{obj}{A list, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
 }
 \value{
-A object of class FCMres
+An object of class FCMres
 }
 \description{
 Instantiate a FCMres object from a list
+}
+\details{
+Creating manually a FCMres object can be handy to use geocmeans functions
+on results from external algorithms. The list given to function FCMres must
+contain 5 necessary parameters:
+\itemize{
+        \item Centers: a dataframe or matrix describing the final centers of the groups
+        \item Belongings: a membership matrix
+        \item Data: the dataset used to perform the clustering.
+It must be a dataframe or a matrix. If a list is given, then the function
+assumes that the classification occured on rasters (see information below)
+        \item m: the fuzyness degree (1 if hard clustering is used)
+        \item algo: the name of the algorithm used
+}
+
+Note that the S3 method predict is available only for object created with the functions
+CMeans, GCMeans, SFCMeans, SGFCMeans.
+
+When working with rasters, Data must be a list of rasters, and a second list of rasters
+with the membership values must be provided is en extra slot named "rasters". In that
+case, Belongings has not to be defined and will be created automatically.
+
+Warning: the order of the elements is very important. The first row in the
+matrix "Centers", and the first column in the matrix "Belongings" must both
+be related to the same group and so on. When working with raster data, the
+first row in the matrix "Centers" must also match with the first rasterLayer
+in the list "rasters".
 }
 \examples{
 #This is an internal function, no example provided

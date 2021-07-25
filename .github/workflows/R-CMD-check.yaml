@@ -70,6 +70,7 @@ jobs:
         run: |
           brew install pkg-config
           brew install gdal
+          brew install proj
 
       - name: Install dependencies
         run: |

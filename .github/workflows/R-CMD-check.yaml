@@ -75,7 +75,7 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
-          remotes::install_cran("sf")
+          install.packages("sf")
         shell: Rscript {0}
 
       - name: Check

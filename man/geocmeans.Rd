@@ -18,6 +18,7 @@ A parameter alpha controls for the weight of the lagged matrix. If
 alpha = 0, then the spatial c-means is equal to a classical c-means. If alpha
 = 1, then the weights given to  X and WX are equals. If alpha = 2, then the
 weight of WX is twice the one of X and so on.
-An index to measure the spatial consistency of a classification is proposed in
-this package.
+Several indices are provided to assess the quality of a classification on the
+semantic and spatial dimensions. To explore results, a shiny app is also
+available
 }

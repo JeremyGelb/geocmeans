@@ -48,7 +48,7 @@ A named list with :
 \description{
 Utility function to facilitate the spatial diagnostic of a classification
 
-Calculate the following indicators : Moran I index (spdep::moranI) for each
+Calculate the following indicators: Moran I index (spdep::moranI) for each
 column of the membership matrix, Join count test (spdep::joincount.multi) for
 the most likely groups of each datapoint, Spatial consistency index (see
 function spConsistency) and the Elsa statistic (see function calcElsa). Note

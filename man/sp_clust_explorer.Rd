@@ -34,7 +34,7 @@ shiny app. Default is 8100}
 \item{...}{Other parameters passed to the function runApp}
 }
 \description{
-Stat a local Shiny App to explore the results of a classification
+Start a local Shiny App to explore the results of a classification
 }
 \examples{
 \dontrun{

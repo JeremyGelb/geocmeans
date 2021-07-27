@@ -23,7 +23,7 @@
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans
 #' @param nsim The number of replications to do for the bootstrap evaluation
-#' @param maxiter An integer for the maximum number of iteration
+#' @param maxiter An integer for the maximum number of iterations
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
 #' @param init A string indicating how the initial centers must be selected.
@@ -189,7 +189,7 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans
 #' @param nsim The number of replications to do for the bootstrap evaluation
-#' @param maxiter An integer for the maximum number of iteration
+#' @param maxiter An integer for the maximum number of iterations
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
 #' @param init A string indicating how the initial centers must be selected.

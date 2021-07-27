@@ -37,11 +37,11 @@
 #' @format A Large RasterBrick with 6 bands
 #' \describe{
 #'   \item{blue}{wavelength: 0.45-0.51}
-#'   \item{green}{Wavelength: 0.53-0.59}
-#'   \item{red}{Wavelength: 0.64-0.67}
-#'   \item{near infrared}{Wavelength: 0.85-0.88}
-#'   \item{shortwave infrared}{Wavelength: 1.57-1.65}
-#'   \item{shortwave infrared}{Wavelength: 2.11-2.29}
+#'   \item{green}{wavelength: 0.53-0.59}
+#'   \item{red}{wavelength: 0.64-0.67}
+#'   \item{near infrared}{wavelength: 0.85-0.88}
+#'   \item{shortwave infrared}{wavelength: 1.57-1.65}
+#'   \item{shortwave infrared}{wavelength: 2.11-2.29}
 #' }
 #' @source \url{https://earthexplorer.usgs.gov/}
 "Arcachon"

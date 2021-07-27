@@ -494,13 +494,13 @@ elsa_raster <- function(rast, window, matdist){
 #' @title calculate ELSA statistic for a fuzzy partition
 #'
 #' @description Calculate ELSA statistic for a fuzzy partition. This local indicator of
-#' spatial autocorrelation can be used to determine where observations belong to different
-#' clusters.
+#' spatial autocorrelation can be used to identify areas where close observations tend to
+#' belong to different clusters.
 #'
 #' @details The fuzzy ELSA index is a generalization of the ELSA index \insertCite{naimi2019elsa}{geocmeans}. It can be used to measure
 #' local autocorrelation for a membership matrix. It varies between 0 and 1, 0 indicating
 #' a perfect positive spatial autocorrelation and 1 a perfect heterogeneity. It is based on
-#' the Shanon entropy index, and uses a measure of difference between categories.
+#' the Shanon entropy index, and uses a measure of dissimilarity between categories.
 #'
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans. Can also be a membership matrix. Each row of this matrix

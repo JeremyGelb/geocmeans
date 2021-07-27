@@ -38,7 +38,7 @@ reduced (default = True)}
 A numeric matrix with the membership values for each new observation
 }
 \description{
-Function predict the membership matrix of a new set of observations
+Function to predict the membership matrix of a new set of observations
 }
 \examples{
 data(LyonIris)

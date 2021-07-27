@@ -40,7 +40,7 @@ A numeric matrix with the membership values for each new observation. If
 rasters were used, return a list of rasters with the membership values.
 }
 \description{
-Function predict the membership matrix of a new set of observations
+Function to predict the membership matrix of a new set of observations
 }
 \examples{
 data(LyonIris)

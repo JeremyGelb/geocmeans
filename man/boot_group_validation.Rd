@@ -20,7 +20,7 @@ GCMeans, SFCMeans, SGFCMeans}
 
 \item{nsim}{The number of replications to do for the bootstrap evaluation}
 
-\item{maxiter}{An integer for the maximum number of iteration}
+\item{maxiter}{An integer for the maximum number of iterations}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}

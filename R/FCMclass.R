@@ -360,7 +360,7 @@ summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent
 
 #' @title Predict matrix membership for new observations
 #'
-#' @description Function predict the membership matrix of a new set of observations
+#' @description Function to predict the membership matrix of a new set of observations
 #'
 #' @template FCMresobj-arg
 #' @param new_data A DataFrame with the new observations or a list of rasters if
@@ -500,7 +500,7 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
 
 
 #' @title Predict method for FCMres object
-#' @description Function predict the membership matrix of a new set of observations
+#' @description Function to predict the membership matrix of a new set of observations
 #' @template FCMresobj-arg
 #' @param new_data A DataFrame with the new observations
 #' @template nblistw-arg

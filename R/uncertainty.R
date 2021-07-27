@@ -50,7 +50,7 @@ undecidedUnits <- function(belongmatrix, tol = 0.1, out = "character") {
 #' tends to belong to each cluster. Values above 0.9 should be investigated. The
 #' formula is:
 #'
-#' \deqn{H2_{i} = \frac{-\sum[u_{ij}\ln(u_{ij})]}{\ln(k)}.}
+#' \deqn{H2_{i} = \frac{-\sum[u_{ij}\ln(u_{ij})]}{\ln(k)}}
 #'
 #' with \emph{i} and observation, \emph{j} a cluster, \emph{k} the number of clusters and
 #' \emph{u} the membership matrix.

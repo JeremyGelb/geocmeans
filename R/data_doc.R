@@ -27,7 +27,7 @@
 "LyonIris"
 
 
-#' RasterLayer of the bay of Arcachin
+#' RasterLayer of the bay of Arcachon
 #'
 #' A Landsat 8 image of the bay of Arcachon (France), with a resolution of 30mx30m
 #' and 6 bands: blue, green, red, near infrared, shortwave infrared 1 and shortwave infrared 2.

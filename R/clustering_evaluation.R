@@ -6,7 +6,7 @@
 #' @description Calculate the Silhouette index of clustering quality.
 #' @details
 #' The index is calculated with the function SIL.F from the package fclust.
-#' When the dataset is to big, an approach by subsampling is used to avoid
+#' When the dataset is too big, an approach by subsampling is used to avoid
 #' crash.
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongings A membership matrix (n*k)
@@ -547,7 +547,7 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
 #'
 #' @description Utility function to facilitate the spatial diagnostic of a classification
 #'
-#' Calculate the following indicators : Moran I index (spdep::moranI) for each
+#' Calculate the following indicators: Moran I index (spdep::moranI) for each
 #' column of the membership matrix, Join count test (spdep::joincount.multi) for
 #' the most likely groups of each datapoint, Spatial consistency index (see
 #' function spConsistency) and the Elsa statistic (see function calcElsa). Note

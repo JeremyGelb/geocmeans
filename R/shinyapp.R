@@ -14,7 +14,7 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 
 #' @title Classification result explorer
 #'
-#' @description Stat a local Shiny App to explore the results of a classification
+#' @description Start a local Shiny App to explore the results of a classification
 #'
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans

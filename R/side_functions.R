@@ -715,6 +715,7 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
     dfIndices <- eval_parameters(algo, allcombinaisons, data, nblistw, window, standardize,
         spconsist, classidx, nrep, indices,
         tol, maxiter, seed, init = init, verbose = verbose)
+    return(dfIndices)
 }
 
 

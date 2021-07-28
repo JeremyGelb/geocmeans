@@ -539,3 +539,49 @@ predict.FCMres <- function(object, new_data, nblistw = NULL, window = NULL, stan
   return(predict_membership(object, new_data, nblistw, window, standardize, ...))
 }
 
+
+
+#' @title Plot method for FCMres object
+#' @description Method to plot the results of a FCM.res object
+#'
+#' @details This S3 method is a simple dispatcher for the functions barPlots,
+#' violinPlots and spiderPlots. To be able to use all their specific
+#' parameters, one can use them directly.
+#'
+#' @param x A FCMres object, typically obtained from functions CMeans,
+#'   GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.
+#' @param type A string indicating the type of plot to show. Can be one of
+#' "bar", "violin", or "spider". Default is spider.
+#' @param ... not used
+#' @return a ggplot2 object, a list, or NULL, depending on the type of plot requested
+#' @method plot FCMres
+#' @export
+#' @examples
+#' data(LyonIris)
+#' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
+#' "TxChom1564","Pct_brevet","NivVieMed")
+#'
+#' # rescaling all the variables used in the analysis
+#' for (field in AnalysisFields) {
+#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
+#' }
+#'
+#' # doing the initial clustering
+#' dataset <- LyonIris@data[AnalysisFields]
+#' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
+#' Wqueen <- spdep::nb2listw(queen,style="W")
+#' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)
+#'
+#' plot(result, type = "spider")
+plot.FCMres <- function(x, type = "spider", ...){
+  if(type %in% c("bar", "violin","spider") == FALSE){
+    stop('the parameter type must be one of "bar", "violin","spider" to plot a FCM.res object')
+  }
+  if(type == "bar"){
+    return(barPlots(x$Data, x$Belongings))
+  }else if(type == "violin"){
+    return(violinPlots(x$Data,x$Groups))
+  }else if(type == "spider"){
+    return(spiderPlots(x$Data,x$Belongings))
+  }
+}

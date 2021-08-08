@@ -154,6 +154,18 @@ focal_euclidean_arr_window <- function(mat, window) {
     .Call(`_geocmeans_focal_euclidean_arr_window`, mat, window)
 }
 
+#' @title focal mean weighted by inverse of euclidean distance on a cube
+#' @name focal_adj_mean_arr_window
+#' @param mat an array (cube)
+#' @param window a numeric matrix (squared)
+#' @return a lagged version of the original cube
+#' @keywords internal
+#' @export
+#'
+focal_adj_mean_arr_window <- function(mat, window) {
+    .Call(`_geocmeans_focal_adj_mean_arr_window`, mat, window)
+}
+
 #' @title Jaccard similarity coefficient
 #' @name calc_jaccard_idx
 #' @description Calculate the Jaccard similarity coefficient

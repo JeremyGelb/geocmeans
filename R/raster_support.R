@@ -16,6 +16,63 @@ check_window <- function(w){
   }
 }
 
+
+#' @title Calculate lagged values for a raster dataset
+#'
+#' @description Calculate lagged values for a raster dataset given a window
+#' and an agregation function
+#'
+#' @param w A matrix
+#' @param dataset A list of rasters
+#' @param fun A string giving the name of a function or a function or "nl"
+#' for non-local method
+#' @param missing_pxl A boolean vector of missing (FALSE) pixels
+#' @keywords internal
+#' @examples
+#' # this is an internal function, no example provided
+calcWdataRaster <- function(w, dataset, fun, missing_pxl){
+
+  if(class(fun) != "function"){
+    fun <- as.character(fun)
+    if(fun != "nl"){
+      useNL <- FALSE
+      tryCatch(fun <- eval(parse(text=fun)),
+               error = function(e)
+                 print("When using rasters, the parameter lag_method must be a function or a string
+                 that can be parsed to a function like sum, mean, min, max ...,
+                 Note that this function is applied to the pixels values multiplied by the weights in the window.
+                 There is one exception : 'nl_mean', see help(Cmeans).")
+      )
+    }else{
+      useNL <- TRUE
+    }
+  }
+  if(useNL == FALSE){
+    Wdatamatrix <- do.call(cbind,lapply(dataset, function(band){
+      wraster <- focal(band, w, fun, na.rm = TRUE, pad = TRUE)
+      return(raster::values(wraster))
+    }))
+  }else{
+    # step1: creating an array with all the matrices
+    mats <- lapply(dataset, raster::as.matrix)
+    arr <- array(do.call(c,mats),c(nrow(mats[[1]]), ncol(mats[[1]]), length(mats)))
+    # step2 : getting the lagged version of the array
+    arr_lag <- focal_adj_mean_arr_window(arr, w)
+    # step3 : creating the Wdatamatrix
+    nsl <- dim(arr_lag)[[3]]
+    Wdatamatrix <- do.call(cbind, lapply(1:nsl, function(i){
+      vec <- arr_lag[,,i]
+      dim(vec) <- NULL
+      return(vec)
+    })
+    )
+  }
+  Wdata_class <- Wdatamatrix[missing_pxl,]
+  colnames(Wdata_class) <- names(dataset)
+  return(Wdata_class)
+}
+
+
 #' @title Check dimensions of a list of rasters
 #'
 #' @description Check if all the rasters in a list have the same dimensions
@@ -54,21 +111,25 @@ check_raters_dims <- function(rasters){
 input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
 
   if(is.null(w) == FALSE){
-
     check_raters_dims(dataset)
-
     check_window(w)
-
-    if(class(fun) != "function"){
-
-      tryCatch(fun <- eval(parse(text=fun)),
-               error = function(e)
-                 print("When using rasters, the parameter lag_method must be a function or a string
-                 that can be parsed to a function like sum, mean, min, max ...,
-                 Note that this function is applied to the pixels values multiplied by the weights in the window.")
-               )
-    }
   }
+
+  #   if(class(fun) != "function"){
+  #     if(fun != "nl"){
+  #       useNL <- FALSE
+  #       tryCatch(fun <- eval(parse(text=fun)),
+  #                error = function(e)
+  #                  print("When using rasters, the parameter lag_method must be a function or a string
+  #                that can be parsed to a function like sum, mean, min, max ...,
+  #                Note that this function is applied to the pixels values multiplied by the weights in the window.
+  #                There is one exception : 'nl_mean', see help(Cmeans).")
+  #       )
+  #     }else{
+  #       useNL <- TRUE
+  #     }
+  #   }
+  # }
 
   refdim <- dim(dataset[[1]])
   for(band in dataset){
@@ -102,12 +163,28 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
 
   #step3 : calculating Wdata if necessary
   if(is.null(w) == FALSE){
-    Wdatamatrix <- do.call(cbind,lapply(dataset, function(band){
-      wraster <- focal(band, w, sum, na.rm = TRUE, pad = TRUE)
-      return(raster::values(wraster))
-    }))
-
-    Wdata_class <- Wdatamatrix[missing_pxl,]
+    Wdata_class <- calcWdataRaster(w, dataset, fun, missing_pxl)
+    # if(useNL == FALSE){
+    #   Wdatamatrix <- do.call(cbind,lapply(dataset, function(band){
+    #     wraster <- focal(band, w, fun, na.rm = TRUE, pad = TRUE)
+    #     return(raster::values(wraster))
+    #   }))
+    # }else{
+    #   # step1: creating an array with all the matrices
+    #   mats <- lapply(dataset, raster::as.matrix)
+    #   arr <- array(do.call(c,mats),c(nrow(mats[[1]]), ncol(mats[[1]]), length(mats)))
+    #   # step2 : getting the lagged version of the array
+    #   arr_lag <- focal_adj_mean_arr_window(arr, w)
+    #   # step3 : creating the Wdatamatrix
+    #   nsl <- dim(arr_lag)[[3]]
+    #   Wdatamatrix <- do.call(cbind, lapply(1:nsl, function(i){
+    #       vec <- arr_lag[,,i]
+    #       dim(vec) <- NULL
+    #       return(vec)
+    #     })
+    #   )
+    # }
+    # Wdata_class <- Wdatamatrix[missing_pxl,]
     colnames(Wdata_class) <- okname
 
   }else{

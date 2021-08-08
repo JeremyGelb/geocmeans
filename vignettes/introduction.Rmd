@@ -483,7 +483,14 @@ ggplot(data=DFmapping)+
     )
 ```
 
-for a more detailed map of uncertainty, one could Calculate the Shanon entropy index and use it as a measure of uncertainty with the function `calcUncertaintyIndex.` A value of 1 indicates that an observation has equal membership values among groups and a value of 0 indicates that an observation belongs to only one group.
+It is also possible to visualize the uncertainty by using jittered points. The idea is to draw random points in polygons and attribute them to a group proportionally to the membership values of the polygon the fall in.
+
+```{r warning=FALSE}
+colors <- c("palegreen3","firebrick","lightyellow2","steelblue","pink")
+uncertaintyMap(LyonIris, SGFCM$Belongings, color = colors)
+```
+
+To quantify and map uncertainty, one could Calculate the Shanon entropy index and use it as a measure of uncertainty with the function `calcUncertaintyIndex.` A value of 1 indicates that an observation has equal membership values among groups and a value of 0 indicates that an observation belongs to only one group.
 
 ```{r warning=FALSE}
 LyonIris$entropyidx  <- calcUncertaintyIndex(SGFCM$Belongings)
@@ -530,7 +537,7 @@ All the clustering algorithms of this package depends on a initial state that mi
 
 ```{r warning=FALSE, eval = FALSE}
 bootvalues <- boot_group_validation(SGFCM, nsim = 1000, maxiter = 1000, 
-                                     tol = 0.01, verbose = FALSE)
+                                     tol = 0.0001, verbose = FALSE)
 ```
 
 We can now check if the groups are stable across simulations.
@@ -546,9 +553,9 @@ ggplot() +
   facet_wrap(vars(variable), ncol=2)
 ```
 
-The Jaccard index is calculated at each replication and for each cluster in comparison with the original result. A greater value means a more stable cluster. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster with some uncertainty. Under 0.5, the cluster tends to dissolve during the iterations. In the presented case, the group 3 seems to be less stable and tends to dissolve.
+The Jaccard index is calculated at each replication and for each cluster in comparison with the original result. A greater value means a more stable cluster. Values above 0.75 indicate a stable cluster. Values between 0.5 and 0.75 indicate a cluster with some uncertainty. Under 0.5, the cluster tends to dissolve during the iterations. In the presented case, the group 3 is more worisome with many Jacard values under 0.5.
 
-We can also check the values of the centers of the group 3 across the 1000 iterations.
+We can check the values of the centers of the group 3 across the 1000 iterations.
 
 ```{r warning=FALSE}
 df_gp3 <- bootvalues$group_centers[["group3"]]
@@ -563,6 +570,24 @@ ggplot() +
   facet_wrap(vars(variable), ncol=3)
 ```
 It appears that the center values for NO<sub>2</sub> and PM<sub>2.5</sub> are bimodal, that might explain why this group tends to dissolve. This could mean that group three is the combination of two very similar sub-groups.
+
+## Advanced example
+
+### SFCM with spatial non-local information
+
+It has been proposed to modify the SFCM algorithm to include "non-local spatial information" instead of the information provided by close observations [@zhao2015multiobjective]. Basically, this implies a modified spatial weighting scheme combining neighbouring and semantic distance. This way, more similar neighbours get more weights in the calculation of the lagged dataset which can be desirable in dataset characterized by a lot of noise. When working with a classical vector dataset, one can use the function `adjustSpatialWeights` and create a row-standardized weight matrix using the inverse of the euclidean distance between observation and their neighbours as weights.
+
+```{r warning=FALSE, eval = FALSE}
+# create the modified weight matrix
+WMat_adj <- adjustSpatialWeights(Data, WMat$neighbours, style = "W")
+
+# calculate the modified version of FCM with non-local information
+nl_SFCM <- SFCMeans(Data, WMat_adj, k = 4, m = 1.5, alpha = 0.7,
+                 tol = 0.0001, standardize = FALSE,
+                 verbose = FALSE, seed = 456)
+
+```
+When working with rasters, the same method can be apllied by giving `"nl"` as value for the parameter `lag_method`.
 
 ## Final words
 

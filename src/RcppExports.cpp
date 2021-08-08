@@ -128,6 +128,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// focal_adj_mean_arr_window
+arma::cube focal_adj_mean_arr_window(arma::cube mat, arma::mat window);
+RcppExport SEXP _geocmeans_focal_adj_mean_arr_window(SEXP matSEXP, SEXP windowSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type window(windowSEXP);
+    rcpp_result_gen = Rcpp::wrap(focal_adj_mean_arr_window(mat, window));
+    return rcpp_result_gen;
+END_RCPP
+}
 // calc_jaccard_idx
 double calc_jaccard_idx(arma::vec x, arma::vec y);
 RcppExport SEXP _geocmeans_calc_jaccard_idx(SEXP xSEXP, SEXP ySEXP) {
@@ -425,6 +437,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_geocmeans_focal_euclidean_mat_window", (DL_FUNC) &_geocmeans_focal_euclidean_mat_window, 2},
     {"_geocmeans_focal_euclidean_list", (DL_FUNC) &_geocmeans_focal_euclidean_list, 2},
     {"_geocmeans_focal_euclidean_arr_window", (DL_FUNC) &_geocmeans_focal_euclidean_arr_window, 2},
+    {"_geocmeans_focal_adj_mean_arr_window", (DL_FUNC) &_geocmeans_focal_adj_mean_arr_window, 2},
     {"_geocmeans_calc_jaccard_idx", (DL_FUNC) &_geocmeans_calc_jaccard_idx, 2},
     {"_geocmeans_calc_jaccard_mat", (DL_FUNC) &_geocmeans_calc_jaccard_mat, 2},
     {"_geocmeans_moranI_matrix", (DL_FUNC) &_geocmeans_moranI_matrix, 2},

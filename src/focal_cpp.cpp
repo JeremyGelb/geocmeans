@@ -219,6 +219,99 @@ NumericMatrix focal_euclidean_arr_window(arma::cube mat, arma::mat window){
 }
 
 
+//' @title focal mean weighted by inverse of euclidean distance on a cube
+//' @name focal_adj_mean_arr_window
+//' @param mat an array (cube)
+//' @param window a numeric matrix (squared)
+//' @return a lagged version of the original cube
+//' @keywords internal
+//' @export
+//'
+// [[Rcpp::export]]
+arma::cube focal_adj_mean_arr_window(arma::cube mat, arma::mat window){
+
+  int nr = mat.n_rows;
+  int nc = mat.n_cols;
+  int nl = mat.n_slices;
+  int r,c,lr,hr,lc,hc,i,j;
+  int wr,wc;
+  int w1 = floor(float(window.n_rows)/2.0);
+  int w2 = floor(float(window.n_cols)/2.0);
+  int window_width = window.n_rows;
+  int window_height = window.n_cols;
+  int start_window_row = 0, end_window_row = window_width-1, start_window_col = 0, end_window_col = window_height-1;
+  arma::mat subwindow;
+  double distsums;
+  arma::vec xi,xj;
+  arma::cube subcube;
+  // creating the output cube with the lagged version of the data
+  arma::cube out_cube(mat.n_rows,mat.n_cols,mat.n_slices);
+
+  for (r = 0; r < nr ; r++){
+    wr = w1;
+    lr = r - w1;
+    hr = r + w1;
+    start_window_row = 0;
+    end_window_row = window_width-1;
+    if(lr < 0){
+      wr = w1 + lr;
+      start_window_row = lr * -1;
+      lr = 0;
+    }
+    if(hr >= nr){
+      end_window_row = window_width - 2 - (hr - nr); // so the width of the window minus excess
+      hr = nr-1;
+    }
+    for(c = 0; c < nc; c++){
+      start_window_col = 0;
+      end_window_col = window_height-1;
+      wc = w2;
+      lc = c - w2;
+      hc = c + w2;
+      if(lc < 0){
+        wc = w2 + lc;
+        start_window_col = lc *-1;
+        lc = 0;
+      }
+      if(hc >= nc){
+        end_window_col = window_height - 2 - (hc - nc); // so the height of the window minus excess
+        hc = nc-1;
+      }
+      xi =  mat.tube(r,c);
+      if(!xi.has_nan()){
+        subcube = mat.subcube(lr, lc, 0, hr, hc, (nl-1));
+        subwindow = window.submat(start_window_row, start_window_col, end_window_row, end_window_col);
+        arma::mat weightwindow(subwindow.n_rows, subwindow.n_cols);
+        subwindow(wr,wc) = 0;
+        // calculating the weight window
+        for(i = 0; i < subcube.n_rows; i++){
+          for(j = 0; j < subcube.n_cols; j++){
+            xj = subcube.tube(i,j);
+            double dist = accu(pow(xi - xj,2)) * subwindow(i,j);
+            if(dist == 0){
+              // NOTE : this extrem case is not really satisfactory
+              weightwindow(i,j) = 1.0 / 0.00000001;
+            }else{
+              weightwindow(i,j) = 1.0/dist;
+            }
+          }
+        }
+        weightwindow(wr,wc) = 0;
+        // standardisation of the weights
+        weightwindow = weightwindow / accu(weightwindow);
+        // and now for each slices, calculate the value (mean)
+        for(i = 0; i < subcube.n_slices; i++){
+          out_cube(r,c,i) = accu(subcube.slice(i) % weightwindow % subwindow);
+        }
+      }else{
+        for(i = 0; i < mat.n_slices; i++){
+          out_cube(r,c,i) = NA_REAL;
+        }
+      }
+    }
+  }
+  return out_cube;
+}
 
 
 

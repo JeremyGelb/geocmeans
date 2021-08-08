@@ -66,7 +66,19 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 
   ## calulating the lagged dataset if necessary -----------------------
   if(object$algo %in% c("SGFCM", "SFCM")){
-    wdata <- calcLaggedData(object$Data, object$listw, object$lag_method)
+    if(object$isRaster == FALSE){
+      wdata <- calcLaggedData(object$Data, object$listw, object$lag_method)
+    }else{
+      dataset <- lapply(1:ncol(object$Data), function(i){
+        rast <- object$rasters[[1]]
+        vec <- rep(NA, times = raster::ncell(rast))
+        vec[object$missing] <- object$Data[,i]
+        raster::values(rast) <- vec
+        return(rast)
+      })
+      wdata <- calcWdataRaster(object$window, dataset, object$lag_method, object$missing)
+    }
+
   }else{
     wdata <- NULL
   }
@@ -102,20 +114,9 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   }
 
   cons_values <- lapply(all_perm, function(results){
-    # qual_mat <- matrix(-1, nrow = k, ncol = k)
-    # for(ii in 1:k){
-    #   for(jj in 1:k){
-    #     if(qual_mat[ii,jj] == -1){
-    #       x <- results$Belongings[,ii]
-    #       y <- object$Belongings[,jj][results$idx]
-    #       val <- calc_jaccard_idx(x,y)
-    #       qual_mat[ii,jj] <- val
-    #     }
-    #   }
-    # }
     matX <- results$Belongings
     matY <- object$Belongings[results$idx,]
-    qual_mat <- calc_jaccard_mat(matX,matY)
+    qual_mat <- calc_jaccard_mat(matY,matX)
     colnames(qual_mat) <- 1:ncol(qual_mat)
     rownames(qual_mat) <- 1:nrow(qual_mat)
 
@@ -155,20 +156,19 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 
   ## creating a list with the centers values boostraped of clusters -----------------------
   print("Extracting the centers of the clusters...")
-  clust_centers <- lapply(1:k, function(i){
-    idx <- mat_idx[,i]
-    clust_table <- do.call(rbind,lapply(1:nsim, function(j){
-      all_perm[[j]]$Centers[idx[[j]],]
-    }))
-    clust_table <- data.frame(clust_table)
-    names(clust_table) <- colnames(object$Data)
-    return(clust_table)
-  })
+
+  clust_table <- do.call(rbind,lapply(1:nsim, function(j){
+    all_perm[[j]]$Centers[mat_idx[j,],]
+  }))
+
+  clust_table <- as.data.frame(clust_table)
+  colnames(clust_table) <- colnames(object$Data)
+
+  gp <- rep(1:k, times = nsim)
+  clust_centers <- split(clust_table,f = as.factor(gp))
   names(clust_centers) <- paste("group",1:k, sep = "")
   mat_valid <- data.frame(mat_valid)
   names(mat_valid) <- paste("group",1:k, sep = "")
-
-
   return(
     list("group_consistency" = mat_valid,
          "group_centers" = clust_centers
@@ -236,7 +236,19 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
 
   ## calulating the lagged dataset if necessary -----------------------
   if(object$algo %in% c("SGFCM", "SFCM")){
-    wdata <- calcLaggedData(object$Data, object$listw, object$lag_method)
+    if(object$isRaster == FALSE){
+      wdata <- calcLaggedData(object$Data, object$listw, object$lag_method)
+    }else{
+      dataset <- lapply(1:ncol(object$Data), function(i){
+        rast <- object$rasters[[1]]
+        vec <- rep(NA, times = raster::ncell(rast))
+        vec[object$missing] <- object$Data[,i]
+        raster::values(rast) <- vec
+        return(rast)
+      })
+      wdata <- calcWdataRaster(object$window, dataset, object$lag_method, object$missing)
+    }
+
   }else{
     wdata <- NULL
   }
@@ -276,20 +288,9 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
   }
 
   cons_values <- future.apply::future_lapply(all_perm, function(results){
-    # qual_mat <- matrix(-1, nrow = k, ncol = k)
-    # for(ii in 1:k){
-    #   for(jj in 1:k){
-    #     if(qual_mat[ii,jj] == -1){
-    #       x <- results$Belongings[,ii]
-    #       y <- object$Belongings[,jj][results$idx]
-    #       val <- calc_jaccard_idx(x,y)
-    #       qual_mat[ii,jj] <- val
-    #     }
-    #   }
-    # }
     matX <- results$Belongings
     matY <- object$Belongings[results$idx,]
-    qual_mat <- calc_jaccard_mat(matX,matY)
+    qual_mat <- calc_jaccard_mat(matY,matX)
     colnames(qual_mat) <- 1:ncol(qual_mat)
     rownames(qual_mat) <- 1:nrow(qual_mat)
 
@@ -328,25 +329,20 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
   mat_valid <- do.call(rbind, lapply(cons_values, function(v){v[[1]]}))
   mat_idx <- do.call(rbind, lapply(cons_values, function(v){v[[2]]}))
 
-  ## creatin a list with the centers values boostraped of clusters -----------------------
-  if(verbose){
-    print("Extracting the centers of the clusters...")
-  }
+  ## creating a list with the centers values boostraped of clusters -----------------------
+  print("Extracting the centers of the clusters...")
 
-  clust_centers <- future.apply::future_lapply(1:k, function(i){
-    idx <- mat_idx[,i]
-    clust_table <- do.call(rbind,lapply(1:nsim, function(j){
-      all_perm[[j]]$Centers[idx[[j]],]
-    }))
-    clust_table <- data.frame(clust_table)
-    names(clust_table) <- colnames(object$Data)
-    return(clust_table)
-  })
+  clust_table <- do.call(rbind,lapply(1:nsim, function(j){
+    all_perm[[j]]$Centers[mat_idx[j,],]
+  }))
 
+  clust_table <- as.data.frame(clust_table)
+  colnames(clust_table) <- colnames(object$Data)
+  gp <- rep(1:k, times = nsim)
+  clust_centers <- split(clust_table,f = as.factor(gp))
   names(clust_centers) <- paste("group",1:k, sep = "")
   mat_valid <- data.frame(mat_valid)
   names(mat_valid) <- paste("group",1:k, sep = "")
-
 
   return(
     list("group_consistency" = mat_valid,

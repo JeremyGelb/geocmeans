@@ -28,8 +28,8 @@ object.}
 \item{dataset}{A dataframe or matrix representing the data used for the
 classification. If NULL, then the matrix is extracted from object.}
 
-\item{port}{A integer of length 4 indicating the port on which starting the
-shiny app. Default is 8100}
+\item{port}{An integer of length 4 indicating the port on which to start the
+Shiny app. Default is 8100}
 
 \item{...}{Other parameters passed to the function runApp}
 }

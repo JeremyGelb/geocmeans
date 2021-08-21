@@ -505,7 +505,7 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
 #' @param new_data A DataFrame with the new observations
 #' @template nblistw-arg
 #' @template window-arg
-#' @param standardize  A boolean to specify if the variable must be centered and
+#' @param standardize  A boolean to specify if the variable must be centred and
 #'   reduced (default = True)
 #' @param ... not used
 #' @return A numeric matrix with the membership values for each new observation

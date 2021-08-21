@@ -16,9 +16,9 @@ convergence assessment}
 
 \item{maxiter}{An integer for the maximum number of iteration}
 
-\item{init}{A string indicating how the initial centers must be selected. "random"
-indicates that random observations are used as centers. "kpp" use a distance based method
-resulting in more dispersed centers at the beginning. Both of them are heuristic.}
+\item{init}{A string indicating how the initial centres must be selected. "random"
+indicates that random observations are used as centres. "kpp" use a distance based method
+resulting in more dispersed centres at the beginning. Both of them are heuristic.}
 }
 \value{
 A list, similar to a FCMres object, but with only necessary slots for cluster bootstraping.

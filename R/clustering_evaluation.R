@@ -6,7 +6,7 @@
 #' @description Calculate the Silhouette index of clustering quality.
 #' @details
 #' The index is calculated with the function SIL.F from the package fclust.
-#' When the dataset is too big, an approach by subsampling is used to avoid
+#' When the dataset is too large, an approach by subsampling is used to avoid
 #' crash.
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongings A membership matrix (n*k)
@@ -53,7 +53,7 @@ calcSilhouetteIdx <- function(data, belongings){
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
-#' @param centers The centers of the clusters
+#' @param centers The centres of the clusters
 #' @return A float: the Negentropy Increment index
 #' @export
 #' @examples
@@ -117,7 +117,7 @@ calcNegentropyI <- function(data, belongmatrix, centers){
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
-#' @param centers The centers of the clusters
+#' @param centers The centres of the clusters
 #' @return A float: the  Generalized Dunn’s index (53)
 #' @export
 #' @examples
@@ -179,7 +179,7 @@ calcGD53 <- function(data, belongmatrix, centers){
 #'
 #' \deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\left\|\boldsymbol{c}_{i}-\boldsymbol{c}_{j}\right\|}
 #'
-#' which is basically the Euclidean distance between the centers of clusters \eqn{c_{i}} and \eqn{c_{j}}
+#' which is basically the Euclidean distance between the centres of clusters \eqn{c_{i}} and \eqn{c_{j}}
 #'
 #' The denominator is a measure of the maximal dispersion of all clusters, given
 #' by the formula:
@@ -191,7 +191,7 @@ calcGD53 <- function(data, belongmatrix, centers){
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
-#' @param centers The centers of the clusters
+#' @param centers The centres of the clusters
 #' @return A float: the  Generalized Dunn’s index (43)
 #' @export
 #' @examples
@@ -236,7 +236,7 @@ calcGD43 <- function(data, belongmatrix, centers){
 #' @description Calculate the Davies-Bouldin index of clustering quality.
 #'
 #' @details
-#' The Davies-Bouldin index \insertCite{da2020incremental}{geocmeans} can be seen as a ratio between the within cluster dispersion and the
+#' The Davies-Bouldin index \insertCite{da2020incremental}{geocmeans} can be seen as the ratio of the within cluster dispersion and the
 #' between cluster separation. A lower value indicates a higher cluster compacity
 #' or a higher cluster separation. The formula is:
 #'
@@ -248,8 +248,8 @@ calcGD43 <- function(data, belongmatrix, centers){
 #' \deqn{S_{l} =\left[\frac{1}{n_{l}} \sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|*u_{i}\right]^{\frac{1}{2}}}
 #' \deqn{M_{i, j} =\sum\left\|\boldsymbol{c}_{i}-\boldsymbol{c}_{j}\right\|}
 #'
-#' So, the value of the index is an average of \eqn{R_{i}} values. They represent
-#' for each cluster its worst comparison with all the other clusters, calculated
+#' So, the value of the index is an average of \eqn{R_{i}} values. For each cluster, they represent
+#' its worst comparison with all the other clusters, calculated
 #' as the ratio between the compactness of the two clusters and the separation
 #' of the two clusters.
 #'
@@ -258,7 +258,7 @@ calcGD43 <- function(data, belongmatrix, centers){
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
-#' @param centers The centers of the clusters
+#' @param centers The centres of the clusters
 #' @return A float: the Davies-Bouldin index
 #' @export
 #' @examples
@@ -311,7 +311,7 @@ calcDaviesBouldin <- function(data, belongmatrix, centers){
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
-#' @param centers The centers of the clusters
+#' @param centers The centres of the clusters
 #' @return A float: the Calinski-Harabasz index
 #' @export
 #' @examples
@@ -354,7 +354,7 @@ calcCalinskiHarabasz <- function(data, belongmatrix, centers){
 #'
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongmatrix A membership matrix (n*k)
-#' @param centers The centers of the clusters
+#' @param centers The centres of the clusters
 #' @param m The fuzziness parameter
 #' @return A float: the Fukuyama and Sugeno index
 #' @export

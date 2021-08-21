@@ -11,7 +11,7 @@ calcFukuyamaSugeno(data, belongmatrix, centers, m)
 
 \item{belongmatrix}{A membership matrix (n*k)}
 
-\item{centers}{The centers of the clusters}
+\item{centers}{The centres of the clusters}
 
 \item{m}{The fuzziness parameter}
 }

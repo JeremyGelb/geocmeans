@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In this vignette, we want to show how to use `geocmeans` to do fuzzy clustering on a raster dataset. The idea is simple, each pixel of a raster is an observation, and each band of the raster is a variable. Based on this, the same methodology can be applied, but rasters can not be handled like classical tabular and vector dataset. The example given use a medium size raster so some part of the vignette can be quite long to run (in particular when `select_parameters` is used).
 
-We give a practical example here with a raster with 5 bands: 
+We give a practical example here with a raster of 5 bands: 
 
 * band 1: blue (wavelength: 0.45-0.51)
 * band 2: green (0.53-0.59)
@@ -36,7 +36,7 @@ We give a practical example here with a raster with 5 bands:
 * band 5: shortwave infrared (1.57-1.65)
 * band 6: shortwave infrared (2.11-2.29)
 
-The image has a resolution of 30x30 meters and has been acquired by Landsat 8 on 2021/06/14. It is provided with `geocmeans` as a Large RasterBrick `Arcachon`.
+The image has a resolution of 30x30 metres and was acquired by Landsat 8 on June 14, 2021. It is provided with `geocmeans` as a Large RasterBrick `Arcachon`.
 
 ## Loading the dataset
 
@@ -46,7 +46,7 @@ load(system.file("extdata", "results_vignette_raster.rda",
                            package = "geocmeans", mustWork = TRUE))
 ```
 
-Let us start with a simple visualisation of the dataset
+Let us start with a simple visualization of the dataset
 
 ```{r message=FALSE, warning=FALSE, fig.width= 4}
 library(raster)
@@ -63,11 +63,11 @@ data("Arcachon")
 plotRGB(Arcachon, r = 3, g = 2, b = 1, stretch = "hist")
 ```
 
-We can distinguish urban areas, crops, deep water, coast and sand areas. We can expect a number of clusters around 5.
+We can distinguish urban areas, crops, deep water, coast and sand areas. We can expect approximately five clusters.
 
 ## Fuzzy C-means
 
-As a first exploration and to determine the appropriate number of clusters, we propose to apply a classical FCM.
+As a first exploration and to determine the appropriate number of clusters, we propose the applcication of a classical FCM.
 
 The dataset must be structured as a list of bands. The names given to the list elements will be used as variable names.
 
@@ -107,7 +107,7 @@ ggplot(FCMvalues) +
 
 ```
 
-Considering the values above, we select k = 7 and m = 1.5, it seems to give a good compromise between the silhouette index and the explained inertia.
+Considering the values above, we select k = 7 and m = 1.5, it seems to provide a good compromise between the silhouette index and the explained inertia.
 
 ```{r message=FALSE, warning=FALSE, fig.width = 4, fig.align = "center"}
 FCM_result <- CMeans(dataset, k = 7, m = 1.5, standardize = TRUE,
@@ -115,10 +115,10 @@ FCM_result <- CMeans(dataset, k = 7, m = 1.5, standardize = TRUE,
 
 maps1 <- mapClusters(object = FCM_result, undecided = 0.45)
 
-# plotting membership values to group 2
+# plotting membership values for group 2
 maps1$ProbaMaps[[2]] + theme(legend.position = "bottom")
 
-# plotting membership values to group 5
+# plotting membership values for group 5
 maps1$ProbaMaps[[5]] + theme(legend.position = "bottom")
 
 # plotting the most likely categories
@@ -127,7 +127,7 @@ maps1$ClusterPlot + theme(legend.position = "bottom")
 
 We can already determine some groups from these maps: 
 
-1. not deep water
+1. shallow water
 2. sand
 3. low density urban areas
 4. wet sand
@@ -135,7 +135,7 @@ We can already determine some groups from these maps:
 6. vegetation
 7. high density urban areas
 
-We could try to obtain a more crispy partition by using the generalized version of FCM. This implies to select a parameter called beta.
+We could try to obtain a more crispy partition by using the generalized version of FCM. This implies selecting a parameter called beta.
 
 ```{r message=FALSE, warning=FALSE, eval = FALSE}
 GFCMvalues <- select_parameters.mc(algo = "GFCM", data = dataset,
@@ -162,7 +162,7 @@ ggplot(GFCMvalues) +
 
 ```
 
-It seems that `beta = 0.5` gives the best results wiht `m = 1.5`, we gain 2 more percentage points of inertia while keeping the same Silhouette index.
+It seems that `beta = 0.5` gives the best results with `m = 1.5`, we gain 2 more percentage points of inertia while keeping the same Silhouette index.
 
 ```{r message=FALSE, warning=FALSE, fig.width = 4, fig.align = "center"}
 GFCM_result <- GCMeans(dataset, k = 7, m = 1.5, beta = 0.5, standardize = TRUE,
@@ -173,10 +173,10 @@ GFCM_result <- groups_matching(FCM_result, GFCM_result)
 
 maps2 <- mapClusters(object = GFCM_result, undecided = 0.45)
 
-# plotting membership values to group 2
+# plotting membership values for group 2
 maps2$ProbaMaps[[2]] + theme(legend.position = "bottom")
 
-# plotting membership values to group 5
+# plotting membership values for group 5
 maps2$ProbaMaps[[5]] + theme(legend.position = "bottom")
 
 # plotting the most likely categories
@@ -184,13 +184,13 @@ maps2$ClusterPlot + theme(legend.position = "bottom")
 
 ```
 
-We can see that with the same threshold, we obtain far less undecided pixels and only little variations among groups in comparison with the previous results.
+We can see that with the same threshold, we obtain far less undecided pixels and only few variations among groups in comparison with the previous results.
 
 ## Spatial Generalized Fuzzy C-means
 
-The image we get has a lot of noise, this is due to its rather small resolution. To obtain more a more spatially homogeneous clustering, we will use here the SGFCM method.
+The image we obtain comprise a lot of noise due to its rather small resolution. To obtain a more spatially homogeneous clustering, we will use here the SGFCM method.
 
-We have to determine the right value of alpha and the size of the window. When working with rasters, a square window is used to define the neighbours around a pixel because using a classical neighbour matrix would be not efficient.
+We must determine the right value of alpha and the size of the window. When working with rasters, a square window is used to define the neighbours around a pixel because using a classical neighbour matrix would not be efficient.
 
 ```{r message=FALSE, warning=FALSE}
 w1 <- matrix(1, nrow = 3, ncol = 3)
@@ -244,10 +244,10 @@ SGFCM_result <- groups_matching(FCM_result, SGFCM_result)
 
 maps3 <- mapClusters(object = SGFCM_result, undecided = 0.2)
 
-# plotting membership values to group 2
+# plotting membership values for group 2
 maps3$ProbaMaps[[2]] + theme(legend.position = "bottom")
 
-# plotting membership values to group 5
+# plotting membership values for group 5
 maps3$ProbaMaps[[5]] + theme(legend.position = "bottom")
 
 
@@ -256,7 +256,7 @@ maps3$ClusterPlot + theme(legend.position = "bottom")
 
 ```
 
-To map the results of the SGFCM, it is necessary to lower the threshold of the parameter `undecided`. In comparison with the previous maps, we obtain a much more smooth result which can be easier to use for mapping purpose or delimiting areas. As suggested by the drop in the explained inertia, We lost a lot of details. This is not surprising if we consider that the pixels have a size of 30 meters, and the neighbours can be very different from the center of the window. Moreover, the group 4 is not describing anymore wet sand, but interstitial areas between low and high density urban areas.
+To map the results of the SGFCM, it is necessary to lower the threshold of the parameter `undecided`. In comparison with the previous maps, we obtain a much smoother result which can be easier to use for mapping purposes or for delimiting areas. As suggested by the drop in the explained inertia, we lost a lot of details. This is not surprising if we consider that the pixels have a size of 30 metres, and the neighbours can be very different from the center of the window. Moreover, group 4 no longer describes wet sand, but interstitial areas between low and high density urban areas.
 
 ```{r message=FALSE, warning=FALSE}
 cluster_results <- list(FCM_result, GFCM_result, SGFCM_result)
@@ -284,12 +284,12 @@ SGFCM proposes a solution with a spatial inconsistency index divided by three. H
 diagGFCM <- spatialDiag(GFCM_result, window = matrix(1, nrow = 3, ncol = 3), nrep = 5)
 ```
 
-The global Moran I indicates for each category the level of spatial autocorrelation.
+The global Moran I indicates the level of spatial autocorrelation for each category.
 
 ```{r message=FALSE, warning=FALSE}
 knitr::kable(diagGFCM$MoranValues, digits = 3, row.names = FALSE)
 ```
-Here, the groups 3 and 7 have the lowest levels of spatial autocorrelation, meaning that these groups tend to be less surrounded by pixels from the same groups and are more fragmented. Both groups are urban areas (high and low density) and are spatially close, that's why they have lower Moran I values. We could explore the local Moran I values for both of them with the function `calc_local_moran_raster`. This function gives the same results as `raster::MoranLocal` but is significantly faster.
+Here groups 3 and 7 have the lowest levels of spatial autocorrelation, meaning that these groups tend to be less surrounded by pixels from the same groups and are more fragmented. Both groups are urban areas (high and low density) and are spatially close; this is why they have lower Moran I values. We could explore the local Moran I values for both with the function `calc_local_moran_raster`. This function provides the same results as `raster::MoranLocal` but is significantly faster.
 
 ```{r message=FALSE, warning=FALSE, fig.width = 6, fig.align = "center"}
 # calculating the local Moran I values
@@ -309,9 +309,9 @@ tm_shape(loc_moran7) +
 
 ```
 
-These maps can be used to investigate the limits of the two categories and to determine if the classification is meaningful. The group 7 is by far the most spatially dispersed, which is consistent with its nature: low-density urban areas.
+These maps can be used to investigate the limits of the two categories and determine if the classification is meaningful. Group 7 is by far the most spatially dispersed, which is consistent with its nature: low-density urban areas.
 
-The local Moran I values are useful but are limited to one dimension of the fuzzy classification. An interesting alternative is the *ELSA* statistic [@naimi2019elsa]. It measures local differences in final group attributions with an entropy based index and combines it with the euclidean distance between the groups. In other words, it is a measure of spatial autocorrelation for a categorical variable which takes into account the level of dissimilarity between categories. It can be calculated with the following formula: 
+The local Moran I values are useful but are limited to one dimension of the fuzzy classification. An interesting alternative is the *ELSA* statistic [@naimi2019elsa]. It measures local differences in final group attributions with an entropy based index and combines it with the Euclidean distance between the groups. In other words, it is a measure of spatial autocorrelation for a categorical variable which takes into account the level of dissimilarity between categories. It can be calculated with the following formula: 
 
 $$\begin{array}{l}
 E_{i}=E_{a i} \times E_{c i} \\
@@ -324,8 +324,8 @@ m \text { if } \sum_{j} w_{i j}>m \\
 d_{i j}=\left|c_{i}-c_{j}\right|
 \end{array}$$
 
-* $d_{ij}$ is the dissimilarity (e.g. euclidean distance) between the categories *i* and *j*. In a classification context, in can be calculate as the distance between the centers of the classes. 
-* $p_k$ is the probability of seeing the group *k* within the binary neighbouring window $w_{ij}$.
+* $d_{ij}$ is the dissimilarity (e.g. Euclidean distance) between categories *i* and *j*. In a classification context, it can be calculated as the distance between the centres of the clusters (categories). 
+* $p_k$ is the probability of seeing group *k* within the neighbouring binary window $w_{ij}$.
 
 ```{r message=FALSE, warning=FALSE, fig.width = 6, fig.align = "center"}
 tm_shape(diagGFCM$Elsa) + 
@@ -335,7 +335,7 @@ tm_shape(diagGFCM$Elsa) +
 
 This map clearly draws the contours of each cluster. The darker pixels are located at the frontier of clusters or in areas with high heterogeneity.
 
-The original version of ELSA uses a hard partition and thus does not exploit all the information we might get from a fuzzy classification. We propose here an adjusted version the fuzzy ELSA. As an input, we do not use a categorical vector but a matrix of membership values.
+The original version of ELSA uses a hard partition and thus does not exploit all the information we might get from a fuzzy classification. We propose here an adjusted version: the fuzzy ELSA. As an input, we do not use a categorical vector but a matrix of membership values.
 
 $$\begin{array}{l}
 \xi_{ij} =  (|x_i-x_j|\otimes|x_i-x_j|)\\
@@ -353,11 +353,11 @@ with:
 * *x* the membership matrix, and $x_i$ the membership values of observation *i* to all clusters,
 * $p_k$ the sum of membership values to each cluster arround observation *i* including *i*,
 * $\otimes$ the outer product between two vectors,
-* $w$ a binary spatial weight matrix indicating fo each observation their neighbours,
-* *d* the dissimilarity matrix between clusters. Its diagonal must be filled with zeros,
+* $w$ a binary spatial weight matrix indicating neighbours for each observation,
+* *d* the dissimilarity matrix between clusters; its diagonal must be filled with zeros,
 * $\odot$ the element wise product between two matrices,
 
-The fuzzy ELSA can be seen as a generalization of the categorical ELSA and gives the same results if a binary matrix is given. This indicator has not been presented in a paper yet (we are working on it), so it is currently not calculated by `spatialDiag`. It can be obtained with the function `calcFuzzyELSA`.
+The fuzzy ELSA can be seen as a generalization of the categorical ELSA and provides the same results if a binary matrix is given. This indicator has not been presented in a paper yet (we are working on it), so it is currently not calculated by `spatialDiag`. It can be obtained with the function `calcFuzzyELSA`.
 
 ```{r message=FALSE, warning=FALSE, fig.width = 6, fig.align = "center"}
 fuzzy_elsa_rast <- calcFuzzyELSA(GFCM_result,window = matrix(1,nrow = 3, ncol = 3))
@@ -366,6 +366,6 @@ tm_shape(fuzzy_elsa_rast) +
   tm_raster(palette = "Greys", style = "kmeans", n = 7, title = "Local fuzzy ELSA") + 
   tm_layout(legend.outside = TRUE, legend.outside.position = "right")
 ```
-In this case, we can see that the fuzzy ELSA draws more important limits along the coasts, and that the differences between deep and not deep water are weaker. We also have strong artefacts at the South-East (black dots), which are in reality long buildings in a industrial and commercial area.
+In this case, we can see that the fuzzy ELSA draws more important limits along the coasts, and that the differences between deep and shallow water are weaker. We also have strong artefacts at the South-East (black dots), which are in reality long buildings in a industrial and commercial area.
 
 ## References

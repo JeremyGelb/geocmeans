@@ -7,9 +7,9 @@
 circular_window(radius, res)
 }
 \arguments{
-\item{radius}{The size in meters of the radius of the circular focal}
+\item{radius}{The size in metres of the radius of the circular focal}
 
-\item{res}{The width in meters of a pixel. It is assumed that pixels are squares.}
+\item{res}{The width in metres of a pixel. It is assumed that pixels are squares.}
 }
 \value{
 A binary weight matrix
@@ -24,7 +24,7 @@ The original function comes from here: https://scrogster.wordpress.com/2012/10/0
 but we reworked it to make it faster and to ensure that the result is a matrix with odd dimensions.
 }
 \examples{
-# wide of 100 meters for pixels of 2 meters
+# wide of 100 metres for pixels of 2 metres
 window <- circular_window(100, 2)
 # row standardisation
 window_row_std <- window / sum(window)

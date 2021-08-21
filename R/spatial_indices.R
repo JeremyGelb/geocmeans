@@ -288,7 +288,7 @@ check_matdist <- function(matdist){
 #' a perfect positive spatial autocorrelation and 1 a perfect heterogeneity. It is based on
 #' the Shanon entropy index, and uses a measure of difference between categories. Thus it
 #' can reflect that proximity of two similar categories is still a form of positive
-#' autocorellation. The authors suggest to calculate the mean of the index at several lag
+#' autocorelation. The authors suggest to calculate the mean of the index at several lag
 #' distance to create an entrogram which quantifies global spatial structure and can be
 #' represented as a variogram-like graph.
 #'
@@ -500,12 +500,12 @@ elsa_raster <- function(rast, window, matdist){
 #' @details The fuzzy ELSA index is a generalization of the ELSA index \insertCite{naimi2019elsa}{geocmeans}. It can be used to measure
 #' local autocorrelation for a membership matrix. It varies between 0 and 1, 0 indicating
 #' a perfect positive spatial autocorrelation and 1 a perfect heterogeneity. It is based on
-#' the Shanon entropy index, and uses a measure of dissimilarity between categories.
+#' the Shannon entropy index, and uses a measure of dissimilarity between categories.
 #'
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans. Can also be a membership matrix. Each row of this matrix
-#'   must sum up to 1. can also be a list of rasters, in that case, each raster must represent
-#'   the membership values to one cluster and the sum of all the rasters must be a raster filled
+#'   must sum up to 1. Can also be a list of rasters, in which case each raster must represent
+#'   the membership values for one cluster and the sum of all the rasters must be a raster filled
 #'   with ones.
 #' @template nblistw-arg
 #' @template window2-arg

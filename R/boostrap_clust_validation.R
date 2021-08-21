@@ -4,21 +4,21 @@
 #'
 #' @details Considering that the classification produced by a FCM like algorithm
 #'   depends on its initial state, it is important to check if the groups
-#'   obtained are stable. This function uses a bootstrap method to do it. During
+#'   obtained are stable. This function uses a bootstrap method to do so. During
 #'   a selected number of iterations (at least 1000), a sample of size n (with
 #'   replacement) is drawn from the original dataset. For each sample, the same
 #'   classification algorithm is applied and the results are compared with the
-#'   reference results. For each original group, the mots similar group is
+#'   reference results. For each original group, the most similar group is
 #'   identified by calculating the Jaccard similarity index between the columns
 #'   of the two membership matrices. This index is comprised between 0 (exact
 #'   difference) and 1 (perfect similarity) and a value is calculated for each
 #'   group at each iteration. One can investigate the values obtained to
-#'   determine if the groups are stable. Values under 0.5 are worrisome and
+#'   determine if the groups are stable. Values under 0.5 are a concern and
 #'   indicate that the group is dissolving. Values between 0.6 and 0.75 indicate
-#'   a pattern in the data, but an important uncertainty. Values above 0.8
-#'   indicate strong groups. The values of the centers obtained at each
-#'   iteration are also returned, it is important to check the they follow
-#'   approximately a normal distribution and are at least unimodal.
+#'   a pattern in the data, but a significant uncertainty. Values above 0.8
+#'   indicate strong groups. The values of the centres obtained at each
+#'   iteration are also returned, it is important to ensure that they approximately
+#'   follow a normal distribution (or are at least unimodal).
 #'
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans
@@ -26,15 +26,16 @@
 #' @param maxiter An integer for the maximum number of iterations
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param init A string indicating how the initial centers must be selected.
-#'   "random" indicates that random observations are used as centers. "kpp" use
-#'   a distance based method resulting in more dispersed centers at the
+#' @param init A string indicating how the initial centres must be selected.
+#'   "random" indicates that random observations are used as centres "kpp" use
+#'   a distance-based method resulting in more dispersed centres at the
 #'   beginning. Both of them are heuristic.
 #' @param verbose A boolean to specify if the progress bar should be displayed.
-#' @param seed An integer to control randomness, default is NULL
-#' @return A list of two values: group_consistency, a dataframe indicating for
-#'   each cluster its consistency across simulations. group_centers a list with
-#'   a dataframe for each cluster. The values in the dataframes are the centers
+#' @param seed An integer used for random number generation. It ensures that the
+#' starting centres will be the same if the same value is selected.
+#' @return A list of two values: group_consistency: a dataframe indicating
+#'   the consistency across simulations each cluster ; group_centres: a list with
+#'   a dataframe for each cluster. The values in the dataframes are the centres
 #'   of the clusters at each simulation.
 #' @export
 #' @examples
@@ -154,8 +155,8 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
   mat_valid <- do.call(rbind, lapply(cons_values, function(v){v[[1]]}))
   mat_idx <- do.call(rbind, lapply(cons_values, function(v){v[[2]]}))
 
-  ## creating a list with the centers values boostraped of clusters -----------------------
-  print("Extracting the centers of the clusters...")
+  ## creating a list with the centres values boostraped of clusters -----------------------
+  print("Extracting the centres of the clusters...")
 
   clust_table <- do.call(rbind,lapply(1:nsim, function(j){
     all_perm[[j]]$Centers[mat_idx[j,],]
@@ -192,15 +193,15 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 #' @param maxiter An integer for the maximum number of iterations
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
-#' @param init A string indicating how the initial centers must be selected.
-#'   "random" indicates that random observations are used as centers. "kpp" use
-#'   a distance based method resulting in more dispersed centers at the
+#' @param init A string indicating how the initial centres must be selected.
+#'   "random" indicates that random observations are used as centres. "kpp" use
+#'   a distance based method resulting in more dispersed centres at the
 #'   beginning. Both of them are heuristic.
 #' @param verbose A boolean to specify if the progress bar should be displayed.
 #' @param seed An integer to control randomness, default is NULL
-#' @return  A list of two values: group_consistency, a dataframe indicating for
-#'   each cluster its consistency across simulations. group_centers a list with
-#'   a dataframe for each cluster. The values in the dataframes are the centers
+#' @return A list of two values: group_consistency: a dataframe indicating
+#'   the consistency across simulations each cluster ; group_centres: a list with
+#'   a dataframe for each cluster. The values in the dataframes are the centres
 #'   of the clusters at each simulation.
 #' @export
 #' @examples
@@ -330,7 +331,7 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
   mat_idx <- do.call(rbind, lapply(cons_values, function(v){v[[2]]}))
 
   ## creating a list with the centers values boostraped of clusters -----------------------
-  print("Extracting the centers of the clusters...")
+  print("Extracting the centres of the clusters...")
 
   clust_table <- do.call(rbind,lapply(1:nsim, function(j){
     all_perm[[j]]$Centers[mat_idx[j,],]
@@ -363,9 +364,9 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
 #' @param tol The tolerance criterion used in the evaluateMatrices function for
 #'   convergence assessment
 #' @param maxiter An integer for the maximum number of iteration
-#' @param init A string indicating how the initial centers must be selected. "random"
-#' indicates that random observations are used as centers. "kpp" use a distance based method
-#' resulting in more dispersed centers at the beginning. Both of them are heuristic.
+#' @param init A string indicating how the initial centres must be selected. "random"
+#' indicates that random observations are used as centres. "kpp" use a distance based method
+#' resulting in more dispersed centres at the beginning. Both of them are heuristic.
 #' @return A list, similar to a FCMres object, but with only necessary slots for cluster bootstraping.
 #' @keywords internal
 #' @examples
@@ -402,16 +403,16 @@ boot_worker <- function(object, wdata, tol, maxiter, init){
 #' @description Match the groups obtained from two classifications based on
 #' the Jaccard index calculated on the membership matrices.
 #'
-#' @details We can not expect to obtain the groups in the same order in every runs
-#' of a classification algorithm. This function can be used to find for two results
-#' the most similar clusters in a pairwise fashion and to reorder the results. Thus
+#' @details We can not expect to obtain the groups in the same order in each run
+#' of a classification algorithm. This function can be used match the clusters of a first
+#' classification with the most similar clusters in a second classification. Thus
 #' it might be easier to compare the results of two algorithms or two runs of the
 #' same algorithm.
 #'
 #' @param object.x A FCMres object, or a simple membership matrix. It is used as the reference
 #' for the ordering of the groups
 #' @param object.y A FCMres object, or a simple membership matrix. The order of its groups will
-#' bu updated to match with the groups of object.x
+#' be updated to match with the groups of object.x
 #' @return The FCMres object or the membership matrix provided for the parameter object.y with
 #' the order of the groups updated.
 #' @export

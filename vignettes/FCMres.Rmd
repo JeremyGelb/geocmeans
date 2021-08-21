@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-In this vignette, we want to show how to create a `FCMres` object from results obtained with other classification or clustering methods. This can be very handy to compare results from methods available in other packages. We give a practical example here with the `hclust` function.
+In this vignette, we want to show how to create a `FCMres` object from results obtained with other classification or clustering methods. This can be very useful to compare results with methods available in other packages. We give a practical example here with the `hclust` function.
 
 ## Applying hclust
 
@@ -66,14 +66,14 @@ tm_shape(LyonIris) +
 
 ## Creating a FCMres object
 
-Now, if we want to use the functions provided by **geocemans**, we must create a `FCMres` object by hand. This is basically a list with some required slots: 
+Now, if we want to use the functions provided by **geocemans**, we must create a `FCMres` object manually. This is basically a list with some required slots: 
 
-* Centers: a matrix representing the center of each group
+* Centers: a matrix representing the centre of each group
 * Belongings: a membership matrix of each observation to each group
 * Data: the dataset used for the clustering
 * m: the fuzzyness factor (1 if using a hard clustering method)
 
-In this case, we calculate the centers of the groups as the mean of each variable in each group.
+In this case, we calculate the centres of the groups as the mean of each variable in each group.
 
 ```{r message=FALSE, warning=FALSE}
 centers <- Data %>% 
@@ -103,7 +103,7 @@ hclustres <- FCMres(list(
 ))
 ```
 
-It is now possible to use almost all the functions in the package **geocmeans** to investigate the results.
+It is now possible to use almost all the functions in the **geocmeans** package to investigate the results.
 
 ```{r message=FALSE, warning=FALSE, eval = FALSE}
 # quick summaries about the groups
@@ -155,8 +155,8 @@ kmean7 <- kmeans(all_data, 7)
 We must now create three objects: 
 
 * Data: a list of rasterLayers with the values used in the clustering algorithm.
-* rasters: a list of rasterLayers with the membership values of each pixel to each group.
-* Centers: a matrix with the centers of each group.
+* rasters: a list of rasterLayers with the membership values of each pixel for each group.
+* Centers: a matrix with the centres of each group.
 
 ```{r message=FALSE, warning=FALSE}
 

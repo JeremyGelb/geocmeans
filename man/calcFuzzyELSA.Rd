@@ -9,8 +9,8 @@ calcFuzzyELSA(object, nblistw = NULL, window = NULL, matdist = NULL)
 \arguments{
 \item{object}{A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans. Can also be a membership matrix. Each row of this matrix
-must sum up to 1. can also be a list of rasters, in that case, each raster must represent
-the membership values to one cluster and the sum of all the rasters must be a raster filled
+must sum up to 1. Can also be a list of rasters, in which case each raster must represent
+the membership values for one cluster and the sum of all the rasters must be a raster filled
 with ones.}
 
 \item{nblistw}{A list.w object describing the neighbours typically produced
@@ -35,7 +35,7 @@ belong to different clusters.
 The fuzzy ELSA index is a generalization of the ELSA index \insertCite{naimi2019elsa}{geocmeans}. It can be used to measure
 local autocorrelation for a membership matrix. It varies between 0 and 1, 0 indicating
 a perfect positive spatial autocorrelation and 1 a perfect heterogeneity. It is based on
-the Shanon entropy index, and uses a measure of dissimilarity between categories.
+the Shannon entropy index, and uses a measure of dissimilarity between categories.
 }
 \examples{
 data(LyonIris)

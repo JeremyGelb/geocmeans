@@ -25,9 +25,9 @@ GCMeans, SFCMeans, SGFCMeans}
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{init}{A string indicating how the initial centers must be selected.
-"random" indicates that random observations are used as centers. "kpp" use
-a distance based method resulting in more dispersed centers at the
+\item{init}{A string indicating how the initial centres must be selected.
+"random" indicates that random observations are used as centres. "kpp" use
+a distance based method resulting in more dispersed centres at the
 beginning. Both of them are heuristic.}
 
 \item{verbose}{A boolean to specify if the progress bar should be displayed.}
@@ -35,9 +35,9 @@ beginning. Both of them are heuristic.}
 \item{seed}{An integer to control randomness, default is NULL}
 }
 \value{
-A list of two values: group_consistency, a dataframe indicating for
-  each cluster its consistency across simulations. group_centers a list with
-  a dataframe for each cluster. The values in the dataframes are the centers
+A list of two values: group_consistency: a dataframe indicating
+  the consistency across simulations each cluster ; group_centres: a list with
+  a dataframe for each cluster. The values in the dataframes are the centres
   of the clusters at each simulation.
 }
 \description{

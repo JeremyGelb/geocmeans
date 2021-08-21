@@ -19,6 +19,6 @@ Calculate the Silhouette index of clustering quality.
 }
 \details{
 The index is calculated with the function SIL.F from the package fclust.
-When the dataset is too big, an approach by subsampling is used to avoid
+When the dataset is too large, an approach by subsampling is used to avoid
 crash.
 }

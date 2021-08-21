@@ -11,7 +11,7 @@ calcNegentropyI(data, belongmatrix, centers)
 
 \item{belongmatrix}{A membership matrix (n*k)}
 
-\item{centers}{The centers of the clusters}
+\item{centers}{The centres of the clusters}
 }
 \value{
 A float: the Negentropy Increment index

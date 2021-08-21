@@ -11,7 +11,7 @@ calcGD43(data, belongmatrix, centers)
 
 \item{belongmatrix}{A membership matrix (n*k)}
 
-\item{centers}{The centers of the clusters}
+\item{centers}{The centres of the clusters}
 }
 \value{
 A float: the  Generalized Dunn’s index (43)
@@ -32,7 +32,7 @@ The numerator is a measure of the minimal separation between all the clusters
 
 \deqn{\delta_{r}\left(\omega_{i}, \omega_{j}\right)=\left\|\boldsymbol{c}_{i}-\boldsymbol{c}_{j}\right\|}
 
-which is basically the Euclidean distance between the centers of clusters \eqn{c_{i}} and \eqn{c_{j}}
+which is basically the Euclidean distance between the centres of clusters \eqn{c_{i}} and \eqn{c_{j}}
 
 The denominator is a measure of the maximal dispersion of all clusters, given
 by the formula:

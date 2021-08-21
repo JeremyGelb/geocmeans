@@ -11,7 +11,7 @@ groups_matching(object.x, object.y)
 for the ordering of the groups}
 
 \item{object.y}{A FCMres object, or a simple membership matrix. The order of its groups will
-bu updated to match with the groups of object.x}
+be updated to match with the groups of object.x}
 }
 \value{
 The FCMres object or the membership matrix provided for the parameter object.y with
@@ -22,9 +22,9 @@ Match the groups obtained from two classifications based on
 the Jaccard index calculated on the membership matrices.
 }
 \details{
-We can not expect to obtain the groups in the same order in every runs
-of a classification algorithm. This function can be used to find for two results
-the most similar clusters in a pairwise fashion and to reorder the results. Thus
+We can not expect to obtain the groups in the same order in each run
+of a classification algorithm. This function can be used match the clusters of a first
+classification with the most similar clusters in a second classification. Thus
 it might be easier to compare the results of two algorithms or two runs of the
 same algorithm.
 }

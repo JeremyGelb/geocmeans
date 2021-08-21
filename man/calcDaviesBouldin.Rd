@@ -11,7 +11,7 @@ calcDaviesBouldin(data, belongmatrix, centers)
 
 \item{belongmatrix}{A membership matrix (n*k)}
 
-\item{centers}{The centers of the clusters}
+\item{centers}{The centres of the clusters}
 }
 \value{
 A float: the Davies-Bouldin index
@@ -20,7 +20,7 @@ A float: the Davies-Bouldin index
 Calculate the Davies-Bouldin index of clustering quality.
 }
 \details{
-The Davies-Bouldin index \insertCite{da2020incremental}{geocmeans} can be seen as a ratio between the within cluster dispersion and the
+The Davies-Bouldin index \insertCite{da2020incremental}{geocmeans} can be seen as the ratio of the within cluster dispersion and the
 between cluster separation. A lower value indicates a higher cluster compacity
 or a higher cluster separation. The formula is:
 
@@ -32,8 +32,8 @@ with:
 \deqn{S_{l} =\left[\frac{1}{n_{l}} \sum_{l=1}^{n}\left\|\boldsymbol{x_{l}}-\boldsymbol{c_{i}}\right\|*u_{i}\right]^{\frac{1}{2}}}
 \deqn{M_{i, j} =\sum\left\|\boldsymbol{c}_{i}-\boldsymbol{c}_{j}\right\|}
 
-So, the value of the index is an average of \eqn{R_{i}} values. They represent
-for each cluster its worst comparison with all the other clusters, calculated
+So, the value of the index is an average of \eqn{R_{i}} values. For each cluster, they represent
+its worst comparison with all the other clusters, calculated
 as the ratio between the compactness of the two clusters and the separation
 of the two clusters.
 }

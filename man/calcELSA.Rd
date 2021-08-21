@@ -35,7 +35,7 @@ local autocorrelation for a categorical variable. It varies between 0 and 1, 0 i
 a perfect positive spatial autocorrelation and 1 a perfect heterogeneity. It is based on
 the Shanon entropy index, and uses a measure of difference between categories. Thus it
 can reflect that proximity of two similar categories is still a form of positive
-autocorellation. The authors suggest to calculate the mean of the index at several lag
+autocorelation. The authors suggest to calculate the mean of the index at several lag
 distance to create an entrogram which quantifies global spatial structure and can be
 represented as a variogram-like graph.
 }

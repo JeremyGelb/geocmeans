@@ -7,12 +7,12 @@
 #' @details The original function comes from here: https://scrogster.wordpress.com/2012/10/05/applying-a-circular-moving-window-filter-to-raster-data-in-r/
 #' but we reworked it to make it faster and to ensure that the result is a matrix with odd dimensions.
 #'
-#' @param radius The size in meters of the radius of the circular focal
-#' @param res The width in meters of a pixel. It is assumed that pixels are squares.
+#' @param radius The size in metres of the radius of the circular focal
+#' @param res The width in metres of a pixel. It is assumed that pixels are squares.
 #' @return A binary weight matrix
 #' @export
 #' @examples
-#' # wide of 100 meters for pixels of 2 meters
+#' # wide of 100 metres for pixels of 2 metres
 #' window <- circular_window(100, 2)
 #' # row standardisation
 #' window_row_std <- window / sum(window)

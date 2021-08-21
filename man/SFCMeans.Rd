@@ -50,26 +50,26 @@ examples in the vignette introduction for more details).}
 
 \item{window}{If data is a list of rasters, then a window must be specified instead of
 a list.w object. It will be used to calculate a focal function on each raster. The
-window must be a square numeric matrix with odd dimensions (like 3x3). The values in
-the matrix indicate the weight to give to each pixel and the center of the matrix is
-the center of the focal function.}
+window must be a square numeric matrix with odd dimensions (such 3x3). The values in
+the matrix indicate the weight to give to each pixel and the centre of the matrix is
+the centre of the focal function.}
 
 \item{maxiter}{An integer for the maximum number of iterations}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
 convergence assessment}
 
-\item{standardize}{A boolean to specify if the variables must be centered and
+\item{standardize}{A boolean to specify if the variables must be centred and
 reduced (default = True)}
 
 \item{verbose}{A boolean to specify if the progress should be printed}
 
-\item{init}{A string indicating how the initial centers must be selected. "random"
-indicates that random observations are used as centers. "kpp" use a distance based method
-resulting in more dispersed centers at the beginning. Both of them are heuristic.}
+\item{init}{A string indicating how the initial centres must be selected. "random"
+indicates that random observations are used as centres. "kpp" use a distance-based method
+resulting in more dispersed centres at the beginning. Both of them are heuristic.}
 
 \item{seed}{An integer used for random number generation. It ensures that the
-start centers will be the same if the same value is selected.}
+starting centres will be the same if the same value is selected.}
 }
 \value{
 An S3 object of class FCMres with the following slots

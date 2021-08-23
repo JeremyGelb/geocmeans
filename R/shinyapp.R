@@ -5,8 +5,15 @@
 # the variables used in the shiny environment must be declared as globalVariables
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
                   "dataset", "base_violinplots", "dark", "light", "uncertainMap",
-                  "base_boxplots","radarchart", 'rasterMode', "object"
+                  "base_boxplots","radarchart", 'rasterMode', "object","shiny_data"
                   ))
+
+
+#' @title geocmeans general environment
+#'
+#' @description An environment used by geocmeans to store data, functions and values
+#' @keywords internal
+geocmeans_env <- new.env()
 
 #see here to remove global environment variables
 #https://community.rstudio.com/t/alternative-to-global-for-passing-variable-to-shiny-app/26476/2
@@ -50,13 +57,16 @@ globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "myma
 #'
 #' Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 #'
-#' sp_clust_explorer(LyonIris, Cmean)
+#' sp_clust_explorer(Cmean, LyonIris)
 #' }
 sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, dataset = NULL, port = 8100, ...) {
 
   # if(object$isRaster){
   #   stop("The shiny app can not be used currently to display results from raster data, sorry...")
   # }
+
+  # creating a list to store all the data to pass to the shiny app
+  shiny_data <- list()
 
   # checking if the directory of hte shiny app is here  ---------------------------------------
   appDir <- system.file("shiny-examples", "cluster_explorer", package = "geocmeans")
@@ -121,7 +131,8 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     inertia <- calcexplainedInertia(dataset, belongings)
   }
 
-  assign('inertia', inertia, .GlobalEnv)
+  #assign('inertia', inertia, .GlobalEnv)
+  shiny_data$inertia <- inertia
 
 
   # Preparing some global variables for the app ----------------------------------------
@@ -140,7 +151,8 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
               "#98DF8A","#FF9896","#C5B0D5","#C49C94","#F7B6D2","#C7C7C7",
               "#DBDB8D","#9EDAE5")[1:ncol(belongings)]
 
-  assign('colors', colors, .GlobalEnv)
+  #assign('colors', colors, .GlobalEnv)
+  shiny_data$colors <- colors
 
   # the available themes
   if("bslib" %in% installed.packages()){
@@ -151,8 +163,10 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     light <- NULL
   }
 
-  assign('dark', dark, .GlobalEnv)
-  assign('light', light, .GlobalEnv)
+  #assign('dark', dark, .GlobalEnv)
+  #assign('light', light, .GlobalEnv)
+  shiny_data$dark <- dark
+  shiny_data$light <- light
 
   # check if we have to deal with rasters
   rasterMode <- FALSE
@@ -167,12 +181,16 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     ## be used in the main functions UI and SERVER
     ## but reduce there size
     Ids <- sample(1:nrow(belongings), size = 1500, replace = FALSE)
-    assign('belongings', belongings[Ids,], .GlobalEnv)
-    assign('dataset', dataset[Ids,], .GlobalEnv)
+    #assign('belongings', belongings[Ids,], .GlobalEnv)
+    #assign('dataset', dataset[Ids,], .GlobalEnv)
+    shiny_data$belongings <- belongings
+    shiny_data$dataset <- dataset
 
     ## creating a referencing raster with the right projection
     ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sp::CRS("+init=epsg:3857"), method = "ngb")
-    assign('ref_raster', ref_raster, .GlobalEnv)
+    #assign('ref_raster', ref_raster, .GlobalEnv)
+    shiny_data$ref_raster <- ref_raster
+
     old_names <- names(object$rasters)
     object$rasters <- lapply(object$rasters, function(rast){
       raster::projectRaster(rast, crs = sp::CRS("+init=epsg:3857"), method = "ngb")
@@ -182,23 +200,31 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   }else{
     ## saving the main objets in the global environment for them to
     ## be used in the main functions UI and SERVER
-    assign('belongings', belongings, .GlobalEnv)
-    assign('dataset', dataset, .GlobalEnv)
-    assign('spatial', spatial, .GlobalEnv)
+    #assign('belongings', belongings, .GlobalEnv)
+    #assign('dataset', dataset, .GlobalEnv)
+    #assign('spatial', spatial, .GlobalEnv)
+
+    shiny_data$belongings <- belongings
+    shiny_data$dataset <- dataset
+    shiny_data$spatial <- spatial
 
     ## for leaflet, the CRS must be 4326
     ref <- sp::CRS("+init=epsg:4326")
     spatial4326 <- sp::spTransform(spatial, ref)
-    assign('spatial4326', spatial4326, .GlobalEnv)
+    #assign('spatial4326', spatial4326, .GlobalEnv)
+    shiny_data$spatial4326 <- spatial4326
   }
 
-  assign("rasterMode", rasterMode, .GlobalEnv)
+  #assign("rasterMode", rasterMode, .GlobalEnv)
+  shiny_data$rasterMode <- rasterMode
 
 
   groups <- paste("group ", 1:ncol(belongings), sep = "")
   variables <- names(dataset)
-  assign('groups', groups, .GlobalEnv)
-  assign('variables', variables, .GlobalEnv)
+  #assign('groups', groups, .GlobalEnv)
+  #assign('variables', variables, .GlobalEnv)
+  shiny_data$groups <- groups
+  shiny_data$variables <- variables
 
   ## prepare the leaflet maps in the first pannel ***************************************
 
@@ -279,7 +305,8 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
                 title = NULL, group= "Most likely group",
                 position = "bottomright")
 
-    assign('mapfun', mapfun, .GlobalEnv)
+    #assign('mapfun', mapfun, .GlobalEnv)
+    shiny_data$mapfun <- mapfun
 
   }else{
     # IF WE ARE IN RASTER MODE
@@ -314,7 +341,8 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
                 title = NULL, group= "Most likely group",
                 position = "bottomright")
 
-    assign('mapfun', NULL, .GlobalEnv)
+    #assign('mapfun', NULL, .GlobalEnv)
+    shiny_data$mapfun <- mapfun
 
   }
 
@@ -331,7 +359,8 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   }
   mymap <- mymap %>% hideGroup("Most likely group")
 
-  assign('mymap', mymap, .GlobalEnv)
+  #assign('mymap', mymap, .GlobalEnv)
+  shiny_data$mymap <- mymap
 
 
   ## preparing the map for the third pannel ***************************************
@@ -411,8 +440,12 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   }
 
 
-  assign('uncertainMap', uncertainMap, .GlobalEnv)
-  assign('object', object, .GlobalEnv)
+  #assign('uncertainMap', uncertainMap, .GlobalEnv)
+  #assign('object', object, .GlobalEnv)
+  shiny_data$uncertainMap <- uncertainMap
+  shiny_data$object <- object
+
+  assign('shiny_data', shiny_data, geocmeans_env)
   ##******************************************************************
 
 

@@ -27,7 +27,7 @@ A SpatialPolygonsDataFrame with 506 rows and 32 variables:
 }
 }
 \source{
-\url{https://data.grandlyon.com/accueil}
+\url{https://data.grandlyon.com/}
 }
 \usage{
 LyonIris

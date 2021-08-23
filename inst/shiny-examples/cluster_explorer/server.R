@@ -195,6 +195,14 @@ if(add_helper){
   library(shinyhelper)
 }
 
+## loading all the variables from shiny_app list
+geocmeans_env <- geocmeans::geocmeans_env
+shiny_data <- geocmeans_env$shiny_data
+for (name in names(shiny_data)){
+  print(name)
+  assign(name, shiny_data[[name]])
+}
+
 
 server <- function(input, output, session) {
 

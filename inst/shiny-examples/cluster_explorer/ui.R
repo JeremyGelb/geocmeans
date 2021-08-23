@@ -63,6 +63,14 @@ boxplots_ui <- function(n){
 #' @importFrom leaflet leafletOutput
 #' @importFrom plotly plotlyOutput
 #' @importFrom utils installed.packages
+#'
+
+## extracting all the variables from the shiny_data object
+geocmeans_env <- geocmeans::geocmeans_env
+shiny_data <- geocmeans_env$shiny_data
+for (name in names(shiny_data)){
+  assign(name, shiny_data[[name]])
+}
 
 ## selecting the right number of columns and rows for the violinplots
 nv <- length(variables)

@@ -8,7 +8,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
-[![](https://img.shields.io/badge/devel%20version-0.1.1.9000-green.svg)](https://github.com/JeremyGelb/geocmeans)
+[![](https://img.shields.io/badge/devel%20version-0.2.0-green.svg)](https://github.com/JeremyGelb/geocmeans)
 [![](https://www.r-pkg.org/badges/version/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 <!-- badges: end -->
@@ -40,15 +40,15 @@ Email: <philippe.apparicio@ucs.inrs.ca>
 Provides functions to apply Spatial Fuzzy c-means Algorithm, visualize
 and interpret results. This method is well suited when the user wants to
 analyze data with a fuzzy clustering algorithm and to account for the
-spatial dimension of the dataset. Indexes for measuring the spatial
-consistency and classification quality are proposed in addition. The
+spatial dimension of the dataset. In addition, indexes for measuring the
+spatial consistency and classification quality are proposed. The
 algorithms were developed first for brain imagery as described in the
 articles of [Cai and
 al. 2007](https://doi.org/10.1016/j.patcog.2006.07.011) and [Zaho and
 al. 2013](https://doi.org/10.1016/j.dsp.2012.09.016). [Gelb and
 Apparicio](https://doi.org/10.4000/cybergeo.36414) proposed to apply the
 method to perform a socio-residential and environmental taxonomy in Lyon
-(France).
+(France). The methods can be applied to dataframes or to rasters.
 
 #### Fuzzy classification algorithms
 
@@ -95,6 +95,13 @@ function `calcqualityIndexes`:
 -   *Explained.inertia*: the percentage of total inertia explained by
     the solution
 
+#### Classification consistency
+
+To assess the stability of the obtained clusters, a function for
+bootstrap validation is proposed: `boot_group_validation`. The results
+can be used to verify if the obtained clusters are stable and how much
+their centres vary.
+
 #### Interpretation
 
 Several functions are also available to facilitate the interpretation of
@@ -114,7 +121,15 @@ interpretation. It requires the packages `shiny`, `leaflet`, `bslib`,
 ![Alt
 Text](https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif)
 
-#### Spatial inconsistency
+#### Spatial diagnostic
+
+Several spatial indices can be calculated to have a better spatial
+understanding of the obtained clusters, like the global or local Moran I
+calculated on the membership values, or the join-count-test on the most
+likely group for each observation. ELSA and Fuzzy ELSA statistics can
+also be calculated to identify areas with high or low multidimensional
+spatial autocorrelation in the membership values. See functions
+`spConsistency`, `calcELSA`, `calcFuzzyELSA` and `spatialDiag`.
 
 We proposed an index to quantify the spatial inconsistency of a
 classification ([Gelb and

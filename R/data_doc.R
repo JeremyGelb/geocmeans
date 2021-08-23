@@ -23,7 +23,7 @@
 #'   \item{Y}{the Y coordinate of the center of the Iris (numeric)}
 #'   ...
 #' }
-#' @source \url{https://data.grandlyon.com/accueil}
+#' @source \url{https://data.grandlyon.com/}
 "LyonIris"
 
 

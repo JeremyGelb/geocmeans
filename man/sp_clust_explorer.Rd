@@ -52,6 +52,6 @@ for (Col in names(Data)){
 
 Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456, tol = 0.00001, verbose = FALSE)
 
-sp_clust_explorer(LyonIris, Cmean)
+sp_clust_explorer(Cmean, LyonIris)
 }
 }

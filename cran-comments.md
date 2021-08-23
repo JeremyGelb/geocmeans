@@ -93,3 +93,35 @@ Please unwrap the examples if they are executable in < 5 sec, or replace
 **correction** : 
 
 \\dontrun{} was used to avoid running the function selectParameters because it is quite long (>5 sec). As suggested, it is now replaced by \\donttest{}
+
+
+# Version 0.2.0
+
+## Test environments
+
+* local R installation, R 4.0.5
+* GitHub Actions - (windows): release
+* GitHub Actions - (macOS): release
+* rhub - (ubuntu): release
+
+## R CMD check results
+0 ERRORs | 0 WARNINGs | 1 NOTES.
+
+# Round 1, After automatic check and contact with CRAN team (2021/08/22)
+
+**problem** : 
+
+```
+Found the following assignments to the global environment:
+File ‘geocmeans/R/shinyapp.R’:
+  assign("shiny_data", shiny_data, .GlobalEnv)
+```
+
+suggestion from CRAN team:
+
+"Please use, e.g., an environment in your package and not the GlobalEnv
+to assign to."
+
+**solution**: 
+
+An environment called `geocmeans_env` is created in package the geocmeans. It could be used in the future for other purposes.

@@ -3,6 +3,7 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # the variables used in the shiny environment must be declared as globalVariables
+# nocov start
 globalVariables(c("spatial4326", "mapfun", "variables", "belongings", "n", "mymap",
                   "dataset", "base_violinplots", "dark", "light", "uncertainMap",
                   "base_boxplots","radarchart", 'rasterMode', "object","shiny_data"
@@ -451,5 +452,5 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
 
   shiny::runApp(appDir, display.mode = "normal",port = 8100)
 }
-
+# nocov end
 

@@ -38,24 +38,25 @@ Suggests:
     maptools (>= 0.9-5),
     future (>= 1.16.0),
     ppclust (>= 1.1.0),
-	  ClustGeo (>= 2.0),
-	  car (>= 3.0-7),
-	  rgl (>= 0.100),
-	  ggpubr (>= 0.2.5),
-	  RColorBrewer (>= 1.1-2),
-	  kableExtra (>= 1.1.0),
-	  viridis (>= 0.5.1),
-	  testthat (>= 3.0.0),
-	  sf (>= 0.9-8),
-	  bslib (>= 0.2.5),
+    ClustGeo (>= 2.0),
+    car (>= 3.0-7),
+    rgl (>= 0.100),
+    ggpubr (>= 0.2.5),
+    RColorBrewer (>= 1.1-2),
+    kableExtra (>= 1.1.0),
+    viridis (>= 0.5.1),
+    testthat (>= 3.0.0),
+    sf (>= 0.9-8),
+    bslib (>= 0.2.5),
     shinyWidgets (>= 0.6),
     shinyhelper (>= 0.3.2),
     tmap (>= 3.3-1),
-    waiter (>= 0.2.2)
+    waiter (>= 0.2.2),
+    covr
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Description: Provides functions to apply spatial fuzzy unsupervised classification, visualize and interpret results. This method is well suited when the user wants to analyze data with a fuzzy clustering algorithm and to account for the spatial dimension of the dataset. In addition, indexes for estimating the spatial consistency and classification quality are proposed.
     The methods were originally proposed in the field of brain imagery (seed Cai and al. 2007 <doi:10.1016/j.patcog.2006.07.011> and Zaho and al. 2013 <doi:10.1016/j.dsp.2012.09.016>) and recently applied in geography (see Gelb and Apparicio <doi:10.4000/cybergeo.36414>).

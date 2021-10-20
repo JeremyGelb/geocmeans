@@ -16,5 +16,6 @@ catToBelongings(categories)
 A binary matrix
 }
 \description{
-Function to convert a character vector to a membership matrix (binary matrix)
+Function to convert a character vector to a membership matrix (binary matrix).
+The columns of the matrix are ordered with the order function.
 }

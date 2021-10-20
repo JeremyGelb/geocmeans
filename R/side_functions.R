@@ -34,7 +34,7 @@
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' MyMaps <- mapClusters(LyonIris, result$Belongings)
 #' }
-mapClusters <- function(geodata = NULL, object, undecided = NULL) {
+mapClusters <- function(geodata = NULL, object, undecided = NULL) {# nocov start
 
     cls <- class(object)[[1]]
     isRaster <- FALSE
@@ -666,7 +666,7 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
 
     return(uncertain_map)
 
-}
+} # nocov end
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1083,7 +1083,8 @@ adjustSpatialWeights <- function(data,listw,style){
 
 #' @title Convert categories to membership matrix
 #'
-#' @description Function to convert a character vector to a membership matrix (binary matrix)
+#' @description Function to convert a character vector to a membership matrix (binary matrix).
+#' The columns of the matrix are ordered with the order function.
 #'
 #' @param categories A vector with the categories of each observation
 #'
@@ -1091,10 +1092,12 @@ adjustSpatialWeights <- function(data,listw,style){
 #' @export
 cat_to_belongings <- function(categories){
     cats <- unique(categories)
+    cats <- cats[order(cats)]
     cols <- lapply(cats, function(i){
         return (ifelse(categories == i, 1, 0))
     })
     mat <- do.call(cbind, cols)
+    colnames(mat) <- cats
     return(mat)
 }
 

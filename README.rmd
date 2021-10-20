@@ -27,6 +27,7 @@ cat(
   badge_cran_download(color = "blue", type = "grand-total")
 )
 ```
+[![Codecov test coverage](https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.svg)](https://codecov.io/gh/JeremyGelb/geocmeans?branch=master)
 <!-- badges: end -->
 
 

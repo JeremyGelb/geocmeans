@@ -42,6 +42,7 @@
 #'         \item prt05 : the 5th percentile of the spatial consistency index
 #'         \item prt95 : the 95th percentile of the spatial consistency index
 #'         \item samples : all the value of the spatial consistency index
+#'         \item sum_diff : the total sum of squarred difference between observations and their neighbours
 #' }
 #' @export
 #' @examples
@@ -89,8 +90,8 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
         neighbour <- t(as.matrix(neighbour))
       }
       W <- weights[[i]]
-      diff <- (neighbour-row[col(neighbour)])**2
-      tot <- sum(rowSums(diff) * W)
+      diff <- (neighbour-row[col(neighbour)])**2 * W
+      tot <- sum(rowSums(diff))
       return(tot)
     })
 
@@ -223,7 +224,8 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
   return(list(Mean = mean(ratio), Median = quantile(ratio, probs = c(0.5)),
               prt05 = quantile(ratio, probs = c(0.05)),
               prt95 = quantile(ratio, probs = c(0.95)),
-              samples = ratio))
+              samples = ratio,
+              sum_diff = totalcons))
 }
 
 
@@ -529,7 +531,7 @@ calcFuzzyELSA <- function(object, nblistw = NULL, window = NULL, matdist = NULL)
   }
 
   if(cls == "matrix"){
-    sums <- sum(rowSums(object)) != 1
+    sums <- rowSums(object) != 1
     if(any(sums)){
       stop("if object is a matrix, the sum of each row must be 1")
     }

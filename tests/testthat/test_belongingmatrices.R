@@ -34,8 +34,8 @@ test_that("SFCM and FCM should yield identical results if alpha = 0 for SFCM",{
   dataset <- LyonIris@data[AnalysisFields]
   queen <- poly2nb(LyonIris,queen=TRUE)
   Wqueen <- nb2listw(queen,style="W")
-  result1 <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 0, standardize = TRUE, seed = 123)
-  result2 <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE, seed = 123)
+  result1 <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 0, standardize = TRUE, seed = 123, init = "kpp")
+  result2 <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE, seed = 123, init = "kpp")
   x <- round(result1$Belongings - result2$Belongings,8)
   expect_equal(sum(x),0)
 })

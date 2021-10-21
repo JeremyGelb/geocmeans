@@ -13,8 +13,6 @@ coverage:
         threshold: 1%
         informational: true
 
-comment: false
-
 language: R
 
 sudo: false

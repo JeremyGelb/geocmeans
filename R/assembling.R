@@ -28,9 +28,14 @@ calcLaggedData <- function(x,nblistw,method="mean"){
       ids <- nb[[i]]
       w <- weights[[i]]
       obs <- x[ids,]
-      values <- apply(obs,2,function(column){
-        return(reldist::wtd.quantile(column,q=0.5,weight=w))
-      })
+      if (ncol(x) == 1){
+        values <- reldist::wtd.quantile(obs,q=0.5,weight=w)
+      }else{
+        values <- apply(obs,2,function(column){
+          return(reldist::wtd.quantile(column,q=0.5,weight=w))
+        })
+      }
+      return(values)
     })
     wx <- data.frame(do.call(rbind,all_values))
     return(wx)
@@ -77,7 +82,7 @@ calcEuclideanDistance <- function(m, v) {
 #' @importFrom matrixStats rowMaxs
 #' @examples
 #' #This is an internal function, no example provided
-evaluateMatrices <- function(mat1, mat2, tol) {
+evaluateMatrices <- function(mat1, mat2, tol) { #nocov start
   mat1 <- as.matrix(mat1)
   mat2 <- as.matrix(mat2)
   differ <- abs(mat1 - mat2)
@@ -87,7 +92,7 @@ evaluateMatrices <- function(mat1, mat2, tol) {
   } else{
     return(TRUE)
   }
-}
+} #nocov end
 
 
 
@@ -111,7 +116,6 @@ kppCenters <- function(data,k){
     dists <- apply(centers,1,function(ci){
       return(calcEuclideanDistance2(data,ci))
     })
-    #Dx <- apply(dists,1,min)
     Dx <- rowMins(dists)
     probs <- (Dx**2) / sum((Dx**2))
     new_center <- data[sample(1:nrow(data),size = 1,prob = probs),]

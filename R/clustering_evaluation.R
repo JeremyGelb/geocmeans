@@ -11,7 +11,7 @@
 #' @param data The original dataframe used for the clustering (n*p)
 #' @param belongings A membership matrix (n*k)
 #' @return A float, the fuzzy Silhouette index
-calcSilhouetteIdx <- function(data, belongings){
+calcSilhouetteIdx <- function(data, belongings){ #nocov start
   FS <- tryCatch(
     fclust::SIL.F(data, belongings, alpha = 1),
     error = function(e){
@@ -25,7 +25,8 @@ calcSilhouetteIdx <- function(data, belongings){
       }
   )
   return(FS)
-}
+} #nocov end
+# not tested, come simply from fclust
 
 
 #' @title Negentropy Increment index

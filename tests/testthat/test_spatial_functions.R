@@ -10,7 +10,7 @@ test_that("The global moran I calculated is the same as the one in raster packag
   mat <- matrix(sample(1:10, size = 100, replace = TRUE), nrow = 10, ncol = 10)
   rast <- raster(mat)
   v1 <- Moran(rast)
-  v2 <- moranI_matrix_window(mat, window = matrix(1, nrow = 3, ncol = 3))
+  v2 <- calc_moran_raster(raster(mat), window = matrix(1, nrow = 3, ncol = 3))
   expect_equal(v1, v2)
 })
 
@@ -19,7 +19,8 @@ test_that("The local moran I calculated is the same as the one in raster package
   mat <- matrix(sample(1:10, size = 100, replace = TRUE), nrow = 10, ncol = 10)
   rast <- raster(mat)
   v1 <- raster::values(MoranLocal(rast))
-  v2 <- local_moranI_matrix_window(mat, window = matrix(1, nrow = 3, ncol = 3))
+  v2 <- calc_local_moran_raster(raster(mat), window = matrix(1, nrow = 3, ncol = 3))
+  v2 <- raster::values(v2)
   expect_equal(v1, v2)
 })
 
@@ -49,13 +50,13 @@ test_that("The ELSA index calculated on vector should give the same values as in
   testA <- round(vals[[5]],3) == 0
 
   ## test B
-  vals <- elsa_vector(categories, nb, dists)
+  vals <- calcELSA(categories, nb, matdist = dists)
   testB <- round(vals[[5]],3) == 0.503
 
   ## test C
   categories <- rep(1, times = 9)
   categories[[3]] <- 2
-  vals <- elsa_vector(categories, nb, dists)
+  vals <- calcELSA(categories, nb, matdist = dists)
   testC <- round(vals[[5]],3) == 0.063
 
   ## test D
@@ -96,14 +97,14 @@ test_that("The fuzzy ELSA index calculated on vector should give the same values
   mat <- matrix(0, nrow = 9, ncol =2)
   mat[,1] <- 1
   mat[5,] <- c(0,1)
-  vals <- elsa_fuzzy_vector(mat, nb, dists)
+  vals <- calcFuzzyELSA(mat, nb, matdist = dists)
   testB <- round(vals[[5]],3) == 0.503
 
   ## test C
   mat <- matrix(0, nrow = 9, ncol =2)
   mat[,1] <- 1
   mat[3,] <- c(0,1)
-  vals <- elsa_fuzzy_vector(mat, nb, dists)
+  vals <- calcFuzzyELSA(mat, nb, matdist = dists)
   testC <- round(vals[[5]],3) == 0.063
 
   ## test D
@@ -113,7 +114,7 @@ test_that("The fuzzy ELSA index calculated on vector should give the same values
     c(0,1,0,1,0,1,0,1,0),
     c(0,0,0,0,1,0,0,0,0)
   )
-  vals <- elsa_fuzzy_vector(mat, nb, dists)
+  vals <- elsa_fuzzy_vector(mat, nb, matdist = dists)
   testD <- round(vals[[5]],3) == 0.878
 
   ## test E
@@ -238,5 +239,83 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
   testE <- round(vals[[5]],3) == 0.773
 
   expect_true(testA & testB & testC & testD & testE)
+})
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#### Testing sp consistency index
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+test_that("Testing the spatial consistency index for a vector dataset",{
+
+  # first, creating a membership matrix for 4 observations (squarred 2x2) and 2 groups
+  belong_mat <- matrix(0,nrow = 4, ncol = 2)
+  belong_mat[1,1] <- 1
+  belong_mat[2,1] <- 1
+  belong_mat[3,2] <- 1
+  belong_mat[4,2] <- 1
+
+  # second, creating the spatial neighbouring matrix
+  neighmat <- matrix(0, ncol = 4, nrow = 4)
+  neighmat[1,2] <- 1
+  neighmat[2,1] <- 1
+  neighmat[1,3] <- 1
+  neighmat[3,1] <- 1
+
+  neighmat[4,2] <- 1
+  neighmat[2,4] <- 1
+  neighmat[4,3] <- 1
+  neighmat[3,4] <- 1
+  nb <- spdep::mat2listw(neighmat)
+
+  # each observation has a diff of 2 with a neighbour
+  expected <- 4*2
+
+  obtained <- spConsistency(belong_mat, nblistw = nb,nrep = 5)
+
+  expect_equal(expected, obtained$sum_diff)
+
+})
+
+
+test_that("Testing the spatial consistency index for a raster dataset",{
+
+  # first, creating a membership matrix for 4 observations (squarred 2x2) and 2 groups
+  rast1 <- rbind(
+    c(1,1),
+    c(0,0)
+  )
+  rast1 <- raster(rast1)
+
+  rast2 <- rbind(
+    c(0,0),
+    c(1,1)
+  )
+  rast2 <- raster(rast2)
+
+  rasters <- list(rast1,rast2)
+  W <- matrix(1, nrow = 3, ncol = 3)
+  Data <- rasters
+  centers <- data.frame(
+    x1 = c(1,0),
+    x2 = c(0,1)
+  )
+
+  myFCMres <- FCMres(list(
+    "Data" = Data,
+    "Centers" = centers,
+    "rasters" = rasters,
+    "m" = 1,
+    "algo" = "kmeans"
+  ))
+
+
+  # each observation has a diff of 2 with two neighbours
+  expected <- 2 * 2 * 4
+
+  obtained <- spConsistency(myFCMres, window = matrix(1, nrow = 3, ncol = 3),nrep = 5)
+
+  expect_equal(expected, obtained$sum_diff)
+
 })
 

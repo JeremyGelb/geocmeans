@@ -58,3 +58,27 @@ test_that("Testing the calcLaggedData function",{
   expect_true(test1 & test2)
 
 })
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#### Testing the check_raters_dims
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+test_that("Testing the calcLaggedData function",{
+
+  mat <- rbind(
+    c(1,2,3),
+    c(1,2,3),
+    c(1,2,3)
+  )
+  rast1 <- raster::raster(mat)
+  rast2 <- raster::raster(mat)
+
+  check_raters_dims(list(rast1, rast2))
+
+  rast3 <- raster::raster(matrix(0, ncol = 2, nrow = 3))
+  expect_error({
+    check_raters_dims(list(rast1, rast2, rast3))
+  })
+
+})
+

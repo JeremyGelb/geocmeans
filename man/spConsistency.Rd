@@ -31,6 +31,7 @@ A named list with
         \item prt05 : the 5th percentile of the spatial consistency index
         \item prt95 : the 95th percentile of the spatial consistency index
         \item samples : all the value of the spatial consistency index
+        \item sum_diff : the total sum of squarred difference between observations and their neighbours
 }
 }
 \description{

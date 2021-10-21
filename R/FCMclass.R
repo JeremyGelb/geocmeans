@@ -36,6 +36,10 @@
 #' #This is an internal function, no example provided
 FCMres <- function(obj){
 
+  if(class(obj)!="list"){
+    stop("A list is required to create a FCMres object.")
+  }
+
   rasterMode <- class(obj$Data)[[1]] == "list"
   if(rasterMode){
     necessary <- c("Centers", "Data", "m", "algo", "rasters")
@@ -55,6 +59,9 @@ FCMres <- function(obj){
     obj$Belongings <- tryCatch(as.matrix(obj$Belongings),
                                error = function(e)
                                  print("Obj$Belongings must be coercible to a matrix with as.matrix"))
+    if(nrow(obj$Belongings) != nrow(obj$Data)){
+      stop("The number of rows in obj$Data and obj$Belongings must be the same.")
+    }
   }
 
   obj$Centers <- tryCatch(as.matrix(obj$Centers),
@@ -151,7 +158,7 @@ is.FCMres <- function(x){
 
   # the object must have this three attributes
   necessary <- c("Centers", "Belongings", "Data", "m", "algo")
-  if (sum(necessary %in% attrs) < 3){
+  if (sum(necessary %in% attrs) < 5){
     return(FALSE)
   }
 
@@ -195,7 +202,7 @@ is.FCMres <- function(x){
 #' dataset <- LyonIris@data[AnalysisFields]
 #' result <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE)
 #' print(result, "FCMres")
-print.FCMres <- function(x, ...){
+print.FCMres <- function(x, ...){ #nocov start
   if(x$isRaster){
     part1 <- "FCMres object constructed from a raster dataset"
     part2 <- paste("dimension of the raster : ",x$rasters[[1]]@nrows,"x",x$rasters[[1]]@cols,
@@ -209,7 +216,7 @@ print.FCMres <- function(x, ...){
   part3 <- paste("parameters of the classification: ",params, sep = "")
   cat(part1,part2,part3,sep="\n")
   invisible(x)
-}
+} #nocov end
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ####                      SUMMARY S3 METHOD                          ####
@@ -246,7 +253,7 @@ print.FCMres <- function(x, ...){
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' summarizeClusters(dataset, result$Belongings)
-summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, silent=TRUE) {
+summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, silent=TRUE) { #nocov start
   belongmatrix <- as.data.frame(belongmatrix)
   if (weighted) {
     Summaries <- lapply(1:ncol(belongmatrix), function(c) {
@@ -584,4 +591,4 @@ plot.FCMres <- function(x, type = "spider", ...){
   }else if(type == "spider"){
     return(spiderPlots(x$Data,x$Belongings))
   }
-}
+}#nocov end

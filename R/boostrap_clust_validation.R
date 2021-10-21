@@ -353,7 +353,7 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
 }
 
 
-#' @title Bootstrap check the robustness of a classification (multicore)
+#' @title Worker function for cluster bootstrapping
 #'
 #' @description Worker function for cluster bootstrapping
 #'

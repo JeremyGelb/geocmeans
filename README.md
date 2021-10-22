@@ -15,6 +15,9 @@
 coverage](https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.svg)](https://codecov.io/gh/JeremyGelb/geocmeans?branch=master)
 <!-- badges: end -->
 
+The website of the package is available
+[here](https://jeremygelb.github.io/geocmeans/)
+
 ## Installation
 
 The stable version of `geocmeans` is available on CRAN. You can install

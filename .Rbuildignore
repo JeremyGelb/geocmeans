@@ -16,3 +16,6 @@
 ^JOSS$
 ^man-roxygen
 ^codecov\.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

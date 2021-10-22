@@ -169,18 +169,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// moranI_matrix
-double moranI_matrix(NumericMatrix mat, int w);
-RcppExport SEXP _geocmeans_moranI_matrix(SEXP matSEXP, SEXP wSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< int >::type w(wSEXP);
-    rcpp_result_gen = Rcpp::wrap(moranI_matrix(mat, w));
-    return rcpp_result_gen;
-END_RCPP
-}
 // moranI_matrix_window
 double moranI_matrix_window(NumericMatrix mat, NumericMatrix window);
 RcppExport SEXP _geocmeans_moranI_matrix_window(SEXP matSEXP, SEXP windowSEXP) {
@@ -202,19 +190,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type window(windowSEXP);
     rcpp_result_gen = Rcpp::wrap(local_moranI_matrix_window(mat, window));
-    return rcpp_result_gen;
-END_RCPP
-}
-// Elsa_categorical_matrix
-NumericVector Elsa_categorical_matrix(IntegerMatrix mat, int w, NumericMatrix dist);
-RcppExport SEXP _geocmeans_Elsa_categorical_matrix(SEXP matSEXP, SEXP wSEXP, SEXP distSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< int >::type w(wSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type dist(distSEXP);
-    rcpp_result_gen = Rcpp::wrap(Elsa_categorical_matrix(mat, w, dist));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -445,10 +420,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_geocmeans_focal_adj_mean_arr_window", (DL_FUNC) &_geocmeans_focal_adj_mean_arr_window, 2},
     {"_geocmeans_calc_jaccard_idx", (DL_FUNC) &_geocmeans_calc_jaccard_idx, 2},
     {"_geocmeans_calc_jaccard_mat", (DL_FUNC) &_geocmeans_calc_jaccard_mat, 2},
-    {"_geocmeans_moranI_matrix", (DL_FUNC) &_geocmeans_moranI_matrix, 2},
     {"_geocmeans_moranI_matrix_window", (DL_FUNC) &_geocmeans_moranI_matrix_window, 2},
     {"_geocmeans_local_moranI_matrix_window", (DL_FUNC) &_geocmeans_local_moranI_matrix_window, 2},
-    {"_geocmeans_Elsa_categorical_matrix", (DL_FUNC) &_geocmeans_Elsa_categorical_matrix, 3},
     {"_geocmeans_Elsa_categorical_matrix_window", (DL_FUNC) &_geocmeans_Elsa_categorical_matrix_window, 3},
     {"_geocmeans_Elsa_fuzzy_matrix_window", (DL_FUNC) &_geocmeans_Elsa_fuzzy_matrix_window, 3},
     {"_geocmeans_adj_spconsist_arr_window_globstd", (DL_FUNC) &_geocmeans_adj_spconsist_arr_window_globstd, 3},

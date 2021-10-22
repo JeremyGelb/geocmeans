@@ -25,9 +25,9 @@ Calculate Fukuyama and Sugeno index of clustering quality
 The Fukuyama and Sugeno index \insertCite{fukuyama1989new}{geocmeans} is the difference between the compacity of clusters and the separation of clusters. A smaller value indicates a better clustering.
 The formula is:
 
-\deqn{J_{m}=\sum_{j=1}^{n} \sum_{i=1}^{k}\left(\mu_{i j}\right)^{m}\left\|x_{j}-c_{i}\right\|^{2}-\sum_{i=1}^{k}\left\|c_{i}-\bar{c}\right\|^{2}}
+\deqn{S(c)=\sum_{k=1}^{n} \sum_{i=1}^{c}\left(U_{i k}\right)^{m}\left(\left\|x_{k}-v_{i}\right\|^{2}-\left\|v_{i}-\bar{x}\right\|^{2}\right) 2}
 
-with \emph{n} the number of observations, \emph{k} the number of clusters and \eqn{\bar{c}} the mean of the centers of the clusters.
+with \emph{n} the number of observations, \emph{k} the number of clusters and \eqn{\bar{x}} the mean of the dataset.
 }
 \examples{
 data(LyonIris)

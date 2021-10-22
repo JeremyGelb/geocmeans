@@ -2,7 +2,7 @@
 % Please edit documentation in R/boostrap_clust_validation.R
 \name{boot_worker}
 \alias{boot_worker}
-\title{Bootstrap check the robustness of a classification (multicore)}
+\title{Worker function for cluster bootstrapping}
 \usage{
 boot_worker(object, wdata, tol, maxiter, init)
 }

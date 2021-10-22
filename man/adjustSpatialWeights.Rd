@@ -4,7 +4,7 @@
 \alias{adjustSpatialWeights}
 \title{Semantic adjusted spatial weights}
 \usage{
-adjustSpatialWeights(data, listw, style)
+adjustSpatialWeights(data, listw, style, mindist = 1e-11)
 }
 \arguments{
 \item{data}{A dataframe with numeric columns}
@@ -12,6 +12,11 @@ adjustSpatialWeights(data, listw, style)
 \item{listw}{A nb object from spdep}
 
 \item{style}{A letter indicating the weighting scheme (see spdep doc)}
+
+\item{mindist}{A minimum value for distance between two observations. If two
+neighbours have exactly the same values, then the euclidean distance between
+them is 0, leading to an infinite spatial weight. In that case, the minimum
+distance is used instead of 0.}
 }
 \value{
 A listw object (spdep like)

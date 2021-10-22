@@ -189,18 +189,6 @@ calc_jaccard_mat <- function(matX, matY) {
     .Call(`_geocmeans_calc_jaccard_mat`, matX, matY)
 }
 
-#' @title Moran I calculated on a matrix
-#' @name moranI_matrix
-#' @param mat a matrix
-#' @param w the size of the neighbouring window
-#' @return a double, the value of Moran I
-#' @keywords internal
-#' @export
-#'
-moranI_matrix <- function(mat, w) {
-    .Call(`_geocmeans_moranI_matrix`, mat, w)
-}
-
 #' @title Moran I calculated on a matrix with a given window
 #' @name moranI_matrix_window
 #' @param mat a matrix
@@ -223,20 +211,6 @@ moranI_matrix_window <- function(mat, window) {
 #'
 local_moranI_matrix_window <- function(mat, window) {
     .Call(`_geocmeans_local_moranI_matrix_window`, mat, window)
-}
-
-#' @title Elsa statistic calculated on a matrix
-#' @name Elsa_categorical_matrix
-#' @description method described here : https://doi.org/10.1016/j.spasta.2018.10.001
-#' @param mat an IntegerMatrix, must be filled with integer, -1 indicates NA values, categories must start at 0
-#' @param w the size of the neighbouring window
-#' @param dist a distance matrix between the categories
-#' @return a NumericVector : the local values of ELSA
-#' @keywords internal
-#' @export
-#'
-Elsa_categorical_matrix <- function(mat, w, dist) {
-    .Call(`_geocmeans_Elsa_categorical_matrix`, mat, w, dist)
 }
 
 #' @title Elsa statistic calculated on a matrix with a given window

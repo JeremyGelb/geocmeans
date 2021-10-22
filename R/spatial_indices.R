@@ -627,7 +627,7 @@ calcFuzzyELSA <- function(object, nblistw = NULL, window = NULL, matdist = NULL)
     #case 4 : object is a list of rasters
     mats <- lapply(object, raster::as.matrix)
     arr <- do.call(c,mats)
-    arr <- array(arr, dim = c(nrow(mats[[1]]), ncol(mats[[1]]),object$k))
+    arr <- array(arr, dim = c(nrow(mats[[1]]), ncol(mats[[1]]), length(object)))
     values <- Elsa_fuzzy_matrix_window(arr, window, matdist)
     rast <- object[[1]]
     raster::values(rast) <- values
@@ -749,7 +749,10 @@ calc_moran_raster <- function(rast, window){
   if(class(window)[[1]] == "matrix"){
     fun <- moranI_matrix_window
   }else if (class(window)[[1]] == "numeric"){
-    fun <- moranI_matrix
+    #fun <- moranI_matrix
+    fun <- moranI_matrix_window
+    size <- n+1+n
+    window <- matrix(1, nrow = size, ncol = size)
   }else{
     stop("window parameter must be an integer or a matrix")
   }

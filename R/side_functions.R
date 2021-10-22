@@ -1052,6 +1052,10 @@ selectParameters.mc <- select_parameters.mc
 #' @param data A dataframe with numeric columns
 #' @param listw A nb object from spdep
 #' @param style A letter indicating the weighting scheme (see spdep doc)
+#' @param mindist A minimum value for distance between two observations. If two
+#' neighbours have exactly the same values, then the euclidean distance between
+#' them is 0, leading to an infinite spatial weight. In that case, the minimum
+#' distance is used instead of 0.
 #'
 #' @return A listw object (spdep like)
 #' @export
@@ -1063,12 +1067,19 @@ selectParameters.mc <- select_parameters.mc
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' Wqueen2 <- adjustSpatialWeights(dataset,queen,style="C")
-adjustSpatialWeights <- function(data,listw,style){
+adjustSpatialWeights <- function(data,listw,style, mindist = 0.00000000001){
     data <- as.matrix(data)
     new_weights <- lapply(1:nrow(data),function(i){
         row <- data[i,]
         neighbours <- data[listw[[i]],]
-        dists <- 1/calcEuclideanDistance2(neighbours,row)
+        dists <- calcEuclideanDistance2(neighbours,row)
+        err <- dists == 0
+        if(any(err)){
+            dists[err] <- mindist
+            warning("Some observartions have exactly the same values as one of their neighbours, leading to
+                    an euclidean distance of 0 and an infinite weight. The mindist value is applied instead")
+        }
+        indists <- 1/dists
         weights <- dists / sum(dists)
         return(weights)
     })

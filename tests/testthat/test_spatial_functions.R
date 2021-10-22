@@ -104,7 +104,18 @@ test_that("The fuzzy ELSA index calculated on vector should give the same values
   mat <- matrix(0, nrow = 9, ncol =2)
   mat[,1] <- 1
   mat[3,] <- c(0,1)
-  vals <- calcFuzzyELSA(mat, nb, matdist = dists)
+
+  my_object <- FCMres(list(
+    "Data" = data.frame(x = rep(0, times = 9),
+                        y =rep(0, times = 9)),
+    "Belongings" = mat,
+    "Centers" = rbind(c(0,1),
+                      c(0,0)),
+    "m" = 1,
+    "algo" = "cmeans"
+  ))
+
+  vals <- calcFuzzyELSA(my_object, nb, matdist = dists)
   testC <- round(vals[[5]],3) == 0.063
 
   ## test D
@@ -140,13 +151,13 @@ test_that("The ELSA index calculated on raster should give the same values as in
 
   ## testA
   mat <- matrix(0, ncol = 3, nrow = 3)
-  vals <- Elsa_categorical_matrix_window(mat, window, dists)
+  vals <- elsa_raster(mat, window, dists)
   testA <- round(vals[[5]],3) == 0
 
   ## test B
   mat <- matrix(0, ncol = 3, nrow = 3)
   mat[2,2] <- 1
-  vals <- Elsa_categorical_matrix_window(mat, window, dists)
+  vals <- raster::values(elsa_raster(raster::raster(mat), window, dists))
   testB <- round(vals[[5]],3) == 0.503
 
   ## test C
@@ -189,8 +200,10 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
   mat2 <- matrix(1, nrow = 3, ncol =3)
   mat1[2,2] <- 1
   mat2[2,2] <- 0
-  arr <- array(c(mat1,mat2), c(3,3,2))
-  vals <- Elsa_fuzzy_matrix_window(arr, window, dists)
+  vals <- raster::values(calcFuzzyELSA(object = list(raster::raster(mat1),
+                              raster::raster(mat2)),
+                window = window, matdist = dists
+  ))
   testB <- round(vals[[5]],3) == 0.503
 
   ## test C
@@ -198,8 +211,20 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
   mat2 <- matrix(1, nrow = 3, ncol =3)
   mat1[1,3] <- 1
   mat2[1,3] <- 0
-  arr <- array(c(mat1,mat2), c(3,3,2))
-  vals <- Elsa_fuzzy_matrix_window(arr, window, dists)
+
+  my_object <- FCMres(list(
+    "Data" = list(raster::raster(mat1),raster::raster(mat1)),
+    "rasters" = list(raster::raster(mat1),raster::raster(mat2)),
+    "Centers" = rbind(c(0,1),
+                      c(0,0)),
+    "m" = 1,
+    "algo" = "cmeans"
+  ))
+
+  vals <- raster::values(calcFuzzyELSA(object = my_object,
+                        window = window, matdist = dists
+  ))
+
   testC <- round(vals[[5]],3) == 0.063
 
   ## test D
@@ -217,8 +242,17 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
                 c(0,0,0),
                 c(1,0,1)
   )
-  arr <- array(c(mat1,mat2,mat3), c(3,3,3))
-  vals <- Elsa_fuzzy_matrix_window(arr, window, dists)
+
+
+  vals <- raster::values(calcFuzzyElsa_raster(list(
+    raster::raster(mat1),
+    raster::raster(mat2),
+    raster::raster(mat3)),
+    window = window, matdist = dists
+  ))
+
+  #arr <- array(c(mat1,mat2,mat3), c(3,3,3))
+  #vals <- Elsa_fuzzy_matrix_window(arr, window, dists)
   testD <- round(vals[[5]],3) == 0.878
 
   ## test E
@@ -319,3 +353,37 @@ test_that("Testing the spatial consistency index for a raster dataset",{
 
 })
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#### Testing the adjusting of spatial weight by semantical distance
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+test_that("Testing the function adjustSpatialWeights",{
+
+  df1 <- data.frame(
+    x = c(1,1,0,0),
+    y = c(1,1,0,0)
+  )
+
+  neighmat <- rbind(
+    c(0,1,1,0),
+    c(1,0,0,1),
+    c(1,0,0,1),
+    c(0,1,1,0)
+  )
+
+  nb <- spdep::mat2listw(neighmat, style = "W")
+
+  # expected weights
+  distmat <- as.matrix(dist(df1)**2)
+  distmat <- 1/distmat
+  distmat[is.infinite(distmat)] <- 0
+  distmat <- distmat * neighmat
+  distmat <- distmat / rowSums(distmat)
+
+  # obtained weight
+  expect_warning({adj_nb <- adjustSpatialWeights(data = df1, listw = nb$neighbours, style = "W")})
+  obtained <- round(spdep::listw2mat(adj_nb),5)
+  diff <- sum(abs((distmat - obtained)))
+  expect_equal(diff, 0)
+
+})

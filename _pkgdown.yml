@@ -1,24 +1,24 @@
 reference:
 - title: "Clustering methods"
   desc: >
-    Functions for applying the proposed fuzzy clustering methods in geocmeans
+    Functions for applying the proposed fuzzy clustering methods in geocmeans.
 - contents:
   - CMeans
   - GCMeans
   - SFCMeans
   - SGFCMeans
 - title: "Parameter selections"
-  desc: "Functions to help in the selection of clustering parameters"
+  desc: "Functions to help in the selection of clustering parameters."
 - contents:
   - select_parameters
   - select_parameters.mc
 - title: "Clustering stability evaluation"
-  desc: "Functions to investigate the stability of clustering results"
+  desc: "Functions to investigate the stability of clustering results."
 - contents:
   - boot_group_validation
   - boot_group_validation.mc
 - title: "Clustering quality evaluation"
-  desc: "Functions to evaluate the quality of clustering results"
+  desc: "Functions to evaluate the quality of clustering results."
 - contents:
   - calcCalinskiHarabasz
   - calcDaviesBouldin
@@ -31,7 +31,7 @@ reference:
   - calcUncertaintyIndex
   - calcqualityIndexes
 - title: "Clustering spatial evaluation"
-  desc: "Functions to evaluate the spatial dimension of clustering results"
+  desc: "Functions to evaluate the spatial dimension of clustering results."
 - contents:
   - calcELSA
   - calcFuzzyELSA
@@ -41,7 +41,7 @@ reference:
   - spConsistency
   - adjustSpatialWeights
 - title: "Visualization functions"
-  desc: "Several functions to visualize clustering results"
+  desc: "Several functions to visualize clustering results."
 - contents:
   - mapClusters
   - uncertaintyMap
@@ -50,7 +50,7 @@ reference:
   - violinPlots
   - sp_clust_explorer
 - title: "FCMres S3 methods"
-  desc: "Several methods to work with FCMres objects"
+  desc: "Several methods to work with FCMres objects."
 - contents:
   - is.FCMres
   - plot.FCMres
@@ -58,14 +58,14 @@ reference:
   - print.FCMres
   - summary.FCMres
 - title: "Utility functions"
-  desc: "Several complementary functions that can be handy"
+  desc: "Several complementary functions that can be handy."
 - contents:
   - cat_to_belongings
   - groups_matching
   - undecidedUnits
   - circular_window
 - title: "Datasets"
-  desc: "Available datasets in geocmeans"
+  desc: "Available datasets in geocmeans."
 - contents:
   - LyonIris
   - Arcachon

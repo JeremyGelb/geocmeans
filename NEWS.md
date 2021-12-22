@@ -1,3 +1,7 @@
+# geocmeans 0.2.1
+
+Minor release for correcting minor bugs and providing an updated documentation.
+
 # geocmeans 0.2.0
 
 ## New Features

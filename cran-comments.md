@@ -125,3 +125,16 @@ to assign to."
 **solution**: 
 
 An environment called `geocmeans_env` is created in package the geocmeans. It could be used in the future for other purposes.
+
+
+# Version 0.2.1
+
+## Test environments
+
+* local R installation, R Under development
+* GitHub Actions - (windows): release
+* GitHub Actions - (macOS): release
+* rhub - (ubuntu): release
+
+## R CMD check results
+0 ERRORs | 0 WARNINGs | 1 NOTES.

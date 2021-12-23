@@ -26,7 +26,6 @@ Imports:
     Rdpack (>= 2.1.1),
     matrixStats (>= 0.58.0),
     raster (>= 3.4-10),
-    rgdal (>= 1.5-23),
     methods (>= 3.5),
     Rcpp (>= 1.0.6)
 Depends:
@@ -41,6 +40,7 @@ Suggests:
     ClustGeo (>= 2.0),
     car (>= 3.0-7),
     rgl (>= 0.100),
+    rgdal (>= 1.5-23),
     ggpubr (>= 0.2.5),
     RColorBrewer (>= 1.1-2),
     kableExtra (>= 1.1.0),

@@ -66,7 +66,7 @@ test_that("The evaluate parameters function (multicore) must return the same val
   df1$oid <- paste(df1$k,df1$m, sep = "_")
   df1 <- df1[order(df1$oid),]
 
-  future::plan(future::multiprocess(workers=2))
+  future::plan(future::multiprocess(workers=1))
   values <- select_parameters.mc("FCM", dataset, k = c(2,3), m = c(1.5,2),
                               spconsist=FALSE, seed = 123, standardize = F, tol = 0.000001,
                               indices = idxs)

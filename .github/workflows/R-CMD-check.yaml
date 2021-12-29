@@ -23,7 +23,7 @@ jobs:
       matrix:
         config:
           - {os: windows-latest, r: 'release'}
-          # - {os: macOS-latest, r: 'release'}
+          - {os: macOS-latest, r: 'release'}
           # - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           # - {os: windows-latest, r: 'devel'} # removed currently because spdep is missing
           #- {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
@@ -77,6 +77,14 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           install.packages("sf")
+        shell: Rscript {0}
+
+     - name: Query fonts for macOS
+        if: runner.os == 'macOS'
+        run: |
+          install.packages("extrafont")
+          library(extrafont)
+          font_import()
         shell: Rscript {0}
 
       - name: Check

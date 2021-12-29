@@ -131,10 +131,10 @@ An environment called `geocmeans_env` is created in package the geocmeans. It co
 
 ## Test environments
 
-* local R installation, R Under development
+* local R installation (windows), R Under development
 * GitHub Actions - (windows): release
-* GitHub Actions - (macOS): release
 * rhub - (ubuntu): release
+* rhub - (macos): release
 
 ## R CMD check results
 0 ERRORs | 0 WARNINGs | 1 NOTES.

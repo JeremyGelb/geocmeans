@@ -101,8 +101,8 @@ test_that("The bootstraping function should be able to distinguish stable and un
 
   clus1 <- CMeans(df1, k = 3, m = 1.5)
   # v2 should be the solid group
-  future::plan(future::multiprocess(workers=2))
-  bootValues <- boot_group_validation.mc(clus1, nsim = 50)
+  future::plan(future::multisession(workers=2))
+  bootValues <- boot_group_validation.mc(clus1, nsim = 50, seed = 123)
 
   jacard_means <- colMeans(bootValues$group_consistency)
 

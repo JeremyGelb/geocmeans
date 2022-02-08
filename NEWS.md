@@ -1,3 +1,7 @@
+# geocmeans 0.2.1.9000
+
+Corrected the bug in the issue #2
+
 # geocmeans 0.2.1
 
 Minor release for correcting minor bugs and providing an updated documentation.

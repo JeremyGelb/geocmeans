@@ -205,7 +205,7 @@ is.FCMres <- function(x){
 print.FCMres <- function(x, ...){ #nocov start
   if(x$isRaster){
     part1 <- "FCMres object constructed from a raster dataset"
-    part2 <- paste("dimension of the raster : ",x$rasters[[1]]@nrows,"x",x$rasters[[1]]@cols,
+    part2 <- paste("dimension of the raster : ",x$rasters[[1]]@nrows,"x",x$rasters[[1]]@ncols,
                    " and ", nrow(x$Data), " variables",sep="")
   }else{
     part1 <- "FCMres object constructed from a dataframe"

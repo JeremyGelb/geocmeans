@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geocmeans <img src='man/figures/geocmeans_logo.png' align="right" height="138.5" />
+# geocmeans <img src='man/figures/geocmeans_logo.png' align="right" style = 'height:138px;'/>
 
 ## An R package to perform Spatial Fuzzy C-means.
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
-[![](https://img.shields.io/badge/devel%20version-0.2.1-green.svg)](https://github.com/JeremyGelb/geocmeans)
+[![](https://img.shields.io/badge/devel%20version-0.2.1.9000-green.svg)](https://github.com/JeremyGelb/geocmeans)
 [![](https://www.r-pkg.org/badges/version/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![Codecov test

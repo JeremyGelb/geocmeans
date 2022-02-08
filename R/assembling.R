@@ -215,6 +215,9 @@ main_worker <- function(algo, ...){
     centers <- kppCenters(data,k)
   }
 
+  if(is.null(dim(centers))){
+    centers <- matrix(centers, ncol = 1)
+  }
 
   # calculating the first membership matrix
   belongmatrix <- update_belongs(data, centers, dots)

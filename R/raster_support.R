@@ -159,6 +159,9 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
   #step2 : only keep the non-missing valuez
   missing_pxl <- complete.cases(datamatrix)
   data_class <- datamatrix[missing_pxl,]
+  if(is.null(dim(data_class))){
+    data_class <- matrix(data_class, ncol = 1)
+  }
   colnames(data_class) <- okname
 
   #step3 : calculating Wdata if necessary
@@ -185,6 +188,9 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
     #   )
     # }
     # Wdata_class <- Wdatamatrix[missing_pxl,]
+    if(is.null(dim(Wdata_class))){
+      Wdata_class <- matrix(Wdata_class, ncol = 1)
+    }
     colnames(Wdata_class) <- okname
 
   }else{

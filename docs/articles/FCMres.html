@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1.9000</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -73,7 +69,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/JeremyGelb/geocmeans/">
+  <a href="https://github.com/JeremyGelb/geocmeans/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,65 +84,65 @@
 
       
 
-      </header><script src="FCMres_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Creating a FCMres object</h1>
-                        <h4 class="author">Jeremy Gelb</h4>
+                        <h4 data-toc-skip class="author">Jeremy Gelb</h4>
             
-            <h4 class="date">02/04/2021</h4>
+            <h4 data-toc-skip class="date">02/04/2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/JeremyGelb/geocmeans/blob/master/vignettes/FCMres.Rmd"><code>vignettes/FCMres.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JeremyGelb/geocmeans/blob/HEAD/vignettes/FCMres.Rmd" class="external-link"><code>vignettes/FCMres.Rmd</code></a></small>
       <div class="hidden name"><code>FCMres.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>In this vignette, we want to show how to create a <code>FCMres</code> object from results obtained with other classification or clustering methods. This can be very useful to compare results with methods available in other packages. We give a practical example here with the <code>hclust</code> function.</p>
 </div>
-<div id="applying-hclust" class="section level2">
-<h2 class="hasAnchor">
-<a href="#applying-hclust" class="anchor"></a>Applying hclust</h2>
+<div class="section level2">
+<h2 id="applying-hclust">Applying hclust<a class="anchor" aria-label="anchor" href="#applying-hclust"></a>
+</h2>
 <p>We start by clustering the observations in the <code>LyonIris</code> dataset with the <code>hclust</code> function and retaining 4 groups.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeremyGelb/geocmeans">geocmeans</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap">tmap</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/">spdep</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeremyGelb/geocmeans" class="external-link">geocmeans</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/" class="external-link">spdep</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"LyonIris"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"LyonIris"</span><span class="op">)</span>
 
 <span class="co"># selecting the columns for the analysis</span>
-<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
+<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
                    <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
 
 <span class="co"># rescaling the columns</span>
 <span class="va">Data</span> <span class="op">&lt;-</span> <span class="va">LyonIris</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="co"># applying the hclust function</span>
-<span class="va">clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"ward"</span><span class="op">)</span>
+<span class="va">clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"ward"</span><span class="op">)</span>
 
 <span class="co"># getting the groups</span>
-<span class="va">LyonIris</span><span class="op">$</span><span class="va">Hclust_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cutree.html">cutree</a></span><span class="op">(</span><span class="va">clust</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
-<span class="va">Data</span><span class="op">$</span><span class="va">Hclust_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cutree.html">cutree</a></span><span class="op">(</span><span class="va">clust</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<span class="va">LyonIris</span><span class="op">$</span><span class="va">Hclust_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">clust</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<span class="va">Data</span><span class="op">$</span><span class="va">Hclust_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">clust</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># mapping the groups</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_polygons</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Hclust_groups"</span>, title <span class="op">=</span> <span class="st">"groups"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_polygons</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Hclust_groups"</span>, title <span class="op">=</span> <span class="st">"groups"</span><span class="op">)</span></code></pre></div>
 <p><img src="FCMres_files/figure-html/unnamed-chunk-1-1.png" width="700"></p>
 </div>
-<div id="creating-a-fcmres-object" class="section level2">
-<h2 class="hasAnchor">
-<a href="#creating-a-fcmres-object" class="anchor"></a>Creating a FCMres object</h2>
+<div class="section level2">
+<h2 id="creating-a-fcmres-object">Creating a FCMres object<a class="anchor" aria-label="anchor" href="#creating-a-fcmres-object"></a>
+</h2>
 <p>Now, if we want to use the functions provided by <strong>geocemans</strong>, we must create a <code>FCMres</code> object manually. This is basically a list with some required slots:</p>
 <ul>
 <li>Centers: a matrix representing the centre of each group</li>
@@ -156,11 +152,11 @@
 </ul>
 <p>In this case, we calculate the centres of the groups as the mean of each variable in each group.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">centers</span> <span class="op">&lt;-</span> <span class="va">Data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Hclust_groups</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html">summarise_all</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">centers</span> <span class="op">&lt;-</span> <span class="va">Data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">Hclust_groups</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_all</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>
 
-<span class="va">centers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">centers</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">ncol</a></span><span class="op">(</span><span class="va">centers</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<span class="va">centers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">centers</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">centers</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>The membership matrix is a simple binary matrix. We can create it with the function <code>cat_to_belongings</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">member_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_to_belongings.html">cat_to_belongings</a></span><span class="op">(</span><span class="va">Data</span><span class="op">$</span><span class="va">Hclust_groups</span><span class="op">)</span></code></pre></div>
@@ -168,7 +164,7 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">Data</span><span class="op">$</span><span class="va">Hclust_groups</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
 
-<span class="va">hclustres</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FCMres.html">FCMres</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+<span class="va">hclustres</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FCMres.html">FCMres</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
   <span class="st">"Centers"</span> <span class="op">=</span> <span class="va">centers</span>,
   <span class="st">"Belongings"</span> <span class="op">=</span> <span class="va">member_mat</span>,
   <span class="st">"Data"</span> <span class="op">=</span> <span class="va">Data</span>,
@@ -178,7 +174,7 @@
 <p>It is now possible to use almost all the functions in the <strong>geocmeans</strong> package to investigate the results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># quick summaries about the groups</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">hclustres</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">hclustres</span><span class="op">)</span>
 <span class="fu"><a href="../reference/violinPlots.html">violinPlots</a></span><span class="op">(</span><span class="va">hclustres</span><span class="op">$</span><span class="va">Data</span>, <span class="va">hclustres</span><span class="op">$</span><span class="va">Groups</span><span class="op">)</span>
 <span class="fu"><a href="../reference/spiderPlots.html">spiderPlots</a></span><span class="op">(</span><span class="va">hclustres</span><span class="op">$</span><span class="va">Data</span>, <span class="va">hclustres</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span>
 <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span><span class="va">LyonIris</span>, <span class="va">hclustres</span><span class="op">)</span>
@@ -189,34 +185,34 @@
                    <span class="va">hclustres</span><span class="op">$</span><span class="va">m</span><span class="op">)</span>
 
 <span class="co"># spatial diagnostic</span>
-<span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/poly2nb.html">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/nb2listw.html">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">hclustres</span>, nblistw <span class="op">=</span> <span class="va">WMat</span><span class="op">)</span>
 
 <span class="co"># investigation with the shiny app</span>
 <span class="fu"><a href="../reference/sp_clust_explorer.html">sp_clust_explorer</a></span><span class="op">(</span><span class="va">hclustres</span>, spatial <span class="op">=</span> <span class="va">LyonIris</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="creating-a-fcmres-object-when-working-with-rasters" class="section level2">
-<h2 class="hasAnchor">
-<a href="#creating-a-fcmres-object-when-working-with-rasters" class="anchor"></a>Creating a FCMres object when working with rasters</h2>
+<div class="section level2">
+<h2 id="creating-a-fcmres-object-when-working-with-rasters">Creating a FCMres object when working with rasters<a class="anchor" aria-label="anchor" href="#creating-a-fcmres-object-when-working-with-rasters"></a>
+</h2>
 <p>When working with raster data, a little more work must be done to create a <code>FCMres</code> object. We show here a complete example with the <code>Arcachon</code> dataset.</p>
 <p>We start here by applying the k-means algorithm to a set of rasters.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"Arcachon"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Arcachon"</span><span class="op">)</span>
 
 <span class="co"># loading each raster as a column in a matrix</span>
 <span class="co"># and scale each column</span>
-<span class="va">all_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
+<span class="va">all_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
   <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">Arcachon</span><span class="op">[[</span><span class="va">n</span><span class="op">]</span><span class="op">]</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html">values</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html">scale</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># removing the rows with missing values</span>
-<span class="va">missing</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span>
+<span class="va">missing</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span>
 <span class="va">all_data</span> <span class="op">&lt;-</span> <span class="va">all_data</span><span class="op">[</span><span class="va">missing</span>,<span class="op">]</span>
 
 <span class="co"># applying the kmeans algorithm with 7 groups</span>
-<span class="va">kmean7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html">kmeans</a></span><span class="op">(</span><span class="va">all_data</span>, <span class="fl">7</span><span class="op">)</span></code></pre></div>
+<span class="va">kmean7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans</a></span><span class="op">(</span><span class="va">all_data</span>, <span class="fl">7</span><span class="op">)</span></code></pre></div>
 <p>We must now create three objects:</p>
 <ul>
 <li>Data: a list of rasterLayers with the values used in the clustering algorithm.</li>
@@ -225,39 +221,39 @@
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># creating Data (do not forget the standardization)</span>
-<span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
+<span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
   <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">Arcachon</span><span class="op">[[</span><span class="va">n</span><span class="op">]</span><span class="op">]</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html">scale</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>
 
 <span class="co"># creating rasters</span>
 <span class="va">ref_raster</span> <span class="op">&lt;-</span> <span class="va">Arcachon</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 
-<span class="va">rasters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span>
+<span class="va">rasters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span>
   <span class="co"># creating a vector with only 0 values</span>
-  <span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">ncell</a></span><span class="op">(</span><span class="va">ref_raster</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">ref_raster</span><span class="op">)</span><span class="op">)</span>
   <span class="co"># filling it with values when the pixels are not NA</span>
-  <span class="va">vals</span><span class="op">[</span><span class="va">missing</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kmean7</span><span class="op">$</span><span class="va">cluster</span> <span class="op">==</span> <span class="va">i</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
+  <span class="va">vals</span><span class="op">[</span><span class="va">missing</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kmean7</span><span class="op">$</span><span class="va">cluster</span> <span class="op">==</span> <span class="va">i</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
   <span class="co"># setting the values in a rasterLayer</span>
   <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">ref_raster</span>
-  <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">vals</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>
+  <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">vals</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 
 <span class="co"># creating centers</span>
-<span class="va">all_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>
-<span class="va">all_data</span><span class="op">$</span><span class="va">kmean_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.character.html">as.character</a></span><span class="op">(</span><span class="va">kmean7</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
+<span class="va">all_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>
+<span class="va">all_data</span><span class="op">$</span><span class="va">kmean_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">kmean7</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
 
-<span class="va">centers</span> <span class="op">&lt;-</span> <span class="va">all_data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">kmean_groups</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html">summarise_all</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>
+<span class="va">centers</span> <span class="op">&lt;-</span> <span class="va">all_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">kmean_groups</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_all</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>
 
-<span class="va">centers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">centers</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">ncol</a></span><span class="op">(</span><span class="va">centers</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<span class="va">centers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">centers</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">centers</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>We can now create a FCMres object !</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">myFCMres</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FCMres.html">FCMres</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+<code class="sourceCode R"><span class="va">myFCMres</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FCMres.html">FCMres</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
   <span class="st">"Data"</span> <span class="op">=</span> <span class="va">Data</span>,
   <span class="st">"Centers"</span> <span class="op">=</span> <span class="va">centers</span>,
   <span class="st">"rasters"</span> <span class="op">=</span> <span class="va">rasters</span>,
@@ -267,7 +263,7 @@
 <p>And again, we can use the functions provided in <strong>geocmeans</strong> !</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># quick summaries about the groups</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">myFCMres</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">myFCMres</span><span class="op">)</span>
 <span class="fu"><a href="../reference/violinPlots.html">violinPlots</a></span><span class="op">(</span><span class="va">myFCMres</span><span class="op">$</span><span class="va">Data</span>, <span class="va">myFCMres</span><span class="op">$</span><span class="va">Groups</span><span class="op">)</span>
 <span class="fu"><a href="../reference/spiderPlots.html">spiderPlots</a></span><span class="op">(</span><span class="va">myFCMres</span><span class="op">$</span><span class="va">Data</span>, <span class="va">myFCMres</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span>
 <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">myFCMres</span><span class="op">)</span>
@@ -278,7 +274,7 @@
                    <span class="va">myFCMres</span><span class="op">$</span><span class="va">m</span><span class="op">)</span>
 
 <span class="co"># spatial diagnostic</span>
-<span class="va">w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
+<span class="va">w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">myFCMres</span>, window <span class="op">=</span> <span class="va">w1</span>, nrep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
 
 <span class="co"># investigation with the shiny app</span>
@@ -297,11 +293,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Jeremy Gelb.</p>
+  <p></p>
+<p>Developed by Jeremy Gelb.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -309,6 +307,8 @@
 
   
 
+
+  
 
   </body>
 </html>

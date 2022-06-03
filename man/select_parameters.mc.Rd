@@ -128,7 +128,7 @@ AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img"
 dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
-future::plan(future::multiprocess(workers=2))
+future::plan(future::multisession(workers=2))
 #set spconsist to TRUE to calculate the spatial consistency indicator
 #FALSE here to reduce the time during package check
 values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
@@ -143,7 +143,7 @@ AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img"
 dataset <- LyonIris@data[AnalysisFields]
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
-future::plan(future::multiprocess(workers=2))
+future::plan(future::multisession(workers=2))
 #set spconsist to TRUE to calculate the spatial consistency indicator
 #FALSE here to reduce the time during package check
 values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),

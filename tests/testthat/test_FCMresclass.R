@@ -98,6 +98,7 @@ test_that("Testing the behavior of the FCMres class object : simple case with ve
 test_that("Testing the behavior of the FCMres class object : simple case with raster data",{
 
   data("Arcachon")
+  library(dplyr)
   # loading each raster as a column in a matrix
   # and scale each column
   all_data <- do.call(cbind, lapply(names(Arcachon), function(n){

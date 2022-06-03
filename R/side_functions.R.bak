@@ -950,7 +950,7 @@ selectParameters <- select_parameters
 #' dataset <- LyonIris@data[AnalysisFields]
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
-#' future::plan(future::multisession(workers=2))
+#' future::plan(future::multiprocess(workers=2))
 #' #set spconsist to TRUE to calculate the spatial consistency indicator
 #' #FALSE here to reduce the time during package check
 #' values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),
@@ -1026,7 +1026,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
 #' dataset <- LyonIris@data[AnalysisFields]
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
-#' future::plan(future::multisession(workers=2))
+#' future::plan(future::multiprocess(workers=2))
 #' #set spconsist to TRUE to calculate the spatial consistency indicator
 #' #FALSE here to reduce the time during package check
 #' values <- select_parameters.mc("SFCM", dataset, k = 5, m = seq(1,2.5,0.1),

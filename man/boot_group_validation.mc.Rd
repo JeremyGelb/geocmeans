@@ -65,7 +65,7 @@ for (Col in names(Data)){
 Cmean <- CMeans(Data,4,1.5,500,standardize = FALSE, seed = 456,
     tol = 0.00001, verbose = FALSE)
 
-future::plan(future::multiprocess(workers=2))
+future::plan(future::multisession(workers=2))
 
 validation <- boot_group_validation.mc(Cmean, nsim = 1000, maxiter = 1000,
     tol = 0.01, init = "random")

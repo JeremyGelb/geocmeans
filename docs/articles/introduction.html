@@ -43,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -245,7 +245,7 @@ Clusters identified by classical k-means
 <span class="co">## [1] 1.352347</span>
 <span class="co">## </span>
 <span class="co">## $FukuyamaSugeno.index</span>
-<span class="co">## [1] 910.6537</span>
+<span class="co">## [1] 1860.772</span>
 <span class="co">## </span>
 <span class="co">## $Explained.inertia</span>
 <span class="co">## [1] 0.3018179</span></code></pre>
@@ -436,8 +436,8 @@ Clusters identified by classical k-means
 </tr>
 <tr class="odd">
 <td align="left">FukuyamaSugeno.index</td>
-<td align="right">219.640</td>
-<td align="right">910.654</td>
+<td align="right">585.977</td>
+<td align="right">1860.772</td>
 </tr>
 <tr class="even">
 <td align="left">Explained.inertia</td>
@@ -583,7 +583,7 @@ Link between alpha and Xie and Beni index
 <p><span class="math display">\[u_{ik} = \frac{(||x_{k} - v{_i}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_j}||^2)^{(-1/(m-1))}}\]</span></p>
 <p>Because we select a high resolution for our grid search of <em>alpha</em> and <em>beta</em>, we will use a multiprocessing approach.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multiprocess.html" class="external-link">multiprocess</a></span><span class="op">(</span>workers<span class="op">=</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span><span class="op">(</span>workers<span class="op">=</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 <span class="va">DFindices_SFGCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">selectParameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"SGFCM"</span>, data <span class="op">=</span> <span class="va">Data</span>,
                                k <span class="op">=</span> <span class="fl">4</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span>,<span class="fl">0.05</span><span class="op">)</span>,
                                beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.85</span>,<span class="fl">0.05</span><span class="op">)</span>,
@@ -670,8 +670,8 @@ Impact of beta and alpha on spatial inconsistency
 </tr>
 <tr class="odd">
 <td align="left">FukuyamaSugeno.index</td>
-<td align="right">1100.096</td>
-<td align="right">739.201</td>
+<td align="right">2228.507</td>
+<td align="right">1585.559</td>
 </tr>
 <tr class="even">
 <td align="left">Explained.inertia</td>
@@ -867,89 +867,89 @@ Most likely cluster and undecided units
                   weighted <span class="op">=</span> <span class="cn">TRUE</span>, dec <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## $Cluster_1</span>
 <span class="co">##      Lden   NO2    PM25   VegHautPrt Pct0_14 Pct_65 Pct_Img TxChom1564</span>
-<span class="co">## Q5   50.589 27.985 16.784 6.338      8.32    6.77   6.046   7.785     </span>
-<span class="co">## Q10  51.585 29.228 17.273 7.78       10.331  8.408  6.902   8.577     </span>
-<span class="co">## Q25  53.776 30.867 18.333 10.334     12.47   10.736 8.825   11.114    </span>
-<span class="co">## Q50  56.383 35.037 18.952 13.855     15.023  13.891 11.98   13.119    </span>
-<span class="co">## Q75  59.117 38.881 19.582 18.091     17.456  17.495 15.248  15.495    </span>
-<span class="co">## Q90  62.474 41.146 20.004 26.082     19.673  20.509 18.629  18.429    </span>
-<span class="co">## Q95  64.175 44.365 20.206 31.659     21.192  22.987 20.193  20.58     </span>
+<span class="co">## Q5   50.602 27.905 16.761 6.21       8.19    6.47   5.998   7.56      </span>
+<span class="co">## Q10  51.474 29.207 17.227 7.71       10.25   8.35   6.765   8.56      </span>
+<span class="co">## Q25  53.701 30.856 18.33  10.3       12.47   10.74  8.72    11.03     </span>
+<span class="co">## Q50  56.375 35.045 18.943 13.865     15.04   13.81  11.99   13.11     </span>
+<span class="co">## Q75  59.134 38.698 19.554 17.98      17.43   17.52  15.24   15.41     </span>
+<span class="co">## Q90  62.459 41.262 19.987 25.94      19.64   20.475 18.56   18.42     </span>
+<span class="co">## Q95  64.173 44.364 20.205 31.527     21.19   22.98  20.175  20.58     </span>
 <span class="co">## Mean 56.627 35.058 18.771 15.294     14.91   14.085 12.449  13.567    </span>
 <span class="co">## Std  4.37   5.766  1.208  7.716      4.416   5.184  5.642   5.298     </span>
 <span class="co">##      Pct_brevet NivVieMed</span>
-<span class="co">## Q5   7.221      17419.89 </span>
-<span class="co">## Q10  8.474      18717.44 </span>
-<span class="co">## Q25  10.738     20126.27 </span>
-<span class="co">## Q50  13.995     22572.24 </span>
-<span class="co">## Q75  19.769     24717.11 </span>
-<span class="co">## Q90  25.535     28046.09 </span>
-<span class="co">## Q95  30.333     31046.21 </span>
+<span class="co">## Q5   7.173      17268.5  </span>
+<span class="co">## Q10  8.465      18657.5  </span>
+<span class="co">## Q25  10.69      20093    </span>
+<span class="co">## Q50  14         22557    </span>
+<span class="co">## Q75  19.76      24716.5  </span>
+<span class="co">## Q90  25.515     28025    </span>
+<span class="co">## Q95  30.278     31044    </span>
 <span class="co">## Mean 15.935     22869.05 </span>
 <span class="co">## Std  8.182      4004.629 </span>
 <span class="co">## </span>
 <span class="co">## $Cluster_2</span>
 <span class="co">##      Lden   NO2    PM25   VegHautPrt Pct0_14 Pct_65 Pct_Img TxChom1564</span>
-<span class="co">## Q5   44.821 14.772 12.649 12.107     12.776  12.691 3.787   6.723     </span>
-<span class="co">## Q10  45.822 15.692 12.92  14.655     14.297  13.379 4.259   6.999     </span>
-<span class="co">## Q25  49.654 18.685 13.741 21.742     16.697  16.145 5.738   7.934     </span>
-<span class="co">## Q50  52.309 22.074 14.555 28.635     18.605  19.207 7.466   9.603     </span>
-<span class="co">## Q75  54.808 25.971 15.695 36.48      20.816  22.612 10.08   12        </span>
-<span class="co">## Q90  58.116 29     16.534 42.041     22.335  27.455 14.174  15.045    </span>
-<span class="co">## Q95  60.163 32.396 17.279 44.911     22.837  29.579 17.32   17.7      </span>
+<span class="co">## Q5   44.484 14.557 12.388 11.13      12.65   12.44  3.56    6.41      </span>
+<span class="co">## Q10  45.778 15.64  12.91  14.375     14.27   13.35  4.23    6.985     </span>
+<span class="co">## Q25  49.698 18.672 13.702 21.15      16.71   16.12  5.725   7.94      </span>
+<span class="co">## Q50  52.268 22.007 14.556 28.62      18.6    19.13  7.42    9.58      </span>
+<span class="co">## Q75  54.805 25.884 15.666 36.44      20.82   22.645 10.08   12        </span>
+<span class="co">## Q90  57.86  28.921 16.475 42.18      22.3    27.47  13.92   14.765    </span>
+<span class="co">## Q95  60.365 32.471 17.233 44.79      22.762  29.642 17.702  17.975    </span>
 <span class="co">## Mean 52.16  22.436 14.748 28.341     18.402  19.835 8.51    10.619    </span>
 <span class="co">## Std  4.802  5.595  1.514  10.238     3.598   5.877  4.842   5.629     </span>
 <span class="co">##      Pct_brevet NivVieMed</span>
-<span class="co">## Q5   10.061     19832.54 </span>
-<span class="co">## Q10  11.654     20783.62 </span>
-<span class="co">## Q25  14.719     22402    </span>
-<span class="co">## Q50  18.432     24529.81 </span>
-<span class="co">## Q75  23.231     28399.48 </span>
-<span class="co">## Q90  29.32      31031.92 </span>
-<span class="co">## Q95  32.451     34184.69 </span>
+<span class="co">## Q5   9.68       19254    </span>
+<span class="co">## Q10  11.585     20448    </span>
+<span class="co">## Q25  14.72      22402    </span>
+<span class="co">## Q50  18.39      24543    </span>
+<span class="co">## Q75  23.26      28327    </span>
+<span class="co">## Q90  29.5       31019.5  </span>
+<span class="co">## Q95  32.82      33673    </span>
 <span class="co">## Mean 19.709     25380.5  </span>
 <span class="co">## Std  8.288      4369.744 </span>
 <span class="co">## </span>
 <span class="co">## $Cluster_3</span>
 <span class="co">##      Lden   NO2    PM25   VegHautPrt Pct0_14 Pct_65 Pct_Img TxChom1564</span>
-<span class="co">## Q5   49.798 17.78  13.828 6.066      12.75   9.204  5.735   7.014     </span>
-<span class="co">## Q10  51.342 19.266 14.049 7.239      14.851  11.218 7.021   8.042     </span>
-<span class="co">## Q25  53.119 21.734 15.145 10.739     17.284  13.915 9.308   10.341    </span>
-<span class="co">## Q50  55.599 25.39  15.653 14.948     19.483  17.316 12.747  13.1      </span>
-<span class="co">## Q75  58.777 30.382 17.072 20.608     21.744  20.907 18.397  16.651    </span>
-<span class="co">## Q90  62.58  35.164 18.582 29.932     24.515  23.814 22.821  20.836    </span>
-<span class="co">## Q95  63.937 38.523 18.883 34.84      26.302  25.504 28.424  24.37     </span>
+<span class="co">## Q5   49.699 16.729 13.822 5.85       12.612  8.855  5.68    6.747     </span>
+<span class="co">## Q10  51.26  19.251 14.033 6.885      14.74   11.11  6.775   8         </span>
+<span class="co">## Q25  53.047 21.657 15.143 10.6       17.22   13.88  9.25    10.207    </span>
+<span class="co">## Q50  55.545 25.361 15.653 14.86      19.45   17.3   12.605  13.09     </span>
+<span class="co">## Q75  58.798 30.333 17.078 20.57      21.74   20.92  18.2    16.645    </span>
+<span class="co">## Q90  62.518 35.006 18.582 29.96      24.455  23.85  22.575  20.625    </span>
+<span class="co">## Q95  63.927 38.486 18.861 34.695     26.1    25.323 28.643  23.742    </span>
 <span class="co">## Mean 56.114 26.145 16.019 16.576     19.358  17.264 14.365  14.031    </span>
 <span class="co">## Std  4.53   6.411  1.614  8.737      4.516   5.483  7.41    7.063     </span>
 <span class="co">##      Pct_brevet NivVieMed</span>
-<span class="co">## Q5   13.488     15635.58 </span>
-<span class="co">## Q10  17.02      16542.05 </span>
-<span class="co">## Q25  20.781     18807.47 </span>
-<span class="co">## Q50  25.835     20432.88 </span>
-<span class="co">## Q75  32.021     23025.93 </span>
-<span class="co">## Q90  38.279     25212.17 </span>
-<span class="co">## Q95  43.764     26277.2  </span>
+<span class="co">## Q5   13.115     15636    </span>
+<span class="co">## Q10  16.72      16354    </span>
+<span class="co">## Q25  20.732     18786    </span>
+<span class="co">## Q50  25.735     20401    </span>
+<span class="co">## Q75  32.12      23069    </span>
+<span class="co">## Q90  38.19      25124    </span>
+<span class="co">## Q95  43.65      26208    </span>
 <span class="co">## Mean 27.216     20877.06 </span>
 <span class="co">## Std  10.51      3534.834 </span>
 <span class="co">## </span>
 <span class="co">## $Cluster_4</span>
 <span class="co">##      Lden   NO2    PM25   VegHautPrt Pct0_14 Pct_65 Pct_Img TxChom1564</span>
-<span class="co">## Q5   51.576 20.041 14.136 6.455      16.48   7.549  10.481  11.133    </span>
-<span class="co">## Q10  52.383 21.383 14.56  7.648      18.483  8.95   16.123  13.787    </span>
-<span class="co">## Q25  55.067 23.266 15.907 10.844     21.452  11.048 21.007  17.872    </span>
-<span class="co">## Q50  57.243 26.534 16.538 14.218     24.398  13.815 27.056  23.003    </span>
-<span class="co">## Q75  59.53  31.85  17.733 18.387     27.6    17.125 32.865  31.83     </span>
-<span class="co">## Q90  63.441 37.186 18.757 24.835     30.974  20.535 38.25   34.394    </span>
-<span class="co">## Q95  64.732 39.63  19.068 28.607     32.41   23.228 41.005  37.971    </span>
+<span class="co">## Q5   51.475 19.705 14.04  6.41       15.67   7.52   9.36    10.707    </span>
+<span class="co">## Q10  52.316 21.235 14.555 7.54       18.3    8.8    15.55   13.57     </span>
+<span class="co">## Q25  54.81  23.137 15.878 10.84      21.355  10.88  20.47   17.863    </span>
+<span class="co">## Q50  57.233 26.533 16.532 14.2       24.31   13.79  26.8    22.96     </span>
+<span class="co">## Q75  59.497 31.844 17.728 18.2       27.58   17.05  32.85   31.76     </span>
+<span class="co">## Q90  63.423 37.345 18.751 24.93      30.69   20.54  38.25   34.76     </span>
+<span class="co">## Q95  64.733 39.648 19.067 28.67      32.42   23.32  41.15   37.98     </span>
 <span class="co">## Mean 57.515 27.99  16.693 15.476     24.403  14.223 26.758  24.189    </span>
 <span class="co">## Std  4.253  6.622  1.518  7.25       6.315   5.024  9.457   9.479     </span>
 <span class="co">##      Pct_brevet NivVieMed</span>
-<span class="co">## Q5   21.535     12404.91 </span>
-<span class="co">## Q10  26.811     12891.14 </span>
-<span class="co">## Q25  32.702     13852.68 </span>
-<span class="co">## Q50  38.41      15648.12 </span>
-<span class="co">## Q75  45.03      18117.52 </span>
-<span class="co">## Q90  49.569     19545.97 </span>
-<span class="co">## Q95  53.699     21898.08 </span>
+<span class="co">## Q5   20.332     12338    </span>
+<span class="co">## Q10  25.215     12747    </span>
+<span class="co">## Q25  32.32      13732    </span>
+<span class="co">## Q50  38.38      15636    </span>
+<span class="co">## Q75  45.01      18059.25 </span>
+<span class="co">## Q90  49.8       19533    </span>
+<span class="co">## Q95  53.77      21802.5  </span>
 <span class="co">## Mean 38.608     16111.03 </span>
 <span class="co">## Std  11.927     3117.687</span></code></pre>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">

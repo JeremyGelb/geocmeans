@@ -42,7 +42,7 @@ FCMres <- function(obj){
   }
 
   #rasterMode <- class(obj$Data)[[1]] == "list"
-  rasterMode <- inherits(obj$Data, "list")
+  rasterMode <- inherits(obj$Data, c("list"))
   if(rasterMode){
     necessary <- c("Centers", "Data", "m", "algo", "rasters")
     attrs <- names(obj)

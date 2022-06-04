@@ -32,7 +32,7 @@ check_window <- function(w){
 #' # this is an internal function, no example provided
 calcWdataRaster <- function(w, dataset, fun, missing_pxl){
 
-  if(class(fun) != "function"){
+  if(inherits(fun, "function") == FALSE){
     fun <- as.character(fun)
     if(fun != "nl"){
       useNL <- FALSE

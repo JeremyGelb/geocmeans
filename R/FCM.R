@@ -19,20 +19,22 @@
 #' result <- CMeans(dataset,k = 5, m = 1.5, standardize = TRUE)
 CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
 
-    data_class <- class(data)
+    #data_class <- class(data)
 
     if (verbose & standardize){
         print("Standardizing the data (set parameter to FALSE to avoid this step)")
     }
 
-    if(data_class == "list"){ # if we have to deal with a raster dataset
+    isRaster <- inherits(data, "list")
+
+    if(isRaster){ # if we have to deal with a raster dataset
         elements <- input_raster_data(dataset  = data,
                                       standardize = standardize)
         data <- elements$data
         missing <- elements$missing
         rst <- elements$rst
 
-    }else if(data_class == "data.frame"){ # if we have to deal with a dataframe
+    }else if(inherits(data, "data.frame")){ # if we have to deal with a dataframe
 
         # standardize data if required
         if (standardize) {
@@ -49,7 +51,7 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
                            )
 
     # if we are working with rasters, we should set some additional values
-    if(data_class == "list"){
+    if(isRaster){
         results <- output_raster_data(results, missing, rst)
     }
 
@@ -106,9 +108,9 @@ SFCMeans <- function(data, nblistw = NULL, k, m, alpha, lag_method="mean",
                      maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE,
                      init = "random", seed = NULL) {
 
-    data_class <- class(data)
-    if(data_class != "list"){
-        if(class(nblistw)[[1]] != "listw"){
+    isRaster <- inherits(data, "list")
+    if(isRaster == FALSE){
+        if(inherits(nblistw, "listw") == FALSE ){
             stop("the nblistw must be a listw object from spdep package")
         }
 
@@ -122,7 +124,7 @@ SFCMeans <- function(data, nblistw = NULL, k, m, alpha, lag_method="mean",
     }
 
 
-    if(data_class == "list"){ # if we have to deal with a raster dataset
+    if(isRaster){ # if we have to deal with a raster dataset
         elements <- input_raster_data(data,
                                         w = window,
                                         fun = lag_method,
@@ -133,7 +135,7 @@ SFCMeans <- function(data, nblistw = NULL, k, m, alpha, lag_method="mean",
         missing <- elements$missing
         rst <- elements$rst
 
-    }else if(data_class == "data.frame"){ # if we have to deal with a dataframe
+    }else if(inherits(data, "data.frame")){ # if we have to deal with a dataframe
 
         # standardize data if required
         if (standardize) {
@@ -154,7 +156,7 @@ SFCMeans <- function(data, nblistw = NULL, k, m, alpha, lag_method="mean",
                            seed = seed, init = init)
 
     # if we are working with rasters, we should set some additional values
-    if(data_class == "list"){
+    if(isRaster){
         results <- output_raster_data(results, missing, rst)
         results$window <- window
     }

@@ -587,9 +587,9 @@ calcqualityIndexes <- function(data, belongmatrix, m, indices = c("Silhouette.in
 #' spatialDiag(result, undecided=0.45, nrep=30)
 spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL, matdist = NULL, nrep = 50) { #nocov start
 
-  cls <- class(object)[[1]]
+  # cls <- class(object)[[1]]
   ## prior check of parameters
-  if(cls != "FCMres") {
+  if(inherits(object, "FCMres") == FALSE ) {
     if(is.null(nblistw)){
       stop("if object is not a FCMres object, nblistw must be provided")
     }
@@ -619,7 +619,7 @@ spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL,
 
   ## check if we are in rasterMode here is a mistake !
   rasterMode <- FALSE
-  if(cls == "FCMres"){
+  if(inherits(object, "FCMres")){
     if(object$isRaster){
       rasterMode <- TRUE
     }
@@ -627,7 +627,7 @@ spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL,
 
   ## WE ARE NOT IN RASTERMODE ##
   if(rasterMode == FALSE){
-    if(cls != "FCMres"){
+    if(inherits(object, "FCMres") == FALSE){
       membership <- object
       Groups <- (1:ncol(membership))[max.col(membership, ties.method = "first")]
     }else{

@@ -387,3 +387,4 @@ test_that("Testing the function adjustSpatialWeights",{
   expect_equal(diff, 0)
 
 })
+

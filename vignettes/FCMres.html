@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Jeremy Gelb" />
+
+<meta name="date" content="2021-02-04" />
+
+<title>Creating a FCMres object</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Creating a FCMres object</h1>
+<h4 class="author">Jeremy Gelb</h4>
+<h4 class="date">02/04/2021</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#applying-hclust">Applying hclust</a></li>
+<li><a href="#creating-a-fcmres-object">Creating a FCMres object</a></li>
+<li><a href="#creating-a-fcmres-object-when-working-with-rasters">Creating a FCMres object when working with rasters</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this vignette, we want to show how to create a <code>FCMres</code> object from results obtained with other classification or clustering methods. This can be very useful to compare results with methods available in other packages. We give a practical example here with the <code>hclust</code> function.</p>
+</div>
+<div id="applying-hclust" class="section level2">
+<h2>Applying hclust</h2>
+<p>We start by clustering the observations in the <code>LyonIris</code> dataset with the <code>hclust</code> function and retaining 4 groups.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geocmeans)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;LyonIris&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># selecting the columns for the analysis</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>AnalysisFields <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;Lden&quot;</span>,<span class="st">&quot;NO2&quot;</span>,<span class="st">&quot;PM25&quot;</span>,<span class="st">&quot;VegHautPrt&quot;</span>,<span class="st">&quot;Pct0_14&quot;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Pct_65&quot;</span>,<span class="st">&quot;Pct_Img&quot;</span>,<span class="st">&quot;TxChom1564&quot;</span>,<span class="st">&quot;Pct_brevet&quot;</span>,<span class="st">&quot;NivVieMed&quot;</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># rescaling the columns</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> LyonIris<span class="sc">@</span>data[AnalysisFields]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (Col <span class="cf">in</span> <span class="fu">names</span>(Data)){</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  Data[[Col]] <span class="ot">&lt;-</span> <span class="fu">scale</span>(Data[[Col]])</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># applying the hclust function</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(Data), <span class="at">method =</span> <span class="st">&quot;ward&quot;</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># getting the groups</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>LyonIris<span class="sc">$</span>Hclust_groups <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">cutree</span>(clust, <span class="at">k =</span> <span class="dv">4</span>))</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>Data<span class="sc">$</span>Hclust_groups <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">cutree</span>(clust, <span class="at">k =</span> <span class="dv">4</span>))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># mapping the groups</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(LyonIris) <span class="sc">+</span> </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">&quot;Hclust_groups&quot;</span>, <span class="at">title =</span> <span class="st">&quot;groups&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="creating-a-fcmres-object" class="section level2">
+<h2>Creating a FCMres object</h2>
+<p>Now, if we want to use the functions provided by <strong>geocemans</strong>, we must create a <code>FCMres</code> object manually. This is basically a list with some required slots:</p>
+<ul>
+<li>Centers: a matrix representing the centre of each group</li>
+<li>Belongings: a membership matrix of each observation to each group</li>
+<li>Data: the dataset used for the clustering</li>
+<li>m: the fuzzyness factor (1 if using a hard clustering method)</li>
+</ul>
+<p>In this case, we calculate the centres of the groups as the mean of each variable in each group.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>centers <span class="ot">&lt;-</span> Data <span class="sc">%&gt;%</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Hclust_groups) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(mean)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>centers <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(centers[<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(centers)])</span></code></pre></div>
+<p>The membership matrix is a simple binary matrix. We can create it with the function <code>cat_to_belongings</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>member_mat <span class="ot">&lt;-</span> <span class="fu">cat_to_belongings</span>(Data<span class="sc">$</span>Hclust_groups)</span></code></pre></div>
+<p>And we can now create our FCMres object.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Data<span class="sc">$</span>Hclust_groups <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>hclustres <span class="ot">&lt;-</span> <span class="fu">FCMres</span>(<span class="fu">list</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Centers&quot;</span> <span class="ot">=</span> centers,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Belongings&quot;</span> <span class="ot">=</span> member_mat,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Data&quot;</span> <span class="ot">=</span> Data,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;m&quot;</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;algo&quot;</span> <span class="ot">=</span> <span class="st">&quot;hclust&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<p>It is now possible to use almost all the functions in the <strong>geocmeans</strong> package to investigate the results.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># quick summaries about the groups</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hclustres)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">violinPlots</span>(hclustres<span class="sc">$</span>Data, hclustres<span class="sc">$</span>Groups)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">spiderPlots</span>(hclustres<span class="sc">$</span>Data, hclustres<span class="sc">$</span>Belongings)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mapClusters</span>(LyonIris, hclustres)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># some indices about classification quality</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">calcqualityIndexes</span>(hclustres<span class="sc">$</span>Data,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                   hclustres<span class="sc">$</span>Belongings, </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                   hclustres<span class="sc">$</span>m)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># spatial diagnostic</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>Neighbours <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(LyonIris,<span class="at">queen =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>WMat <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(Neighbours,<span class="at">style=</span><span class="st">&quot;W&quot;</span>,<span class="at">zero.policy =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">spatialDiag</span>(hclustres, <span class="at">nblistw =</span> WMat)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># investigation with the shiny app</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">sp_clust_explorer</span>(hclustres, <span class="at">spatial =</span> LyonIris)</span></code></pre></div>
+</div>
+<div id="creating-a-fcmres-object-when-working-with-rasters" class="section level2">
+<h2>Creating a FCMres object when working with rasters</h2>
+<p>When working with raster data, a little more work must be done to create a <code>FCMres</code> object. We show here a complete example with the <code>Arcachon</code> dataset.</p>
+<p>We start here by applying the k-means algorithm to a set of rasters.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Arcachon&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># loading each raster as a column in a matrix</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># and scale each column</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>all_data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(cbind, <span class="fu">lapply</span>(<span class="fu">names</span>(Arcachon), <span class="cf">function</span>(n){</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  rast <span class="ot">&lt;-</span> Arcachon[[n]]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(raster<span class="sc">::</span><span class="fu">values</span>(raster<span class="sc">::</span><span class="fu">scale</span>(rast)))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># removing the rows with missing values</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>missing <span class="ot">&lt;-</span> <span class="fu">complete.cases</span>(all_data)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>all_data <span class="ot">&lt;-</span> all_data[missing,]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># applying the kmeans algorithm with 7 groups</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>kmean7 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(all_data, <span class="dv">7</span>)</span></code></pre></div>
+<p>We must now create three objects:</p>
+<ul>
+<li>Data: a list of rasterLayers with the values used in the clustering algorithm.</li>
+<li>rasters: a list of rasterLayers with the membership values of each pixel for each group.</li>
+<li>Centers: a matrix with the centres of each group.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating Data (do not forget the standardization)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">names</span>(Arcachon), <span class="cf">function</span>(n){</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  rast <span class="ot">&lt;-</span> Arcachon[[n]]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(raster<span class="sc">::</span><span class="fu">scale</span>(rast))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(Data) <span class="ot">&lt;-</span> <span class="fu">names</span>(Arcachon)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># creating rasters</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>ref_raster <span class="ot">&lt;-</span> Arcachon[[<span class="dv">1</span>]]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>rasters <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>, <span class="cf">function</span>(i){</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># creating a vector with only 0 values</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">ncell</span>(ref_raster))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filling it with values when the pixels are not NA</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  vals[missing] <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(kmean7<span class="sc">$</span>cluster <span class="sc">==</span> i,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># setting the values in a rasterLayer</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  rast <span class="ot">&lt;-</span> ref_raster</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  raster<span class="sc">::</span><span class="fu">values</span>(rast) <span class="ot">&lt;-</span> vals</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(rast)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># creating centers</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>all_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(all_data)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(all_data) <span class="ot">&lt;-</span> <span class="fu">names</span>(Arcachon)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>all_data<span class="sc">$</span>kmean_groups <span class="ot">&lt;-</span> <span class="fu">as.character</span>(kmean7<span class="sc">$</span>cluster)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>centers <span class="ot">&lt;-</span> all_data <span class="sc">%&gt;%</span> </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(kmean_groups) <span class="sc">%&gt;%</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(mean)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>centers <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(centers[<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(centers)])</span></code></pre></div>
+<p>We can now create a FCMres object !</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>myFCMres <span class="ot">&lt;-</span> <span class="fu">FCMres</span>(<span class="fu">list</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Data&quot;</span> <span class="ot">=</span> Data,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Centers&quot;</span> <span class="ot">=</span> centers,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;rasters&quot;</span> <span class="ot">=</span> rasters,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;m&quot;</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;algo&quot;</span> <span class="ot">=</span> <span class="st">&quot;kmeans&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<p>And again, we can use the functions provided in <strong>geocmeans</strong> !</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># quick summaries about the groups</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(myFCMres)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">violinPlots</span>(myFCMres<span class="sc">$</span>Data, myFCMres<span class="sc">$</span>Groups)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">spiderPlots</span>(myFCMres<span class="sc">$</span>Data, myFCMres<span class="sc">$</span>Belongings)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mapClusters</span>(<span class="at">object =</span> myFCMres)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># some indices about classification quality</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">calcqualityIndexes</span>(myFCMres<span class="sc">$</span>Data,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                   myFCMres<span class="sc">$</span>Belongings, </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                   myFCMres<span class="sc">$</span>m)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># spatial diagnostic</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>w1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span>, <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">spatialDiag</span>(myFCMres, <span class="at">window =</span> w1, <span class="at">nrep =</span> <span class="dv">5</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># investigation with the shiny app</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sp_clust_explorer</span>(myFCMres)</span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

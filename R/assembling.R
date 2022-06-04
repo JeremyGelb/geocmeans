@@ -317,7 +317,7 @@ sanity_check <- function(dots,data){
 
   ## checking if the dataset is only numeric
   for(col in names(data)){
-    if (class(data[[col]]) %in% c("numeric","integer") == FALSE){
+    if (inherits(data[[col]], c("numeric","integer"))  == FALSE){
       print(paste("the column ",col," is not numeric..."))
       stop("all the columns in the data must be numeric")
     }

@@ -36,12 +36,12 @@
 #' }
 mapClusters <- function(geodata = NULL, object, undecided = NULL) {# nocov start
 
-    cls <- class(object)[[1]]
+    #cls <- class(object)[[1]]
     isRaster <- FALSE
-    if(cls == "FCMres"){
+    if(inherits(object,"FCMres")){
         belongmatrix <- object$Belongings
         isRaster <- object$isRaster
-    }else if(class(object)[[1]] == "matrix"){
+    }else if(inherits(object,"matrix")){
         belongmatrix <- object
     }else{
         stop("object must be one of matrix of FCMres")
@@ -51,11 +51,11 @@ mapClusters <- function(geodata = NULL, object, undecided = NULL) {# nocov start
         return(mapRasters(object, undecided))
     }else{
         geodata$OID <- as.character(1:nrow(geodata@data))
-        if(class(geodata)[[1]]=="SpatialPolygonsDataFrame"){
+        if(inherits(geodata,"SpatialPolygonsDataFrame")){
             return(mapPolygons(geodata, belongmatrix, undecided))
-        }else if(class(geodata)[[1]]=="SpatialPointsDataFrame"){
+        }else if(inherits(geodata,"SpatialPointsDataFrame")){
             return(mapPoints(geodata, belongmatrix, undecided))
-        }else if(class(geodata)[[1]]=="SpatialLinesDataFrame"){
+        }else if(inherits(geodata,"SpatialLinesDataFrame")){
             return(mapLines(geodata, belongmatrix, undecided))
         }else {
             stop("The object passed in geodata argument is not supported.
@@ -583,14 +583,14 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
 
     geodata$tmpOID <- 1:nrow(geodata)
     groups <- 1:ncol(belongmatrix)
-    cls <- class(geodata)[[1]]
+    #cls <- class(geodata)[[1]]
 
-    if(cls=="SpatialPolygonsDataFrame"){
+    if(inherits(geodata,"SpatialPolygonsDataFrame")){
         geodata$area <- rgeos::gArea(geodata, byid = TRUE)
 
-    }else if(cls=="SpatialLinesDataFrame"){
+    }else if(inherits(geodata,"SpatialLinesDataFrame")){
         geodata$area <- rgeos::gLength(geodata, byid = TRUE)
-    }else if(cls=="SpatialPointsDataFrame"){
+    }else if(inherits(geodata,"SpatialPointsDataFrame")){
         geodata$area <- 1
         coords <- sp::coordinates(geodata)
         geodata$X <- coords[,1]
@@ -609,7 +609,7 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
         belong <- belongmatrix[i,]
         poly <- geodata[i,]
 
-        if(cls != "SpatialPointsDataFrame"){
+        if(inherits(geodata,"SpatialPointsDataFrame")==FALSE){
             n <- round(poly$area*rt)
             if(n < 10){
                 n <-10
@@ -655,7 +655,7 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
             axis.text = ggplot2::element_blank(),
             axis.ticks = ggplot2::element_blank()
         )
-    if(cls == "SpatialPolygonsDataFrame"){
+    if(inherits(geodata,"SpatialPolygonsDataFrame")){
         FortiData <- ggplot2::fortify(geodata, region = "tmpOID")
         uncertain_map <- uncertain_map +
             ggplot2::geom_polygon(data = FortiData, mapping = ggplot2::aes_string(x = "long",
@@ -854,11 +854,11 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
         stop("one of spconsist and classidx must be TRUE")
     }
 
-    if(class(nblistw)[[1]]!="list"){
+    if(inherits(nblistw,"list") == FALSE){
         nblistw <- list(nblistw)
     }
 
-    if(class(window)[[1]] != "list"){
+    if(inherits(window,"list") == FALSE ){
         window <- list(window)
     }
     if(is.null(indices)){
@@ -967,11 +967,11 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
         stop("one of spconsist and classidx must be TRUE")
     }
 
-    if(class(nblistw)[[1]]!="list"){
+    if(inherits(nblistw, "list")== FALSE){
         nblistw <- list(nblistw)
     }
 
-    if(class(window)[[1]] != "list"){
+    if(inherits(window, "list") == FALSE ){
         window <- list(window)
     }
     if(is.null(indices)){

@@ -8,7 +8,7 @@ test_that("The evaluate parameters function must return the same values as calcu
   data(LyonIris)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
   "TxChom1564","Pct_brevet","NivVieMed")
-  dataset <- LyonIris@data[AnalysisFields]
+  dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 
   ks <- c(2,3)
   ms <- c(1.5,2)
@@ -45,7 +45,7 @@ test_that("The evaluate parameters function (multicore) must return the same val
   data(LyonIris)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
                      "TxChom1564","Pct_brevet","NivVieMed")
-  dataset <- LyonIris@data[AnalysisFields]
+  dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 
   ks <- c(2,3)
   ms <- c(1.5,2)

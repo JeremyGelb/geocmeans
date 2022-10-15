@@ -125,7 +125,7 @@ future to reduce calculation time.
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
-dataset <- LyonIris@data[AnalysisFields]
+dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 future::plan(future::multisession(workers=2))
@@ -140,7 +140,7 @@ if (!inherits(future::plan(), "sequential")) future::plan(future::sequential)
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
-dataset <- LyonIris@data[AnalysisFields]
+dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 future::plan(future::multisession(workers=2))

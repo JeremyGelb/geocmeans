@@ -16,7 +16,7 @@ test_that("Testing the behavior of the FCMres class object : simple case with ve
   library(dplyr)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
                      "TxChom1564","Pct_brevet","NivVieMed")
-  Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
+  Data <- LyonIris@data[AnalysisFields]
 
   clust <- hclust(dist(Data), method = "ward.D2")
   # getting the groups

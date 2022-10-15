@@ -8,7 +8,7 @@ test_that("Membership matrices must have a rowSums equal to 1",{
   data(LyonIris)
   library(spdep)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-  dataset <- LyonIris@data[AnalysisFields]
+  dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
   queen <- poly2nb(LyonIris,queen=TRUE)
   Wqueen <- nb2listw(queen,style="W")
   FCM <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE)
@@ -31,7 +31,7 @@ test_that("SFCM and FCM should yield identical results if alpha = 0 for SFCM",{
   data(LyonIris)
   library(spdep)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-  dataset <- LyonIris@data[AnalysisFields]
+  dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
   queen <- poly2nb(LyonIris,queen=TRUE)
   Wqueen <- nb2listw(queen,style="W")
   result1 <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 0, standardize = TRUE, seed = 123, init = "kpp")
@@ -45,7 +45,7 @@ test_that("GFCM and FCM should yield identical results if beta = 0 for GFCM",{
   data(LyonIris)
   library(spdep)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-  dataset <- LyonIris@data[AnalysisFields]
+  dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
   result1 <- GCMeans(dataset, k = 5, m = 1.5, beta = 0, standardize = TRUE, seed = 123)
   result2 <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE, seed = 123)
   x <- round(result1$Belongings - result2$Belongings,8)
@@ -57,7 +57,7 @@ test_that("SGFCM and FCM should yield identical results if beta = 0 and alpha = 
   data(LyonIris)
   library(spdep)
   AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
-  dataset <- LyonIris@data[AnalysisFields]
+  dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
   queen <- poly2nb(LyonIris,queen=TRUE)
   Wqueen <- nb2listw(queen,style="W")
   result1 <- SGFCMeans(dataset,Wqueen, k = 5, m = 1.5, alpha = 0, beta = 0, standardize = TRUE, seed = 123)

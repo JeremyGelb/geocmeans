@@ -151,7 +151,7 @@ FCMres <- function(obj){
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -202,7 +202,7 @@ is.FCMres <- function(x){
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' result <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE)
 #' print(result, "FCMres")
 print.FCMres <- function(x, ...){ #nocov start
@@ -251,7 +251,7 @@ print.FCMres <- function(x, ...){ #nocov start
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -349,7 +349,7 @@ summarizeClusters <- function(data, belongmatrix, weighted = TRUE, dec = 3, sile
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -391,18 +391,18 @@ summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent
 #'
 #' # rescaling all the variables used in the analysis
 #' for (field in AnalysisFields) {
-#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
+#'     LyonIris[[field]] <- scale(LyonIris[[field]])
 #' }
 #'
 #' # doing the initial clustering
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)
 #'
 #' # using a subset of the original dataframe as "new data"
 #' new_data <- LyonIris[c(1, 27, 36, 44, 73),]
-#' new_dataset <- new_data@data[AnalysisFields]
+#' new_dataset <- sf::st_drop_geometry(new_data[AnalysisFields])
 #' new_nb <- spdep::poly2nb(new_data,queen=TRUE)
 #' new_Wqueen <- spdep::nb2listw(new_nb,style="W")
 #'
@@ -529,18 +529,18 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
 #'
 #' # rescaling all the variables used in the analysis
 #' for (field in AnalysisFields) {
-#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
+#'     LyonIris[[field]] <- scale(LyonIris[[field]])
 #' }
 #'
 #' # doing the initial clustering
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)
 #'
 #' # using a subset of the original dataframe as "new data"
 #' new_data <- LyonIris[c(1, 27, 36, 44, 73),]
-#' new_dataset <- new_data@data[AnalysisFields]
+#' new_dataset <- sf::st_drop_geometry(new_data[AnalysisFields])
 #' new_nb <- spdep::poly2nb(new_data,queen=TRUE)
 #' new_Wqueen <- spdep::nb2listw(new_nb,style="W")
 #'
@@ -574,11 +574,11 @@ predict.FCMres <- function(object, new_data, nblistw = NULL, window = NULL, stan
 #'
 #' # rescaling all the variables used in the analysis
 #' for (field in AnalysisFields) {
-#'     LyonIris@data[[field]] <- scale(LyonIris@data[[field]])
+#'     LyonIris[[field]] <- scale(LyonIris[[field]])
 #' }
 #'
 #' # doing the initial clustering
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = FALSE)

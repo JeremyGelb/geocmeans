@@ -22,7 +22,7 @@ print a FCMres object
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
-dataset <- LyonIris@data[AnalysisFields]
+dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 result <- CMeans(dataset, k = 5, m = 1.5, standardize = TRUE)
 print(result, "FCMres")
 }

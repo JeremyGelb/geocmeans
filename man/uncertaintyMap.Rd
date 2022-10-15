@@ -14,8 +14,7 @@ uncertaintyMap(
 )
 }
 \arguments{
-\item{geodata}{An object of class spatialpolygonesdataframe /
-spatiallinesdataframe or spatialpointsdataframe ordered
+\item{geodata}{An object of class feature collection from sf ordered
 like the original data used for the clustering.}
 
 \item{belongmatrix}{A membership matrix}
@@ -31,7 +30,7 @@ points will be plotted around the original features.}
 map (default is 0.05)}
 }
 \value{
-a map created with ggplot2
+a map created with tmap
 }
 \description{
 Return a map to visualize membership matrix
@@ -49,7 +48,7 @@ visualize regions with uncertainty and to identify the strongest clusters.
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
   "TxChom1564","Pct_brevet","NivVieMed")
-dataset <- LyonIris@data[AnalysisFields]
+dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)

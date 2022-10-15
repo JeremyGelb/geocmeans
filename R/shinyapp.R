@@ -51,7 +51,7 @@ geocmeans_env <- new.env()
 #'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 #'
 #' #rescaling the columns
-#' Data <- LyonIris@data[AnalysisFields]
+#' Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' for (Col in names(Data)){
 #'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
 #' }
@@ -101,16 +101,16 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     stop("if object is NULL, spatial must be specified")
   }
 
-  ok_sp <- c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")
+  ok_sp <- c("sf")
   if(is.null(object) == FALSE){
     if(object$isRaster == FALSE){
       if(inherits(spatial, ok_sp)  == FALSE){
-        stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame") because object was not created with rasters')
+        stop('spatial must be a feature collection (sf) because object was not created with rasters')
       }
     }
   }else{
     if(inherits(spatial, ok_sp)  == FALSE){
-      stop('spatial must be one of : c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame","SpatialLinesDataFrame")')
+      stop('spatial must be one a feature collection (sf)')
     }
   }
 
@@ -188,13 +188,15 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     shiny_data$dataset <- dataset
 
     ## creating a referencing raster with the right projection
-    ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sp::CRS("+init=epsg:3857"), method = "ngb")
+    # ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sp::CRS("+init=epsg:3857"), method = "ngb")
+	ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sf::st_crs(3857), method = "ngb")
     #assign('ref_raster', ref_raster, .GlobalEnv)
     shiny_data$ref_raster <- ref_raster
 
     old_names <- names(object$rasters)
     object$rasters <- lapply(object$rasters, function(rast){
-      raster::projectRaster(rast, crs = sp::CRS("+init=epsg:3857"), method = "ngb")
+      #raster::projectRaster(rast, crs = sp::CRS("+init=epsg:3857"), method = "ngb")
+	  raster::projectRaster(rast, crs = sf::st_crs(3857), method = "ngb")
     })
     names(object$rasters) <- old_names
 
@@ -210,8 +212,10 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     shiny_data$spatial <- spatial
 
     ## for leaflet, the CRS must be 4326
-    ref <- sp::CRS("+init=epsg:4326")
-    spatial4326 <- sp::spTransform(spatial, ref)
+    # ref <- sp::CRS("+init=epsg:4326")
+	  ref <- sf::st_crs(4326)
+    #spatial4326 <- sp::spTransform(spatial, ref)
+	  spatial4326 <- sf::st_transform(spatial, ref)
     #assign('spatial4326', spatial4326, .GlobalEnv)
     shiny_data$spatial4326 <- spatial4326
   }
@@ -233,7 +237,9 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
     addProviderTiles(leaflet::providers$OpenStreetMap, group = "Open Street Map", layerId = "back2")
 
-  if(inherits(spatial,"SpatialPolygonsDataFrame")){
+  geom_type <- sf::st_geometry_type(spatial, by_geometry = FALSE)
+
+  if(geom_type %in% c("POLYGON", "MULTIPOLYGON")){
     mapfun <- function(map, data, weight, group, color, fillColor, layerId, ...){
       map %>% addPolygons(
         data = data,
@@ -245,9 +251,9 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
         ...
       )
     }
-  }else if (inherits(spatial,"SpatialPointsDataFrame")){
+  }else if (geom_type %in% c("POINT", "MULTIPOINT")){
     mapfun <- addCircles
-  }else if (inherits(spatial,"SpatialLinesDataFrame")){
+  }else if (geom_type %in% c("LINESTRING", "MULTILINESTRING")){
     mapfun <- function(map, data, weight, group, color, fillColor, layerId, ...){
       if(is.null(fillColor)){
         fillColor <- "red"

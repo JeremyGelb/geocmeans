@@ -17,7 +17,7 @@
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' result <- GCMeans(dataset,k = 5, m = 1.5, beta = 0.5, standardize = TRUE)
 GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
 
@@ -103,7 +103,7 @@ GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = T
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = TRUE)

@@ -6,7 +6,7 @@
 #'
 #' @description Build some maps to visualize the results of the clustering
 #'
-#' @param geodata An object of class spatialpolygonesdataframe /
+#' @param geodata An object of class features collection from sf /
 #' spatiallinesdataframe or spatialpointsdataframe ordered
 #' like the original data used for the clustering. Can be Null if object is
 #' a FCMres and has been created with rasters.
@@ -17,9 +17,9 @@
 #'   uncertain (default = NULL)
 #' @return A named list with :
 #' \itemize{
-#'         \item ProbaMaps : a list of ggplot maps showing for each group the
+#'         \item ProbaMaps : a list of tmap maps showing for each group the
 #'         probability of the observations to belong to that group
-#'         \item ClusterMap : a ggplot map showing the most likely group for
+#'         \item ClusterMap : a tmap map showing the most likely group for
 #'          observation
 #' }
 #' @export
@@ -28,7 +28,7 @@
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -50,18 +50,31 @@ mapClusters <- function(geodata = NULL, object, undecided = NULL) {# nocov start
     if(isRaster){
         return(mapRasters(object, undecided))
     }else{
-        geodata$OID <- as.character(1:nrow(geodata@data))
-        if(inherits(geodata,"SpatialPolygonsDataFrame")){
-            return(mapPolygons(geodata, belongmatrix, undecided))
-        }else if(inherits(geodata,"SpatialPointsDataFrame")){
-            return(mapPoints(geodata, belongmatrix, undecided))
-        }else if(inherits(geodata,"SpatialLinesDataFrame")){
-            return(mapLines(geodata, belongmatrix, undecided))
-        }else {
+        geodata$OID <- as.character(1:nrow(geodata))
+        sf_type <- sf::st_geometry_type(geodata,by_geometry = FALSE)
+        if(sf_type %in% c("POLYGON","MULTIPOLYGON")){
+          geom_type <- "polygon"
+        }else if(sf_type %in% c("POINT","MULTIPOINT")){
+          geom_type <- "point"
+        }else if(sf_type %in% c("LINESTRING","MULTILINESTRING")){
+          geom_type <- "line"
+        }else{
             stop("The object passed in geodata argument is not supported.
-              Supported classes are : SpatialPolygonsDataFrame,
-              SpatialPointsDataFrame and SpatialLinesDataFrame")
+              Supported classes are feature collections from sf with geometry type in
+              POLYGON, MULTIPOLYGON, POINT, MULTIPOINT, LINESTRING, MULTILINESTRING")
         }
+        return(mapThis(geodata, belongmatrix, undecided, geom_type))
+        # if(sf::st_geometry_type(geodata,by_geometry = FALSE) %in% c("POLYGON","MULTIPOLYGON")){
+        #     return(mapPolygons(geodata, belongmatrix, undecided))
+        # }else if(sf::st_geometry_type(geodata,by_geometry = FALSE) %in% c("POINT","MULTIPOINT")){
+        #     return(mapPoints(geodata, belongmatrix, undecided))
+        #   else if(sf::st_geometry_type(geodata,by_geometry = FALSE) %in% c("LINESTRING","MULTILINESTRING")){
+        #     return(mapLines(geodata, belongmatrix, undecided))
+        # }else {
+        #     stop("The object passed in geodata argument is not supported.
+        #       Supported classes are feature collections from sf with geometry type in
+        #       POLYGON, MULTIPOLYGON, POINT, MULTIPOINT, LINESTRING, MULTILINESTRING")
+        # }
     }
 
 
@@ -143,171 +156,32 @@ mapRasters  <- function(object, undecided){
 }
 
 
-#' @title Mapping the clusters (polygons)
+#' @title Mapping the clusters
 #'
-#' @description Internal function to realize maps based on spatialpolygondataframe
+#' @description Internal function to realize maps
 #'
-#' @param geodata A spatialpolygonsdataframe ordered like the original data used
+#' @param geodata feature collections ordered like the original data used
 #'   for the clustering
 #' @param belongmatrix The membership matrix obtained at the end of the algorithm
 #' @param undecided A float between 0 and 1 giving the minimum value that an
 #'   observation must get in the membership matrix to not be considered as
 #'   uncertain (default = NULL)
+#' @param geom_type A string indicating the type of geometry (polygon, string or point)
 #' @return A named list with :
 #' \itemize{
 #'         \item ProbaMaps : a list of ggplot maps showing for each group the
 #'         probability of the observations to belong to that group
 #'         \item ClusterMap : a ggplot map showing the most likely group for each observation
 #' }
+#' @importFrom tmap tm_shape tm_fill tm_borders tm_dots tm_layout tm_lines
 #' @keywords internal
 #' @examples
 #' #No example provided, this is an internal function, use the general wrapper function mapClusters
-mapPolygons <- function(geodata, belongmatrix, undecided = NULL){
+mapThis <- function(geodata, belongmatrix, undecided = NULL, geom_type = "polygon"){
+
     belongmatrix <- as.data.frame(belongmatrix)
-    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
-    geodata@data <- cbind(geodata@data,belongmatrix)
-
-    # attribution des groupes
-    Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
-    if (is.null(undecided) == FALSE) {
-        Maximums <- do.call(pmax, belongmatrix)
-        Undecided <- ifelse(Maximums < undecided, "Undecided", "Ok")
-    } else {
-        Undecided <- rep("Ok", length(Groups))
-    }
-    geodata$Cluster <- Groups
-    geodata$Undecided <- Undecided
-    FortiData <- ggplot2::fortify(geodata, region = "OID")
-    FortiData$OID <- FortiData$id
-    geodata$OID <- rownames(geodata@data)
-    FortiData <- dplyr::left_join(FortiData, geodata@data, by = "OID")
-    # realisation des cartes de probabilites
-    ProbaPlots <- lapply(names(belongmatrix), function(Name) {
-        Plot <- ggplot2::ggplot(FortiData) +
-            ggplot2::geom_polygon(ggplot2::aes_string(x = "long", y = "lat", group = "group", fill = Name),
-                                  colour = "black", size = 0.1) +
-            ggplot2::scale_fill_gradient(low = "white", high = "blue") +
-            ggplot2::coord_fixed(ratio = 1)+
-            ggplot2::theme(
-                axis.title = ggplot2::element_blank(),
-                axis.text = ggplot2::element_blank(),
-                axis.ticks = ggplot2::element_blank()
-            )
-        return(Plot)
-    })
-    # realisation de la carte des groupes
-    ClusterMap <- ggplot2::ggplot(FortiData) +
-        ggplot2::geom_polygon(ggplot2::aes_string(x = "long", y = "lat", group = "group", fill = "Cluster"), size = 0.1) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::geom_polygon(ggplot2::aes_string(x = "long", y = "lat", group = "group"),
-                              fill = rgb(1, 1, 1, 0.7),
-                              size = 0.1,
-                              data = subset(FortiData,FortiData$Undecided == "Undecided")) +
-        ggplot2::coord_fixed(ratio = 1)+
-        ggplot2::theme(
-            axis.title = ggplot2::element_blank(),
-            axis.text = ggplot2::element_blank(),
-            axis.ticks = ggplot2::element_blank()
-        )
-    return(list(ProbaMaps = ProbaPlots, ClusterPlot = ClusterMap))
-}
-
-
-#' @title Mapping the clusters (lines)
-#'
-#' @description Internal function to realize maps based on spatiallinesdataframe
-#'
-#' @param geodata A spatiallinesdataframe ordered like the original data used
-#'   for the clustering
-#' @param belongmatrix The membership matrix obtained at the end of the algorithm
-#' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the membership matrix to not be considered as
-#'   uncertain (default = NULL)
-#' @return A named list with :
-#' \itemize{
-#'         \item ProbaMaps : a list of ggplot maps showing for each group the
-#'         probability of the observations to belong to that group
-#'         \item ClusterMap : a ggplot map showing the most likely group for each observation
-#' }
-#' @keywords internal
-#' @examples
-#' #No example provided, this is an internal function, use the general wrapper function mapClusters
-mapLines <- function(geodata, belongmatrix, undecided = NULL){
-    belongmatrix <- as.data.frame(belongmatrix)
-    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
-    geodata@data <- cbind(geodata@data, belongmatrix)
-
-    # attribution des groupes
-    Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
-    if (is.null(undecided) == FALSE) {
-        Maximums <- do.call(pmax, belongmatrix)
-        Undecided <- ifelse(Maximums < undecided, "Undecided", "Ok")
-    } else {
-        Undecided <- rep("Ok", length(Groups))
-    }
-    geodata$Cluster <- Groups
-    FortiData <- ggplot2::fortify(geodata, region = "OID")
-    FortiData$OID <- FortiData$id
-    geodata$OID <- rownames(geodata@data)
-    FortiData <- dplyr::left_join(FortiData, geodata@data, by = "OID")
-    # realisation des cartes de probabilites
-    ProbaPlots <- lapply(names(belongmatrix), function(Name) {
-        Plot <- ggplot2::ggplot(FortiData) +
-            ggplot2::geom_path(ggplot2::aes_string(x = "long", y = "lat", group = "group", color = Name),
-                                  size = 0.1) +
-            ggplot2::scale_fill_gradient(low = "white", high = "blue") +
-            ggplot2::coord_fixed(ratio = 1)+
-            ggplot2::theme(
-                axis.title = ggplot2::element_blank(),
-                axis.text = ggplot2::element_blank(),
-                axis.ticks = ggplot2::element_blank()
-            )
-        return(Plot)
-    })
-    # realisation de la carte des groupes
-    ClusterMap <- ggplot2::ggplot(FortiData) +
-        ggplot2::geom_path(ggplot2::aes_string(x = "long", y = "lat", group = "group", color = "Cluster"), size = 0.1) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::geom_path(ggplot2::aes_string(x = "long", y = "lat", group = "group"),
-                              color = rgb(1, 1, 1, 0.7),
-                              size = 0.1,
-                              data = subset(FortiData,FortiData$Undecided == "Undecided")) +
-        ggplot2::coord_fixed(ratio = 1)+
-        ggplot2::theme(
-            axis.title = ggplot2::element_blank(),
-            axis.text = ggplot2::element_blank(),
-            axis.ticks = ggplot2::element_blank()
-        )
-    return(list(ProbaMaps = ProbaPlots, ClusterPlot = ClusterMap))
-}
-
-
-#' @title Mapping the clusters (points)
-#'
-#' @description Internal function to realize maps based on spatialpointsdataframe
-#'
-#' @param geodata A spatialpointsdataframe ordered like the original data used
-#'   for the clustering
-#' @param belongmatrix The membership matrix obtained at the end of the algorithm
-#' @param undecided A float between 0 and 1 giving the minimum value that an
-#'   observation must get in the membership matrix to not be considered as
-#'   uncertain (default = NULL)
-#' @return A named list with :
-#' \itemize{
-#'         \item ProbaMaps : a list of ggplot maps showing for each group the probability
-#'          of the observations to belong to that group
-#'         \item ClusterMap : a ggplot map showing the most likely group for each observation
-#' }
-#' @keywords internal
-#' @examples
-#' #No example provided, this is an internal function, use the general wrapper function mapClusters
-mapPoints <- function(geodata, belongmatrix, undecided = NULL){
-    belongmatrix <- as.data.frame(belongmatrix)
-    names(belongmatrix) <- gsub(" ", "", names(belongmatrix), fixed = TRUE)
-    geodata@data <- cbind(geodata@data, belongmatrix)
-    Coords <- sp::coordinates(geodata)
-    geodata$X__ <- Coords[,1]
-    geodata$Y__ <- Coords[,2]
+    names(belongmatrix) <- paste0("cluster",1:ncol(belongmatrix))
+    geodata <- cbind(geodata,belongmatrix)
 
     # attribution des groupes
     Groups <- names(belongmatrix)[max.col(belongmatrix, ties.method = "first")]
@@ -321,34 +195,64 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
     geodata$Undecided <- Undecided
     # realisation des cartes de probabilites
     ProbaPlots <- lapply(names(belongmatrix), function(Name) {
-        Plot <- ggplot2::ggplot(geodata@data) +
-            ggplot2::geom_point(ggplot2::aes_string(x = "X__", y = "Y__", color = Name),
-                                  size = 1) +
-            ggplot2::scale_fill_gradient(low = "white", high = "blue") +
-            ggplot2::coord_fixed(ratio = 1)+
-            ggplot2::theme(
-                axis.title = ggplot2::element_blank(),
-                axis.text = ggplot2::element_blank(),
-                axis.ticks = ggplot2::element_blank()
-            )
-        return(Plot)
+      if(geom_type == "polygon"){
+        this_map <- tm_shape(geodata) +
+          tm_fill(col = Name, palette = "Blues", style = "cont") +
+          tm_borders("black") +
+          tm_layout(legend.outside = TRUE, frame = FALSE)
+      }else if(geom_type == "line"){
+        this_map <- tm_shape(geodata) +
+          tm_lines(col = Name, palette = "Blues", style = "cont") +
+          tm_layout(legend.outside = TRUE, frame = FALSE)
+      }else if(geom_type == "point"){
+        this_map <- tm_shape(geodata) +
+          tm_dots(col = Name, palette = "Blues", style = "cont", size = 0.1) +
+          tm_layout(legend.outside = TRUE, frame = FALSE)
+      }
+
+        return(this_map)
     })
     # realisation de la carte des groupes
-    ClusterMap <- ggplot2::ggplot(geodata@data) +
-        ggplot2::geom_point(ggplot2::aes_string(x = "X__", y = "Y__", color = "Cluster"), size = 1) +
-        ggplot2::scale_fill_brewer(palette = "Set1") +
-        ggplot2::geom_point(ggplot2::aes_string(x = "X__", y = "Y__"),
-                              fill = rgb(1, 1, 1, 0.7),
-                              size = 1,
-                              data = subset(geodata@data,geodata@data$Undecided == "Undecided")) +
-        ggplot2::coord_fixed(ratio = 1)+
-        ggplot2::theme(
-            axis.title = ggplot2::element_blank(),
-            axis.text = ggplot2::element_blank(),
-            axis.ticks = ggplot2::element_blank()
-            )
+    if(geom_type == "polygon"){
+      ClusterMap <- tm_shape(geodata) +
+        tm_fill("Cluster", palette = "Set1") +
+        tm_borders("black")+
+        tm_layout(legend.outside = TRUE, frame = FALSE)
+    }else if (geom_type == "line"){
+      ClusterMap <- tm_shape(geodata) +
+        tm_lines("Cluster", palette = "Set1") +
+        tm_layout(legend.outside = TRUE, frame = FALSE)
+    }else if(geom_type == "point"){
+      ClusterMap <- tm_shape(geodata) +
+        tm_dots("Cluster", palette = "Set1", size = 0.1) +
+        tm_layout(legend.outside = TRUE, frame = FALSE)
+    }
+
+
+    if(is.null(undecided) == FALSE){
+      if(geom_type == "polygon"){
+        ClusterMap <- ClusterMap +
+          tm_shape(subset(geodata, geodata$Undecided == "Undecided")) +
+          tm_fill("white", alpha = 0.7)+
+          tm_borders("black") +
+          tm_layout(legend.outside = TRUE, frame = FALSE)
+      }else if (geom_type == "line"){
+        ClusterMap <- ClusterMap +
+          tm_shape(subset(geodata, geodata$Undecided == "Undecided")) +
+          tm_lines("white", alpha = 0.7)+
+          tm_layout(legend.outside = TRUE, frame = FALSE)
+      }else if (geom_type == "point"){
+        ClusterMap <- ClusterMap +
+          tm_shape(subset(geodata, geodata$Undecided == "Undecided")) +
+          tm_dots("white", alpha = 0.7, size = 0.1)+
+          tm_layout(legend.outside = TRUE, frame = FALSE)
+        }
+
+    }
+
     return(list(ProbaMaps = ProbaPlots, ClusterPlot = ClusterMap))
 }
+
 
 
 #' @title Spider chart
@@ -373,7 +277,7 @@ mapPoints <- function(geodata, belongmatrix, undecided = NULL){
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -440,7 +344,7 @@ spiderPlots<- function(data, belongmatrix, chartcolors=NULL){
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometrie(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -480,7 +384,7 @@ violinPlots <- function(data,groups){
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -516,33 +420,21 @@ barPlots <- function(data,belongmatrix, ncol = 3, what = "mean"){
 }
 
 
-#' @title wrapper around spsample
-#'
-#' @description A wrapper around spsample to avoid errors when points are
-#' hard to find
-#'
-#' @param spatial An sp object
-#' @param n The number of points
-#' @param type The original strategy to use, changed for "regular" if the
-#' original strategy fail
-#' @return a SpatialPoints object
-#' @keywords internal
-#' @examples
-#' # this is an internal function, no example provided
-force_sp_sample <- function(spatial, n, type){
-    result <- tryCatch(
-        {sp::spsample(spatial,n,type,iter = 10)},
-        error = function(e){
-            tryCatch(
-                {sp::spsample(spatial,n,type = "regular",iter = 10)},
-                error = function(ee){
-                    stop(sprintf('Error when drawing random points: ',ee$message))
-                }
-                )
-        }
-    )
-    return(result)
-}
+
+#force_sp_sample <- function(spatial, n, type){
+#    result <- tryCatch(
+#        {sp::spsample(spatial,n,type,iter = 10)},
+#        error = function(e){
+#            tryCatch(
+#                {sp::spsample(spatial,n,type = "regular",iter = 10)},
+#                error = function(ee){
+#                    stop(sprintf('Error when drawing random points: ',ee$message))
+#                }
+#                )
+#        }
+#    )
+#    return(result)
+#}
 
 
 #' @title Uncertainty map
@@ -556,8 +448,7 @@ force_sp_sample <- function(spatial, n, type){
 #' value of the feature it belongs itself. Thus, it is possible to
 #' visualize regions with uncertainty and to identify the strongest clusters.
 #'
-#' @param geodata An object of class spatialpolygonesdataframe /
-#' spatiallinesdataframe or spatialpointsdataframe ordered
+#' @param geodata An object of class feature collection from sf ordered
 #' like the original data used for the clustering.
 #' @param belongmatrix A membership matrix
 #' @param njit The number of points to map on each feature.
@@ -566,14 +457,14 @@ force_sp_sample <- function(spatial, n, type){
 #' @param colors A vector of colors to use for the groups.
 #' @param pt_size A float giving the size of the random points on the final
 #' map (default is 0.05)
-#' @return a map created with ggplot2
+#' @return a map created with tmap
 #' @export
 #' @examples
 #' \dontrun{
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #'   "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
@@ -585,14 +476,16 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
     groups <- 1:ncol(belongmatrix)
     #cls <- class(geodata)[[1]]
 
-    if(inherits(geodata,"SpatialPolygonsDataFrame")){
-        geodata$area <- rgeos::gArea(geodata, byid = TRUE)
+    geom_type <- sf::st_geometry_type(geodata, by_geometry = FALSE)
 
-    }else if(inherits(geodata,"SpatialLinesDataFrame")){
-        geodata$area <- rgeos::gLength(geodata, byid = TRUE)
-    }else if(inherits(geodata,"SpatialPointsDataFrame")){
+    if(geom_type %in% c("POLYGON","MULTIPOLYGON")){
+        geodata$area <- sf::st_area(geodata)
+
+    }else if(geom_type %in% c("LINESTRING", "MULTILINESTRING")){
+        geodata$area <- sf::st_length(geodata)
+    }else if(geom_type %in% c("POINT","MULTIPOINT")){
         geodata$area <- 1
-        coords <- sp::coordinates(geodata)
+        coords <- sf::st_coordinates(geodata)
         geodata$X <- coords[,1]
         geodata$Y <- coords[,2]
         if(is.null(radius)){
@@ -602,39 +495,32 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
         stop("geodata must be one of SpatialPolygonsDataFrame, SpatialLinesDataFrame or SpatialPointsDataFrame")
     }
     maxA <- max(geodata$area)
-    rt <- njit / maxA
+    rt <- as.numeric(njit / maxA)
 
 
-    allsppts <- lapply(1:nrow(geodata), function(i){
-        belong <- belongmatrix[i,]
-        poly <- geodata[i,]
+    if((geom_type %in% c("POINT","MULTIPOINT"))==FALSE){
+      n_obs <- as.integer(as.numeric(geodata$area) * rt)
+      jitted <- sf::st_sample(geodata, n_obs)
+      coords <- sf::st_coordinates(jitted)
+    }else{
+      jitted <- sf::st_sample(
+        sf::st_buffer(geodata, dist = radius),
+        njit)
+      coords <- sf::st_coordinates(jitted)
+      n_obs <- rep(njit, nrow(geodata))
+    }
 
-        if(inherits(geodata,"SpatialPointsDataFrame")==FALSE){
-            n <- round(poly$area*rt)
-            if(n < 10){
-                n <-10
-            }
-            pts <- force_sp_sample(poly,n, type = "random")
-            coords <- sp::coordinates(pts)
-            df <- data.frame(
-                tmpOID = i,
-                gp = sample(groups,size = n,replace = TRUE, prob = belong),
-                X = coords[,1],
-                Y = coords[,2]
-            )
-
-        }else{
-            df <- data.frame(
-                tmpOID = i,
-                X = poly$X + stats::runif(njit, min = -1*(radius), max = radius),
-                Y = poly$Y + stats::runif(njit, min = -1*(radius), max = radius),
-                gp = sample(groups,size = njit,replace = TRUE, prob = belong)
-            )
-        }
-        return(df)
-
+    clusts <- lapply(1:nrow(geodata), function(i){
+      probs <- belongmatrix[i,]
+      clusters <- sample(groups, size = n_obs[[i]], prob = probs, replace = TRUE)
+      return(clusters)
     })
-    df <- do.call(rbind,allsppts)
+    clusts <- do.call(c, clusts)
+
+    all_pts <- sf::st_sf(data.frame(
+      "oid" = 1:length(jitted),
+      "cluster" = as.character(clusts)
+    ),jitted)
 
     if(is.null(colors)){
         colors <- c("#1F77B4","#FF7F0E","#2CA02C","#D62728","#9467BD","#8C564B",
@@ -643,25 +529,16 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
                     "#DBDB8D","#9EDAE5")[1:ncol(belongmatrix)]
     }
 
-    df$gp <-as.character(df$gp)
     names(colors) <- as.character(groups)
 
-    uncertain_map <- ggplot2::ggplot(df) +
-        ggplot2::geom_point(ggplot2::aes_string(x = "X", y = "Y", color = "gp"), size = pt_size) +
-        ggplot2::scale_colour_manual(values = colors) +
-        ggplot2::coord_fixed(ratio = 1)+
-        ggplot2::theme(
-            axis.title = ggplot2::element_blank(),
-            axis.text = ggplot2::element_blank(),
-            axis.ticks = ggplot2::element_blank()
-        )
-    if(inherits(geodata,"SpatialPolygonsDataFrame")){
-        FortiData <- ggplot2::fortify(geodata, region = "tmpOID")
-        uncertain_map <- uncertain_map +
-            ggplot2::geom_polygon(data = FortiData, mapping = ggplot2::aes_string(x = "long",
-                                                      y = "lat",
-                                                      group = "group"),
-                                  fill = "white", colour = "black", size = 0.1, alpha = 0)
+    uncertain_map <- tm_shape(all_pts) +
+      tm_dots("cluster", palette = colors, size = 0.01) +
+      tm_layout(frame = FALSE, legend.outside = TRUE)
+
+    if(geom_type %in% c("POLYGON","MULTIPOLYGON")){
+      uncertain_map <- uncertain_map +
+        tm_shape(geodata) +
+        tm_borders("black")
     }
 
     return(uncertain_map)
@@ -837,7 +714,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' #set spconsist to TRUE to calculate the spatial consistency indicator
@@ -881,7 +758,7 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' #set spconsist to TRUE to calculate the spatial consistency indicator
@@ -947,7 +824,7 @@ selectParameters <- select_parameters
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' future::plan(future::multisession(workers=2))
@@ -1023,7 +900,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' future::plan(future::multisession(workers=2))
@@ -1063,7 +940,7 @@ selectParameters.mc <- select_parameters.mc
 #' data(LyonIris)
 #' AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 #' "TxChom1564","Pct_brevet","NivVieMed")
-#' dataset <- LyonIris@data[AnalysisFields]
+#' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' Wqueen2 <- adjustSpatialWeights(dataset,queen,style="C")

@@ -57,7 +57,7 @@ AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 
 #rescaling the columns
-Data <- LyonIris@data[AnalysisFields]
+Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 for (Col in names(Data)){
   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
 }

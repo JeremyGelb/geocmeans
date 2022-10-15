@@ -58,7 +58,7 @@ AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 
 #rescaling the columns
-Data <- LyonIris@data[AnalysisFields]
+Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 for (Col in names(Data)){
   Data[[Col]] <- scale(Data[[Col]])
 }
@@ -72,8 +72,8 @@ SFCM <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
                  tol = 0.0001, standardize = FALSE,
                  verbose = FALSE, seed = 456)
 
-#calculating the spatial inconsistency index
-consistIndex <- spConsistency(SFCM$Belongings, WMat, nrep = 500)
+#calculating the spatial inconsistency index (more replications are recommended)
+consistIndex <- spConsistency(SFCM$Belongings, WMat, nrep = 100)
 
 ggplot() + 
   geom_histogram(aes(x = consistIndex$samples),
@@ -103,7 +103,8 @@ It is easy to calculate this adjusted version with the package **geocmeans** by 
 
 ```{r message=FALSE, warning=FALSE, fig.pos="H", fig.align="center"}
 WMat2 <- adjustSpatialWeights(Data, WMat$neighbours, style = "C")
-consistIndex2 <- spConsistency(SFCM$Belongings, WMat2, nrep = 500)
+# (more replications are recommanded)
+consistIndex2 <- spConsistency(SFCM$Belongings, WMat2, nrep = 100)
 
 ggplot() + 
   geom_histogram(aes(x = consistIndex2$samples),

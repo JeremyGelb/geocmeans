@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3</span>
       </span>
     </div>
 
@@ -88,7 +88,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Creating a FCMres object</h1>
-                        <h4 data-toc-skip class="author">Jeremy Gelb</h4>
+                        <h4 data-toc-skip class="author">Jeremy
+Gelb</h4>
             
             <h4 data-toc-skip class="date">02/04/2021</h4>
       
@@ -102,12 +103,18 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>In this vignette, we want to show how to create a <code>FCMres</code> object from results obtained with other classification or clustering methods. This can be very useful to compare results with methods available in other packages. We give a practical example here with the <code>hclust</code> function.</p>
+<p>In this vignette, we want to show how to create a <code>FCMres</code>
+object from results obtained with other classification or clustering
+methods. This can be very useful to compare results with methods
+available in other packages. We give a practical example here with the
+<code>hclust</code> function.</p>
 </div>
 <div class="section level2">
 <h2 id="applying-hclust">Applying hclust<a class="anchor" aria-label="anchor" href="#applying-hclust"></a>
 </h2>
-<p>We start by clustering the observations in the <code>LyonIris</code> dataset with the <code>hclust</code> function and retaining 4 groups.</p>
+<p>We start by clustering the observations in the <code>LyonIris</code>
+dataset with the <code>hclust</code> function and retaining 4
+groups.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeremyGelb/geocmeans" class="external-link">geocmeans</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
@@ -115,15 +122,16 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/" class="external-link">spdep</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"LyonIris"</span><span class="op">)</span>
 
 <span class="co"># selecting the columns for the analysis</span>
-<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
+<span class="va">AnalysisFields</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
                    <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
 
 <span class="co"># rescaling the columns</span>
-<span class="va">Data</span> <span class="op">&lt;-</span> <span class="va">LyonIris</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span>
+<span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 <span class="op">}</span>
@@ -143,21 +151,26 @@
 <div class="section level2">
 <h2 id="creating-a-fcmres-object">Creating a FCMres object<a class="anchor" aria-label="anchor" href="#creating-a-fcmres-object"></a>
 </h2>
-<p>Now, if we want to use the functions provided by <strong>geocemans</strong>, we must create a <code>FCMres</code> object manually. This is basically a list with some required slots:</p>
+<p>Now, if we want to use the functions provided by
+<strong>geocemans</strong>, we must create a <code>FCMres</code> object
+manually. This is basically a list with some required slots:</p>
 <ul>
 <li>Centers: a matrix representing the centre of each group</li>
-<li>Belongings: a membership matrix of each observation to each group</li>
+<li>Belongings: a membership matrix of each observation to each
+group</li>
 <li>Data: the dataset used for the clustering</li>
 <li>m: the fuzzyness factor (1 if using a hard clustering method)</li>
 </ul>
-<p>In this case, we calculate the centres of the groups as the mean of each variable in each group.</p>
+<p>In this case, we calculate the centres of the groups as the mean of
+each variable in each group.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">centers</span> <span class="op">&lt;-</span> <span class="va">Data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">Hclust_groups</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_all</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>
 
 <span class="va">centers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">centers</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">centers</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<p>The membership matrix is a simple binary matrix. We can create it with the function <code>cat_to_belongings</code>.</p>
+<p>The membership matrix is a simple binary matrix. We can create it
+with the function <code>cat_to_belongings</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">member_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_to_belongings.html">cat_to_belongings</a></span><span class="op">(</span><span class="va">Data</span><span class="op">$</span><span class="va">Hclust_groups</span><span class="op">)</span></code></pre></div>
 <p>And we can now create our FCMres object.</p>
@@ -171,7 +184,8 @@
   <span class="st">"m"</span> <span class="op">=</span> <span class="fl">1</span>,
   <span class="st">"algo"</span> <span class="op">=</span> <span class="st">"hclust"</span>
 <span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>It is now possible to use almost all the functions in the <strong>geocmeans</strong> package to investigate the results.</p>
+<p>It is now possible to use almost all the functions in the
+<strong>geocmeans</strong> package to investigate the results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># quick summaries about the groups</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">hclustres</span><span class="op">)</span>
@@ -195,8 +209,11 @@
 <div class="section level2">
 <h2 id="creating-a-fcmres-object-when-working-with-rasters">Creating a FCMres object when working with rasters<a class="anchor" aria-label="anchor" href="#creating-a-fcmres-object-when-working-with-rasters"></a>
 </h2>
-<p>When working with raster data, a little more work must be done to create a <code>FCMres</code> object. We show here a complete example with the <code>Arcachon</code> dataset.</p>
-<p>We start here by applying the k-means algorithm to a set of rasters.</p>
+<p>When working with raster data, a little more work must be done to
+create a <code>FCMres</code> object. We show here a complete example
+with the <code>Arcachon</code> dataset.</p>
+<p>We start here by applying the k-means algorithm to a set of
+rasters.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Arcachon"</span><span class="op">)</span>
 
@@ -215,8 +232,10 @@
 <span class="va">kmean7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans</a></span><span class="op">(</span><span class="va">all_data</span>, <span class="fl">7</span><span class="op">)</span></code></pre></div>
 <p>We must now create three objects:</p>
 <ul>
-<li>Data: a list of rasterLayers with the values used in the clustering algorithm.</li>
-<li>rasters: a list of rasterLayers with the membership values of each pixel for each group.</li>
+<li>Data: a list of rasterLayers with the values used in the clustering
+algorithm.</li>
+<li>rasters: a list of rasterLayers with the membership values of each
+pixel for each group.</li>
 <li>Centers: a matrix with the centres of each group.</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -260,7 +279,8 @@
   <span class="st">"m"</span> <span class="op">=</span> <span class="fl">1</span>,
   <span class="st">"algo"</span> <span class="op">=</span> <span class="st">"kmeans"</span>
 <span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>And again, we can use the functions provided in <strong>geocmeans</strong> !</p>
+<p>And again, we can use the functions provided in
+<strong>geocmeans</strong> !</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># quick summaries about the groups</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">myFCMres</span><span class="op">)</span>
@@ -299,7 +319,8 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

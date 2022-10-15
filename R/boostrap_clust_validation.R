@@ -47,7 +47,7 @@
 #'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 #'
 #' #rescaling the columns
-#' Data <- LyonIris@data[AnalysisFields]
+#' Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' for (Col in names(Data)){
 #'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
 #' }
@@ -213,7 +213,7 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
 #'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 #'
 #' #rescaling the columns
-#' Data <- LyonIris@data[AnalysisFields]
+#' Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' for (Col in names(Data)){
 #'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
 #' }
@@ -424,7 +424,7 @@ boot_worker <- function(object, wdata, tol, maxiter, init){
 #'                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
 #'
 #' #rescaling the columns
-#' Data <- LyonIris@data[AnalysisFields]
+#' Data <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' for (Col in names(Data)){
 #'   Data[[Col]] <- as.numeric(scale(Data[[Col]]))
 #' }

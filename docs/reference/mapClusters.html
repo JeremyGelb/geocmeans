@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>geodata</dt>
-<dd><p>An object of class spatialpolygonesdataframe /
+<dd><p>An object of class features collection from sf /
 spatiallinesdataframe or spatialpointsdataframe ordered
 like the original data used for the clustering. Can be Null if object is
 a FCMres and has been created with rasters.</p></dd>
@@ -92,9 +92,9 @@ uncertain (default = NULL)</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list with :</p><ul><li><p>ProbaMaps : a list of ggplot maps showing for each group the
+    <p>A named list with :</p><ul><li><p>ProbaMaps : a list of tmap maps showing for each group the
         probability of the observations to belong to that group</p></li>
-<li><p>ClusterMap : a ggplot map showing the most likely group for
+<li><p>ClusterMap : a tmap map showing the most likely group for
          observation</p></li>
 </ul></div>
 
@@ -104,7 +104,7 @@ uncertain (default = NULL)</p></dd>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
 <span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,
 <span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
-<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">LyonIris</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span>
+<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
 <span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -124,7 +124,8 @@ uncertain (default = NULL)</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

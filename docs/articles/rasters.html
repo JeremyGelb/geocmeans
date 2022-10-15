@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3</span>
       </span>
     </div>
 
@@ -88,7 +88,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fuzzy clustering with rasters</h1>
-                        <h4 data-toc-skip class="author">Jeremy Gelb</h4>
+                        <h4 data-toc-skip class="author">Jeremy
+Gelb</h4>
             
             <h4 data-toc-skip class="date">02/04/2021</h4>
       
@@ -102,7 +103,14 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>In this vignette, we want to show how to use <code>geocmeans</code> to do fuzzy clustering on a raster dataset. The idea is simple, each pixel of a raster is an observation, and each band of the raster is a variable. Based on this, the same methodology can be applied, but rasters can not be handled like classical tabular and vector dataset. The example given use a medium size raster so some part of the vignette can be quite long to run (in particular when <code>select_parameters</code> is used).</p>
+<p>In this vignette, we want to show how to use <code>geocmeans</code>
+to do fuzzy clustering on a raster dataset. The idea is simple, each
+pixel of a raster is an observation, and each band of the raster is a
+variable. Based on this, the same methodology can be applied, but
+rasters can not be handled like classical tabular and vector dataset.
+The example given use a medium size raster so some part of the vignette
+can be quite long to run (in particular when
+<code>select_parameters</code> is used).</p>
 <p>We give a practical example here with a raster of 5 bands:</p>
 <ul>
 <li>band 1: blue (wavelength: 0.45-0.51)</li>
@@ -112,7 +120,9 @@
 <li>band 5: shortwave infrared (1.57-1.65)</li>
 <li>band 6: shortwave infrared (2.11-2.29)</li>
 </ul>
-<p>The image has a resolution of 30x30 metres and was acquired by Landsat 8 on June 14, 2021. It is provided with <code>geocmeans</code> as a Large RasterBrick <code>Arcachon</code>.</p>
+<p>The image has a resolution of 30x30 metres and was acquired by
+Landsat 8 on June 14, 2021. It is provided with <code>geocmeans</code>
+as a Large RasterBrick <code>Arcachon</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="loading-the-dataset">Loading the dataset<a class="anchor" aria-label="anchor" href="#loading-the-dataset"></a>
@@ -132,13 +142,16 @@
 <span class="co"># show the pseudo-color image</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">Arcachon</span>, r <span class="op">=</span> <span class="fl">3</span>, g <span class="op">=</span> <span class="fl">2</span>, b <span class="op">=</span> <span class="fl">1</span>, stretch <span class="op">=</span> <span class="st">"hist"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-2-1.png" width="384"></p>
-<p>We can distinguish urban areas, crops, deep water, coast and sand areas. We can expect approximately five clusters.</p>
+<p>We can distinguish urban areas, crops, deep water, coast and sand
+areas. We can expect approximately five clusters.</p>
 </div>
 <div class="section level2">
 <h2 id="fuzzy-c-means">Fuzzy C-means<a class="anchor" aria-label="anchor" href="#fuzzy-c-means"></a>
 </h2>
-<p>As a first exploration and to determine the appropriate number of clusters, we propose the applcication of a classical FCM.</p>
-<p>The dataset must be structured as a list of bands. The names given to the list elements will be used as variable names.</p>
+<p>As a first exploration and to determine the appropriate number of
+clusters, we propose the applcication of a classical FCM.</p>
+<p>The dataset must be structured as a list of bands. The names given to
+the list elements will be used as variable names.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># sonverting the RasterBrick to a simple list of RasterLayer</span>
 <span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
@@ -172,7 +185,9 @@
   <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-5-2.png" width="480" style="display: block; margin: auto;"></p>
-<p>Considering the values above, we select k = 7 and m = 1.5, it seems to provide a good compromise between the silhouette index and the explained inertia.</p>
+<p>Considering the values above, we select k = 7 and m = 1.5, it seems
+to provide a good compromise between the silhouette index and the
+explained inertia.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">FCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
                      verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, init <span class="op">=</span> <span class="st">"kpp"</span><span class="op">)</span>
@@ -200,7 +215,9 @@
 <li>vegetation</li>
 <li>high density urban areas</li>
 </ol>
-<p>We could try to obtain a more crispy partition by using the generalized version of FCM. This implies selecting a parameter called beta.</p>
+<p>We could try to obtain a more crispy partition by using the
+generalized version of FCM. This implies selecting a parameter called
+beta.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">GFCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"GFCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>,
                              k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1.1</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>, beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0.9</span>,<span class="fl">0.1</span><span class="op">)</span>,
@@ -223,7 +240,9 @@
   <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-8-2.png" width="480" style="display: block; margin: auto;"></p>
-<p>It seems that <code>beta = 0.5</code> gives the best results with <code>m = 1.5</code>, we gain 2 more percentage points of inertia while keeping the same Silhouette index.</p>
+<p>It seems that <code>beta = 0.5</code> gives the best results with
+<code>m = 1.5</code>, we gain 2 more percentage points of inertia while
+keeping the same Silhouette index.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">GFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GCMeans.html">GCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
                        verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span>
@@ -244,13 +263,20 @@
 <code class="sourceCode R"><span class="co"># plotting the most likely categories</span>
 <span class="va">maps2</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-9-3.png" width="384" style="display: block; margin: auto;"></p>
-<p>We can see that with the same threshold, we obtain far less undecided pixels and only few variations among groups in comparison with the previous results.</p>
+<p>We can see that with the same threshold, we obtain far less undecided
+pixels and only few variations among groups in comparison with the
+previous results.</p>
 </div>
 <div class="section level2">
 <h2 id="spatial-generalized-fuzzy-c-means">Spatial Generalized Fuzzy C-means<a class="anchor" aria-label="anchor" href="#spatial-generalized-fuzzy-c-means"></a>
 </h2>
-<p>The image we obtain comprise a lot of noise due to its rather small resolution. To obtain a more spatially homogeneous clustering, we will use here the SGFCM method.</p>
-<p>We must determine the right value of alpha and the size of the window. When working with rasters, a square window is used to define the neighbours around a pixel because using a classical neighbour matrix would not be efficient.</p>
+<p>The image we obtain comprise a lot of noise due to its rather small
+resolution. To obtain a more spatially homogeneous clustering, we will
+use here the SGFCM method.</p>
+<p>We must determine the right value of alpha and the size of the
+window. When working with rasters, a square window is used to define the
+neighbours around a pixel because using a classical neighbour matrix
+would not be efficient.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 <span class="va">w2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
@@ -288,7 +314,11 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">spConsistency</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></code></pre></div>
-<p><img src="rasters_files/figure-html/unnamed-chunk-12-3.png" width="480" style="display: block; margin: auto;"> Its seems that alpha = 0.9 and a small window of 3x3 gives good results, but we have an important loss in explained inertia. Note that when larger windows need to be used, it is possible to define distance based circular windows with the function <code>circular_window</code>.</p>
+<p><img src="rasters_files/figure-html/unnamed-chunk-12-3.png" width="480" style="display: block; margin: auto;">
+Its seems that alpha = 0.9 and a small window of 3x3 gives good results,
+but we have an important loss in explained inertia. Note that when
+larger windows need to be used, it is possible to define distance based
+circular windows with the function <code>circular_window</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">SGFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SGFCMeans.html">SGFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
                        lag_method <span class="op">=</span> <span class="st">"mean"</span>,
@@ -311,7 +341,15 @@
 <code class="sourceCode R"><span class="co"># plotting the most likely categories</span>
 <span class="va">maps3</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-13-3.png" width="384" style="display: block; margin: auto;"></p>
-<p>To map the results of the SGFCM, it is necessary to lower the threshold of the parameter <code>undecided</code>. In comparison with the previous maps, we obtain a much smoother result which can be easier to use for mapping purposes or for delimiting areas. As suggested by the drop in the explained inertia, we lost a lot of details. This is not surprising if we consider that the pixels have a size of 30 metres, and the neighbours can be very different from the center of the window. Moreover, group 4 no longer describes wet sand, but interstitial areas between low and high density urban areas.</p>
+<p>To map the results of the SGFCM, it is necessary to lower the
+threshold of the parameter <code>undecided</code>. In comparison with
+the previous maps, we obtain a much smoother result which can be easier
+to use for mapping purposes or for delimiting areas. As suggested by the
+drop in the explained inertia, we lost a lot of details. This is not
+surprising if we consider that the pixels have a size of 30 metres, and
+the neighbours can be very different from the center of the window.
+Moreover, group 4 no longer describes wet sand, but interstitial areas
+between low and high density urban areas.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">GFCM_result</span>, <span class="va">SGFCM_result</span><span class="op">)</span>
 
@@ -353,15 +391,23 @@
 </tr>
 </tbody>
 </table>
-<p>SGFCM proposes a solution with a spatial inconsistency index divided by three. However, in that context, the spatial algorithm might not be the best choice considering the hard drop of both explained inertia and Silhouette index. Here FCM and FGCM produces very similar results.</p>
+<p>SGFCM proposes a solution with a spatial inconsistency index divided
+by three. However, in that context, the spatial algorithm might not be
+the best choice considering the hard drop of both explained inertia and
+Silhouette index. Here FCM and FGCM produces very similar results.</p>
 </div>
 <div class="section level2">
 <h2 id="spatial-diagnostic">Spatial diagnostic<a class="anchor" aria-label="anchor" href="#spatial-diagnostic"></a>
 </h2>
-<p><strong>geocmeans</strong> provides multiple tools to assess the spatial consistency of a classification. For a raster dataset, the function <code>spatialDiag</code> will calculate the Moran I values for each column in the membership matrix, the spatial inconsistency index and the local ELSA statistic.</p>
+<p><strong>geocmeans</strong> provides multiple tools to assess the
+spatial consistency of a classification. For a raster dataset, the
+function <code>spatialDiag</code> will calculate the Moran I values for
+each column in the membership matrix, the spatial inconsistency index
+and the local ELSA statistic.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">diagGFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">GFCM_result</span>, window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, nrep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
-<p>The global Moran I indicates the level of spatial autocorrelation for each category.</p>
+<p>The global Moran I indicates the level of spatial autocorrelation for
+each category.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">MoranValues</span>, digits <span class="op">=</span> <span class="fl">3</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -400,7 +446,14 @@
 </tr>
 </tbody>
 </table>
-<p>Here groups 3 and 7 have the lowest levels of spatial autocorrelation, meaning that these groups tend to be less surrounded by pixels from the same groups and are more fragmented. Both groups are urban areas (high and low density) and are spatially close; this is why they have lower Moran I values. We could explore the local Moran I values for both with the function <code>calc_local_moran_raster</code>. This function provides the same results as <code><a href="https://rdrr.io/pkg/raster/man/autocor.html" class="external-link">raster::MoranLocal</a></code> but is significantly faster.</p>
+<p>Here groups 3 and 7 have the lowest levels of spatial
+autocorrelation, meaning that these groups tend to be less surrounded by
+pixels from the same groups and are more fragmented. Both groups are
+urban areas (high and low density) and are spatially close; this is why
+they have lower Moran I values. We could explore the local Moran I
+values for both with the function <code>calc_local_moran_raster</code>.
+This function provides the same results as
+<code><a href="https://rdrr.io/pkg/raster/man/autocor.html" class="external-link">raster::MoranLocal</a></code> but is significantly faster.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># calculating the local Moran I values</span>
 <span class="va">loc_moran3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_local_moran_raster.html">calc_local_moran_raster</a></span><span class="op">(</span><span class="va">GFCM_result</span><span class="op">$</span><span class="va">rasters</span><span class="op">$</span><span class="va">group3</span>,<span class="va">w1</span><span class="op">)</span>
@@ -418,12 +471,25 @@
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html" class="external-link">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="va">pal</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">9</span>, title <span class="op">=</span> <span class="st">"Local Moran I"</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-17-2.png" width="576" style="display: block; margin: auto;"></p>
-<p>These maps can be used to investigate the limits of the two categories and determine if the classification is meaningful. Group 7 is by far the most spatially dispersed, which is consistent with its nature: low-density urban areas.</p>
-<p>The local Moran I values are useful but are limited to one dimension of the fuzzy classification. An interesting alternative is the <em>ELSA</em> statistic <span class="citation">(<a href="#ref-naimi2019elsa" role="doc-biblioref">Naimi et al. 2019</a>)</span>. It measures local differences in final group attributions with an entropy based index and combines it with the Euclidean distance between the groups. In other words, it is a measure of spatial autocorrelation for a categorical variable which takes into account the level of dissimilarity between categories. It can be calculated with the following formula:</p>
+<p>These maps can be used to investigate the limits of the two
+categories and determine if the classification is meaningful. Group 7 is
+by far the most spatially dispersed, which is consistent with its
+nature: low-density urban areas.</p>
+<p>The local Moran I values are useful but are limited to one dimension
+of the fuzzy classification. An interesting alternative is the
+<em>ELSA</em> statistic <span class="citation">(<a href="#ref-naimi2019elsa" role="doc-biblioref">Naimi et al.
+2019</a>)</span>. It measures local differences in final group
+attributions with an entropy based index and combines it with the
+Euclidean distance between the groups. In other words, it is a measure
+of spatial autocorrelation for a categorical variable which takes into
+account the level of dissimilarity between categories. It can be
+calculated with the following formula:</p>
 <p><span class="math display">\[\begin{array}{l}
 E_{i}=E_{a i} \times E_{c i} \\
-E_{a i}=\frac{\sum_{j} w_{i j} d_{i j}}{\max \{d\} \sum_{j} w_{i j}}, j \neq i \\
-E_{c i}=-\frac{\sum_{k=1}^{m_{w}} p_{k} \log _{2}\left(p_{k}\right)}{\log _{2} m_{i}}, j \neq i \\
+E_{a i}=\frac{\sum_{j} w_{i j} d_{i j}}{\max \{d\} \sum_{j} w_{i j}}, j
+\neq i \\
+E_{c i}=-\frac{\sum_{k=1}^{m_{w}} p_{k} \log
+_{2}\left(p_{k}\right)}{\log _{2} m_{i}}, j \neq i \\
 m_{i}=\left\{\begin{array}{l}
 m \text { if } \sum_{j} w_{i j}&gt;m \\
 \sum_{j} w_{i j}, \text { otherwise }
@@ -432,21 +498,32 @@ d_{i j}=\left|c_{i}-c_{j}\right|
 \end{array}\]</span></p>
 <ul>
 <li>
-<span class="math inline">\(d_{ij}\)</span> is the dissimilarity (e.g. Euclidean distance) between categories <em>i</em> and <em>j</em>. In a classification context, it can be calculated as the distance between the centres of the clusters (categories).</li>
+<span class="math inline">\(d_{ij}\)</span> is the dissimilarity
+(e.g. Euclidean distance) between categories <em>i</em> and <em>j</em>.
+In a classification context, it can be calculated as the distance
+between the centres of the clusters (categories).</li>
 <li>
-<span class="math inline">\(p_k\)</span> is the probability of seeing group <em>k</em> within the neighbouring binary window <span class="math inline">\(w_{ij}\)</span>.</li>
+<span class="math inline">\(p_k\)</span> is the probability of
+seeing group <em>k</em> within the neighbouring binary window <span class="math inline">\(w_{ij}\)</span>.</li>
 </ul>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">Elsa</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html" class="external-link">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Greys"</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">7</span>, title <span class="op">=</span> <span class="st">"Local ELSA"</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-18-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>This map clearly draws the contours of each cluster. The darker pixels are located at the frontier of clusters or in areas with high heterogeneity.</p>
-<p>The original version of ELSA uses a hard partition and thus does not exploit all the information we might get from a fuzzy classification. We propose here an adjusted version: the fuzzy ELSA. As an input, we do not use a categorical vector but a matrix of membership values.</p>
+<p>This map clearly draws the contours of each cluster. The darker
+pixels are located at the frontier of clusters or in areas with high
+heterogeneity.</p>
+<p>The original version of ELSA uses a hard partition and thus does not
+exploit all the information we might get from a fuzzy classification. We
+propose here an adjusted version: the fuzzy ELSA. As an input, we do not
+use a categorical vector but a matrix of membership values.</p>
 <p><span class="math display">\[\begin{array}{l}
 \xi_{ij} =  (|x_i-x_j|\otimes|x_i-x_j|)\\
-Ea_i = \frac{\sum_j(w_{ij}\frac{grandsum(\xi_{ij}\odot d)}{2})}{max \{d\}*\sum_{j} w_{i j}} \\
-E_{c i}=-\frac{\sum_{k=1}^{m_{w}} p_{k} \log _{2}\left(p_{k}\right)}{\log _{2} m_{i}}, j \neq i \\
+Ea_i = \frac{\sum_j(w_{ij}\frac{grandsum(\xi_{ij}\odot d)}{2})}{max
+\{d\}*\sum_{j} w_{i j}} \\
+E_{c i}=-\frac{\sum_{k=1}^{m_{w}} p_{k} \log
+_{2}\left(p_{k}\right)}{\log _{2} m_{i}}, j \neq i \\
 m_{i}=\left\{\begin{array}{l}
 m \text { if } \sum_{j} w_{i j}&gt;m \\
 \sum_{j} w_{i j}, \text { otherwise }
@@ -456,33 +533,52 @@ d_{i j}=\left|c_{i}-c_{j}\right|
 <p>with:</p>
 <ul>
 <li>
-<em>x</em> the membership matrix, and <span class="math inline">\(x_i\)</span> the membership values of observation <em>i</em> to all clusters,</li>
+<em>x</em> the membership matrix, and <span class="math inline">\(x_i\)</span> the membership values of observation
+<em>i</em> to all clusters,</li>
 <li>
-<span class="math inline">\(p_k\)</span> the sum of membership values to each cluster arround observation <em>i</em> including <em>i</em>,</li>
+<span class="math inline">\(p_k\)</span> the sum of membership
+values to each cluster arround observation <em>i</em> including
+<em>i</em>,</li>
 <li>
-<span class="math inline">\(\otimes\)</span> the outer product between two vectors,</li>
+<span class="math inline">\(\otimes\)</span> the outer product
+between two vectors,</li>
 <li>
-<span class="math inline">\(w\)</span> a binary spatial weight matrix indicating neighbours for each observation,</li>
+<span class="math inline">\(w\)</span> a binary spatial weight
+matrix indicating neighbours for each observation,</li>
 <li>
-<em>d</em> the dissimilarity matrix between clusters; its diagonal must be filled with zeros,</li>
+<em>d</em> the dissimilarity matrix between clusters; its diagonal
+must be filled with zeros,</li>
 <li>
-<span class="math inline">\(\odot\)</span> the element wise product between two matrices,</li>
+<span class="math inline">\(\odot\)</span> the element wise product
+between two matrices,</li>
 </ul>
-<p>The fuzzy ELSA can be seen as a generalization of the categorical ELSA and provides the same results if a binary matrix is given. This indicator has not been presented in a paper yet (we are working on it), so it is currently not calculated by <code>spatialDiag</code>. It can be obtained with the function <code>calcFuzzyELSA</code>.</p>
+<p>The fuzzy ELSA can be seen as a generalization of the categorical
+ELSA and provides the same results if a binary matrix is given. This
+indicator has not been presented in a paper yet (we are working on it),
+so it is currently not calculated by <code>spatialDiag</code>. It can be
+obtained with the function <code>calcFuzzyELSA</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fuzzy_elsa_rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcFuzzyELSA.html">calcFuzzyELSA</a></span><span class="op">(</span><span class="va">GFCM_result</span>,window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>,nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">fuzzy_elsa_rast</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html" class="external-link">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Greys"</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">7</span>, title <span class="op">=</span> <span class="st">"Local fuzzy ELSA"</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
-<p><img src="rasters_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;"> In this case, we can see that the fuzzy ELSA draws more important limits along the coasts, and that the differences between deep and shallow water are weaker. We also have strong artefacts at the South-East (black dots), which are in reality long buildings in a industrial and commercial area.</p>
+<p><img src="rasters_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;">
+In this case, we can see that the fuzzy ELSA draws more important limits
+along the coasts, and that the differences between deep and shallow
+water are weaker. We also have strong artefacts at the South-East (black
+dots), which are in reality long buildings in a industrial and
+commercial area.</p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-naimi2019elsa" class="csl-entry">
-Naimi, Babak, Nicholas AS Hamm, Thomas A Groen, Andrew K Skidmore, Albertus G Toxopeus, and Sara Alibakhshi. 2019. <span>“ELSA: Entropy-Based Local Indicator of Spatial Association.”</span> <em>Spatial Statistics</em> 29: 66–88. <a href="https://doi.org/10.1016/j.spasta.2018.10.001" class="external-link">https://doi.org/10.1016/j.spasta.2018.10.001</a>.
+Naimi, Babak, Nicholas AS Hamm, Thomas A Groen, Andrew K Skidmore,
+Albertus G Toxopeus, and Sara Alibakhshi. 2019. <span>“ELSA:
+Entropy-Based Local Indicator of Spatial Association.”</span>
+<em>Spatial Statistics</em> 29: 66–88. <a href="https://doi.org/10.1016/j.spasta.2018.10.001" class="external-link">https://doi.org/10.1016/j.spasta.2018.10.001</a>.
 </div>
 </div>
 </div>
@@ -505,7 +601,8 @@ Naimi, Babak, Nicholas AS Hamm, Thomas A Groen, Andrew K Skidmore, Albertus G To
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

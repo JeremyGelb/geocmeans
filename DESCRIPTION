@@ -1,13 +1,14 @@
 Package: geocmeans
 Type: Package
 Title: Implementing Methods for Spatial Fuzzy Unsupervised Classification
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
 Maintainer: Jeremy Gelb <jeremy.gelb@ucs.inrs.ca>
 Imports: 
     ggplot2 (>= 3.2.1),
+    tmap (>= 3.3-1),
     spdep (>= 1.1.2),
     reldist (>= 1.6.6),
     dplyr (>= 0.8.3),
@@ -16,11 +17,10 @@ Imports:
     future.apply (>= 1.4.0),
     progressr (>= 0.4.0),
     reshape2 (>= 1.4.4),
-    sp (>= 1.4-4),
     stats (>= 3.5),
-    rgeos (>= 0.5-5),
     grDevices (>= 3.5),
     shiny (>= 1.6.0),
+    sf (>= 1.0-6),
     leaflet (>= 2.0.4.1),
     plotly (>= 4.9.3),
     Rdpack (>= 2.1.1),
@@ -34,7 +34,6 @@ Suggests:
     knitr (>= 1.28),
     rmarkdown (>= 2.1),
     markdown (>= 1.1),
-    maptools (>= 0.9-5),
     future (>= 1.16.0),
     ppclust (>= 1.1.0),
     ClustGeo (>= 2.0),
@@ -46,11 +45,9 @@ Suggests:
     kableExtra (>= 1.1.0),
     viridis (>= 0.5.1),
     testthat (>= 3.0.0),
-    sf (>= 0.9-8),
     bslib (>= 0.2.5),
     shinyWidgets (>= 0.6),
     shinyhelper (>= 0.3.2),
-    tmap (>= 3.3-1),
     waiter (>= 0.2.2),
     covr
 License: GPL-2

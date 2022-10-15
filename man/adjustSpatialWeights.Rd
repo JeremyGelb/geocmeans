@@ -29,7 +29,7 @@ distances between neighbours
 data(LyonIris)
 AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14","Pct_65","Pct_Img",
 "TxChom1564","Pct_brevet","NivVieMed")
-dataset <- LyonIris@data[AnalysisFields]
+dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 Wqueen2 <- adjustSpatialWeights(dataset,queen,style="C")

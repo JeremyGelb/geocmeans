@@ -7,8 +7,7 @@
 #' @description Build some maps to visualize the results of the clustering
 #'
 #' @param geodata An object of class features collection from sf /
-#' spatiallinesdataframe or spatialpointsdataframe ordered
-#' like the original data used for the clustering. Can be Null if object is
+#' ordered like the original data used for the clustering. Can be Null if object is
 #' a FCMres and has been created with rasters.
 #' @param object  A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.
@@ -492,7 +491,7 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
             stop("When mapping points, the parameter radius can not be NULL")
         }
     }else{
-        stop("geodata must be one of SpatialPolygonsDataFrame, SpatialLinesDataFrame or SpatialPointsDataFrame")
+        stop("geodata must be a feature collection (POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON or MULTIPOLYGON)")
     }
     maxA <- max(geodata$area)
     rt <- as.numeric(njit / maxA)

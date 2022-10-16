@@ -17,8 +17,7 @@ sp_clust_explorer(
 \item{object}{A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans}
 
-\item{spatial}{A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
-SpatialLinesDataFrame) used to map the observations. Only needed if object was not created
+\item{spatial}{A feature collection (sf) used to map the observations. Only needed if object was not created
 from rasters.}
 
 \item{membership}{A matrix or a dataframe representing the membership values

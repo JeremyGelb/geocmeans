@@ -8,8 +8,7 @@ mapClusters(geodata = NULL, object, undecided = NULL)
 }
 \arguments{
 \item{geodata}{An object of class features collection from sf /
-spatiallinesdataframe or spatialpointsdataframe ordered
-like the original data used for the clustering. Can be Null if object is
+ordered like the original data used for the clustering. Can be Null if object is
 a FCMres and has been created with rasters.}
 
 \item{object}{A FCMres object, typically obtained from functions CMeans,

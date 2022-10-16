@@ -608,7 +608,7 @@ spatialDiag <- function(object, nblistw = NULL, window = NULL, undecided = NULL,
       }
     }else{
       if(is.null(object$nblistw) & is.null(nblistw)){
-        stop("The FCMres object was created with a SpatialDataFrame or a dataframe, but does not contain a nblistw slot and the nblistw parameter is NULL. Please specify a nblistw")
+        stop("The FCMres object was created with a feature collection or a dataframe, but does not contain a nblistw slot and the nblistw parameter is NULL. Please specify a nblistw")
       }
     }
     if(is.null(matdist)){

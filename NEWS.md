@@ -1,3 +1,7 @@
+# geocmeans 0.3.1
+
+Replacing all the functions from maptools, sp and rgeos to work now with feature collections from sf.
+
 # geocmeans 0.2.2
 
 removed the old function future::multiprocess, for future::multisession as suggested in issue #3

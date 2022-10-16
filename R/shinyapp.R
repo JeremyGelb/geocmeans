@@ -26,8 +26,7 @@ geocmeans_env <- new.env()
 #'
 #' @param object A FCMres object, typically obtained from functions CMeans,
 #'   GCMeans, SFCMeans, SGFCMeans
-#' @param spatial A spatial object (SpatialPointsDataFrame, SpatialPolygonsDataFrame or
-#' SpatialLinesDataFrame) used to map the observations. Only needed if object was not created
+#' @param spatial A feature collection (sf) used to map the observations. Only needed if object was not created
 #' from rasters.
 #' @param membership A matrix or a dataframe representing the membership values
 #' obtained for each observation. If NULL, then the matrix is extracted from
@@ -271,7 +270,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     #nothing to do here if we have to plot rasters
     i <- 1
   }else{
-    stop("spatial must be one of SpatialPolygonsDataFrame, SpatialPointsDataFrame, SpatialLinesDataFrame")
+    stop("spatial must be a feature collections (POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON or MULTIPOLYGON)")
   }
 
   # adding the layers of we are in vector mode

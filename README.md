@@ -18,6 +18,13 @@ coverage](https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.s
 The website of the package is available
 [here](https://jeremygelb.github.io/geocmeans/)
 
+## Breaking news
+
+Here we are! We are moving from `maptools`, `sp` and `rgeos` to `sf` and
+`tmap`. All the functions and the documentation were modified
+accordingly. If you spot an error or a bug, please open an issue on
+github.
+
 ## Installation
 
 The stable version of `geocmeans` is available on CRAN. You can install

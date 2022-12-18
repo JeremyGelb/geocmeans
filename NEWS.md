@@ -1,3 +1,8 @@
+# geocmeans 0.3.2
+
+Removing dependencies from rgdal and raster to move to terra.
+The dataset Aracachon is now provided as a raw tiff file and must be read directly.
+
 # geocmeans 0.3.1
 
 Replacing all the functions from maptools, sp and rgeos to work now with feature collections from sf.

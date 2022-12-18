@@ -50,11 +50,11 @@ calcWdataRaster <- function(w, dataset, fun, missing_pxl){
   if(useNL == FALSE){
     Wdatamatrix <- do.call(cbind,lapply(dataset, function(band){
       wraster <- focal(band, w, fun, na.rm = TRUE, pad = TRUE)
-      return(raster::values(wraster))
+      return(terra::values(wraster, mat = FALSE))
     }))
   }else{
     # step1: creating an array with all the matrices
-    mats <- lapply(dataset, raster::as.matrix)
+    mats <- lapply(dataset, terra::as.matrix)
     arr <- array(do.call(c,mats),c(nrow(mats[[1]]), ncol(mats[[1]]), length(mats)))
     # step2 : getting the lagged version of the array
     arr_lag <- focal_adj_mean_arr_window(arr, w)
@@ -83,7 +83,7 @@ calcWdataRaster <- function(w, dataset, fun, missing_pxl){
 #' # this is an internal function, no example provided
 check_raters_dims <- function(rasters){
   dims <- lapply(rasters, function(i){
-    return(c(raster::nrow(i), raster::ncol(i)))
+    return(c(terra::nrow(i), terra::ncol(i)))
   })
   dims <- do.call(rbind, dims)
   ref <- dims[1,]
@@ -104,7 +104,7 @@ check_raters_dims <- function(rasters){
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduced (default = True)
 #' @return A list with the required elements to perform clustering
-#' @importFrom raster focal ncell
+#' @importFrom terra focal ncell
 #' @keywords internal
 #' @examples
 #' # this is an internal function, no example provided
@@ -147,13 +147,13 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
 
   if(standardize){
     for(i in 1:length(dataset)){
-      dataset[[i]] <- raster::scale(dataset[[i]])
+      dataset[[i]] <- terra::scale(dataset[[i]])
     }
   }
 
   #step1 : prepare the regular dataset
   datamatrix <- do.call(cbind,lapply(dataset, function(band){
-    raster::values(band)
+    terra::values(band, mat = FALSE)
   }))
 
   #step2 : only keep the non-missing valuez
@@ -170,11 +170,11 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
     # if(useNL == FALSE){
     #   Wdatamatrix <- do.call(cbind,lapply(dataset, function(band){
     #     wraster <- focal(band, w, fun, na.rm = TRUE, pad = TRUE)
-    #     return(raster::values(wraster))
+    #     return(terra::values(wraster, mat = FALSE))
     #   }))
     # }else{
     #   # step1: creating an array with all the matrices
-    #   mats <- lapply(dataset, raster::as.matrix)
+    #   mats <- lapply(dataset, terra::as.matrix)
     #   arr <- array(do.call(c,mats),c(nrow(mats[[1]]), ncol(mats[[1]]), length(mats)))
     #   # step2 : getting the lagged version of the array
     #   arr_lag <- focal_adj_mean_arr_window(arr, w)
@@ -228,7 +228,7 @@ output_raster_data <- function(object, missing, rst){
     rst2 <- rst
     vec <- rep(NA,times = ncell(rst))
     vec[missing] <- object$Belongings[,i]
-    raster::values(rst2) <- vec
+    terra::values(rst2) <- vec
     return(rst2)
   })
 
@@ -239,7 +239,7 @@ output_raster_data <- function(object, missing, rst){
   vec <- rep(NA,times = ncell(rst))
   DF <- as.data.frame(object$Belongings)
   vec[missing] <- max.col(DF, ties.method = "first")
-  raster::values(rst2) <- vec
+  terra::values(rst2) <- vec
   rasters[["Groups"]] <- rst2
 
   object$isRaster <- TRUE

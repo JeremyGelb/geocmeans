@@ -97,13 +97,16 @@ test_that("Testing the behavior of the FCMres class object : simple case with ve
 
 test_that("Testing the behavior of the FCMres class object : simple case with raster data",{
 
-  data("Arcachon")
+  library(terra)
+  Arcachon <- terra::rast(system.file("extdata/Littoral4_2154.tif", package = "geocmeans"))
+  names(Arcachon) <- c("blue", "green", "red", "infrared", "SWIR1", "SWIR2")
+
   library(dplyr)
   # loading each raster as a column in a matrix
   # and scale each column
   all_data <- do.call(cbind, lapply(names(Arcachon), function(n){
     rast <- Arcachon[[n]]
-    return(raster::values(raster::scale(rast)))
+    return(terra::values(terra::scale(rast),mat = FALSE))
   }))
 
   # removing the rows with missing values
@@ -116,7 +119,7 @@ test_that("Testing the behavior of the FCMres class object : simple case with ra
   # creating Data (do not forget the standardization)
   Data <- lapply(names(Arcachon), function(n){
     rast <- Arcachon[[n]]
-    return(raster::scale(rast))
+    return(terra::scale(rast))
   })
   names(Data) <- names(Arcachon)
 
@@ -125,12 +128,12 @@ test_that("Testing the behavior of the FCMres class object : simple case with ra
 
   rasters <- lapply(1:7, function(i){
     # creating a vector with only 0 values
-    vals <- rep(0, ncell(ref_raster))
+    vals <- rep(0, terra::ncell(ref_raster))
     # filling it with values when the pixels are not NA
     vals[missing] <- ifelse(kmean7$cluster == i,1,0)
     # setting the values in a rasterLayer
     rast <- ref_raster
-    raster::values(rast) <- vals
+    terra::values(rast) <- vals
     return(rast)
   })
 

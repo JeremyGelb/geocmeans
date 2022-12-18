@@ -1,6 +1,6 @@
-#' social and environmental indicators for the Iris of the metropolitan region of Lyon (France)
+#' @title social and environmental indicators for the Iris of the metropolitan region of Lyon (France)
 #'
-#' A dataset containing social and environmental data for the
+#' @description A dataset containing social and environmental data for the
 #' Iris of Lyon (France)
 #'
 #' @format A SpatialPolygonsDataFrame with 506 rows and 32 variables:
@@ -27,12 +27,12 @@
 "LyonIris"
 
 
-#' RasterLayer of the bay of Arcachon
+#' @title SpatRaster of the bay of Arcachon
 #'
-#' A Landsat 8 image of the bay of Arcachon (France), with a resolution of 30mx30m
+#' @description A Landsat 8 image of the bay of Arcachon (France), with a resolution of 30mx30m
 #' and 6 bands: blue, green, red, near infrared, shortwave infrared 1 and shortwave infrared 2.
 #' The dataset is saved as a Large RasterBrick with the package raster and has the
-#' following crs: EPSG:32630
+#' following crs: EPSG:32630. It is provided as a tiff file.
 #'
 #' @format A Large RasterBrick with 6 bands
 #' \describe{
@@ -44,6 +44,6 @@
 #'   \item{shortwave infrared}{wavelength: 2.11-2.29}
 #' }
 #' @source \url{https://earthexplorer.usgs.gov/}
-"Arcachon"
+NULL
 
 

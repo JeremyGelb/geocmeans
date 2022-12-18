@@ -7,7 +7,7 @@
 calcFuzzyElsa_raster(rasters, window, matdist)
 }
 \arguments{
-\item{rasters}{A List of RasterLayer or a List of matrices, or an array}
+\item{rasters}{A List of SpatRaster or a List of matrices, or an array}
 
 \item{window}{A binary (0,1) matrix representing the neighbours spatial weights when working
 with rasters. The matrix must have odd dimensions.}

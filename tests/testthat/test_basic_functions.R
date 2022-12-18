@@ -70,12 +70,12 @@ test_that("Testing the calcLaggedData function",{
     c(1,2,3),
     c(1,2,3)
   )
-  rast1 <- raster::raster(mat)
-  rast2 <- raster::raster(mat)
+  rast1 <- terra::rast(mat)
+  rast2 <- terra::rast(mat)
 
   check_raters_dims(list(rast1, rast2))
 
-  rast3 <- raster::raster(matrix(0, ncol = 2, nrow = 3))
+  rast3 <- terra::rast(matrix(0, ncol = 2, nrow = 3))
   expect_error({
     check_raters_dims(list(rast1, rast2, rast3))
   })

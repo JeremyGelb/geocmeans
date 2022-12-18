@@ -187,15 +187,13 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     shiny_data$dataset <- dataset
 
     ## creating a referencing raster with the right projection
-    # ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sp::CRS("+init=epsg:3857"), method = "ngb")
-	ref_raster <- raster::projectRaster(object$rasters[[1]], crs = sf::st_crs(3857), method = "ngb")
+	ref_raster <- terra::project(object$rasters[[1]], y = "epsg:3857", method = "near")
     #assign('ref_raster', ref_raster, .GlobalEnv)
     shiny_data$ref_raster <- ref_raster
 
     old_names <- names(object$rasters)
     object$rasters <- lapply(object$rasters, function(rast){
-      #raster::projectRaster(rast, crs = sp::CRS("+init=epsg:3857"), method = "ngb")
-	  raster::projectRaster(rast, crs = sf::st_crs(3857), method = "ngb")
+	  terra::project(object$rasters[[1]],  y = "epsg:3857", method = "near")
     })
     names(object$rasters) <- old_names
 
@@ -323,7 +321,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     ok_names <- name[grepl("group",name, fixed = TRUE)]
     for (name in ok_names){
       rast <- object$rasters[[name]]
-      vals <- raster::values(rast)
+      vals <- terra::values(rast, mat = FALSE)
       pal <- leaflet::colorNumeric(c("#FFFFFF", colors[[i]]),
                                    vals, na.color = "transparent")
       mymap <- mymap %>%
@@ -337,7 +335,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
 
     # adding the last layer with the most likely groups
     rast <- object$rasters$Groups
-    vals <- raster::values(rast)
+    vals <- terra::values(rast, mat = FALSE)
     pal <- leaflet::colorNumeric(colors[1:ncol(object$Belongings)],
                                  vals, na.color = "transparent")
     mymap <- mymap %>%
@@ -418,15 +416,15 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   }else{
     # IF WE ARE IN RASTER MODE
     all_values <- lapply(object$rasters[ok_names], function(rast){
-      raster::values(rast)[object$missing]
+      terra::values(rast, mat = FALSE)[object$missing]
     })
     maxs <- do.call(pmax,all_values)
     rast <- object$rasters[[1]]
-    vals <- rep(0, times = raster::ncell(rast))
+    vals <- rep(0, times = terra::ncell(rast))
     vals[object$missing] <- maxs
     vals <- ifelse(vals < 0.45, 1,0)
     vals[!object$missing] <- NA
-    raster::values(rast) <- vals
+    terra::values(rast, mat = FALSE) <- vals
 
     pal <- leaflet::colorNumeric(c("#FFFFFF","#D30000"),
                                  vals, na.color = "transparent")

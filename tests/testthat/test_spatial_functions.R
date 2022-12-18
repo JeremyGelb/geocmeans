@@ -1,5 +1,5 @@
 context("spatial function tests")
-library(raster)
+library(terra)
 
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,21 +7,24 @@ library(raster)
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 test_that("The global moran I calculated is the same as the one in raster package",{
+  set.seed(1254)
   mat <- matrix(sample(1:10, size = 100, replace = TRUE), nrow = 10, ncol = 10)
-  rast <- raster(mat)
-  v1 <- Moran(rast)
-  v2 <- calc_moran_raster(raster(mat), window = matrix(1, nrow = 3, ncol = 3))
-  expect_equal(v1, v2)
+  w <- matrix(1, nrow = 3, ncol = 3)
+  w[2,2] <- 0
+  # raster::Moran(raster::raster(mat), w = w), expected value : 0.07608944
+  expected <- 0.07608944
+  val <- calc_moran_raster(terra::rast(mat), w = w)
+  expect_equal(val, expected)
 })
 
 
 test_that("The local moran I calculated is the same as the one in raster package",{
-  mat <- matrix(sample(1:10, size = 100, replace = TRUE), nrow = 10, ncol = 10)
-  rast <- raster(mat)
-  v1 <- raster::values(MoranLocal(rast))
-  v2 <- calc_local_moran_raster(raster(mat), window = matrix(1, nrow = 3, ncol = 3))
-  v2 <- raster::values(v2)
-  expect_equal(v1, v2)
+  set.seed(1254)
+  mat <- matrix(sample(1:10, size = 25, replace = TRUE), nrow = 5, ncol = 5)
+  #v1 <- raster::as.matrix(MoranLocal(raster::raster(mat)))
+  expected <- c(-1.158590254, -0.008237818,  0.087379712, -0.005295740, -0.220802942)
+  v2 <- terra::as.matrix(calc_local_moran_raster(terra::rast(mat), window = matrix(1, nrow = 3, ncol = 3)), wide = TRUE)
+  expect_equal(expected, v2[1,])
 })
 
 
@@ -157,7 +160,8 @@ test_that("The ELSA index calculated on raster should give the same values as in
   ## test B
   mat <- matrix(0, ncol = 3, nrow = 3)
   mat[2,2] <- 1
-  vals <- raster::values(elsa_raster(raster::raster(mat), window, dists))
+  #vals <- raster::values(elsa_raster(raster::raster(mat), window, dists))
+  vals <- terra::values(elsa_raster(terra::rast(mat),window, dists),mat = FALSE)
   testB <- round(vals[[5]],3) == 0.503
 
   ## test C
@@ -200,8 +204,9 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
   mat2 <- matrix(1, nrow = 3, ncol =3)
   mat1[2,2] <- 1
   mat2[2,2] <- 0
-  vals <- raster::values(calcFuzzyELSA(object = list(raster::raster(mat1),
-                              raster::raster(mat2)),
+  vals <- terra::values(calcFuzzyELSA(object = list(
+    terra::rast(mat1),
+    terra::rast(mat2)),
                 window = window, matdist = dists
   ))
   testB <- round(vals[[5]],3) == 0.503
@@ -213,17 +218,17 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
   mat2[1,3] <- 0
 
   my_object <- FCMres(list(
-    "Data" = list(raster::raster(mat1),raster::raster(mat1)),
-    "rasters" = list(raster::raster(mat1),raster::raster(mat2)),
+    "Data" = list(terra::rast(mat1),terra::rast(mat1)),
+    "rasters" = list(terra::rast(mat1),terra::rast(mat2)),
     "Centers" = rbind(c(0,1),
                       c(0,0)),
     "m" = 1,
     "algo" = "cmeans"
   ))
 
-  vals <- raster::values(calcFuzzyELSA(object = my_object,
+  vals <- terra::values(calcFuzzyELSA(object = my_object,
                         window = window, matdist = dists
-  ))
+  ), mat = FALSE)
 
   testC <- round(vals[[5]],3) == 0.063
 
@@ -244,12 +249,12 @@ test_that("The fuzzy ELSA index calculated on raster should give the same values
   )
 
 
-  vals <- raster::values(calcFuzzyElsa_raster(list(
-    raster::raster(mat1),
-    raster::raster(mat2),
-    raster::raster(mat3)),
+  vals <- terra::values(calcFuzzyElsa_raster(list(
+    terra::rast(mat1),
+    terra::rast(mat2),
+    terra::rast(mat3)),
     window = window, matdist = dists
-  ))
+  ), mat = FALSE)
 
   #arr <- array(c(mat1,mat2,mat3), c(3,3,3))
   #vals <- Elsa_fuzzy_matrix_window(arr, window, dists)
@@ -319,13 +324,13 @@ test_that("Testing the spatial consistency index for a raster dataset",{
     c(1,1),
     c(0,0)
   )
-  rast1 <- raster(rast1)
+  rast1 <- terra::rast(rast1)
 
   rast2 <- rbind(
     c(0,0),
     c(1,1)
   )
-  rast2 <- raster(rast2)
+  rast2 <- terra::rast(rast2)
 
   rasters <- list(rast1,rast2)
   W <- matrix(1, nrow = 3, ncol = 3)

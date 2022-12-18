@@ -8,7 +8,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
-[![](https://img.shields.io/badge/devel%20version-0.2.3-green.svg)](https://github.com/JeremyGelb/geocmeans)
+[![](https://img.shields.io/badge/devel%20version-0.3.2-green.svg)](https://github.com/JeremyGelb/geocmeans)
 [![](https://www.r-pkg.org/badges/version/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![Codecov test
@@ -20,10 +20,10 @@ The website of the package is available
 
 ## Breaking news
 
-Here we are! We are moving from `maptools`, `sp` and `rgeos` to `sf` and
-`tmap`. All the functions and the documentation were modified
-accordingly. If you spot an error or a bug, please open an issue on
-github.
+Here we are! We are moving from `maptools`, `sp`, `rgeos`, `raster` and
+`rgdal` to `sf`, `terra` and `tmap`. All the functions and the
+documentation were modified accordingly. If you spot an error or a bug,
+please open an issue on github.
 
 ## Installation
 

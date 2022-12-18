@@ -7,7 +7,7 @@
 calc_moran_raster(rast, window)
 }
 \arguments{
-\item{rast}{A RasterLayer or a matrix}
+\item{rast}{A SpatRaster or a matrix}
 
 \item{window}{The window defining the neighbour weights}
 }
@@ -18,7 +18,8 @@ A float: the global Moran I
 Calculate the global Moran I for a numeric raster
 }
 \examples{
-data("Arcachon")
+Arcachon <- terra::rast(system.file("extdata/Littoral4_2154.tif", package = "geocmeans"))
+names(Arcachon) <- c("blue", "green", "red", "infrared", "SWIR1", "SWIR2")
 rast <- Arcachon[[1]]
 w <- matrix(1, nrow = 3, ncol = 3)
 calc_moran_raster(rast, w)

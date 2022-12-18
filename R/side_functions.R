@@ -102,9 +102,10 @@ mapRasters  <- function(object, undecided){
     # realisation des cartes de probabilites
     ProbaPlots <- lapply(1:ncol(object$Belongings), function(i) {
         rast <- object$rasters[[i]]
-        spdf <- as(rast, "SpatialPixelsDataFrame")
-        df <- as.data.frame(spdf)
-        colnames(df) <- c("value", "x", "y")
+        #spdf <- as(rast, "SpatialPixelsDataFrame")
+        #df <- as.data.frame(spdf)
+        df <- terra::as.data.frame(rast, xy = TRUE)
+        colnames(df) <- c("x", "y", "value")
 
         Plot <- ggplot2::ggplot(df) +
             ggplot2::geom_raster(ggplot2::aes_string(x="x", y="y", fill="value"), alpha=0.8) +
@@ -126,15 +127,16 @@ mapRasters  <- function(object, undecided){
     #finding for each pixel the max probability
     uncertain_vec <- undecidedUnits(object$Belongings, tol = undecided, out = "numeric")
     rast <- object$rasters[[1]]
-    vec <- rep(NA, times = raster::ncell(rast))
+    vec <- rep(NA, times = terra::ncell(rast))
     vec[object$missing] <- uncertain_vec
-    raster::values(rast) <- vec
+    terra::values(rast) <- vec
 
-    spdf <- as(rast, "SpatialPixelsDataFrame")
-    df <- as.data.frame(spdf)
-    colnames(df) <- c("value", "x", "y")
-    df$values <- as.character(df$value)
-    df$values <- ifelse(df$values == "-1", "undecided", paste("group", df$values, sep = " "))
+    #spdf <- as(rast, "SpatialPixelsDataFrame")
+    #df <- as.data.frame(spdf)
+    df <- terra::as.data.frame(rast, xy = TRUE)
+    colnames(df) <- c("x", "y","value")
+    df$value <- as.character(df$value)
+    df$value <- ifelse(df$value == "-1", "undecided", paste("group", df$value, sep = " "))
 
     colors <- RColorBrewer::brewer.pal(ncol(object$Belongings),"Set3")
     if("undecided" %in% df$values){
@@ -142,7 +144,7 @@ mapRasters  <- function(object, undecided){
     }
 
     ClusterMap <- ggplot2::ggplot(df) +
-        ggplot2::geom_raster(ggplot2::aes_string(x = "x", y = "y", fill = "values")) +
+        ggplot2::geom_raster(ggplot2::aes_string(x = "x", y = "y", fill = "value")) +
         ggplot2::scale_fill_discrete(type = colors) +
         ggplot2::coord_fixed(ratio = 1)+
         ggplot2::theme(
@@ -581,6 +583,7 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
 #' indicates that random observations are used as centers. "kpp" use a distance based method
 #' resulting in more dispersed centers at the beginning. Both of them are heuristic.
 #' @param verbose A boolean indicating if a progressbar should be displayed
+#' @param wrapped A boolean indicating if the data passed is wrapped or not (see wrap function of terra)
 #' @return a DataFrame containing for each combinations of parameters several clustering
 #' quality indexes.
 #' @importFrom utils setTxtProgressBar txtProgressBar
@@ -589,7 +592,12 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
 #' #No example provided, this is an internal function
 eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NULL, standardize = TRUE,
                             spconsist = FALSE, classidx = TRUE, nrep = 30, indices = NULL,
-                            tol, maxiter, seed = NULL, init = "random", verbose = TRUE){
+                            tol, maxiter, seed = NULL, init = "random", verbose = TRUE,
+                            wrapped = FALSE){
+    if(wrapped){
+      data <- lapply(data, terra::unwrap)
+    }
+
     if(algo == "FCM"){
         exefun <- function(data,x, ...){
             return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize,
@@ -856,7 +864,6 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
 
     allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method, window = 1:length(window))
 
-
     if (verbose){
         print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     }
@@ -864,6 +871,17 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
                                        each = chunk_size, length.out = nrow(allcombinaisons)))
 
     chunks <- lapply(chunks,function(x){return(allcombinaisons[x,])})
+
+    if(inherits(data, "data.frame") == FALSE){
+      ## NOTE HERE : the rasters from terra must be read here befond send to clusters...
+      dataw <- lapply(data, terra::wrap)
+      wrapped <- TRUE
+    }else{
+      dataw <- data
+      wrapped <- FALSE
+    }
+
+
     # step2 : starting the function
     iseq <- 1:length(chunks)
     if(verbose){
@@ -872,9 +890,9 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
             values <- future.apply::future_lapply(iseq, function(i) {
                 sprintf(algo)
                 parameters <- chunks[[i]]
-                indices <- eval_parameters(algo, parameters, data, nblistw, window, standardize,
+                indices <- eval_parameters(algo, parameters, dataw, nblistw, window, standardize,
                                            spconsist, classidx, nrep, indices,
-                                           tol, maxiter, init = init, verbose = FALSE)
+                                           tol, maxiter, init = init, verbose = FALSE, wrapped = wrapped)
                 p(sprintf("i=%g", i))
                 return(indices)
             }, future.seed = seed)
@@ -882,9 +900,9 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
     }else{
         values <- future.apply::future_lapply(iseq, function(i) {
             parameters <- chunks[[i]]
-            indices <- eval_parameters(algo, parameters, data, nblistw, window, standardize,
+            indices <- eval_parameters(algo, parameters, dataw, nblistw, window, standardize,
                                        spconsist, classidx, nrep, indices,
-                                       tol, maxiter, init = init, verbose = FALSE)
+                                       tol, maxiter, init = init, verbose = FALSE, wrapped = wrapped)
             return(indices)
         },future.seed = seed)
     }

@@ -126,7 +126,7 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
     rastnames <- names(object$rasters)
     ok_names <- rastnames[grepl("group",rastnames, fixed = TRUE)]
     rasters <- object$rasters[ok_names]
-    matrices <- lapply(rasters, raster::as.matrix)
+    matrices <- lapply(rasters, terra::as.matrix, wide = TRUE)
     mat_dim <- dim(matrices[[1]])
 
     if(adj){
@@ -135,7 +135,7 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
         vec2 <- rep(NA,length(object$missing))
         vec2[object$missing] <- vec1
         rast <- object$rasters[[1]]
-        raster::values(rast) <- vec2
+        terra::values(rast) <- vec2
         mat <- as.matrix(rast)
         return(mat)
 
@@ -153,11 +153,11 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
             Note that the high number of cell in a raster reduces the need of
             a great number of replications.")
     # creating a vector of ids for each cell in raster
-    all_ids <- 1:raster::ncell(rasters[[1]])
+    all_ids <- 1:terra::ncell(rasters[[1]])
 
     # converting the matrices (columns of membership matrix) into 1d vectors
     mem_vecs <- lapply(rasters, function(rast){
-      mat <- raster::as.matrix(rast)
+      mat <- terra::as.matrix(rast, wide = TRUE)
       dim(mat) <- NULL
       return(mat)
     })
@@ -171,7 +171,7 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
       })
     }
     # extracting the dimension of the raster
-    #dim(raster::as.matrix(rasters[[1]]))
+    #dim(terra::as.matrix(rasters[[1]]))
 
     # starting the simulations
     simulated <- sapply(1:nrep, function(i){
@@ -453,10 +453,10 @@ elsa_raster <- function(rast, window, matdist){
     stop("for calculating ELSA on raster, window must be a binary matrix")
   }
 
-  isRaster <- inherits(rast, "RasterLayer")
+  isRaster <- inherits(rast, "SpatRaster")
 
   if(isRaster){
-    mat <- raster::as.matrix(rast)
+    mat <- terra::as.matrix(rast, wide = TRUE)
   }else{
     mat <- rast
   }
@@ -479,7 +479,7 @@ elsa_raster <- function(rast, window, matdist){
   mat2 <- fun(mat, window, matdist)
   mat2 <- ifelse(mat2 == -1, NA, mat2)
   if(isRaster){
-    raster::values(rast) <- mat2
+    terra::values(rast) <- mat2
     return(rast)
   }else{
     return(mat2)
@@ -609,12 +609,12 @@ calcFuzzyELSA <- function(object, nblistw = NULL, window = NULL, matdist = NULL)
       if(is.null(window)){
         window <- object$window
       }
-      mats <- lapply(object$rasters[1:object$k], raster::as.matrix)
+      mats <- lapply(object$rasters[1:object$k], terra::as.matrix, wide = TRUE)
       arr <- do.call(c,mats)
       arr <- array(arr, dim = c(nrow(mats[[1]]), ncol(mats[[1]]),object$k))
       values <- Elsa_fuzzy_matrix_window(arr, window, matdist)
       rast <- object$rasters[[1]]
-      raster::values(rast) <- values
+      terra::values(rast) <- values
       return(rast)
     }
 
@@ -624,12 +624,12 @@ calcFuzzyELSA <- function(object, nblistw = NULL, window = NULL, matdist = NULL)
     return(values)
   }else if (inherits(object,"list")){
     #case 4 : object is a list of rasters
-    mats <- lapply(object, raster::as.matrix)
+    mats <- lapply(object, terra::as.matrix, wide = TRUE)
     arr <- do.call(c,mats)
     arr <- array(arr, dim = c(nrow(mats[[1]]), ncol(mats[[1]]), length(object)))
     values <- Elsa_fuzzy_matrix_window(arr, window, matdist)
     rast <- object[[1]]
-    raster::values(rast) <- values
+    terra::values(rast) <- values
     return(rast)
   }else{
     stop("invalid arguments passed to calcFuzzyELSA")
@@ -684,7 +684,7 @@ elsa_fuzzy_vector <- function(memberships, nblistw, matdist){
 #'
 #' @description Calculate the Local Fuzzy ELSA statistic for a numeric raster
 #'
-#' @param rasters A List of RasterLayer or a List of matrices, or an array
+#' @param rasters A List of SpatRaster or a List of matrices, or an array
 #' @template window2-arg
 #' @template matdist-arg
 #' @return A raster or a matrix (depending on the input): the values of
@@ -698,8 +698,8 @@ calcFuzzyElsa_raster <- function(rasters,window,matdist){
     isRaster <- FALSE
     vals <- do.call(c,mats)
     arr <- array(vals, c(nrow(mats[[1]]),ncol(mats[[1]]),length(rasters)))
-  }else if (inherits(rasters[[1]], "RasterLayer")){
-    mats <- lapply(rasters, raster::as.matrix)
+  }else if (inherits(rasters[[1]], "SpatRaster")){
+    mats <- lapply(rasters, terra::as.matrix, wide = TRUE)
     isRaster <- TRUE
     vals <- do.call(c,mats)
     arr <- array(vals, c(nrow(mats[[1]]),ncol(mats[[1]]),length(rasters)))
@@ -707,12 +707,12 @@ calcFuzzyElsa_raster <- function(rasters,window,matdist){
     arr <- rasters
     isRaster <- FALSE
   }else{
-    stop("rasters must be a list of matrix or a list of RasterLayer or an array")
+    stop("rasters must be a list of matrix or a list of SpatRaster or an array")
   }
   elsa <- Elsa_fuzzy_matrix_window(arr, window, matdist)
   if(isRaster){
     rast <- rasters[[1]]
-    raster::values(rast) <- elsa
+    terra::values(rast) <- elsa
   }else{
     dims <- dim(arr)
     rast <- matrix(elsa, nrow = dims[[1]], ncol = dims[[2]])
@@ -729,21 +729,22 @@ calcFuzzyElsa_raster <- function(rasters,window,matdist){
 #'
 #' @description Calculate the global Moran I for a numeric raster
 #'
-#' @param rast A RasterLayer or a matrix
+#' @param rast A SpatRaster or a matrix
 #' @param window The window defining the neighbour weights
 #' @return A float: the global Moran I
 #' @examples
-#' data("Arcachon")
+#' Arcachon <- terra::rast(system.file("extdata/Littoral4_2154.tif", package = "geocmeans"))
+#' names(Arcachon) <- c("blue", "green", "red", "infrared", "SWIR1", "SWIR2")
 #' rast <- Arcachon[[1]]
 #' w <- matrix(1, nrow = 3, ncol = 3)
 #' calc_moran_raster(rast, w)
 calc_moran_raster <- function(rast, window){
-  if(inherits(rast,"RasterLayer")){
-    mat <- raster::as.matrix(rast)
+  if(inherits(rast,"SpatRaster")){
+    mat <- terra::as.matrix(rast, wide = TRUE)
   }else if (inherits(rast,"matrix")){
     mat <- rast
   }else{
-    stop("rast parameter must be on of matrix or RasterLayer")
+    stop("rast parameter must be on of matrix or SpatRaster")
   }
   if(inherits(window,"matrix")){
     fun <- moranI_matrix_window
@@ -764,21 +765,22 @@ calc_moran_raster <- function(rast, window){
 #'
 #' @description Calculate the Local Moran I for a numeric raster
 #'
-#' @param rast A RasterLayer or a matrix
+#' @param rast A SpatRaster or a matrix
 #' @param window The window defining the neighbour weights
-#' @return A RasterLayer or a matrix depending on the input with the local Moran I values
+#' @return A SpatRaster or a matrix depending on the input with the local Moran I values
 #' @examples
-#' data("Arcachon")
+#' Arcachon <- terra::rast(system.file("extdata/Littoral4_2154.tif", package = "geocmeans"))
+#' names(Arcachon) <- c("blue", "green", "red", "infrared", "SWIR1", "SWIR2")
 #' rast <- Arcachon[[1]]
 #' w <- matrix(1, nrow = 3, ncol = 3)
 #' calc_local_moran_raster(rast, w)
 calc_local_moran_raster <- function(rast, window){
-  if(inherits(rast,"RasterLayer")){
-    mat <- raster::as.matrix(rast)
+  if(inherits(rast,"SpatRaster")){
+    mat <- terra::as.matrix(rast, wide = TRUE)
   }else if (inherits(rast,"matrix")){
     mat <- rast
   }else{
-    stop("rast parameter must be on of matrix or RasterLayer")
+    stop("rast parameter must be on of matrix or SpatRaster")
   }
   if(inherits(window,"matrix")){
     window <- window
@@ -791,8 +793,8 @@ calc_local_moran_raster <- function(rast, window){
   }
   vals <- local_moranI_matrix_window(mat, window)
 
-  if(inherits(rast,"RasterLayer")){
-    raster::values(rast) <- vals
+  if(inherits(rast,"SpatRaster")){
+    terra::values(rast) <- vals
     return(rast)
   }else{
     return(matrix(vals, ncol = ncol(mat), nrow = nrow(mat)))

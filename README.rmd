@@ -34,7 +34,7 @@ The website of the package is available [here](https://jeremygelb.github.io/geoc
 
 ## Breaking news
 
-Here we are! We are moving from `maptools`, `sp` and `rgeos` to `sf` and `tmap`. All the functions and the documentation were modified accordingly. If you spot an error or a bug, please open an issue on github.
+Here we are! We are moving from `maptools`, `sp`, `rgeos`, `raster` and `rgdal` to `sf`, `terra` and `tmap`. All the functions and the documentation were modified accordingly. If you spot an error or a bug, please open an issue on github.
 
 ## Installation
 

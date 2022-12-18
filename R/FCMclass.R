@@ -78,7 +78,7 @@ FCMres <- function(obj){
 
     #step1 : prepare the regular dataset
     datamatrix <- do.call(cbind,lapply(obj$Data, function(band){
-      raster::values(band)
+      terra::values(band, mat = FALSE)
     }))
 
     #step2 : only keep the non-missing values
@@ -94,7 +94,7 @@ FCMres <- function(obj){
     }
     #step3 : set up the membership matrix
     belongmat <- do.call(cbind,lapply(obj$rasters, function(band){
-      raster::values(band)
+      terra::values(band, mat = FALSE)
     }))
     belongmat <- belongmat[missing_pxl,]
     obj$Belongings <- belongmat
@@ -104,10 +104,10 @@ FCMres <- function(obj){
     names(old_raster) <- paste("group",1:length(old_raster))
 
     rst2 <- old_raster[[1]]
-    vec <- rep(NA,times = raster::ncell(rst2))
+    vec <- rep(NA,times = terra::ncell(rst2))
     DF <- as.data.frame(obj$Belongings)
     vec[obj$missing] <- max.col(DF, ties.method = "first")
-    raster::values(rst2) <- vec
+    terra::values(rst2) <- vec
     old_raster[["Groups"]] <- rst2
     obj$rasters <- old_raster
 
@@ -425,7 +425,7 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
 
     old_data <- new_data
     new_data_tot <- do.call(cbind,lapply(new_data, function(rast){
-      return(raster::values(rast))
+      return(terra::values(rast, mat = FALSE))
     }))
     missing <- complete.cases(new_data_tot)
     new_data <- new_data_tot[missing,]
@@ -463,8 +463,8 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
       }
 
       wdata_total <- do.call(cbind,lapply(dataset, function(band){
-        wraster <- focal(band, window, fun, na.rm = TRUE, pad = TRUE)
-        return(raster::values(wraster))
+        wraster <- terra::focal(band, window, fun, na.rm = TRUE, pad = TRUE)
+        return(terra::values(wraster, mat = FALSE))
       }))
       wdata <- wdata_total[missing,]
     }
@@ -495,12 +495,12 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
   if(results$isRaster == FALSE){
     return(pred_values)
   }else{
-    nc <- raster::ncell(new_data[[1]])
+    nc <- terra::ncell(new_data[[1]])
     rasters_membership <- lapply(1:ncol(pred_values), function(i){
       rast <- old_data[[1]]
       vec <- rep(NA,times = nc)
       vec[missing] <- pred_values[,i]
-      raster::values(rast) <- vec
+      terra::values(rast, mat = FALSE) <- vec
       return(rast)
     })
     names(rasters_membership) <- paste("group",1:ncol(pred_values), sep = "")

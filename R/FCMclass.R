@@ -127,8 +127,9 @@ FCMres <- function(obj){
   }
 
   # A quick check of the membership matrix
-  test <- round(rowSums(obj$Belongings),8) != 1
-  if(any(test)){
+  test1 <- any(round(rowSums(obj$Belongings),8) != 1)
+  test2 <- is.null(obj$noise_cluster)
+  if(test1 & test2){
     warning("some rows in the membership matrix does not sum up to 1... This should be checked")
   }
 

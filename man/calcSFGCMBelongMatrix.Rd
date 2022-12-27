@@ -4,7 +4,7 @@
 \alias{calcSFGCMBelongMatrix}
 \title{Calculate the generalized membership matrix (spatial version)}
 \usage{
-calcSFGCMBelongMatrix(centers, data, wdata, m, alpha, beta)
+calcSFGCMBelongMatrix(centers, data, wdata, m, alpha, beta, sigmas, wsigmas)
 }
 \arguments{
 \item{centers}{A matrix representing the centers of the clusters with p
@@ -22,6 +22,11 @@ is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
 
 \item{beta}{A float for the beta parameter (control speed convergence and classification crispness)}
+
+\item{sigmas}{A numeric vector for calculating the robust version of the FCM. Filled with ones
+if the classical version is required}
+
+\item{wsigmas}{Same as sigmas, but calculated on the spatially lagged dataset}
 }
 \value{
 A n * k matrix representing the belonging probabilities of each

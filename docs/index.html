@@ -20,6 +20,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -32,18 +34,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -66,6 +62,9 @@
     <li>
       <a href="articles/rasters.html">Fuzzy clustering with rasters</a>
     </li>
+    <li>
+      <a href="articles/web_vignettes/advanced_examples.html">Advanced examples</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -74,7 +73,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/JeremyGelb/geocmeans/">
+  <a href="https://github.com/JeremyGelb/geocmeans/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -91,47 +90,45 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="geocmeans-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#geocmeans-" class="anchor"></a>geocmeans <img src="reference/figures/geocmeans_logo.png" align="right" style="height:138px;">
+<div class="section level1">
+<div class="page-header"><h1 id="geocmeans-">geocmeans <img src="reference/figures/geocmeans_logo.png" align="right" style="height:138px;"><a class="anchor" aria-label="anchor" href="#geocmeans-"></a>
 </h1></div>
-<div id="an-r-package-to-perform-spatial-fuzzy-c-means" class="section level2">
-<h2 class="hasAnchor">
-<a href="#an-r-package-to-perform-spatial-fuzzy-c-means" class="anchor"></a>An R package to perform Spatial Fuzzy C-means.</h2>
+<div class="section level2">
+<h2 id="an-r-package-to-perform-spatial-fuzzy-c-means">An R package to perform Spatial Fuzzy C-means.<a class="anchor" aria-label="anchor" href="#an-r-package-to-perform-spatial-fuzzy-c-means"></a>
+</h2>
 <!-- badges: start -->
-
-<p>The website of the package is available <a href="https://jeremygelb.github.io/geocmeans/">here</a></p>
+<p>The website of the package is available <a href="https://jeremygelb.github.io/geocmeans/" class="external-link">here</a></p>
 </div>
-<div id="breaking-news" class="section level2">
-<h2 class="hasAnchor">
-<a href="#breaking-news" class="anchor"></a>Breaking news</h2>
+<div class="section level2">
+<h2 id="breaking-news">Breaking news<a class="anchor" aria-label="anchor" href="#breaking-news"></a>
+</h2>
 <p>Here we are! We are moving from <code>maptools</code>, <code>sp</code>, <code>rgeos</code>, <code>raster</code> and <code>rgdal</code> to <code>sf</code>, <code>terra</code> and <code>tmap</code>. All the functions and the documentation were modified accordingly. If you spot an error or a bug, please open an issue on github.</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>The stable version of <code>geocmeans</code> is available on CRAN. You can install it with the command below.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"geocmeans"</span>)</span></code></pre></div>
 <p>You can install a development version of the <code>geocmeans</code> package using the command below.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">"JeremyGelb/geocmeans"</span>, <span class="at">build_vignettes =</span> <span class="cn">TRUE</span>, <span class="at">force =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
-<div id="authors" class="section level2">
-<h2 class="hasAnchor">
-<a href="#authors" class="anchor"></a>Authors</h2>
+<div class="section level2">
+<h2 id="authors">Authors<a class="anchor" aria-label="anchor" href="#authors"></a>
+</h2>
 <p>Jeremy Gelb, Laboratoire d’Équité Environnemental INRS (CANADA), Email: <a href="mailto:jeremy.gelb@ucs.inrs.ca" class="email">jeremy.gelb@ucs.inrs.ca</a></p>
 </div>
-<div id="contributors" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contributors" class="anchor"></a>Contributors</h2>
+<div class="section level2">
+<h2 id="contributors">Contributors<a class="anchor" aria-label="anchor" href="#contributors"></a>
+</h2>
 <p>Philippe Apparicio, Laboratoire d’Équité Environnemental INRS (CANADA), Email: <a href="mailto:philippe.apparicio@ucs.inrs.ca" class="email">philippe.apparicio@ucs.inrs.ca</a></p>
 </div>
-<div id="about-the-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#about-the-package" class="anchor"></a>About the package</h2>
-<p>Provides functions to apply Spatial Fuzzy c-means Algorithm, visualize and interpret results. This method is well suited when the user wants to analyze data with a fuzzy clustering algorithm and to account for the spatial dimension of the dataset. In addition, indexes for measuring the spatial consistency and classification quality are proposed. The algorithms were developed first for brain imagery as described in the articles of <a href="https://doi.org/10.1016/j.patcog.2006.07.011">Cai and al. 2007</a> and <a href="https://doi.org/10.1016/j.dsp.2012.09.016">Zaho and al. 2013</a>. <a href="https://doi.org/10.4000/cybergeo.36414">Gelb and Apparicio</a> proposed to apply the method to perform a socio-residential and environmental taxonomy in Lyon (France). The methods can be applied to dataframes or to rasters.</p>
-<div id="fuzzy-classification-algorithms" class="section level4">
-<h4 class="hasAnchor">
-<a href="#fuzzy-classification-algorithms" class="anchor"></a>Fuzzy classification algorithms</h4>
+<div class="section level2">
+<h2 id="about-the-package">About the package<a class="anchor" aria-label="anchor" href="#about-the-package"></a>
+</h2>
+<p>Provides functions to apply Spatial Fuzzy c-means Algorithm, visualize and interpret results. This method is well suited when the user wants to analyze data with a fuzzy clustering algorithm and to account for the spatial dimension of the dataset. In addition, indexes for measuring the spatial consistency and classification quality are proposed. The algorithms were developed first for brain imagery as described in the articles of <a href="https://doi.org/10.1016/j.patcog.2006.07.011" class="external-link">Cai and al. 2007</a> and <a href="https://doi.org/10.1016/j.dsp.2012.09.016" class="external-link">Zaho and al. 2013</a>. <a href="https://doi.org/10.4000/cybergeo.36414" class="external-link">Gelb and Apparicio</a> proposed to apply the method to perform a socio-residential and environmental taxonomy in Lyon (France). The methods can be applied to dataframes or to rasters.</p>
+<div class="section level4">
+<h4 id="fuzzy-classification-algorithms">Fuzzy classification algorithms<a class="anchor" aria-label="anchor" href="#fuzzy-classification-algorithms"></a>
+</h4>
 <p>Four Fuzzy classification algorithms are proposed :</p>
 <ul>
 <li>FCM: Fuzzy C-Means, with the function <code>CMeans</code>
@@ -145,26 +142,26 @@
 </ul>
 <p>Each function return a membership matrix, the data used for the classification (scaled if required) and the centers of the clusters.</p>
 </div>
-<div id="parameter-selections" class="section level4">
-<h4 class="hasAnchor">
-<a href="#parameter-selections" class="anchor"></a>Parameter selections</h4>
+<div class="section level4">
+<h4 id="parameter-selections">Parameter selections<a class="anchor" aria-label="anchor" href="#parameter-selections"></a>
+</h4>
 <p>The algorithms available require different parameters to be fixed by the user. The function <code>selectParameters</code> is a useful tool to compare the results of different combinations of parameters. A multicore version, <code>selectParameters.mc</code>, using a plan from the package <code>future</code> is also available to speed up the calculus.</p>
 </div>
-<div id="classification-quality" class="section level4">
-<h4 class="hasAnchor">
-<a href="#classification-quality" class="anchor"></a>Classification quality</h4>
+<div class="section level4">
+<h4 id="classification-quality">Classification quality<a class="anchor" aria-label="anchor" href="#classification-quality"></a>
+</h4>
 <p>Many indices of classification quality can be calculated with the function <code>calcqualityIndexes</code>:</p>
 <ul>
 <li>
-<em>Silhouette.index</em>: the silhouette index (<code><a href="https://rdrr.io/pkg/fclust/man/SIL.F.html">fclust::SIL.F</a></code>)</li>
+<em>Silhouette.index</em>: the silhouette index (<code><a href="https://rdrr.io/pkg/fclust/man/SIL.F.html" class="external-link">fclust::SIL.F</a></code>)</li>
 <li>
-<em>Partition.entropy</em>: the partition entropy index (<code><a href="https://rdrr.io/pkg/fclust/man/PE.html">fclust::PE</a></code>)</li>
+<em>Partition.entropy</em>: the partition entropy index (<code><a href="https://rdrr.io/pkg/fclust/man/PE.html" class="external-link">fclust::PE</a></code>)</li>
 <li>
-<em>Partition.coeff</em>: the partition entropy coefficient (<code><a href="https://rdrr.io/pkg/fclust/man/PC.html">fclust::PC</a></code>)</li>
+<em>Partition.coeff</em>: the partition entropy coefficient (<code><a href="https://rdrr.io/pkg/fclust/man/PC.html" class="external-link">fclust::PC</a></code>)</li>
 <li>
-<em>Modified.partition.coeff</em>: the modified partition entropy coefficient (<code><a href="https://rdrr.io/pkg/fclust/man/MPC.html">fclust::MPC</a></code>)</li>
+<em>Modified.partition.coeff</em>: the modified partition entropy coefficient (<code><a href="https://rdrr.io/pkg/fclust/man/MPC.html" class="external-link">fclust::MPC</a></code>)</li>
 <li>
-<em>XieBeni.index</em>: the Xie and Beni index (<code><a href="https://rdrr.io/pkg/fclust/man/XB.html">fclust::XB</a></code>)</li>
+<em>XieBeni.index</em>: the Xie and Beni index (<code><a href="https://rdrr.io/pkg/fclust/man/XB.html" class="external-link">fclust::XB</a></code>)</li>
 <li>
 <em>FukuyamaSugeno.index</em>: the Fukuyama and Sugeno index (<code><a href="reference/calcFukuyamaSugeno.html">geocmeans::calcFukuyamaSugeno</a></code>)</li>
 <li>
@@ -179,14 +176,14 @@
 <em>Explained.inertia</em>: the percentage of total inertia explained by the solution</li>
 </ul>
 </div>
-<div id="classification-consistency" class="section level4">
-<h4 class="hasAnchor">
-<a href="#classification-consistency" class="anchor"></a>Classification consistency</h4>
+<div class="section level4">
+<h4 id="classification-consistency">Classification consistency<a class="anchor" aria-label="anchor" href="#classification-consistency"></a>
+</h4>
 <p>To assess the stability of the obtained clusters, a function for bootstrap validation is proposed: <code>boot_group_validation</code>. The results can be used to verify if the obtained clusters are stable and how much their centres vary.</p>
 </div>
-<div id="interpretation" class="section level4">
-<h4 class="hasAnchor">
-<a href="#interpretation" class="anchor"></a>Interpretation</h4>
+<div class="section level4">
+<h4 id="interpretation">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation"></a>
+</h4>
 <p>Several functions are also available to facilitate the interpretation of the classification:</p>
 <ul>
 <li>summary statistics for each cluster: <code>summarizeClusters</code> (also accessible with the generic function <code>summary</code>)</li>
@@ -197,100 +194,106 @@
 <li>maps of the membership matrix: <code>mapClusters</code> (support polygon, points and polylines)</li>
 </ul>
 <p>There is also a shiny app that can be used to go deeper in the result interpretation. It requires the packages <code>shiny</code>, <code>leaflet</code>, <code>bslib</code>, <code>plotly</code>, <code>shinyWidgets</code>, <code>car</code>.</p>
-<p><img src="https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif" alt="Alt Text"></p>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif" alt=""><p class="caption">Alt Text</p>
 </div>
-<div id="spatial-diagnostic" class="section level4">
-<h4 class="hasAnchor">
-<a href="#spatial-diagnostic" class="anchor"></a>Spatial diagnostic</h4>
+</div>
+<div class="section level4">
+<h4 id="spatial-diagnostic">Spatial diagnostic<a class="anchor" aria-label="anchor" href="#spatial-diagnostic"></a>
+</h4>
 <p>Several spatial indices can be calculated to have a better spatial understanding of the obtained clusters, like the global or local Moran I calculated on the membership values, or the join-count-test on the most likely group for each observation. ELSA and Fuzzy ELSA statistics can also be calculated to identify areas with high or low multidimensional spatial autocorrelation in the membership values. See functions <code>spConsistency</code>, <code>calcELSA</code>, <code>calcFuzzyELSA</code> and <code>spatialDiag</code>.</p>
-<p>We proposed an index to quantify the spatial inconsistency of a classification (<a href="https://doi.org/10.4000/cybergeo.36414">Gelb and Apparicio</a>). If in a classification close observations tend to belong to the same group, then the value of the index is close to 0. If the index is close to 1, then the belonging to groups is randomly distributed in space. A value higher than one can happen in the case of negative spatial autocorrelation. The index is described in the vignette <code>adjustinconsistency</code>. The function <code>spatialDiag</code> does a complete spatial diagnostic of the membership matrix resulting from a classification.</p>
+<p>We proposed an index to quantify the spatial inconsistency of a classification (<a href="https://doi.org/10.4000/cybergeo.36414" class="external-link">Gelb and Apparicio</a>). If in a classification close observations tend to belong to the same group, then the value of the index is close to 0. If the index is close to 1, then the belonging to groups is randomly distributed in space. A value higher than one can happen in the case of negative spatial autocorrelation. The index is described in the vignette <code>adjustinconsistency</code>. The function <code>spatialDiag</code> does a complete spatial diagnostic of the membership matrix resulting from a classification.</p>
 </div>
 </div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h2>
+<div class="section level2">
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
 <p>Detailed examples are given in the vignette <code>introduction</code></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vignette</span>(<span class="st">"introduction"</span>,<span class="st">"geocmeans"</span>)</span></code></pre></div>
 </div>
-<div id="testing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#testing" class="anchor"></a>Testing</h2>
+<div class="section level2">
+<h2 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a>
+</h2>
 <p>If you would like to install and run the unit tests interactively, include <code>INSTALL_opts = "--install-tests"</code> in the installation code.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">"JeremyGelb/geocmeans"</span>, <span class="at">build_vignettes =</span> <span class="cn">TRUE</span>, <span class="at">force =</span> <span class="cn">TRUE</span>, <span class="at">INSTALL_opts =</span> <span class="st">"--install-tests"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>testthat<span class="sc">::</span><span class="fu">test_package</span>(<span class="st">"geocmeans"</span>, <span class="at">reporter =</span> <span class="st">"stop"</span>)</span></code></pre></div>
 </div>
-<div id="contribute" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contribute" class="anchor"></a>Contribute</h2>
-<p>To contribute to <code>geocmeans</code>, please follow these <a href="https://github.com/JeremyGelb/geocmeans/blob/master/CONTRIBUTING.md">guidelines</a>.</p>
-<p>Please note that the <code>geocmeans</code> project is released with a <a href="https://github.com/JeremyGelb/geocmeans/blob/master/CONDUCT.md">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<div class="section level2">
+<h2 id="contribute">Contribute<a class="anchor" aria-label="anchor" href="#contribute"></a>
+</h2>
+<p>To contribute to <code>geocmeans</code>, please follow these <a href="https://github.com/JeremyGelb/geocmeans/blob/master/CONTRIBUTING.md" class="external-link">guidelines</a>.</p>
+<p>Please note that the <code>geocmeans</code> project is released with a <a href="https://github.com/JeremyGelb/geocmeans/blob/master/CONDUCT.md" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
-<div id="license" class="section level2">
-<h2 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h2>
-<p><code>geocmeans</code> version 0.1.0 is licensed under <a href="https://github.com/JeremyGelb/geocmeans/blob/master/LICENSE.txt">GPL2 License</a>.</p>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p><code>geocmeans</code> version 0.1.0 is licensed under <a href="https://github.com/JeremyGelb/geocmeans/blob/master/LICENSE.txt" class="external-link">GPL2 License</a>.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=geocmeans">https://​cloud.r-project.org/​package=geocmeans</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/JeremyGelb/geocmeans/">https://​github.com/​JeremyGelb/​geocmeans/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/JeremyGelb/geocmeans/issues">https://​github.com/​JeremyGelb/​geocmeans/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=geocmeans" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/JeremyGelb/geocmeans/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/JeremyGelb/geocmeans/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></li>
+<li><a href="https://www.r-project.org/Licenses/GPL-2" class="external-link">GPL-2</a></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 </ul>
 </div>
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing geocmeans</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Jeremy Gelb <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing geocmeans</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://github.com/JeremyGelb/geocmeans"><img src="https://img.shields.io/badge/devel%20version-0.3.2-green.svg"></a></li>
-<li><a href="https://cran.r-project.org/package=geocmeans"><img src="https://www.r-pkg.org/badges/version/geocmeans?color=blue"></a></li>
-<li><a href="https://cran.r-project.org/package=geocmeans"><img src="http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue"></a></li>
-<li><a href="https://app.codecov.io/gh/JeremyGelb/geocmeans?branch=master"><img src="https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li>Jeremy Gelb <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/JeremyGelb/geocmeans" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.3.2-green.svg"></a></li>
+<li><a href="https://cran.r-project.org/package=geocmeans" class="external-link"><img src="https://www.r-pkg.org/badges/version/geocmeans?color=blue"></a></li>
+<li><a href="https://cran.r-project.org/package=geocmeans" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue"></a></li>
+<li><a href="https://app.codecov.io/gh/JeremyGelb/geocmeans?branch=master" class="external-link"><img src="https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Jeremy Gelb.</p>
+  <p></p>
+<p>Developed by Jeremy Gelb.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -298,6 +301,8 @@
 
   
 
+
+  
 
   </body>
 </html>

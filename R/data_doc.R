@@ -2,6 +2,7 @@
 #'
 #' @description A dataset containing social and environmental data for the
 #' Iris of Lyon (France)
+#' @name LyonIris
 #'
 #' @format A SpatialPolygonsDataFrame with 506 rows and 32 variables:
 #' \describe{
@@ -34,7 +35,9 @@
 #' The dataset is saved as a Large RasterBrick with the package raster and has the
 #' following crs: EPSG:32630. It is provided as a tiff file.
 #'
-#' @format A Large RasterBrick with 6 bands
+#' @name Arcachon
+#'
+#' @format A spaRast with 6 bands
 #' \describe{
 #'   \item{blue}{wavelength: 0.45-0.51}
 #'   \item{green}{wavelength: 0.53-0.59}
@@ -44,6 +47,19 @@
 #'   \item{shortwave infrared}{wavelength: 2.11-2.29}
 #' }
 #' @source \url{https://earthexplorer.usgs.gov/}
-NULL
+#'
+#' @examples
+#' # loading directly from file
+#' Arcachon <- terra::rast(system.file("extdata/Littoral4_2154.tif", package = "geocmeans"))
+#' names(Arcachon) <- c("blue", "green", "red", "infrared", "SWIR1", "SWIR2")
+#'
+#' # loading with the provided function
+#' Arcachon <- load_arcachon()
+#' @export
+load_arcachon <- function(){
+  Arcachon <- terra::rast(system.file("extdata/Littoral4_2154.tif", package = "geocmeans"))
+  names(Arcachon) <- c("blue", "green", "red", "infrared", "SWIR1", "SWIR2")
+  return(Arcachon)
+}
 
 

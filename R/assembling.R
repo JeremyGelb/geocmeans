@@ -154,9 +154,21 @@ main_worker <- function(algo, ...){
   k <- dots$k
   update_belongs <- NULL
   udpdate_centers <- NULL
+  robust <- dots$robust
+  dots$sigmas <- rep(1, k)
+  dots$wsigmas <- rep(1, k)
+
+  if(is.null(dots$noise_cluster)){
+    dots$noise_cluster <- FALSE
+  }
 
   #checking if the parameters are ok
   sanity_check(dots,data)
+
+  if(is.null(dots$delta)){
+    dots$delta <- -1
+  }
+
 
   #selecting the functions for calculus
   if(algo == "FCM"){
@@ -204,6 +216,8 @@ main_worker <- function(algo, ...){
     )
   }
 
+  params$robust <- robust
+
   # selecting the original centers from observations
   if (is.null(dots$seed)==FALSE){
     set.seed(dots$seed)
@@ -232,7 +246,18 @@ main_worker <- function(algo, ...){
       setTxtProgressBar(pb, i)
     }
     newcenters <- udpdate_centers(data, centers, belongmatrix, dots)
+
+    # for the robust version, we need to calculate here the sigmas
+    if(robust){
+      dots$sigmas <- calcRobustSigmas(data, belongmatrix, centers, m = dots$m)
+      if(is.null(dots$wdata) == FALSE){
+        dots$wsigmas <- calcRobustSigmas(dots$wdata,belongmatrix, centers, m = dots$m)
+      }
+    }
+
+
     newbelongmatrix <- update_belongs(data, newcenters, dots)
+
     if (evaluateMatrices(belongmatrix, newbelongmatrix, tol) == FALSE) {
       # if we don't reach convergence criterion
       centers <- newcenters
@@ -260,6 +285,11 @@ main_worker <- function(algo, ...){
 
   ## setting the class of the results
   results <- FCMres(results)
+
+  if(dots$noise_cluster){
+    results$noise_cluster <- 1 - rowSums(results$Belongings)
+    results$delta <- dots$delta
+  }
 
   return(results)
 
@@ -323,6 +353,26 @@ sanity_check <- function(dots,data){
     }
   }
 
+  if(!is.null(dots$delta)){
+    if(is.na(dots$delta)){
+      dots$delta <- NULL
+    }
+  }
+
+  # checking delta for clustering with noise
+  if(dots$noise_cluster & is.null(dots$delta)){
+    stop("For clustering with a noise cluster, it is required to set the parameter delta.")
+  }
+  if(!is.null(dots$delta)){
+    if(dots$delta <= 0){
+      stop("delta parameter cannot be lower or equal to 0.")
+    }
+  }
+
+  if(dots$robust & dots$noise_cluster){
+    warning("When using the robust version of the algorithm and a noise cluster, consider that the euclidean distance between the observation will be lower because it is normalized. Select the paramter delta accordingly.")
+  }
+
 }
 
 
@@ -338,8 +388,13 @@ sanity_check <- function(dots,data){
 #' @param dots a list of other arguments specific to FCM
 #' @return a matrix with the new membership values
 #' @keywords internal
-belongsFCM <- function(data, centers ,dots){
-  return(calcBelongMatrix(centers,data,dots$m))
+belongsFCM <- function(data, centers, dots){
+  if(dots$noise_cluster){
+    return(calcBelongMatrixNoisy(centers,data,dots$m, dots$delta, dots$sigmas))
+  }else{
+    return(calcBelongMatrix(centers,data,dots$m, dots$sigmas))
+  }
+
 }
 #' @title center matrix calculator for FCM algorithm
 #' @param data a matrix (the dataset used for clustering)
@@ -359,7 +414,12 @@ centersFCM <- function(data, centers, belongmatrix, dots){
 #' @return a matrix with the new membership values
 #' @keywords internal
 belongsGFCM <- function(data,centers,dots){
-  return(calcFGCMBelongMatrix(centers,data,dots$m,dots$beta))
+  if(dots$noise_cluster){
+    return(calcFGCMBelongMatrixNoisy(centers,data,dots$m,dots$beta,dots$delta,dots$sigmas))
+  }else{
+    return(calcFGCMBelongMatrix(centers,data,dots$m,dots$beta,dots$sigmas))
+  }
+
 }
 #' @title center matrix calculator for GFCM algorithm
 #' @param data a matrix (the dataset used for clustering)
@@ -379,7 +439,12 @@ centersGFCM <- function(data, centers, belongmatrix, dots){
 #' @return a matrix with the new membership values
 #' @keywords internal
 belongsSFCM <- function(data,centers,dots){
-  return(calcSFCMBelongMatrix(centers,data,dots$wdata,dots$m,dots$alpha))
+  if(dots$noise_cluster){
+    return(calcSFCMBelongMatrixNoisy(centers,data,dots$wdata,dots$m,dots$alpha, dots$delta ,dots$sigmas,dots$wsigmas))
+  }else{
+    return(calcSFCMBelongMatrix(centers,data,dots$wdata,dots$m,dots$alpha,dots$sigmas,dots$wsigmas))
+  }
+
 }
 #' @title center matrix calculator for SFCM algorithm
 #' @param data a matrix (the dataset used for clustering)
@@ -399,7 +464,7 @@ centersSFCM <- function(data, centers, belongmatrix, dots){
 #' @return a matrix with the new membership values
 #' @keywords internal
 belongsSGFCM <- function(data,centers,dots){
-  return(calcSFGCMBelongMatrix(centers,data,dots$wdata,dots$m,dots$alpha,dots$beta))
+  return(calcSFGCMBelongMatrix(centers,data,dots$wdata,dots$m,dots$alpha,dots$beta,dots$sigmas,dots$wsigmas))
 }
 #' @title center matrix calculator for SGFCM algorithm
 #' @param data a matrix (the dataset used for clustering)

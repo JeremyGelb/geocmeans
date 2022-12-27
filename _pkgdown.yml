@@ -55,8 +55,10 @@ reference:
   - is.FCMres
   - plot.FCMres
   - predict.FCMres
+  - predict_membership
   - print.FCMres
   - summary.FCMres
+  - summarizeClusters
 - title: "Utility functions"
   desc: "Several complementary functions that can be handy."
 - contents:
@@ -64,6 +66,7 @@ reference:
   - groups_matching
   - undecidedUnits
   - circular_window
+  - standardizer
 - title: "Datasets"
   desc: "Available datasets in geocmeans."
 - contents:

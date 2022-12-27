@@ -20,6 +20,9 @@ select_parameters.mc(
   nrep = 30,
   indices = NULL,
   standardize = TRUE,
+  robust = FALSE,
+  noise_cluster = FALSE,
+  delta = NA,
   maxiter = 500,
   tol = 0.01,
   chunk_size = 5,
@@ -43,6 +46,9 @@ selectParameters.mc(
   nrep = 30,
   indices = NULL,
   standardize = TRUE,
+  robust = FALSE,
+  noise_cluster = FALSE,
+  delta = NA,
   maxiter = 500,
   tol = 0.01,
   chunk_size = 5,
@@ -95,6 +101,12 @@ Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
 
 \item{standardize}{A boolean to specify if the variable must be centered and
 reduce (default = True)}
+
+\item{robust}{A boolean indicating if the "robust" version of the algorithm must be used (see details)}
+
+\item{noise_cluster}{A boolean indicatong if a noise cluster must be added to the solution (see details)}
+
+\item{delta}{A float giving the distance of the noise cluster to each observation}
 
 \item{maxiter}{An integer for the maximum number of iteration}
 

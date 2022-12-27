@@ -219,9 +219,11 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
 #' @examples
 #' # this is an internal function, no example provided
 output_raster_data <- function(object, missing, rst){
+
   # object is created by a FCM like function
   # missing is indicating which pixels are complete
   # rst is a basic raster to duplicate it
+  i <- 1
 
   #step1 : creating a raster for each cluster
   rasters <- lapply(1:ncol(object$Belongings), function(i){
@@ -241,6 +243,15 @@ output_raster_data <- function(object, missing, rst){
   vec[missing] <- max.col(DF, ties.method = "first")
   terra::values(rst2) <- vec
   rasters[["Groups"]] <- rst2
+
+  #step3 : adding the noise group if needed
+  if(is.null(object$noise_cluster) == FALSE){
+    rst2 <- rst
+    vec <- rep(NA,times = ncell(rst))
+    vec[missing] <- object$noise_cluster[,i]
+    terra::values(rst2) <- vec
+    object$noise_cluster <- rst2
+  }
 
   object$isRaster <- TRUE
   object$rasters <- rasters

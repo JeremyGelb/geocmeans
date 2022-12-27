@@ -4,7 +4,7 @@
 \alias{calcFGCMBelongMatrix}
 \title{Calculate the generalized membership matrix}
 \usage{
-calcFGCMBelongMatrix(centers, data, m, beta)
+calcFGCMBelongMatrix(centers, data, m, beta, sigmas)
 }
 \arguments{
 \item{centers}{A matrix representing the centers of the
@@ -16,6 +16,9 @@ and p columns}
 \item{m}{A float representing the fuzziness degree}
 
 \item{beta}{A float for the beta parameter (control speed convergence and classification crispness)}
+
+\item{sigmas}{A numeric vector for calculating the robust version of the FCM. Filled with ones
+if the classical version is required}
 }
 \value{
 A n * k matrix representing the belonging probabilities of each

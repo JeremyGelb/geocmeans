@@ -17,7 +17,10 @@
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' result <- CMeans(dataset,k = 5, m = 1.5, standardize = TRUE)
-CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
+CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE,
+                   robust = FALSE,
+                   noise_cluster = FALSE, delta = NULL,
+                   verbose = TRUE, init = "random", seed = NULL) {
 
     #data_class <- class(data)
 
@@ -47,14 +50,15 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 
     results <- main_worker("FCM", data = data, k = k, m = m,
                            maxiter = maxiter, tol = tol, standardize = standardize,
-                           verbose = verbose, seed = seed, init = init
+                           verbose = verbose, seed = seed, init = init,
+                           robust = robust, noise_cluster = noise_cluster,
+                           delta = delta
                            )
 
     # if we are working with rasters, we should set some additional values
     if(isRaster){
         results <- output_raster_data(results, missing, rst)
     }
-
 
     return(results)
 }
@@ -105,8 +109,9 @@ CMeans <- function(data, k, m, maxiter = 500, tol = 0.01, standardize = TRUE, ve
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 SFCMeans <- function(data, nblistw = NULL, k, m, alpha, lag_method="mean",
                      window = NULL,
-                     maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE,
-                     init = "random", seed = NULL) {
+                     noise_cluster = FALSE, delta = NULL,
+                     maxiter = 500, tol = 0.01, standardize = TRUE, robust = FALSE,
+                     verbose = TRUE, init = "random", seed = NULL) {
 
     isRaster <- inherits(data, "list")
     if(isRaster == FALSE){
@@ -153,6 +158,8 @@ SFCMeans <- function(data, nblistw = NULL, k, m, alpha, lag_method="mean",
                            nblistw = nblistw, k = k, m = m, alpha = alpha,
                            lag_method=lag_method, maxiter = maxiter, tol = tol,
                            standardize = standardize, verbose = verbose,
+                           robust = robust,
+                           noise_cluster = noise_cluster, delta = delta,
                            seed = seed, init = init)
 
     # if we are working with rasters, we should set some additional values

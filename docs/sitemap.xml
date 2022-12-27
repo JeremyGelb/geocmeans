@@ -19,6 +19,9 @@
     <loc>/articles/rasters.html</loc>
   </url>
   <url>
+    <loc>/articles/web_vignettes/advanced_examples.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -73,6 +76,9 @@
     <loc>/reference/calcBelongMatrix.html</loc>
   </url>
   <url>
+    <loc>/reference/calcBelongMatrixNoisy.html</loc>
+  </url>
+  <url>
     <loc>/reference/calcCalinskiHarabasz.html</loc>
   </url>
   <url>
@@ -98,6 +104,9 @@
   </url>
   <url>
     <loc>/reference/calcFGCMBelongMatrix.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calcFGCMBelongMatrixNoisy.html</loc>
   </url>
   <url>
     <loc>/reference/calcFukuyamaSugeno.html</loc>
@@ -127,10 +136,19 @@
     <loc>/reference/calcqualityIndexes.html</loc>
   </url>
   <url>
+    <loc>/reference/calcRobustSigmas.html</loc>
+  </url>
+  <url>
     <loc>/reference/calcSFCMBelongMatrix.html</loc>
   </url>
   <url>
+    <loc>/reference/calcSFCMBelongMatrixNoisy.html</loc>
+  </url>
+  <url>
     <loc>/reference/calcSFGCMBelongMatrix.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calcSFGCMBelongMatrixNoisy.html</loc>
   </url>
   <url>
     <loc>/reference/calcSilhouetteIdx.html</loc>
@@ -344,6 +362,9 @@
   </url>
   <url>
     <loc>/reference/sqrt_matrix_bycol.html</loc>
+  </url>
+  <url>
+    <loc>/reference/standardizer.html</loc>
   </url>
   <url>
     <loc>/reference/sub_matrices_bycol.html</loc>

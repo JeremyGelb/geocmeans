@@ -19,7 +19,10 @@
 #' "TxChom1564","Pct_brevet","NivVieMed")
 #' dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 #' result <- GCMeans(dataset,k = 5, m = 1.5, beta = 0.5, standardize = TRUE)
-GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
+GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = TRUE,
+                    robust = FALSE,
+                    noise_cluster = FALSE, delta = NULL,
+                    verbose = TRUE, init = "random", seed = NULL) {
 
   #data_class <- class(data)
 
@@ -51,6 +54,8 @@ GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = T
                          k = k, m = m, beta = beta,
                          maxiter = maxiter, tol = tol,
                          standardize = standardize, verbose = verbose,
+                         robust = robust,
+                         noise_cluster = noise_cluster, delta = delta,
                          seed = seed, init = init)
 
   # if we are working with rasters, we should set some additional values
@@ -109,8 +114,10 @@ GCMeans <- function(data, k, m, beta, maxiter = 500, tol = 0.01, standardize = T
 #' result <- SGFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, beta = 0.5, standardize = TRUE)
 SGFCMeans <- function(data, nblistw = NULL, k, m, alpha, beta, lag_method="mean",
                       window = NULL,
-                      maxiter = 500, tol = 0.01,
-                      standardize = TRUE, verbose = TRUE, init = "random", seed = NULL) {
+                      maxiter = 500, tol = 0.01, standardize = TRUE,
+                      robust = FALSE,
+                      noise_cluster = FALSE, delta = NULL,
+                      verbose = TRUE, init = "random", seed = NULL) {
 
   isRaster <- inherits(data, "list")
 
@@ -153,6 +160,8 @@ SGFCMeans <- function(data, nblistw = NULL, k, m, alpha, beta, lag_method="mean"
   results <- main_worker('SGFCM', data = data, wdata = wdata,
                          nblistw = nblistw, k = k, m = m, alpha = alpha,
                          beta = beta, lag_method=lag_method, maxiter = maxiter,
+                         robust = robust,
+                         noise_cluster = noise_cluster, delta = delta,
                          tol = tol, standardize = standardize, verbose = verbose,
                          seed = seed, init = init)
 

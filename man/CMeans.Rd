@@ -11,6 +11,9 @@ CMeans(
   maxiter = 500,
   tol = 0.01,
   standardize = TRUE,
+  robust = FALSE,
+  noise_cluster = FALSE,
+  delta = NULL,
   verbose = TRUE,
   init = "random",
   seed = NULL
@@ -33,6 +36,12 @@ convergence assessment}
 
 \item{standardize}{A boolean to specify if the variables must be centred and
 reduced (default = True)}
+
+\item{robust}{A boolean indicating if the "robust" version of the algorithm must be used (see details)}
+
+\item{noise_cluster}{A boolean indicatong if a noise cluster must be added to the solution (see details)}
+
+\item{delta}{A float giving the distance of the noise cluster to each observation}
 
 \item{verbose}{A boolean to specify if the progress should be printed}
 

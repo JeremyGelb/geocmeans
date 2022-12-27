@@ -11,6 +11,8 @@ eval_parameters(
   nblistw = NULL,
   window = NULL,
   standardize = TRUE,
+  robust = FALSE,
+  noise_cluster = FALSE,
   spconsist = FALSE,
   classidx = TRUE,
   nrep = 30,

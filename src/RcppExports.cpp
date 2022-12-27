@@ -25,15 +25,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // calcBelongMatrix
-NumericMatrix calcBelongMatrix(NumericMatrix centers, NumericMatrix data, double m);
-RcppExport SEXP _geocmeans_calcBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP mSEXP) {
+NumericMatrix calcBelongMatrix(NumericMatrix centers, NumericMatrix data, double m, NumericVector sigmas);
+RcppExport SEXP _geocmeans_calcBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP mSEXP, SEXP sigmasSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
     Rcpp::traits::input_parameter< double >::type m(mSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcBelongMatrix(centers, data, m));
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcBelongMatrix(centers, data, m, sigmas));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -53,8 +54,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // calcSFCMBelongMatrix
-NumericMatrix calcSFCMBelongMatrix(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha);
-RcppExport SEXP _geocmeans_calcSFCMBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP wdataSEXP, SEXP mSEXP, SEXP alphaSEXP) {
+NumericMatrix calcSFCMBelongMatrix(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha, NumericVector sigmas, NumericVector wsigmas);
+RcppExport SEXP _geocmeans_calcSFCMBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP wdataSEXP, SEXP mSEXP, SEXP alphaSEXP, SEXP sigmasSEXP, SEXP wsigmasSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -63,13 +64,48 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type wdata(wdataSEXP);
     Rcpp::traits::input_parameter< double >::type m(mSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcSFCMBelongMatrix(centers, data, wdata, m, alpha));
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type wsigmas(wsigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcSFCMBelongMatrix(centers, data, wdata, m, alpha, sigmas, wsigmas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calcBelongMatrixNoisy
+NumericMatrix calcBelongMatrixNoisy(NumericMatrix centers, NumericMatrix data, double m, double delta, NumericVector sigmas);
+RcppExport SEXP _geocmeans_calcBelongMatrixNoisy(SEXP centersSEXP, SEXP dataSEXP, SEXP mSEXP, SEXP deltaSEXP, SEXP sigmasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcBelongMatrixNoisy(centers, data, m, delta, sigmas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calcSFCMBelongMatrixNoisy
+NumericMatrix calcSFCMBelongMatrixNoisy(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha, double delta, NumericVector sigmas, NumericVector wsigmas);
+RcppExport SEXP _geocmeans_calcSFCMBelongMatrixNoisy(SEXP centersSEXP, SEXP dataSEXP, SEXP wdataSEXP, SEXP mSEXP, SEXP alphaSEXP, SEXP deltaSEXP, SEXP sigmasSEXP, SEXP wsigmasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type wdata(wdataSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type wsigmas(wsigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcSFCMBelongMatrixNoisy(centers, data, wdata, m, alpha, delta, sigmas, wsigmas));
     return rcpp_result_gen;
 END_RCPP
 }
 // calcFGCMBelongMatrix
-NumericMatrix calcFGCMBelongMatrix(NumericMatrix centers, NumericMatrix data, double m, double beta);
-RcppExport SEXP _geocmeans_calcFGCMBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP mSEXP, SEXP betaSEXP) {
+NumericMatrix calcFGCMBelongMatrix(NumericMatrix centers, NumericMatrix data, double m, double beta, NumericVector sigmas);
+RcppExport SEXP _geocmeans_calcFGCMBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP mSEXP, SEXP betaSEXP, SEXP sigmasSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -77,13 +113,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
     Rcpp::traits::input_parameter< double >::type m(mSEXP);
     Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcFGCMBelongMatrix(centers, data, m, beta));
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcFGCMBelongMatrix(centers, data, m, beta, sigmas));
     return rcpp_result_gen;
 END_RCPP
 }
 // calcSFGCMBelongMatrix
-NumericMatrix calcSFGCMBelongMatrix(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha, double beta);
-RcppExport SEXP _geocmeans_calcSFGCMBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP wdataSEXP, SEXP mSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
+NumericMatrix calcSFGCMBelongMatrix(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha, double beta, NumericVector sigmas, NumericVector wsigmas);
+RcppExport SEXP _geocmeans_calcSFGCMBelongMatrix(SEXP centersSEXP, SEXP dataSEXP, SEXP wdataSEXP, SEXP mSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmasSEXP, SEXP wsigmasSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,7 +130,44 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type m(mSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcSFGCMBelongMatrix(centers, data, wdata, m, alpha, beta));
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type wsigmas(wsigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcSFGCMBelongMatrix(centers, data, wdata, m, alpha, beta, sigmas, wsigmas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calcFGCMBelongMatrixNoisy
+NumericMatrix calcFGCMBelongMatrixNoisy(NumericMatrix centers, NumericMatrix data, double m, double beta, double delta, NumericVector sigmas);
+RcppExport SEXP _geocmeans_calcFGCMBelongMatrixNoisy(SEXP centersSEXP, SEXP dataSEXP, SEXP mSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP sigmasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcFGCMBelongMatrixNoisy(centers, data, m, beta, delta, sigmas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calcSFGCMBelongMatrixNoisy
+NumericMatrix calcSFGCMBelongMatrixNoisy(NumericMatrix centers, NumericMatrix data, NumericMatrix wdata, double m, double alpha, double beta, double delta, NumericVector sigmas, NumericVector wsigmas);
+RcppExport SEXP _geocmeans_calcSFGCMBelongMatrixNoisy(SEXP centersSEXP, SEXP dataSEXP, SEXP wdataSEXP, SEXP mSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP sigmasSEXP, SEXP wsigmasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type wdata(wdataSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sigmas(sigmasSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type wsigmas(wsigmasSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcSFGCMBelongMatrixNoisy(centers, data, wdata, m, alpha, beta, delta, sigmas, wsigmas));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -406,14 +480,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calcRobustSigmas
+NumericVector calcRobustSigmas(NumericMatrix data, NumericMatrix belongmatrix, NumericMatrix centers, double m);
+RcppExport SEXP _geocmeans_calcRobustSigmas(SEXP dataSEXP, SEXP belongmatrixSEXP, SEXP centersSEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type belongmatrix(belongmatrixSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(calcRobustSigmas(data, belongmatrix, centers, m));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_geocmeans_calcCentroids", (DL_FUNC) &_geocmeans_calcCentroids, 3},
-    {"_geocmeans_calcBelongMatrix", (DL_FUNC) &_geocmeans_calcBelongMatrix, 3},
+    {"_geocmeans_calcBelongMatrix", (DL_FUNC) &_geocmeans_calcBelongMatrix, 4},
     {"_geocmeans_calcSWFCCentroids", (DL_FUNC) &_geocmeans_calcSWFCCentroids, 5},
-    {"_geocmeans_calcSFCMBelongMatrix", (DL_FUNC) &_geocmeans_calcSFCMBelongMatrix, 5},
-    {"_geocmeans_calcFGCMBelongMatrix", (DL_FUNC) &_geocmeans_calcFGCMBelongMatrix, 4},
-    {"_geocmeans_calcSFGCMBelongMatrix", (DL_FUNC) &_geocmeans_calcSFGCMBelongMatrix, 6},
+    {"_geocmeans_calcSFCMBelongMatrix", (DL_FUNC) &_geocmeans_calcSFCMBelongMatrix, 7},
+    {"_geocmeans_calcBelongMatrixNoisy", (DL_FUNC) &_geocmeans_calcBelongMatrixNoisy, 5},
+    {"_geocmeans_calcSFCMBelongMatrixNoisy", (DL_FUNC) &_geocmeans_calcSFCMBelongMatrixNoisy, 8},
+    {"_geocmeans_calcFGCMBelongMatrix", (DL_FUNC) &_geocmeans_calcFGCMBelongMatrix, 5},
+    {"_geocmeans_calcSFGCMBelongMatrix", (DL_FUNC) &_geocmeans_calcSFGCMBelongMatrix, 8},
+    {"_geocmeans_calcFGCMBelongMatrixNoisy", (DL_FUNC) &_geocmeans_calcFGCMBelongMatrixNoisy, 6},
+    {"_geocmeans_calcSFGCMBelongMatrixNoisy", (DL_FUNC) &_geocmeans_calcSFGCMBelongMatrixNoisy, 9},
     {"_geocmeans_focal_euclidean_mat_window", (DL_FUNC) &_geocmeans_focal_euclidean_mat_window, 2},
     {"_geocmeans_focal_euclidean_list", (DL_FUNC) &_geocmeans_focal_euclidean_list, 2},
     {"_geocmeans_focal_euclidean_arr_window", (DL_FUNC) &_geocmeans_focal_euclidean_arr_window, 2},
@@ -440,6 +532,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_geocmeans_max_mat", (DL_FUNC) &_geocmeans_max_mat, 1},
     {"_geocmeans_test_inferior_mat", (DL_FUNC) &_geocmeans_test_inferior_mat, 2},
     {"_geocmeans_vector_out_prod", (DL_FUNC) &_geocmeans_vector_out_prod, 1},
+    {"_geocmeans_calcRobustSigmas", (DL_FUNC) &_geocmeans_calcRobustSigmas, 4},
     {NULL, NULL, 0}
 };
 

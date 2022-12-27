@@ -4,7 +4,7 @@
 \alias{calcSFCMBelongMatrix}
 \title{Calculate the membership matrix (spatial version)}
 \usage{
-calcSFCMBelongMatrix(centers, data, wdata, m, alpha)
+calcSFCMBelongMatrix(centers, data, wdata, m, alpha, sigmas, wsigmas)
 }
 \arguments{
 \item{centers}{A matrix or a dataframe representing the centers of the
@@ -19,6 +19,11 @@ clusters with p columns and k rows}
 \item{alpha}{A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)}
+
+\item{sigmas}{A numeric vector for calculating the robust version of the FCM. Filled with ones
+if the classical version is required}
+
+\item{wsigmas}{Same as sigmas, but calculated on the spatially lagged dataset}
 }
 \value{
 A n * k matrix representing the belonging probabilities of each

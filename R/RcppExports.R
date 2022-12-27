@@ -27,12 +27,14 @@ calcCentroids <- function(data, belongmatrix, m) {
 #' @param data A dataframe or matrix representing the observed data with n rows
 #'    and p columns
 #' @param m A float representing the fuzziness degree
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
 #' @return A n * k matrix representing the probability of belonging of each
 #'    observation to each cluster
 #' @keywords internal
 #'
-calcBelongMatrix <- function(centers, data, m) {
-    .Call(`_geocmeans_calcBelongMatrix`, centers, data, m)
+calcBelongMatrix <- function(centers, data, m, sigmas) {
+    .Call(`_geocmeans_calcBelongMatrix`, centers, data, m, sigmas)
 }
 
 #' @title Calculate the centroids of SFCM
@@ -67,12 +69,60 @@ calcSWFCCentroids <- function(data, wdata, belongmatrix, m, alpha) {
 #' @param alpha A float representing the weight of the space in the analysis (0
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 #'   dimensions, 2 is twice the weight for space)
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
+#' @param wsigmas Same as sigmas, but calculated on the spatially lagged dataset
 #' @return A n * k matrix representing the belonging probabilities of each
 #'   observation to each cluster
 #' @keywords internal
 #'
-calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
-    .Call(`_geocmeans_calcSFCMBelongMatrix`, centers, data, wdata, m, alpha)
+calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha, sigmas, wsigmas) {
+    .Call(`_geocmeans_calcSFCMBelongMatrix`, centers, data, wdata, m, alpha, sigmas, wsigmas)
+}
+
+#' @title Calculate the membership matrix with a noise cluster
+#' @name calcBelongMatrixNoisy
+#' @description Calculate the membership matrix according to a set of centroids, the observed
+#'  data and the fuzziness degree
+#' @param centers A matrix or a dataframe representing the centers of the
+#'    clusters with p columns and k rows
+#' @param data A dataframe or matrix representing the observed data with n rows
+#'    and p columns
+#' @param m A float representing the fuzziness degree
+#' @param delta A float, the value set for delta by the user
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
+#' @return A n * k matrix representing the probability of belonging of each
+#'    observation to each cluster
+#' @keywords internal
+#'
+calcBelongMatrixNoisy <- function(centers, data, m, delta, sigmas) {
+    .Call(`_geocmeans_calcBelongMatrixNoisy`, centers, data, m, delta, sigmas)
+}
+
+#' @title Calculate the membership matrix (spatial version) with a noise cluster
+#' @name calcSFCMBelongMatrixNoisy
+#' @description Calculate the membership matrix (spatial version) according to a set of
+#' centroids, the observed data, the fuzziness degree a neighbouring matrix and
+#' a spatial weighting term
+#' @param centers A matrix or a dataframe representing the centers of the
+#'   clusters with p columns and k rows
+#' @param data A matrix representing the observed data with n rows and p columns
+#' @param wdata A matrix representing the lagged observed data with n rows and p columns
+#' @param m A float representing the fuzziness degree
+#' @param alpha A float representing the weight of the space in the analysis (0
+#'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
+#'   dimensions, 2 is twice the weight for space)
+#' @param delta A float, the value set for delta by the user
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
+#' @param wsigmas Same as sigmas, but calculated on the spatially lagged dataset
+#' @return A n * k matrix representing the belonging probabilities of each
+#'   observation to each cluster
+#' @keywords internal
+#'
+calcSFCMBelongMatrixNoisy <- function(centers, data, wdata, m, alpha, delta, sigmas, wsigmas) {
+    .Call(`_geocmeans_calcSFCMBelongMatrixNoisy`, centers, data, wdata, m, alpha, delta, sigmas, wsigmas)
 }
 
 #' @title Calculate the generalized membership matrix
@@ -86,12 +136,14 @@ calcSFCMBelongMatrix <- function(centers, data, wdata, m, alpha) {
 #'   and p columns
 #' @param m A float representing the fuzziness degree
 #' @param beta A float for the beta parameter (control speed convergence and classification crispness)
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
 #' @return A n * k matrix representing the belonging probabilities of each
 #'   observation to each cluster
 #' @keywords internal
 #'
-calcFGCMBelongMatrix <- function(centers, data, m, beta) {
-    .Call(`_geocmeans_calcFGCMBelongMatrix`, centers, data, m, beta)
+calcFGCMBelongMatrix <- function(centers, data, m, beta, sigmas) {
+    .Call(`_geocmeans_calcFGCMBelongMatrix`, centers, data, m, beta, sigmas)
 }
 
 #' @title Calculate the generalized membership matrix (spatial version)
@@ -107,12 +159,62 @@ calcFGCMBelongMatrix <- function(centers, data, m, beta) {
 #'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 #'   dimensions, 2 is twice the weight for space)
 #' @param beta A float for the beta parameter (control speed convergence and classification crispness)
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
+#' @param wsigmas Same as sigmas, but calculated on the spatially lagged dataset
 #' @return A n * k matrix representing the belonging probabilities of each
 #'   observation to each cluster
 #' @keywords internal
 #'
-calcSFGCMBelongMatrix <- function(centers, data, wdata, m, alpha, beta) {
-    .Call(`_geocmeans_calcSFGCMBelongMatrix`, centers, data, wdata, m, alpha, beta)
+calcSFGCMBelongMatrix <- function(centers, data, wdata, m, alpha, beta, sigmas, wsigmas) {
+    .Call(`_geocmeans_calcSFGCMBelongMatrix`, centers, data, wdata, m, alpha, beta, sigmas, wsigmas)
+}
+
+#' @title Calculate the generalized membership matrix with a noise cluster
+#' @name calcFGCMBelongMatrixNoisy
+#' @description Calculate the generalized membership matrix according to a set of
+#' centroids, the observed data, the fuzziness degree, and a beta parameter
+#'
+#' @param centers A matrix representing the centers of the
+#'   clusters with p columns and k rows
+#' @param data A matrix representing the observed data with n rows
+#'   and p columns
+#' @param m A float representing the fuzziness degree
+#' @param beta A float for the beta parameter (control speed convergence and classification crispness)
+#' @param delta A float, the value set for delta by the user
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
+#' @return A n * k matrix representing the belonging probabilities of each
+#'   observation to each cluster
+#' @keywords internal
+#'
+calcFGCMBelongMatrixNoisy <- function(centers, data, m, beta, delta, sigmas) {
+    .Call(`_geocmeans_calcFGCMBelongMatrixNoisy`, centers, data, m, beta, delta, sigmas)
+}
+
+#' @title Calculate the generalized membership matrix (spatial version) with a noise cluster
+#' @name calcSFGCMBelongMatrixNoisy
+#' @description Calculate the generalized membership matrix (spatial version) with a noise cluster
+#' @param centers A matrix representing the centers of the clusters with p
+#'   columns and k rows
+#' @param data A matrix representing the observed data with n rows and p columns
+#' @param wdata A matrix representing the lagged observed data with n rows
+#'   and p columns
+#' @param m A float representing the fuzziness degree
+#' @param alpha A float representing the weight of the space in the analysis (0
+#'   is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
+#'   dimensions, 2 is twice the weight for space)
+#' @param beta A float for the beta parameter (control speed convergence and classification crispness)
+#' @param delta A float, the value set for delta by the user
+#' @param sigmas A numeric vector for calculating the robust version of the FCM. Filled with ones
+#'    if the classical version is required
+#' @param wsigmas Same as sigmas, but calculated on the spatially lagged dataset
+#' @return A n * k matrix representing the belonging probabilities of each
+#'   observation to each cluster
+#' @keywords internal
+#'
+calcSFGCMBelongMatrixNoisy <- function(centers, data, wdata, m, alpha, beta, delta, sigmas, wsigmas) {
+    .Call(`_geocmeans_calcSFGCMBelongMatrixNoisy`, centers, data, wdata, m, alpha, beta, delta, sigmas, wsigmas)
 }
 
 #' @title focal euclidean distance on a matrix with a given window
@@ -253,6 +355,19 @@ Elsa_fuzzy_matrix_window <- function(mats, window, dist) {
 adj_spconsist_arr_window_globstd <- function(data, memberships, window) {
     .Call(`_geocmeans_adj_spconsist_arr_window_globstd`, data, memberships, window)
 }
+
+#' @title Calculate sigmas for the robust version of the c-means algorithm
+#' @name calcRobustSigmas
+#' @description Calculate sigmas for the robust version of the c-means algorithm
+#' @param data A Numeric matrix representing the observed data with n rows
+#'   and p columns
+#' @param belongmatrix A n X k matrix giving for each observation n, its
+#'   probability to belong to the cluster k
+#' @param centers A c X k matrix giving for each cluster c, its center in k dimensions
+#' @param m A float representing the fuzziness degree
+#' @return A vector with the sigmas for each cluster
+#' @keywords internal
+NULL
 
 #' @title minimum of a vector
 #' @name vecmin
@@ -426,5 +541,9 @@ test_inferior_mat <- function(mat, t) {
 #'
 vector_out_prod <- function(x) {
     .Call(`_geocmeans_vector_out_prod`, x)
+}
+
+calcRobustSigmas <- function(data, belongmatrix, centers, m) {
+    .Call(`_geocmeans_calcRobustSigmas`, data, belongmatrix, centers, m)
 }
 

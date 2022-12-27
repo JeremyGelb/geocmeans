@@ -12,9 +12,12 @@ SFCMeans(
   alpha,
   lag_method = "mean",
   window = NULL,
+  noise_cluster = FALSE,
+  delta = NULL,
   maxiter = 500,
   tol = 0.01,
   standardize = TRUE,
+  robust = FALSE,
   verbose = TRUE,
   init = "random",
   seed = NULL
@@ -54,6 +57,10 @@ window must be a square numeric matrix with odd dimensions (such 3x3). The value
 the matrix indicate the weight to give to each pixel and the centre of the matrix is
 the centre of the focal function.}
 
+\item{noise_cluster}{A boolean indicatong if a noise cluster must be added to the solution (see details)}
+
+\item{delta}{A float giving the distance of the noise cluster to each observation}
+
 \item{maxiter}{An integer for the maximum number of iterations}
 
 \item{tol}{The tolerance criterion used in the evaluateMatrices function for
@@ -61,6 +68,8 @@ convergence assessment}
 
 \item{standardize}{A boolean to specify if the variables must be centred and
 reduced (default = True)}
+
+\item{robust}{A boolean indicating if the "robust" version of the algorithm must be used (see details)}
 
 \item{verbose}{A boolean to specify if the progress should be printed}
 

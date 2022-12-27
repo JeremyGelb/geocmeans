@@ -591,6 +591,7 @@ uncertaintyMap <- function(geodata, belongmatrix, njit = 150, radius = NULL, col
 #' @examples
 #' #No example provided, this is an internal function
 eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NULL, standardize = TRUE,
+                            robust = FALSE, noise_cluster = FALSE,
                             spconsist = FALSE, classidx = TRUE, nrep = 30, indices = NULL,
                             tol, maxiter, seed = NULL, init = "random", verbose = TRUE,
                             wrapped = FALSE){
@@ -601,11 +602,13 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
     if(algo == "FCM"){
         exefun <- function(data,x, ...){
             return(CMeans(data, x$k, x$m, maxiter = maxiter, tol = tol, standardize = standardize,
+                          robust = robust, noise_cluster = noise_cluster, delta = x$delta,
                           verbose = FALSE, seed = seed, init = init))
         }
     }else if(algo == "GFCM"){
         exefun <- function(data,x,... ){
             return(GCMeans(data, x$k, x$m, x$beta, maxiter = maxiter, tol = tol, standardize = standardize,
+                           robust = robust, noise_cluster = noise_cluster, delta = x$delta,
                            verbose = FALSE, seed = seed, init = init))
         }
     }else if(algo == "SFCM"){
@@ -613,6 +616,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
             dots <- list(...)
             return(SFCMeans(data, dots$lw, x$k, x$m, x$alpha, x$lag_method, window = dots$wd,
                             maxiter = maxiter, tol = tol, standardize = standardize,
+                            robust = robust, noise_cluster = noise_cluster, delta = x$delta,
                             verbose = FALSE, seed = seed, init = init))
         }
     }else if(algo == "SGFCM"){
@@ -620,6 +624,7 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
             dots <- list(...)
             return(SGFCMeans(data, dots$lw, x$k, x$m, x$alpha, x$beta, x$lag_method, window = dots$wd,
                              maxiter = maxiter, tol = tol, standardize = standardize,
+                             robust = robust, noise_cluster = noise_cluster, delta = x$delta,
                              verbose = FALSE, seed = seed, init = init))
         }
     }else{
@@ -691,6 +696,9 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
 #' and weighted according to the values of this matrix.
 #' @param window A list of windows to use to calculate neighbouring values if
 #' rasters are used.
+#' @param robust A boolean indicating if the "robust" version of the algorithm must be used (see details)
+#' @param noise_cluster A boolean indicatong if a noise cluster must be added to the solution (see details)
+#' @param delta A float giving the distance of the noise cluster to each observation
 #' @param standardize A boolean to specify if the variable must be centered and
 #'   reduce (default = True)
 #' @param spconsist A boolean indicating if the spatial consistency must be
@@ -731,7 +739,9 @@ eval_parameters <- function(algo, parameters, data, nblistw = NULL, window = NUL
 #' }
 select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", window = NULL,
                               spconsist = TRUE, classidx = TRUE, nrep = 30, indices = NULL,
-                              standardize = TRUE, maxiter = 500, tol = 0.01,
+                              standardize = TRUE,
+                              robust = FALSE, noise_cluster = FALSE, delta = NA,
+                              maxiter = 500, tol = 0.01,
                               seed=NULL, init = "random", verbose = TRUE){
 
     if(spconsist==FALSE & classidx==FALSE){
@@ -749,12 +759,16 @@ select_parameters <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL,
         indices <- c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia")
     }
 
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method, window = 1:length(window))
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta=beta,
+                                   listsw=1:length(nblistw),lag_method=lag_method,window = 1:length(window),
+                                   delta = delta
+                                   )
 
     print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
     dfIndices <- eval_parameters(algo, allcombinaisons, data, nblistw, window, standardize,
-        spconsist, classidx, nrep, indices,
-        tol, maxiter, seed, init = init, verbose = verbose)
+                                 robust, noise_cluster,
+                                 spconsist, classidx, nrep, indices,
+                                 tol, maxiter, seed, init = init, verbose = verbose)
     return(dfIndices)
 }
 
@@ -799,6 +813,9 @@ selectParameters <- select_parameters
 #' and weighted according to the values of this matrix.
 #' @param window A list of windows to use to calculate neighbouring values if
 #' rasters are used.
+#' @param robust A boolean indicating if the "robust" version of the algorithm must be used (see details)
+#' @param noise_cluster A boolean indicatong if a noise cluster must be added to the solution (see details)
+#' @param delta A float giving the distance of the noise cluster to each observation
 #' @param spconsist A boolean indicating if the spatial consistency must be
 #' calculated
 #' @param classidx A boolean indicating if the quality of classification
@@ -844,7 +861,9 @@ selectParameters <- select_parameters
 #'}
 select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NULL, lag_method="mean", window = NULL,
                                  spconsist = TRUE, classidx = TRUE, nrep = 30, indices = NULL,
-                                 standardize = TRUE, maxiter = 500, tol = 0.01, chunk_size = 5,
+                                 standardize = TRUE,
+                                 robust = FALSE, noise_cluster = FALSE, delta = NA,
+                                 maxiter = 500, tol = 0.01, chunk_size = 5,
                                  seed=NULL, init = "random", verbose = TRUE){
 
     if(spconsist==FALSE & classidx==FALSE){
@@ -862,7 +881,8 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
         indices <- c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia")
     }
 
-    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta = beta,listsw=1:length(nblistw),lag_method=lag_method, window = 1:length(window))
+    allcombinaisons <- expand.grid(k=k,m=m,alpha=alpha,beta=beta,delta = delta,
+                                   listsw=1:length(nblistw),lag_method=lag_method, window = 1:length(window))
 
     if (verbose){
         print(paste("number of combinaisons to estimate : ",nrow(allcombinaisons)))
@@ -891,6 +911,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
                 sprintf(algo)
                 parameters <- chunks[[i]]
                 indices <- eval_parameters(algo, parameters, dataw, nblistw, window, standardize,
+                                           robust = robust, noise_cluster = noise_cluster,
                                            spconsist, classidx, nrep, indices,
                                            tol, maxiter, init = init, verbose = FALSE, wrapped = wrapped)
                 p(sprintf("i=%g", i))
@@ -901,6 +922,7 @@ select_parameters.mc <- function(algo,data,k,m,alpha = NA, beta = NA, nblistw=NU
         values <- future.apply::future_lapply(iseq, function(i) {
             parameters <- chunks[[i]]
             indices <- eval_parameters(algo, parameters, dataw, nblistw, window, standardize,
+                                       robust = robust, noise_cluster = noise_cluster,
                                        spconsist, classidx, nrep, indices,
                                        tol, maxiter, init = init, verbose = FALSE, wrapped = wrapped)
             return(indices)

@@ -1,7 +1,11 @@
-# geocmeans 0.3.2
+# geocmeans 0.3.2.9000
 
 Removing dependencies from rgdal and raster to move to terra.
 The dataset Aracachon is now provided as a raw tiff file and must be read directly.
+
+Adding two new parameters to the functions CMeans, GCMeans, SFCMeans, SFGCMeans : noise_cluster and robust. They can be used to calculate the "robust" version of each algorithm, or to add a noise cluster. See the vignette "Advanced examples" on the website.
+
+Adding a little function to facilitate the scaling and unscaling of variables : standardizer
 
 # geocmeans 0.3.1
 

@@ -31,10 +31,14 @@ LogicalMatrix test_inferior_mat(NumericMatrix mat, double t);
 
 NumericMatrix vector_out_prod(NumericVector x);
 
+double calcDeltaNoiseClust(NumericMatrix data, NumericMatrix centers, double lambda);
+
 double max_mat(NumericMatrix x);
 
 double vecmin(NumericVector x);
 
 double vecmax(NumericVector x);
+
+NumericVector calcRobustSigmas(NumericMatrix data, NumericMatrix belongmatrix, NumericMatrix centers, double m);
 
 #endif

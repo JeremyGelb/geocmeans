@@ -4,7 +4,7 @@
 \alias{calcBelongMatrix}
 \title{Calculate the membership matrix}
 \usage{
-calcBelongMatrix(centers, data, m)
+calcBelongMatrix(centers, data, m, sigmas)
 }
 \arguments{
 \item{centers}{A matrix or a dataframe representing the centers of the
@@ -14,6 +14,9 @@ clusters with p columns and k rows}
 and p columns}
 
 \item{m}{A float representing the fuzziness degree}
+
+\item{sigmas}{A numeric vector for calculating the robust version of the FCM. Filled with ones
+if the classical version is required}
 }
 \value{
 A n * k matrix representing the probability of belonging of each

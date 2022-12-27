@@ -20,4 +20,5 @@
 #'
 #' @docType package
 #' @name geocmeans
+#' @keywords internal
 NULL

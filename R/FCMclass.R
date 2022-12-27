@@ -411,7 +411,7 @@ summary.FCMres <- function(object, data = NULL, weighted = TRUE, dec = 3, silent
 predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, standardize = TRUE, ...){
 
   if(object$algo %in% c("FCM", "GFCM", "SFCM", "SGFCM") == FALSE){
-    stop('pred can only be performed for FCMres object
+    stop('prediction can only be performed for FCMres object
          if algo is one of "FCM", "GFCM", "SFCM", "SGFCM"')
   }
 
@@ -470,26 +470,90 @@ predict_membership <- function(object, new_data, nblistw = NULL, window = NULL, 
     }
 
   }
+  noise_cluster <- is.numeric(results$noise_cluster)
+  if(results$robust == FALSE){
+    sigmas <- rep(1, nrow(results$Centers))
+    wsigmas <- rep(1, nrow(results$Centers))
+  }else{
+    sigmas <- calcRobustSigmas(data = as.matrix(new_data),
+                               belongmatrix = results$Belongings,
+                               centers = as.matrix(results$Centers),
+                               m = results$m
+                               )
+    if(results$algo %in% c("SFCM", "SGFCM")){
+      print("hello there !")
+      wsigmas <- calcRobustSigmas(data = as.matrix(wdata),
+                                  belongmatrix = results$Belongings,
+                                  centers = as.matrix(results$Centers),
+                                  m = results$m
+      )
+    }
+  }
 
   ## selecting the appropriate function for prediction
   if(results$algo == "FCM"){
-    pred_values <- calcBelongMatrix(as.matrix(results$Centers), as.matrix(new_data),
-                                    m = results$m)
+    if(!noise_cluster){
+      pred_values <- calcBelongMatrix(as.matrix(results$Centers), as.matrix(new_data),
+                                      m = results$m, sigmas = sigmas)
+    }else{
+      pred_values <- calcBelongMatrixNoisy(as.matrix(results$Centers), as.matrix(new_data),
+                                      m = results$m, sigmas = sigmas,
+                                      delta = results$delta)
+    }
+
   }else if(results$algo == "GFCM"){
-    pred_values <- calcFGCMBelongMatrix(as.matrix(results$Centers),
-                                        as.matrix(new_data),
-                                        m = results$m, beta = results$beta)
+    if(!noise_cluster){
+      pred_values <- calcFGCMBelongMatrix(as.matrix(results$Centers),
+                                          as.matrix(new_data),
+                                          m = results$m, beta = results$beta,
+                                          sigmas = sigmas)
+    }else{
+      pred_values <- calcFGCMBelongMatrixNoisy(as.matrix(results$Centers),
+                                          as.matrix(new_data),
+                                          m = results$m, beta = results$beta,
+                                          delta = results$delta,
+                                          sigmas = sigmas)
+    }
+
   }else if(results$algo == "SFCM"){
-    pred_values <- calcSFCMBelongMatrix(as.matrix(results$Centers),
-                                        as.matrix(new_data),
-                                        wdata = as.matrix(wdata),
-                                        m = results$m, alpha = results$alpha)
+    if(!noise_cluster){
+      pred_values <- calcSFCMBelongMatrix(as.matrix(results$Centers),
+                                          as.matrix(new_data),
+                                          wdata = as.matrix(wdata),
+                                          m = results$m,
+                                          alpha = results$alpha,
+                                          wsigmas = wsigmas,
+                                          sigmas = sigmas)
+    }else{
+      pred_values <- calcSFCMBelongMatrixNoisy(as.matrix(results$Centers),
+                                          as.matrix(new_data),
+                                          wdata = as.matrix(wdata),
+                                          m = results$m, alpha = results$alpha,
+                                          delta = results$delta,
+                                          wsigmas = wsigmas,
+                                          sigmas = sigmas)
+    }
+
   }else if(results$algo == "SGFCM"){
-    pred_values <- calcSFGCMBelongMatrix(as.matrix(results$Centers),
-                                         as.matrix(new_data),
-                                         wdata = as.matrix(wdata),
-                                         m = results$m, alpha = results$alpha,
-                                         beta = results$beta)
+    if(!noise_cluster){
+      pred_values <- calcSFGCMBelongMatrix(as.matrix(results$Centers),
+                                           as.matrix(new_data),
+                                           wdata = as.matrix(wdata),
+                                           m = results$m, alpha = results$alpha,
+                                           beta = results$beta,
+                                           wsigmas = wsigmas,
+                                           sigmas = sigmas)
+    }else{
+      pred_values <- calcSFGCMBelongMatrixNoisy(as.matrix(results$Centers),
+                                           as.matrix(new_data),
+                                           wdata = as.matrix(wdata),
+                                           m = results$m, alpha = results$alpha,
+                                           beta = results$beta,
+                                           sigmas = sigmas,
+                                           wsigmas = wsigmas,
+                                           delta = results$delta)
+    }
+
   }
 
   if(results$isRaster == FALSE){

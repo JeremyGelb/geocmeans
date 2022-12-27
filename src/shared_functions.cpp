@@ -203,7 +203,6 @@ NumericMatrix pow_matrix_bycol(NumericMatrix x, float p){
 
 
 
-
 //' @title minimum of each row of a matrix
 //' @name rowmins_mat
 //' @param x a matrix
@@ -278,3 +277,39 @@ NumericMatrix vector_out_prod(NumericVector x){
   }
   return res;
 }
+
+// ############################################################################
+// FUNCTIONS FOR ROBUST CASES
+// ############################################################################
+
+//' @title Calculate sigmas for the robust version of the c-means algorithm
+//' @name calcRobustSigmas
+//' @description Calculate sigmas for the robust version of the c-means algorithm
+//' @param data A Numeric matrix representing the observed data with n rows
+//'   and p columns
+//' @param belongmatrix A n X k matrix giving for each observation n, its
+//'   probability to belong to the cluster k
+//' @param centers A c X k matrix giving for each cluster c, its center in k dimensions
+//' @param m A float representing the fuzziness degree
+//' @return A vector with the sigmas for each cluster
+//' @keywords internal
+//
+// [[Rcpp::export]]
+NumericVector calcRobustSigmas(NumericMatrix data, NumericMatrix belongmatrix, NumericMatrix centers, double m){
+
+  NumericMatrix powered = power_mat(belongmatrix, m);
+
+  int nc = centers.nrow();
+  NumericVector sigmas(nc);
+  int i;
+
+  for( i = 0; i < nc ; i++){
+    double denom = sum(powered(_,i));
+    double num = sum(calcEuclideanDistance2(data, centers(i,_)) * powered(_,i));
+    sigmas(i) = num / denom;
+  };
+
+  return(sqrt(sigmas));
+}
+
+

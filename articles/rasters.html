@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -65,6 +61,9 @@
     <li>
       <a href="../articles/rasters.html">Fuzzy clustering with rasters</a>
     </li>
+    <li>
+      <a href="../articles/web_vignettes/advanced_examples.html">Advanced examples</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -73,7 +72,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/JeremyGelb/geocmeans/">
+  <a href="https://github.com/JeremyGelb/geocmeans/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -92,20 +91,20 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fuzzy clustering with rasters</h1>
-                        <h4 class="author">Jeremy Gelb</h4>
+                        <h4 data-toc-skip class="author">Jeremy Gelb</h4>
             
-            <h4 class="date">02/04/2021</h4>
+            <h4 data-toc-skip class="date">02/04/2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/JeremyGelb/geocmeans/blob/master/vignettes/rasters.Rmd"><code>vignettes/rasters.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JeremyGelb/geocmeans/blob/HEAD/vignettes/rasters.Rmd" class="external-link"><code>vignettes/rasters.Rmd</code></a></small>
       <div class="hidden name"><code>rasters.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>In this vignette, we want to show how to use <code>geocmeans</code> to do fuzzy clustering on a raster dataset. The idea is simple, each pixel of a raster is an observation, and each band of the raster is a variable. Based on this, the same methodology can be applied, but rasters can not be handled like classical tabular and vector dataset. The example given use a medium size raster so some part of the vignette can be quite long to run (in particular when <code>select_parameters</code> is used).</p>
 <p>We give a practical example here with a raster of 5 bands:</p>
 <ul>
@@ -118,217 +117,227 @@
 </ul>
 <p>The image has a resolution of 30x30 metres and was acquired by Landsat 8 on June 14, 2021. It is provided with <code>geocmeans</code> as a Large RasterBrick <code>Arcachon</code>.</p>
 </div>
-<div id="loading-the-dataset" class="section level2">
-<h2 class="hasAnchor">
-<a href="#loading-the-dataset" class="anchor"></a>Loading the dataset</h2>
+<div class="section level2">
+<h2 id="loading-the-dataset">Loading the dataset<a class="anchor" aria-label="anchor" href="#loading-the-dataset"></a>
+</h2>
 <p>Let us start with a simple visualization of the dataset</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeremyGelb/geocmeans">geocmeans</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rpkgs.datanovia.com/ggpubr/">ggpubr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://future.futureverse.org">future</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap">tmap</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"Arcachon"</span><span class="op">)</span>
-
-<span class="co"># show the pseudo-color image</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plotRGB.html">plotRGB</a></span><span class="op">(</span><span class="va">Arcachon</span>, r <span class="op">=</span> <span class="fl">3</span>, g <span class="op">=</span> <span class="fl">2</span>, b <span class="op">=</span> <span class="fl">1</span>, stretch <span class="op">=</span> <span class="st">"hist"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeremyGelb/geocmeans" class="external-link">geocmeans</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rpkgs.datanovia.com/ggpubr/" class="external-link">ggpubr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://future.futureverse.org" class="external-link">future</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Arcachon</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/Littoral4_2154.tif"</span>, package <span class="op">=</span> <span class="st">"geocmeans"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"green"</span>, <span class="st">"red"</span>, <span class="st">"infrared"</span>, <span class="st">"SWIR1"</span>, <span class="st">"SWIR2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># show the pseudo-color image</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">Arcachon</span>, r <span class="op">=</span> <span class="fl">3</span>, g <span class="op">=</span> <span class="fl">2</span>, b <span class="op">=</span> <span class="fl">1</span>, stretch <span class="op">=</span> <span class="st">"hist"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-2-1.png" width="384"></p>
 <p>We can distinguish urban areas, crops, deep water, coast and sand areas. We can expect approximately five clusters.</p>
 </div>
-<div id="fuzzy-c-means" class="section level2">
-<h2 class="hasAnchor">
-<a href="#fuzzy-c-means" class="anchor"></a>Fuzzy C-means</h2>
+<div class="section level2">
+<h2 id="fuzzy-c-means">Fuzzy C-means<a class="anchor" aria-label="anchor" href="#fuzzy-c-means"></a>
+</h2>
 <p>As a first exploration and to determine the appropriate number of clusters, we propose the applcication of a classical FCM.</p>
 <p>The dataset must be structured as a list of bands. The names given to the list elements will be used as variable names.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># sonverting the RasterBrick to a simple list of RasterLayer</span>
-<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">aband</span> <span class="op">&lt;-</span> <span class="va">Arcachon</span><span class="op">[[</span><span class="va">n</span><span class="op">]</span><span class="op">]</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">aband</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-
-<span class="co"># giving a name to each band</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">dataset</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># sonverting the RasterBrick to a simple list of SpatRaster</span></span>
+<span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">aband</span> <span class="op">&lt;-</span> <span class="va">Arcachon</span><span class="op">[[</span><span class="va">n</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">aband</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># giving a name to each band</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dataset</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Arcachon</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># finding an appropriate k and m values (using a multicore plan)</span>
-<span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multiprocess.html">multiprocess</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span>
-<span class="va">FCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"FCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>, 
-                               k <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">10</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1.1</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>, spconsist <span class="op">=</span> <span class="cn">FALSE</span>, 
-                               indices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"XieBeni.index"</span>, <span class="st">"Explained.inertia"</span>,
-                                           <span class="st">"Negentropy.index"</span>, <span class="st">"Silhouette.index"</span><span class="op">)</span>,
-                               verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># finding an appropriate k and m values (using a multicore plan)</span></span>
+<span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">FCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"FCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>, </span>
+<span>                               k <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">10</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1.1</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>, spconsist <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>                               indices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XieBeni.index"</span>, <span class="st">"Explained.inertia"</span>,</span>
+<span>                                           <span class="st">"Negentropy.index"</span>, <span class="st">"Silhouette.index"</span><span class="op">)</span>,</span>
+<span>                               verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the silhouette index values</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">FCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">Silhouette.index</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the silhouette index values</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">FCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Silhouette.index</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the explained inertia</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">FCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, fill <span class="op">=</span> <span class="va">Explained.inertia</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">Explained.inertia</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the explained inertia</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">FCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, fill <span class="op">=</span> <span class="va">Explained.inertia</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">k</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Explained.inertia</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-5-2.png" width="480" style="display: block; margin: auto;"></p>
 <p>Considering the values above, we select k = 7 and m = 1.5, it seems to provide a good compromise between the silhouette index and the explained inertia.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">FCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
-                     verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, init <span class="op">=</span> <span class="st">"kpp"</span><span class="op">)</span>
-
-<span class="va">maps1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">FCM_result</span>, undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span>
-
-<span class="co"># plotting membership values for group 2</span>
-<span class="va">maps1</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">FCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, init <span class="op">=</span> <span class="st">"kpp"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">maps1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">FCM_result</span>, undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plotting membership values for group 2</span></span>
+<span><span class="va">maps1</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting membership values for group 5</span>
-<span class="va">maps1</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting membership values for group 5</span></span>
+<span><span class="va">maps1</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-6-2.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the most likely categories</span>
-<span class="va">maps1</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the most likely categories</span></span>
+<span><span class="va">maps1</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-6-3.png" width="384" style="display: block; margin: auto;"></p>
 <p>We can already determine some groups from these maps:</p>
 <ol style="list-style-type: decimal">
-<li>shallow water</li>
-<li>sand</li>
-<li>low density urban areas</li>
-<li>wet sand</li>
 <li>deep water</li>
-<li>vegetation</li>
+<li>sand</li>
+<li>wet sand</li>
 <li>high density urban areas</li>
+<li>low density urban areas</li>
+<li>vegetation</li>
+<li>shallow water</li>
 </ol>
 <p>We could try to obtain a more crispy partition by using the generalized version of FCM. This implies selecting a parameter called beta.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">GFCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"GFCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>,
-                             k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1.1</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>, beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0.9</span>,<span class="fl">0.1</span><span class="op">)</span>,
-                             spconsist <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, init <span class="op">=</span> <span class="st">"kpp"</span>,
-                             indices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"XieBeni.index"</span>, <span class="st">"Explained.inertia"</span>,
-                                         <span class="st">"Negentropy.index"</span>, <span class="st">"Silhouette.index"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">GFCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"GFCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>,</span>
+<span>                             k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1.1</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>, beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0.9</span>,<span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>                             spconsist <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, init <span class="op">=</span> <span class="st">"kpp"</span>,</span>
+<span>                             indices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XieBeni.index"</span>, <span class="st">"Explained.inertia"</span>,</span>
+<span>                                         <span class="st">"Negentropy.index"</span>, <span class="st">"Silhouette.index"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the explained inertia</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">GFCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">Explained.inertia</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">Explained.inertia</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the explained inertia</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">GFCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">Explained.inertia</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Explained.inertia</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-8-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the silhouette index</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">GFCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">Silhouette.index</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the silhouette index</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">GFCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">m</span>, y <span class="op">=</span> <span class="va">beta</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Silhouette.index</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-8-2.png" width="480" style="display: block; margin: auto;"></p>
 <p>It seems that <code>beta = 0.5</code> gives the best results with <code>m = 1.5</code>, we gain 2 more percentage points of inertia while keeping the same Silhouette index.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">GFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GCMeans.html">GCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
-                       verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span>
-
-<span class="co"># reorganizing the groups for an easier comparison</span>
-<span class="va">GFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groups_matching.html">groups_matching</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">GFCM_result</span><span class="op">)</span>
-
-<span class="va">maps2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">GFCM_result</span>, undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span>
-
-<span class="co"># plotting membership values for group 2</span>
-<span class="va">maps2</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">GFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GCMeans.html">GCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                       verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># reorganizing the groups for an easier comparison</span></span>
+<span><span class="va">GFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groups_matching.html">groups_matching</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">GFCM_result</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">maps2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">GFCM_result</span>, undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plotting membership values for group 2</span></span>
+<span><span class="va">maps2</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-9-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting membership values for group 5</span>
-<span class="va">maps2</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting membership values for group 5</span></span>
+<span><span class="va">maps2</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-9-2.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the most likely categories</span>
-<span class="va">maps2</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the most likely categories</span></span>
+<span><span class="va">maps2</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-9-3.png" width="384" style="display: block; margin: auto;"></p>
 <p>We can see that with the same threshold, we obtain far less undecided pixels and only few variations among groups in comparison with the previous results.</p>
 </div>
-<div id="spatial-generalized-fuzzy-c-means" class="section level2">
-<h2 class="hasAnchor">
-<a href="#spatial-generalized-fuzzy-c-means" class="anchor"></a>Spatial Generalized Fuzzy C-means</h2>
+<div class="section level2">
+<h2 id="spatial-generalized-fuzzy-c-means">Spatial Generalized Fuzzy C-means<a class="anchor" aria-label="anchor" href="#spatial-generalized-fuzzy-c-means"></a>
+</h2>
 <p>The image we obtain comprise a lot of noise due to its rather small resolution. To obtain a more spatially homogeneous clustering, we will use here the SGFCM method.</p>
 <p>We must determine the right value of alpha and the size of the window. When working with rasters, a square window is used to define the neighbours around a pixel because using a classical neighbour matrix would not be efficient.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="va">w2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
-<span class="va">w3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">7</span>, ncol <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">w2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">w3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">7</span>, ncol <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multiprocess.html">multiprocess</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span>
-<span class="va">SGFCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"SGFCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>,
-                             beta <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>,
-                             window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">w1</span>,<span class="va">w2</span>,<span class="va">w3</span><span class="op">)</span>,
-                             spconsist <span class="op">=</span> <span class="cn">TRUE</span>, nrep <span class="op">=</span> <span class="fl">5</span>, 
-                             verbose <span class="op">=</span> <span class="cn">TRUE</span>, chunk_size <span class="op">=</span> <span class="fl">4</span>,
-                             seed <span class="op">=</span> <span class="fl">456</span>, init <span class="op">=</span> <span class="st">"kpp"</span>,
-                             indices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"XieBeni.index"</span>, <span class="st">"Explained.inertia"</span>,
-                                         <span class="st">"Negentropy.index"</span>, <span class="st">"Silhouette.index"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">SGFCMvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">select_parameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"SGFCM"</span>, data <span class="op">=</span> <span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>                             beta <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">2</span>,<span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>                             window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">w1</span>,<span class="va">w2</span>,<span class="va">w3</span><span class="op">)</span>,</span>
+<span>                             spconsist <span class="op">=</span> <span class="cn">TRUE</span>, nrep <span class="op">=</span> <span class="fl">5</span>, </span>
+<span>                             verbose <span class="op">=</span> <span class="cn">TRUE</span>, chunk_size <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                             seed <span class="op">=</span> <span class="fl">456</span>, init <span class="op">=</span> <span class="st">"kpp"</span>,</span>
+<span>                             indices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XieBeni.index"</span>, <span class="st">"Explained.inertia"</span>,</span>
+<span>                                         <span class="st">"Negentropy.index"</span>, <span class="st">"Silhouette.index"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># showing the silhouette index</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">Silhouette.index</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dict</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>,</span>
+<span>  window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3x3"</span>,<span class="st">"5x5"</span>,<span class="st">"7x7"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">SGFCMvalues</span><span class="op">$</span><span class="va">window</span> <span class="op">&lt;-</span> <span class="va">dict</span><span class="op">$</span><span class="va">window</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">$</span><span class="va">window</span>,<span class="va">dict</span><span class="op">$</span><span class="va">w</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># showing the silhouette index</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Silhouette.index</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-12-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># showing the explained inertia</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, fill <span class="op">=</span> <span class="va">Explained.inertia</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">Explained.inertia</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># showing the explained inertia</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, fill <span class="op">=</span> <span class="va">Explained.inertia</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Explained.inertia</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-12-2.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># showing the spatial inconsistency</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, fill <span class="op">=</span> <span class="va">spConsistency</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">spConsistency</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># showing the spatial inconsistency</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">SGFCMvalues</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, fill <span class="op">=</span> <span class="va">spConsistency</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">window</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">spConsistency</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span>ratio<span class="op">=</span><span class="fl">0.125</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-12-3.png" width="480" style="display: block; margin: auto;"> Its seems that alpha = 0.9 and a small window of 3x3 gives good results, but we have an important loss in explained inertia. Note that when larger windows need to be used, it is possible to define distance based circular windows with the function <code>circular_window</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">SGFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SGFCMeans.html">SGFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
-                       lag_method <span class="op">=</span> <span class="st">"mean"</span>,
-                       window <span class="op">=</span> <span class="va">w1</span>, alpha <span class="op">=</span> <span class="fl">0.9</span>, beta <span class="op">=</span> <span class="fl">0.5</span>,
-                       seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, init <span class="op">=</span> <span class="st">"kpp"</span><span class="op">)</span>
-
-<span class="co"># reorganizing the groups for an easier comparison</span>
-<span class="va">SGFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groups_matching.html">groups_matching</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">SGFCM_result</span><span class="op">)</span>
-
-<span class="va">maps3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">SGFCM_result</span>, undecided <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>
-
-<span class="co"># plotting membership values for group 2</span>
-<span class="va">maps3</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">SGFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SGFCMeans.html">SGFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, k <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                       lag_method <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>                       window <span class="op">=</span> <span class="va">w1</span>, alpha <span class="op">=</span> <span class="fl">0.9</span>, beta <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>                       seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, init <span class="op">=</span> <span class="st">"kpp"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># reorganizing the groups for an easier comparison</span></span>
+<span><span class="va">SGFCM_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groups_matching.html">groups_matching</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">SGFCM_result</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">maps3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">SGFCM_result</span>, undecided <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plotting membership values for group 2</span></span>
+<span><span class="va">maps3</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting membership values for group 5</span>
-<span class="va">maps3</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting membership values for group 5</span></span>
+<span><span class="va">maps3</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plotting the most likely categories</span>
-<span class="va">maps3</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plotting the most likely categories</span></span>
+<span><span class="va">maps3</span><span class="op">$</span><span class="va">ClusterPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-13-3.png" width="384" style="display: block; margin: auto;"></p>
 <p>To map the results of the SGFCM, it is necessary to lower the threshold of the parameter <code>undecided</code>. In comparison with the previous maps, we obtain a much smoother result which can be easier to use for mapping purposes or for delimiting areas. As suggested by the drop in the explained inertia, we lost a lot of details. This is not surprising if we consider that the pixels have a size of 30 metres, and the neighbours can be very different from the center of the window. Moreover, group 4 no longer describes wet sand, but interstitial areas between low and high density urban areas.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">GFCM_result</span>, <span class="va">SGFCM_result</span><span class="op">)</span>
-
-<span class="va">indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">cluster_results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">clust</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="../reference/calcexplainedInertia.html">calcexplainedInertia</a></span><span class="op">(</span><span class="va">clust</span><span class="op">$</span><span class="va">Data</span>, <span class="va">clust</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span>,
-    <span class="fu"><a href="../reference/calcSilhouetteIdx.html">calcSilhouetteIdx</a></span><span class="op">(</span><span class="va">clust</span><span class="op">$</span><span class="va">Data</span>, <span class="va">clust</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span>,
-    <span class="fu"><a href="../reference/spConsistency.html">spConsistency</a></span><span class="op">(</span><span class="va">clust</span>, window <span class="op">=</span> <span class="va">w1</span>, nrep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">$</span><span class="va">Mean</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FCM"</span>, <span class="st">"GFCM"</span>, <span class="st">"SGFCM"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"explained inertia"</span>, <span class="st">"silhouette index"</span>, <span class="st">"spatial inconsistency"</span><span class="op">)</span>
-
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">indices</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">FCM_result</span>, <span class="va">GFCM_result</span>, <span class="va">SGFCM_result</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">cluster_results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">clust</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="../reference/calcexplainedInertia.html">calcexplainedInertia</a></span><span class="op">(</span><span class="va">clust</span><span class="op">$</span><span class="va">Data</span>, <span class="va">clust</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/calcSilhouetteIdx.html">calcSilhouetteIdx</a></span><span class="op">(</span><span class="va">clust</span><span class="op">$</span><span class="va">Data</span>, <span class="va">clust</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/spConsistency.html">spConsistency</a></span><span class="op">(</span><span class="va">clust</span>, window <span class="op">=</span> <span class="va">w1</span>, nrep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">$</span><span class="va">Mean</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FCM"</span>, <span class="st">"GFCM"</span>, <span class="st">"SGFCM"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"explained inertia"</span>, <span class="st">"silhouette index"</span>, <span class="st">"spatial inconsistency"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">indices</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left"></th>
@@ -359,15 +368,15 @@
 </table>
 <p>SGFCM proposes a solution with a spatial inconsistency index divided by three. However, in that context, the spatial algorithm might not be the best choice considering the hard drop of both explained inertia and Silhouette index. Here FCM and FGCM produces very similar results.</p>
 </div>
-<div id="spatial-diagnostic" class="section level2">
-<h2 class="hasAnchor">
-<a href="#spatial-diagnostic" class="anchor"></a>Spatial diagnostic</h2>
+<div class="section level2">
+<h2 id="spatial-diagnostic">Spatial diagnostic<a class="anchor" aria-label="anchor" href="#spatial-diagnostic"></a>
+</h2>
 <p><strong>geocmeans</strong> provides multiple tools to assess the spatial consistency of a classification. For a raster dataset, the function <code>spatialDiag</code> will calculate the Moran I values for each column in the membership matrix, the spatial inconsistency index and the local ELSA statistic.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">diagGFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">GFCM_result</span>, window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, nrep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">diagGFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">GFCM_result</span>, window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, nrep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <p>The global Moran I indicates the level of spatial autocorrelation for each category.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">MoranValues</span>, digits <span class="op">=</span> <span class="fl">3</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">MoranValues</span>, digits <span class="op">=</span> <span class="fl">3</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Cluster</th>
@@ -404,23 +413,24 @@
 </tr>
 </tbody>
 </table>
-<p>Here groups 3 and 7 have the lowest levels of spatial autocorrelation, meaning that these groups tend to be less surrounded by pixels from the same groups and are more fragmented. Both groups are urban areas (high and low density) and are spatially close; this is why they have lower Moran I values. We could explore the local Moran I values for both with the function <code>calc_local_moran_raster</code>. This function provides the same results as <code><a href="https://rdrr.io/pkg/raster/man/autocor.html">raster::MoranLocal</a></code> but is significantly faster.</p>
+<p>Here groups 4 and 5 have the lowest levels of spatial autocorrelation, meaning that these groups tend to be less surrounded by pixels from the same groups and are more fragmented. Both groups are urban areas (high and low density) and are spatially close; this is why they have lower Moran I values. We could explore the local Moran I values for both with the function <code>calc_local_moran_raster</code>. This function provides the same results as <code>MoranLocal</code> from <code>raster</code> but is significantly faster.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># calculating the local Moran I values</span>
-<span class="va">loc_moran3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_local_moran_raster.html">calc_local_moran_raster</a></span><span class="op">(</span><span class="va">GFCM_result</span><span class="op">$</span><span class="va">rasters</span><span class="op">$</span><span class="va">group3</span>,<span class="va">w1</span><span class="op">)</span>
-<span class="va">loc_moran7</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_local_moran_raster.html">calc_local_moran_raster</a></span><span class="op">(</span><span class="va">GFCM_result</span><span class="op">$</span><span class="va">rasters</span><span class="op">$</span><span class="va">group7</span>,<span class="va">w1</span><span class="op">)</span>
-
-<span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">9</span>, name <span class="op">=</span> <span class="st">"Spectral"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># mapping the values</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">loc_moran3</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="va">pal</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">9</span>, title <span class="op">=</span> <span class="st">"Local Moran I"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/classInt/" class="external-link">classInt</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># calculating the local Moran I values</span></span>
+<span><span class="va">loc_moran4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_local_moran_raster.html">calc_local_moran_raster</a></span><span class="op">(</span><span class="va">GFCM_result</span><span class="op">$</span><span class="va">rasters</span><span class="op">$</span><span class="va">group4</span>,<span class="va">w1</span><span class="op">)</span></span>
+<span><span class="va">loc_moran5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_local_moran_raster.html">calc_local_moran_raster</a></span><span class="op">(</span><span class="va">GFCM_result</span><span class="op">$</span><span class="va">rasters</span><span class="op">$</span><span class="va">group5</span>,<span class="va">w1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># mapping the values</span></span>
+<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/flip.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">8</span>, <span class="st">"Spectral"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">loc_moran4</span>, mat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">limits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classIntervals</a></span><span class="op">(</span><span class="va">vals</span>,  n <span class="op">=</span> <span class="fl">8</span>, style <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">loc_moran4</span>, col <span class="op">=</span> <span class="va">cols</span>, breaks <span class="op">=</span> <span class="va">limits</span><span class="op">$</span><span class="va">brks</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">loc_moran7</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="va">pal</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">9</span>, title <span class="op">=</span> <span class="st">"Local Moran I"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">loc_moran5</span>, mat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">limits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classIntervals</a></span><span class="op">(</span><span class="va">vals</span>,  n <span class="op">=</span> <span class="fl">8</span>, style <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">loc_moran5</span>, col <span class="op">=</span> <span class="va">cols</span>, breaks <span class="op">=</span> <span class="va">limits</span><span class="op">$</span><span class="va">brks</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-17-2.png" width="576" style="display: block; margin: auto;"></p>
 <p>These maps can be used to investigate the limits of the two categories and determine if the classification is meaningful. Group 7 is by far the most spatially dispersed, which is consistent with its nature: low-density urban areas.</p>
 <p>The local Moran I values are useful but are limited to one dimension of the fuzzy classification. An interesting alternative is the <em>ELSA</em> statistic <span class="citation">(Naimi et al. <a href="#ref-naimi2019elsa" role="doc-biblioref">2019</a>)</span>. It measures local differences in final group attributions with an entropy based index and combines it with the Euclidean distance between the groups. In other words, it is a measure of spatial autocorrelation for a categorical variable which takes into account the level of dissimilarity between categories. It can be calculated with the following formula:</p>
@@ -441,9 +451,10 @@ d_{i j}=\left|c_{i}-c_{j}\right|
 <span class="math inline">\(p_k\)</span> is the probability of seeing group <em>k</em> within the neighbouring binary window <span class="math inline">\(w_{ij}\)</span>.</li>
 </ul>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">Elsa</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Greys"</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">7</span>, title <span class="op">=</span> <span class="st">"Local ELSA"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">7</span>, <span class="st">"Greys"</span><span class="op">)</span></span>
+<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">Elsa</span>, mat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">limits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classIntervals</a></span><span class="op">(</span><span class="va">vals</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span><span class="op">]</span>,  n <span class="op">=</span> <span class="fl">7</span>, style <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">diagGFCM</span><span class="op">$</span><span class="va">Elsa</span>, col <span class="op">=</span> <span class="va">cols</span>, breaks <span class="op">=</span> <span class="va">limits</span><span class="op">$</span><span class="va">brks</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-18-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>This map clearly draws the contours of each cluster. The darker pixels are located at the frontier of clusters or in areas with high heterogeneity.</p>
 <p>The original version of ELSA uses a hard partition and thus does not exploit all the information we might get from a fuzzy classification. We propose here an adjusted version: the fuzzy ELSA. As an input, we do not use a categorical vector but a matrix of membership values.</p>
@@ -474,19 +485,21 @@ d_{i j}=\left|c_{i}-c_{j}\right|
 </ul>
 <p>The fuzzy ELSA can be seen as a generalization of the categorical ELSA and provides the same results if a binary matrix is given. This indicator has not been presented in a paper yet (we are working on it), so it is currently not calculated by <code>spatialDiag</code>. It can be obtained with the function <code>calcFuzzyELSA</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fuzzy_elsa_rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcFuzzyELSA.html">calcFuzzyELSA</a></span><span class="op">(</span><span class="va">GFCM_result</span>,window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>,nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">fuzzy_elsa_rast</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_raster.html">tm_raster</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Greys"</span>, style <span class="op">=</span> <span class="st">"kmeans"</span>, n <span class="op">=</span> <span class="fl">7</span>, title <span class="op">=</span> <span class="st">"Local fuzzy ELSA"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, legend.outside.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fuzzy_elsa_rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcFuzzyELSA.html">calcFuzzyELSA</a></span><span class="op">(</span><span class="va">GFCM_result</span>,window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>,nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">7</span>, <span class="st">"Greys"</span><span class="op">)</span></span>
+<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">fuzzy_elsa_rast</span>, mat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">limits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classIntervals</a></span><span class="op">(</span><span class="va">vals</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span><span class="op">]</span>,  n <span class="op">=</span> <span class="fl">7</span>, style <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fuzzy_elsa_rast</span>, col <span class="op">=</span> <span class="va">cols</span>, breaks <span class="op">=</span> <span class="va">limits</span><span class="op">$</span><span class="va">brks</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasters_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;"> In this case, we can see that the fuzzy ELSA draws more important limits along the coasts, and that the differences between deep and shallow water are weaker. We also have strong artefacts at the South-East (black dots), which are in reality long buildings in a industrial and commercial area.</p>
 </div>
-<div id="references" class="section level2 unnumbered">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
+<div class="section level2 unnumbered">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references">
 <div id="ref-naimi2019elsa">
-<p>Naimi, Babak, Nicholas AS Hamm, Thomas A Groen, Andrew K Skidmore, Albertus G Toxopeus, and Sara Alibakhshi. 2019. “ELSA: Entropy-Based Local Indicator of Spatial Association.” <em>Spatial Statistics</em> 29: 66–88. <a href="https://doi.org/10.1016/j.spasta.2018.10.001">https://doi.org/10.1016/j.spasta.2018.10.001</a>.</p>
+<p>Naimi, Babak, Nicholas AS Hamm, Thomas A Groen, Andrew K Skidmore, Albertus G Toxopeus, and Sara Alibakhshi. 2019. “ELSA: Entropy-Based Local Indicator of Spatial Association.” <em>Spatial Statistics</em> 29: 66–88. <a href="https://doi.org/10.1016/j.spasta.2018.10.001" class="external-link">https://doi.org/10.1016/j.spasta.2018.10.001</a>.</p>
 </div>
 </div>
 </div>
@@ -503,11 +516,13 @@ d_{i j}=\left|c_{i}-c_{j}\right|
 
 
       <footer><div class="copyright">
-  <p>Developed by Jeremy Gelb.</p>
+  <p></p>
+<p>Developed by Jeremy Gelb.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -515,6 +530,8 @@ d_{i j}=\left|c_{i}-c_{j}\right|
 
   
 
+
+  
 
   </body>
 </html>

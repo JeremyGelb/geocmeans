@@ -109,27 +109,11 @@ check_raters_dims <- function(rasters){
 #' @examples
 #' # this is an internal function, no example provided
 input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
-
+  #nocov start
   if(is.null(w) == FALSE){
     check_raters_dims(dataset)
     check_window(w)
   }
-
-  #   if(class(fun) != "function"){
-  #     if(fun != "nl"){
-  #       useNL <- FALSE
-  #       tryCatch(fun <- eval(parse(text=fun)),
-  #                error = function(e)
-  #                  print("When using rasters, the parameter lag_method must be a function or a string
-  #                that can be parsed to a function like sum, mean, min, max ...,
-  #                Note that this function is applied to the pixels values multiplied by the weights in the window.
-  #                There is one exception : 'nl_mean', see help(Cmeans).")
-  #       )
-  #     }else{
-  #       useNL <- TRUE
-  #     }
-  #   }
-  # }
 
   refdim <- dim(dataset[[1]])
   for(band in dataset){
@@ -167,27 +151,6 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
   #step3 : calculating Wdata if necessary
   if(is.null(w) == FALSE){
     Wdata_class <- calcWdataRaster(w, dataset, fun, missing_pxl)
-    # if(useNL == FALSE){
-    #   Wdatamatrix <- do.call(cbind,lapply(dataset, function(band){
-    #     wraster <- focal(band, w, fun, na.rm = TRUE, pad = TRUE)
-    #     return(terra::values(wraster, mat = FALSE))
-    #   }))
-    # }else{
-    #   # step1: creating an array with all the matrices
-    #   mats <- lapply(dataset, terra::as.matrix)
-    #   arr <- array(do.call(c,mats),c(nrow(mats[[1]]), ncol(mats[[1]]), length(mats)))
-    #   # step2 : getting the lagged version of the array
-    #   arr_lag <- focal_adj_mean_arr_window(arr, w)
-    #   # step3 : creating the Wdatamatrix
-    #   nsl <- dim(arr_lag)[[3]]
-    #   Wdatamatrix <- do.call(cbind, lapply(1:nsl, function(i){
-    #       vec <- arr_lag[,,i]
-    #       dim(vec) <- NULL
-    #       return(vec)
-    #     })
-    #   )
-    # }
-    # Wdata_class <- Wdatamatrix[missing_pxl,]
     if(is.null(dim(Wdata_class))){
       Wdata_class <- matrix(Wdata_class, ncol = 1)
     }
@@ -203,6 +166,7 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
               "rst" = dataset[[1]],
               "window" = w
               ))
+  #nocov end
 }
 
 
@@ -220,6 +184,7 @@ input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
 #' # this is an internal function, no example provided
 output_raster_data <- function(object, missing, rst){
 
+  #nocov start
   # object is created by a FCM like function
   # missing is indicating which pixels are complete
   # rst is a basic raster to duplicate it
@@ -257,5 +222,6 @@ output_raster_data <- function(object, missing, rst){
   object$rasters <- rasters
   object$missing <- missing
   return(object)
+  #nocov end
 }
 

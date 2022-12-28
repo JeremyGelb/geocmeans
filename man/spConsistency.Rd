@@ -4,7 +4,14 @@
 \alias{spConsistency}
 \title{Spatial consistency index}
 \usage{
-spConsistency(object, nblistw = NULL, window = NULL, nrep = 999, adj = FALSE)
+spConsistency(
+  object,
+  nblistw = NULL,
+  window = NULL,
+  nrep = 999,
+  adj = FALSE,
+  mindist = 1e-11
+)
 }
 \arguments{
 \item{object}{A FCMres object, typically obtained from functions CMeans,
@@ -21,8 +28,13 @@ specified instead of a list.w object. Can also be NULL if object is a FCMres obj
 spatial randomness. Note that if rasters are used, each permutation can be very long.}
 
 \item{adj}{A boolean indicating if the adjusted version of the indicator must be
-calculated when working with rasters. When working with vectors, see the function
+calculated when working with rasters (globally standardized). When working with vectors, see the function
 adjustSpatialWeights to modify the list.w object.}
+
+\item{mindist}{When adj is true, a minimum value for distance between two observations. If two
+neighbours have exactly the same values, then the euclidean distance between
+them is 0, leading to an infinite spatial weight. In that case, the minimum
+distance is used instead of 0.}
 }
 \value{
 A named list with

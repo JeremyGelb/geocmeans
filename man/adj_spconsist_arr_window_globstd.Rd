@@ -4,12 +4,17 @@
 \alias{adj_spconsist_arr_window_globstd}
 \title{Adjusted spatial inconsistency index for rasters}
 \usage{
-adj_spconsist_arr_window_globstd(data, memberships, window)
+adj_spconsist_arr_window_globstd(data, memberships, window, mindist = 1e-11)
 }
 \arguments{
 \item{data}{an arma cube of dimension nr,nc,ns}
 
 \item{memberships}{an arma cube of dimension nr, nc, ks}
+
+\item{mindist}{A minimum value for distance between two observations. If two
+neighbours have exactly the same values, then the euclidean distance
+between them is 0, leading to an infinite spatial weight. In that case,
+the minimum distance is used instead of 0.}
 
 \item{a}{matrix representing the neighbouring of each pixel}
 }

@@ -4,7 +4,13 @@
 \alias{calc_raster_spinconsistency}
 \title{calculate spatial inconsistency for raster}
 \usage{
-calc_raster_spinconsistency(matrices, window, adj = FALSE, dataset = NULL)
+calc_raster_spinconsistency(
+  matrices,
+  window,
+  adj = FALSE,
+  dataset = NULL,
+  mindist = 1e-11
+)
 }
 \arguments{
 \item{matrices}{A list of matrices}
@@ -15,6 +21,11 @@ calc_raster_spinconsistency(matrices, window, adj = FALSE, dataset = NULL)
 calculated}
 
 \item{dataset}{A list of matrices with the original data (if adj = TRUE)}
+
+\item{mindist}{When adj is true, a minimum value for distance between two observations. If two
+neighbours have exactly the same values, then the euclidean distance between
+them is 0, leading to an infinite spatial weight. In that case, the minimum
+distance is used instead of 0.}
 }
 \value{
 A float: the sum of spatial inconsistency

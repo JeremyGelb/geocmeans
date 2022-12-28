@@ -75,7 +75,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">spConsistency</span><span class="op">(</span><span class="va">object</span>, nblistw <span class="op">=</span> <span class="cn">NULL</span>, window <span class="op">=</span> <span class="cn">NULL</span>, nrep <span class="op">=</span> <span class="fl">999</span>, adj <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">spConsistency</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  nblistw <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nrep <span class="op">=</span> <span class="fl">999</span>,</span>
+<span>  adj <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mindist <span class="op">=</span> <span class="fl">1e-11</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -103,8 +110,15 @@ spatial randomness. Note that if rasters are used, each permutation can be very 
 
 <dt>adj</dt>
 <dd><p>A boolean indicating if the adjusted version of the indicator must be
-calculated when working with rasters. When working with vectors, see the function
+calculated when working with rasters (globally standardized). When working with vectors, see the function
 adjustSpatialWeights to modify the list.w object.</p></dd>
+
+
+<dt>mindist</dt>
+<dd><p>When adj is true, a minimum value for distance between two observations. If two
+neighbours have exactly the same values, then the euclidean distance between
+them is 0, leading to an infinite spatial weight. In that case, the minimum
+distance is used instead of 0.</p></dd>
 
 </dl></div>
     <div id="value">

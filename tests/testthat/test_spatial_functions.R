@@ -438,6 +438,7 @@ test_that("Testing the spatial consistency index for a raster dataset with an ad
                             mindist = 0.001)
 
   # first, I will calculate the eucldiean distances
+  mindist <-  0.001
   m1 <- rbind(
     c(1,1),
     c(0,0)
@@ -480,12 +481,12 @@ test_that("Testing the spatial consistency index for a raster dataset with an ad
 
   # second sequence of iterations to have the index
   total_index <- 0
-  for(i in 1:nrow(U)){
-    for(j in 1:ncol(U)){
+  for(i in 1:nrow(U1)){
+    for(j in 1:ncol(U1)){
       tub1 <- c(m1[i,j], m2[i,j])
       u1 <- c(U1[i,j],U2[i,j])
-      for(i2 in 1:nrow(U)){
-        for(j2 in 1:ncol(U)){
+      for(i2 in 1:nrow(U1)){
+        for(j2 in 1:ncol(U1)){
           if(i!=i2 | j!=j2){
             tub2 <- c(m1[i2,j2], m2[i2,j2])
             u2 <- c(U1[i2,j2],U2[i2,j2])

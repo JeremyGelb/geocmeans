@@ -294,15 +294,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // adj_spconsist_arr_window_globstd
-double adj_spconsist_arr_window_globstd(arma::fcube data, arma::fcube memberships, arma::mat window);
-RcppExport SEXP _geocmeans_adj_spconsist_arr_window_globstd(SEXP dataSEXP, SEXP membershipsSEXP, SEXP windowSEXP) {
+double adj_spconsist_arr_window_globstd(arma::fcube data, arma::fcube memberships, arma::mat window, double mindist);
+RcppExport SEXP _geocmeans_adj_spconsist_arr_window_globstd(SEXP dataSEXP, SEXP membershipsSEXP, SEXP windowSEXP, SEXP mindistSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::fcube >::type data(dataSEXP);
     Rcpp::traits::input_parameter< arma::fcube >::type memberships(membershipsSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type window(windowSEXP);
-    rcpp_result_gen = Rcpp::wrap(adj_spconsist_arr_window_globstd(data, memberships, window));
+    Rcpp::traits::input_parameter< double >::type mindist(mindistSEXP);
+    rcpp_result_gen = Rcpp::wrap(adj_spconsist_arr_window_globstd(data, memberships, window, mindist));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -516,7 +517,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_geocmeans_local_moranI_matrix_window", (DL_FUNC) &_geocmeans_local_moranI_matrix_window, 2},
     {"_geocmeans_Elsa_categorical_matrix_window", (DL_FUNC) &_geocmeans_Elsa_categorical_matrix_window, 3},
     {"_geocmeans_Elsa_fuzzy_matrix_window", (DL_FUNC) &_geocmeans_Elsa_fuzzy_matrix_window, 3},
-    {"_geocmeans_adj_spconsist_arr_window_globstd", (DL_FUNC) &_geocmeans_adj_spconsist_arr_window_globstd, 3},
+    {"_geocmeans_adj_spconsist_arr_window_globstd", (DL_FUNC) &_geocmeans_adj_spconsist_arr_window_globstd, 4},
     {"_geocmeans_vecmin", (DL_FUNC) &_geocmeans_vecmin, 1},
     {"_geocmeans_vecmax", (DL_FUNC) &_geocmeans_vecmax, 1},
     {"_geocmeans_power_mat", (DL_FUNC) &_geocmeans_power_mat, 2},

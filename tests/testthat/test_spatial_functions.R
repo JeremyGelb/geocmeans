@@ -393,3 +393,117 @@ test_that("Testing the function adjustSpatialWeights",{
 
 })
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#### Testing the adjusted spatial consistency index
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+test_that("Testing the spatial consistency index for a raster dataset with an adjusted matrix",{
+
+  # first, creating a membership matrix for 4 observations (squarred 2x2) and 2 groups
+  rast1 <- rbind(
+    c(1,1),
+    c(0,0)
+  )
+  rast1 <- terra::rast(rast1)
+
+  rast2 <- rbind(
+    c(0,0),
+    c(1,1)
+  )
+  rast2 <- terra::rast(rast2)
+
+  rasters <- list(rast1,rast2)
+  W <- matrix(1, nrow = 3, ncol = 3)
+  Data <- rasters
+  centers <- data.frame(
+    x1 = c(1,0),
+    x2 = c(0,1)
+  )
+
+  myFCMres <- FCMres(list(
+    "Data" = Data,
+    "Centers" = centers,
+    "rasters" = rasters,
+    "m" = 1,
+    "algo" = "kmeans"
+  ))
+  w <- matrix(1, nrow = 3, ncol = 3)
+  w[2,2] <- 0
+  obtained <- spConsistency(object = myFCMres,
+                            window = w,
+                            nblistw = NULL,
+                            nrep = 1,
+                            adj = TRUE,
+                            mindist = 0.001)
+
+  # first, I will calculate the eucldiean distances
+  m1 <- rbind(
+    c(1,1),
+    c(0,0)
+  )
+  m2 <- rbind(
+    c(0,0),
+    c(1,1)
+  )
+
+  U1 <- rbind(
+    c(1,1),
+    c(0,0)
+  )
+
+  U2 <- rbind(
+    c(0,0),
+    c(1,1)
+  )
+
+  # first sequence of iterations to have the global weight
+  total_dist <- 0
+  for(i in 1:nrow(m1)){
+    for(j in 1:ncol(m2)){
+      tub1 <- c(m1[i,j], m2[i,j])
+      for(i2 in 1:nrow(m1)){
+        for(j2 in 1:ncol(m1)){
+          if(i!=i2 | j!=j2){
+            tub2 <- c(m1[i2,j2], m2[i2,j2])
+            dist <- sum((tub1 - tub2) ** 2)
+            if(dist < mindist){
+              total_dist <- total_dist + 1/ mindist
+            }else{
+              total_dist <- total_dist + 1/ dist
+            }
+          }
+        }
+      }
+    }
+  }
+
+  # second sequence of iterations to have the index
+  total_index <- 0
+  for(i in 1:nrow(U)){
+    for(j in 1:ncol(U)){
+      tub1 <- c(m1[i,j], m2[i,j])
+      u1 <- c(U1[i,j],U2[i,j])
+      for(i2 in 1:nrow(U)){
+        for(j2 in 1:ncol(U)){
+          if(i!=i2 | j!=j2){
+            tub2 <- c(m1[i2,j2], m2[i2,j2])
+            u2 <- c(U1[i2,j2],U2[i2,j2])
+            dist <- sum((tub1 - tub2) ** 2)
+            if(dist < mindist){
+              dist <- mindist
+            }
+            wij <- (1/dist) / total_dist
+            total_index <- total_index + (wij * sum((u1-u2)**2))
+          }
+        }
+      }
+    }
+  }
+
+
+  expect_equal(total_index, obtained$sum_diff)
+
+})
+
+

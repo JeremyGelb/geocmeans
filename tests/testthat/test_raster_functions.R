@@ -7,7 +7,7 @@ test_that("Testing calcWdataRaster, it should return what is expected",{
   w <- matrix(1, nrow = 3, ncol = 3)
   w[2,2] <- 0
   fun <- "mean"
-  dataset <- matrix(rnorm(100,0,1), nrow = 5, ncol = 5)
+  dataset <- matrix(rnorm(25,0,1), nrow = 5, ncol = 5)
   missing <- !is.na(c(dataset))
 
   obtained <- matrix(calcWdataRaster(w, list(terra::rast(dataset)), fun, missing), nrow = 5, ncol = 5)

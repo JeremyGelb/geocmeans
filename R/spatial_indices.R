@@ -34,8 +34,12 @@
 #' @param nrep An integer indicating the number of permutation to do to simulate
 #' spatial randomness. Note that if rasters are used, each permutation can be very long.
 #' @param adj A boolean indicating if the adjusted version of the indicator must be
-#' calculated when working with rasters. When working with vectors, see the function
+#' calculated when working with rasters (globally standardized). When working with vectors, see the function
 #' adjustSpatialWeights to modify the list.w object.
+#' @param mindist When adj is true, a minimum value for distance between two observations. If two
+#' neighbours have exactly the same values, then the euclidean distance between
+#' them is 0, leading to an infinite spatial weight. In that case, the minimum
+#' distance is used instead of 0.
 #' @return A named list with
 #'  \itemize{
 #'         \item Mean : the mean of the spatial consistency index
@@ -54,7 +58,7 @@
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' spConsistency(result$Belongings, nblistw = Wqueen, nrep=50)
-spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj = FALSE) {
+spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj = FALSE, mindist = 1e-11) {
 
   if(inherits(object, "FCMres")){
     belongmat <- as.matrix(object$Belongings)
@@ -136,11 +140,11 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
         vec2[object$missing] <- vec1
         rast <- object$rasters[[1]]
         terra::values(rast) <- vec2
-        mat <- as.matrix(rast)
+        mat <- terra::as.matrix(rast, wide = TRUE)
         return(mat)
 
       })
-      totalcons <- calc_raster_spinconsistency(matrices, window, adj, dataset)
+      totalcons <- calc_raster_spinconsistency(matrices, window, adj, dataset, mindist = mindist)
 
     }else{
       totalcons <- calc_raster_spinconsistency(matrices,window)
@@ -208,7 +212,7 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
           return(new_vec)
         })
         # calculating the index value
-        inconsist <-  calc_raster_spinconsistency(new_matrices, window, adj, new_dataset)
+        inconsist <-  calc_raster_spinconsistency(new_matrices, window, adj, new_dataset, mindist = mindist)
 
       }else{
         # calculating the index value
@@ -239,18 +243,22 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
 #' @param adj A boolean indicating if the adjusted version of the algorithm must be
 #' calculated
 #' @param dataset A list of matrices with the original data (if adj = TRUE)
+#' @param mindist When adj is true, a minimum value for distance between two observations. If two
+#'   neighbours have exactly the same values, then the euclidean distance between
+#'   them is 0, leading to an infinite spatial weight. In that case, the minimum
+#'   distance is used instead of 0.
 #' @return A float: the sum of spatial inconsistency
 #' @keywords internal
 #' @examples
 #' # this is an internal function, no example provided
-calc_raster_spinconsistency <- function(matrices, window, adj = FALSE, dataset = NULL){
+calc_raster_spinconsistency <- function(matrices, window, adj = FALSE, dataset = NULL, mindist = 1e-11){
   if(adj & is.null(dataset)){
     stop("When the adjusted version of spinconsistency is required, dataset must be given")
   }
   arr <- array(do.call(c,matrices), c(nrow(matrices[[1]]), ncol(matrices[[1]]), length(matrices)))
   if(adj){
     arr2 <- array(do.call(c,dataset), c(nrow(dataset[[1]]), ncol(dataset[[1]]), length(dataset)))
-    totalcons <- adj_spconsist_arr_window_globstd(arr2, arr, window)
+    totalcons <- adj_spconsist_arr_window_globstd(arr2, arr, window, mindist = mindist)
   }else{
     totalcons <- sum(focal_euclidean_arr_window(arr,window), na.rm = TRUE)
   }

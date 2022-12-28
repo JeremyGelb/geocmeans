@@ -348,12 +348,16 @@ Elsa_fuzzy_matrix_window <- function(mats, window, dist) {
 #' @param data an arma cube of dimension nr,nc,ns
 #' @param memberships an arma cube of dimension nr, nc, ks
 #' @param a matrix representing the neighbouring of each pixel
+#' @param mindist A minimum value for distance between two observations. If two
+#'   neighbours have exactly the same values, then the euclidean distance
+#'   between them is 0, leading to an infinite spatial weight. In that case,
+#'   the minimum distance is used instead of 0.
 #' @return a double, the adjusted spatial inconsitency index
 #' @keywords internal
 #' @export
 #'
-adj_spconsist_arr_window_globstd <- function(data, memberships, window) {
-    .Call(`_geocmeans_adj_spconsist_arr_window_globstd`, data, memberships, window)
+adj_spconsist_arr_window_globstd <- function(data, memberships, window, mindist = 1e-11) {
+    .Call(`_geocmeans_adj_spconsist_arr_window_globstd`, data, memberships, window, mindist)
 }
 
 #' @title Calculate sigmas for the robust version of the c-means algorithm

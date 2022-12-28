@@ -124,25 +124,25 @@ c("Silhouette.index", "Partition.entropy", "Partition.coeff", "XieBeni.index", "
 <span class="r-in"><span><span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Standardizing the data (set parameter to FALSE to avoid this step)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%[1] "criterion reached"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%[1] "criterion reached"</span>
 <span class="r-in"><span><span class="fu">calcqualityIndexes</span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">Data</span>,<span class="va">result</span><span class="op">$</span><span class="va">Belongings</span>, m<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Silhouette.index</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3363483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3390337</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Partition.entropy</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8795782</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8820302</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Partition.coeff</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5534965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5517544</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $XieBeni.index</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.927707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.761824</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $FukuyamaSugeno.index</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1803.892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1804.253</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Explained.inertia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2896986</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2899781</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

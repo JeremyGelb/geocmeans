@@ -64,6 +64,9 @@
     <li>
       <a href="../articles/web_vignettes/advanced_examples.html">Advanced examples</a>
     </li>
+    <li>
+      <a href="../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -189,8 +192,8 @@
 <span>                   <span class="va">hclustres</span><span class="op">$</span><span class="va">m</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># spatial diagnostic</span></span>
-<span><span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">hclustres</span>, nblistw <span class="op">=</span> <span class="va">WMat</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># investigation with the shiny app</span></span>

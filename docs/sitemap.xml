@@ -22,6 +22,9 @@
     <loc>/articles/web_vignettes/advanced_examples.html</loc>
   </url>
   <url>
+    <loc>/articles/web_vignettes/optimizing_parameters.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -247,9 +250,6 @@
     <loc>/reference/focal_euclidean_mat_window.html</loc>
   </url>
   <url>
-    <loc>/reference/force_sp_sample.html</loc>
-  </url>
-  <url>
     <loc>/reference/GCMeans.html</loc>
   </url>
   <url>
@@ -284,15 +284,6 @@
   </url>
   <url>
     <loc>/reference/mapClusters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mapLines.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mapPoints.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mapPolygons.html</loc>
   </url>
   <url>
     <loc>/reference/mapRasters.html</loc>

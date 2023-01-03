@@ -64,6 +64,9 @@
     <li>
       <a href="../articles/web_vignettes/advanced_examples.html">Advanced examples</a>
     </li>
+    <li>
+      <a href="../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -139,8 +142,8 @@
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">#creating the queen spatial weight matrix</span></span>
-<span><span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#applying SFCM algorithm</span></span>
 <span><span class="va">SFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">WMat</span>, k <span class="op">=</span> <span class="fl">4</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span>,</span>

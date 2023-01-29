@@ -73,7 +73,7 @@ As a first exploration and to determine the appropriate number of clusters, we p
 The dataset must be structured as a list of bands. The names given to the list elements will be used as variable names.
 
 ```{r message=FALSE, warning=FALSE}
-# sonverting the RasterBrick to a simple list of SpatRaster
+# converting the RasterBrick to a simple list of SpatRaster
 dataset <- lapply(names(Arcachon), function(n){
   aband <- Arcachon[[n]]
   return(aband)

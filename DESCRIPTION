@@ -21,7 +21,7 @@ Imports:
     grDevices (>= 3.5),
     shiny (>= 1.6.0),
     sf (>= 1.0-6),
-    leaflet (>= 2.0.4.1),
+    leaflet (>= 2.1.1),
     plotly (>= 4.9.3),
     Rdpack (>= 2.1.1),
     matrixStats (>= 0.58.0),

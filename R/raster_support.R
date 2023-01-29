@@ -213,7 +213,7 @@ output_raster_data <- function(object, missing, rst){
   if(is.null(object$noise_cluster) == FALSE){
     rst2 <- rst
     vec <- rep(NA,times = ncell(rst))
-    vec[missing] <- object$noise_cluster[,i]
+    vec[missing] <- object$noise_cluster
     terra::values(rst2) <- vec
     object$noise_cluster <- rst2
   }

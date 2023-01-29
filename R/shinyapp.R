@@ -134,6 +134,19 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   #assign('inertia', inertia, .GlobalEnv)
   shiny_data$inertia <- inertia
 
+  # # Adjusting the membership matrix if we have a noise cluster ----------------------------------------
+  noise_mode <- FALSE
+  if(is.null(object) == FALSE){
+    if(is.null(object$noise_cluster) == FALSE){
+      #test <- matrixStats::rowMaxs(object$Belongings) < object$noise_cluster
+      #object$Belongings <- cbind(object$Belongings, object$noise_cluster)
+      #object$Groups[test] <- "noise"
+      noise_vec <- object$noise_cluster
+      noise_mode <- TRUE
+    }
+  }
+
+
 
   # Preparing some global variables for the app ----------------------------------------
   if(is.matrix(dataset)){
@@ -173,6 +186,12 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   if(is.null(object) == FALSE){
     if(object$isRaster){
       rasterMode <- TRUE
+
+      # let me check if the installed version of leaflet is enough
+      if(packageVersion("leaflet") <= "2.1.1"){
+        stop("To use the shiny app with raster data, you must have installed a version of leaflet > 2.1.1 (ex 2.1.1.9000 from github)")
+      }
+
     }
   }
 
@@ -187,13 +206,13 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     shiny_data$dataset <- dataset
 
     ## creating a referencing raster with the right projection
-	ref_raster <- terra::project(object$rasters[[1]], y = "epsg:3857", method = "near")
+	  ref_raster <- terra::project(object$rasters[[1]], y = "epsg:3857", method = "near")
     #assign('ref_raster', ref_raster, .GlobalEnv)
     shiny_data$ref_raster <- ref_raster
 
     old_names <- names(object$rasters)
     object$rasters <- lapply(object$rasters, function(rast){
-	  terra::project(object$rasters[[1]],  y = "epsg:3857", method = "near")
+	  terra::project(rast,  y = "epsg:3857", method = "near")
     })
     names(object$rasters) <- old_names
 
@@ -234,7 +253,12 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
     addProviderTiles(leaflet::providers$OpenStreetMap, group = "Open Street Map", layerId = "back2")
 
-  geom_type <- sf::st_geometry_type(spatial, by_geometry = FALSE)
+  if(rasterMode == FALSE){
+    geom_type <- sf::st_geometry_type(spatial, by_geometry = FALSE)
+  }else{
+    geom_type <- "raster"
+  }
+
 
   if(geom_type %in% c("POLYGON", "MULTIPOLYGON")){
     mapfun <- function(map, data, weight, group, color, fillColor, layerId, ...){
@@ -271,10 +295,10 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     stop("spatial must be a feature collections (POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON or MULTIPOLYGON)")
   }
 
-  # adding the layers of we are in vector mode
+  # adding the layers if we are in vector mode
   if(rasterMode == FALSE){
-    for (i in 1:ncol(belongings)){
 
+    for (i in 1:ncol(belongings)){
       bins <- seq(0,1,0.1)
       cols <- colorRamp(c("#FFFFFF", colors[[i]]), interpolate = "spline")
       pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
@@ -290,10 +314,30 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
                   title = NULL, group=paste("group ",i,sep=""),
                   position = "bottomright")
     }
+    ## if required, a layer with the noise values
+    if(noise_mode){
+      bins <- seq(0,1,0.1)
+      cols <- colorRamp(c("#FFFFFF", "black"), interpolate = "spline")
+      pal <- leaflet::colorBin(cols, c(0,1), bins = bins)
+
+      mymap <- mymap %>% mapfun(data = spatial4326,
+                                weight = 1,
+                                group = "noise",
+                                color = "black",
+                                fillColor = ~pal(noise_vec),
+                                fillOpacity = 0.7,
+                                layerId = 1:nrow(spatial4326)) %>%
+        addLegend(pal = pal, values = bins, opacity = 0.7,
+                  title = NULL, group="noise",
+                  position = "bottomright")
+    }
 
     ## and a layer for the hard partition
     colnames(belongings) <- paste("group",1:ncol(belongings), sep = " ")
     groups <- colnames(belongings)[max.col(belongings, ties.method = "first")]
+    if(noise_mode){
+      groups <- ifelse(matrixStats::rowMaxs(belongings) < noise_vec, "noise", groups)
+    }
     spatial4326$group <- as.factor(groups)
 
     factpal <- colorFactor(colors, spatial4326$group)
@@ -333,6 +377,18 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
       i <- i + 1
     }
 
+    if(noise_mode){
+      pal <- leaflet::colorNumeric(c("#FFFFFF", "black"),
+                                   vals, na.color = "transparent")
+      noise_rast <- terra::project(object$noise_cluster,  y = "epsg:3857", method = "near")
+      mymap <- mymap %>%
+        addRasterImage(noise_rast, colors = pal, opacity = 0.8,
+                       group = "noise") %>%
+        addLegend(pal = pal, values = vals, opacity = 0.7,
+                  title = NULL, group = "noise",
+                  position = "bottomright")
+    }
+
     # adding the last layer with the most likely groups
     rast <- object$rasters$Groups
     vals <- terra::values(rast, mat = FALSE)
@@ -346,22 +402,31 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
                 position = "bottomright")
 
     #assign('mapfun', NULL, .GlobalEnv)
-    shiny_data$mapfun <- mapfun
+    #shiny_data$mapfun <- mapfun
 
   }
 
   # adding some tools for the map
+  if(noise_mode){
+    all_layer <- c(paste("group ", 1:ncol(belongings), sep = ""),"noise","Most likely group")
+  }else{
+    all_layer <- c(paste("group ", 1:ncol(belongings), sep = ""),"Most likely group")
+  }
+
   mymap <- mymap %>%
     addLayersControl(
       position = "bottomleft",
       baseGroups = c("Toner Lite","Open Street Map"),
-      overlayGroups  = c(paste("group ", 1:ncol(belongings), sep = ""),"Most likely group"),
+      overlayGroups  = all_layer,
       options = leaflet::layersControlOptions(collapsed = FALSE))
 
   for(i in 2:ncol(belongings)){
     mymap <- mymap %>% hideGroup(paste("group ",i,sep=""))
   }
   mymap <- mymap %>% hideGroup("Most likely group")
+  if(noise_mode){
+    mymap <- mymap %>% hideGroup("noise")
+  }
 
   #assign('mymap', mymap, .GlobalEnv)
   shiny_data$mymap <- mymap
@@ -424,7 +489,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
     vals[object$missing] <- maxs
     vals <- ifelse(vals < 0.45, 1,0)
     vals[!object$missing] <- NA
-    terra::values(rast, mat = FALSE) <- vals
+    terra::values(rast) <- vals
 
     pal <- leaflet::colorNumeric(c("#FFFFFF","#D30000"),
                                  vals, na.color = "transparent")

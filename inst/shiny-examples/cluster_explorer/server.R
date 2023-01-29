@@ -188,6 +188,7 @@ adj_bg_color <- function(plot, light, input){
 library(shiny)
 library(leaflet)
 library(plotly)
+library(sf)
 
 ## check here if the shiny helper is ready !
 add_helper <- "shinyhelper" %in% installed.packages()
@@ -475,14 +476,18 @@ server <- function(input, output, session) {
     observeEvent(input$mymap_click, {
       click <- input$mymap_click
       if(!is.null(click)){
-        pt <- sp::SpatialPoints(data.frame(click$lng, click$lat))
-        raster::crs(pt) <- sp::CRS("+init=epsg:4326")
-        pt2 <- sp::spTransform(pt, sp::CRS("+init=epsg:3857"))
+        #pt <- sp::SpatialPoints(data.frame(click$lng, click$lat))
+        #raster::crs(pt) <- sp::CRS("+init=epsg:4326")
+        #pt2 <- sp::spTransform(pt, sp::CRS("+init=epsg:3857"))
         #step 1 : finding the cell and the values associated
-        cell <- raster::cellFromXY(object$rasters[[1]], c(pt2@coords[[1]], pt2@coords[[2]]))
+        #cell <- raster::cellFromXY(object$rasters[[1]], c(pt2@coords[[1]], pt2@coords[[2]]))
+        pt <- st_coordinates(st_transform(st_sfc(st_point(c(click$lng, click$lat)), crs = 4326),3857))
+        cell <- terra::cellFromXY(object$rasters[[1]], pt)
+        print(cell)
         vals <- sapply(1:ncol(belongings), function(i){
-          object$rasters[[i]][cell]
+          object$rasters[[i]][cell][[1]]
         })
+        print(vals)
 
         ## Step 2 : rendering the plot for the belongings
         df <- data.frame(

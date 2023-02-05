@@ -19,7 +19,7 @@ a spatial weighting term"><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
@@ -28,7 +28,7 @@ a spatial weighting term"><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -82,7 +82,7 @@ a spatial weighting term</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calcSFCMBelongMatrix</span><span class="op">(</span><span class="va">centers</span>, <span class="va">data</span>, <span class="va">wdata</span>, <span class="va">m</span>, <span class="va">alpha</span>, <span class="va">sigmas</span>, <span class="va">wsigmas</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calcSFCMBelongMatrix</span><span class="op">(</span><span class="va">centers</span>, <span class="va">data</span>, <span class="va">wdata</span>, <span class="va">m</span>, <span class="va">alpha</span>, <span class="va">sigmas</span>, <span class="va">wsigmas</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -90,40 +90,25 @@ a spatial weighting term</p>
     <dl><dt>centers</dt>
 <dd><p>A matrix or a dataframe representing the centers of the
 clusters with p columns and k rows</p></dd>
-
-
 <dt>data</dt>
 <dd><p>A matrix representing the observed data with n rows and p columns</p></dd>
-
-
 <dt>wdata</dt>
 <dd><p>A matrix representing the lagged observed data with n rows and p columns</p></dd>
-
-
 <dt>m</dt>
 <dd><p>A float representing the fuzziness degree</p></dd>
-
-
 <dt>alpha</dt>
 <dd><p>A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)</p></dd>
-
-
 <dt>sigmas</dt>
 <dd><p>A numeric vector for calculating the robust version of the FCM. Filled with ones
 if the classical version is required</p></dd>
-
-
 <dt>wsigmas</dt>
 <dd><p>Same as sigmas, but calculated on the spatially lagged dataset</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A n * k matrix representing the belonging probabilities of each
+    <p>A n * k matrix representing the belonging probabilities of each
   observation to each cluster</p>
     </div>
 
@@ -139,7 +124,8 @@ if the classical version is required</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

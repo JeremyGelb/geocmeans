@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -78,15 +78,15 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">boot_group_validation</span><span class="op">(</span></span>
-<span>  <span class="va">object</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  maxiter <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  tol <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>  init <span class="op">=</span> <span class="st">"random"</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">boot_group_validation</span><span class="op">(</span>
+  <span class="va">object</span>,
+  nsim <span class="op">=</span> <span class="fl">1000</span>,
+  maxiter <span class="op">=</span> <span class="fl">1000</span>,
+  tol <span class="op">=</span> <span class="fl">0.01</span>,
+  init <span class="op">=</span> <span class="st">"random"</span>,
+  verbose <span class="op">=</span> <span class="cn">TRUE</span>,
+  seed <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,42 +94,27 @@
     <dl><dt>object</dt>
 <dd><p>A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans</p></dd>
-
-
 <dt>nsim</dt>
 <dd><p>The number of replications to do for the bootstrap evaluation</p></dd>
-
-
 <dt>maxiter</dt>
 <dd><p>An integer for the maximum number of iterations</p></dd>
-
-
 <dt>tol</dt>
 <dd><p>The tolerance criterion used in the evaluateMatrices function for
 convergence assessment</p></dd>
-
-
 <dt>init</dt>
 <dd><p>A string indicating how the initial centres must be selected.
 "random" indicates that random observations are used as centres "kpp" use
 a distance-based method resulting in more dispersed centres at the
 beginning. Both of them are heuristic.</p></dd>
-
-
 <dt>verbose</dt>
 <dd><p>A boolean to specify if the progress bar should be displayed.</p></dd>
-
-
 <dt>seed</dt>
 <dd><p>An integer used for random number generation. It ensures that the
 starting centres will be the same if the same value is selected.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A list of two values: group_consistency: a dataframe indicating
+    <p>A list of two values: group_consistency: a dataframe indicating
   the consistency across simulations each cluster ; group_centres: a list with
   a dataframe for each cluster. The values in the dataframes are the centres
   of the clusters at each simulation.</p>
@@ -157,25 +142,26 @@ starting centres will be the same if the same value is selected.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#selecting the columns for the analysis</span></span>
-<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,</span>
-<span>                   <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#rescaling the columns</span></span>
-<span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>,</span>
-<span>    tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu">boot_group_validation</span><span class="op">(</span><span class="va">Cmean</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, maxiter <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>    tol <span class="op">=</span> <span class="fl">0.01</span>, init <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
+
+<span class="co">#selecting the columns for the analysis</span>
+<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
+                   <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
+
+<span class="co">#rescaling the columns</span>
+<span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span>
+
+<span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>,
+    tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+
+<span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu">boot_group_validation</span><span class="op">(</span><span class="va">Cmean</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, maxiter <span class="op">=</span> <span class="fl">1000</span>,
+    tol <span class="op">=</span> <span class="fl">0.01</span>, init <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span>
+<span class="op">}</span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -189,7 +175,8 @@ starting centres will be the same if the same value is selected.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

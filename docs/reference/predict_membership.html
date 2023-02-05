@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -78,14 +78,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">predict_membership</span><span class="op">(</span></span>
-<span>  <span class="va">object</span>,</span>
-<span>  <span class="va">new_data</span>,</span>
-<span>  nblistw <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  window <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">predict_membership</span><span class="op">(</span>
+  <span class="va">object</span>,
+  <span class="va">new_data</span>,
+  nblistw <span class="op">=</span> <span class="cn">NULL</span>,
+  window <span class="op">=</span> <span class="cn">NULL</span>,
+  standardize <span class="op">=</span> <span class="cn">TRUE</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -93,69 +93,57 @@
     <dl><dt>object</dt>
 <dd><p>A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.</p></dd>
-
-
 <dt>new_data</dt>
 <dd><p>A DataFrame with the new observations or a list of rasters if
 object$isRaster is TRUE</p></dd>
-
-
 <dt>nblistw</dt>
 <dd><p>A list.w object describing the neighbours typically produced
 by the spdep package. Required if data is a dataframe, see the parameter window
 if you use a list of rasters as input.</p></dd>
-
-
 <dt>window</dt>
 <dd><p>If data is a list of rasters, then a window must be specified instead of
 a list.w object. It will be used to calculate a focal function on each raster. The
 window must be a square numeric matrix with odd dimensions (such 3x3). The values in
 the matrix indicate the weight to give to each pixel and the centre of the matrix is
 the centre of the focal function.</p></dd>
-
-
 <dt>standardize</dt>
 <dd><p>A boolean to specify if the variable must be centered and
 reduced (default = True)</p></dd>
-
-
 <dt>...</dt>
 <dd><p>not used</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A numeric matrix with the membership values for each new observation. If
+    <p>A numeric matrix with the membership values for each new observation. If
 rasters were used, return a list of rasters with the membership values.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
-<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,</span>
-<span><span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># rescaling all the variables used in the analysis</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">field</span> <span class="kw">in</span> <span class="va">AnalysisFields</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">LyonIris</span><span class="op">[[</span><span class="va">field</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[[</span><span class="va">field</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># doing the initial clustering</span></span>
-<span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SGFCMeans.html">SGFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># using a subset of the original dataframe as "new data"</span></span>
-<span><span class="va">new_data</span> <span class="op">&lt;-</span> <span class="va">LyonIris</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">27</span>, <span class="fl">36</span>, <span class="fl">44</span>, <span class="fl">73</span><span class="op">)</span>,<span class="op">]</span></span>
-<span><span class="va">new_dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">new_data</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">new_nb</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">new_data</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">new_Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">new_nb</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># doing the prediction</span></span>
-<span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predict_membership</span><span class="op">(</span><span class="va">result</span>, <span class="va">new_dataset</span>, <span class="va">new_Wqueen</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
+<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,
+<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
+
+<span class="co"># rescaling all the variables used in the analysis</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">field</span> <span class="kw">in</span> <span class="va">AnalysisFields</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">LyonIris</span><span class="op">[[</span><span class="va">field</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[[</span><span class="va">field</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span>
+
+<span class="co"># doing the initial clustering</span>
+<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
+<span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SGFCMeans.html">SGFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+
+<span class="co"># using a subset of the original dataframe as "new data"</span>
+<span class="va">new_data</span> <span class="op">&lt;-</span> <span class="va">LyonIris</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">27</span>, <span class="fl">36</span>, <span class="fl">44</span>, <span class="fl">73</span><span class="op">)</span>,<span class="op">]</span>
+<span class="va">new_dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">new_data</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
+<span class="va">new_nb</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">new_data</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">new_Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">new_nb</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span>
+
+<span class="co"># doing the prediction</span>
+<span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predict_membership</span><span class="op">(</span><span class="va">result</span>, <span class="va">new_dataset</span>, <span class="va">new_Wqueen</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -169,7 +157,8 @@ rasters were used, return a list of rasters with the membership values.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

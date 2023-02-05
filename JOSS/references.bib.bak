@@ -1,0 +1,112 @@
+@article{gelb2021apport,
+  title={Contribution of the spatial c-means fuzzy classification in geography: a socio-residential and environmental taxonomy in Lyon},
+  author={Gelb, J{\'e}r{\'e}my and Apparicio, Philippe},
+  journal={Cybergeo: European Journal of Geography},
+  year={2021},
+  doi={10.4000/cybergeo.36414},
+  publisher={CNRS-UMR G{\'e}ographie-cit{\'e}s 8504}
+}
+
+@article{cai2007fast,
+  title={Fast and robust fuzzy c-means clustering algorithms incorporating local information for image segmentation},
+  author={Cai, Weiling and Chen, Songcan and Zhang, Daoqiang},
+  journal={Pattern recognition},
+  volume={40},
+  number={3},
+  pages={825--838},
+  year={2007},
+  doi={10.1016/j.patcog.2006.07.011},
+  publisher={Elsevier}
+}
+
+@article{zhao2013kernel,
+  title={Kernel generalized fuzzy c-means clustering with spatial information for image segmentation},
+  author={Zhao, Feng and Jiao, Licheng and Liu, Hanqiang},
+  journal={Digital Signal Processing},
+  volume={23},
+  number={1},
+  pages={184--199},
+  year={2013},
+  doi={10.1016/j.dsp.2012.09.016},
+  publisher={Elsevier}
+}
+
+@article{chavent2018clustgeo,
+  title={ClustGeo: an R package for hierarchical clustering with spatial constraints},
+  author={Chavent, Marie and Kuentz-Simonet, Vanessa and Labenne, Amaury and Saracco, J{\'e}r{\^o}me},
+  journal={Computational Statistics},
+  volume={33},
+  number={4},
+  pages={1799--1822},
+  year={2018},
+  doi={10.1007/s00180-018-0791-1},
+  publisher={Springer}
+}
+
+@article{openshaw1977geographical,
+  title={A geographical solution to scale and aggregation problems in region-building, partitioning and spatial modelling},
+  author={Openshaw, Stan},
+  journal={Transactions of the institute of british geographers},
+  pages={459--472},
+  year={1977},
+  doi={10.2307/622300},
+  publisher={JSTOR}
+}
+
+@article{assunccao2006efficient,
+  title={Efficient regionalization techniques for socio-economic geographical units using minimum spanning trees},
+  author={Assun{\c{c}}{\~a}o, Renato M and Neves, Marcos Corr{\^e}a and C{\^a}mara, Gilberto and da Costa Freitas, Corina},
+  journal={International Journal of Geographical Information Science},
+  volume={20},
+  number={7},
+  pages={797--811},
+  year={2006},
+  doi={10.1080/13658810600665111},
+  publisher={Taylor \& Francis}
+}
+
+@article{aldstadt2006using,
+  title={Using AMOEBA to create a spatial weights matrix and identify spatial clusters},
+  author={Aldstadt, Jared and Getis, Arthur},
+  journal={Geographical analysis},
+  volume={38},
+  number={4},
+  pages={327--343},
+  year={2006},
+  doi={10.1111/j.1538-4632.2006.00689.x},
+  publisher={Wiley Online Library}
+}
+
+@article{romary2015unsupervised,
+  title={Unsupervised classification of multivariate geostatistical data: two algorithms},
+  author={Romary, Thomas and Ors, Fabien and Rivoirard, Jacques and Deraisme, Jacques},
+  journal={Computers \& geosciences},
+  volume={85},
+  pages={96--103},
+  year={2015},
+  doi={10.1016/j.cageo.2015.05.019},
+  publisher={Elsevier}
+}
+
+@article{tsai2011fuzzy,
+  title={Fuzzy C-means based clustering for linearly and nonlinearly separable data},
+  author={Tsai, Du-Ming and Lin, Chung-Chan},
+  journal={Pattern recognition},
+  volume={44},
+  number={8},
+  pages={1750--1760},
+  year={2011},
+  doi={10.1016/j.patcog.2011.02.009},
+  publisher={Elsevier}
+}
+
+@article{dave1991characterization,
+  title={Characterization and detection of noise in clustering},
+  author={Dave, Rajesh N},
+  journal={Pattern Recognition Letters},
+  volume={12},
+  number={11},
+  pages={657--664},
+  year={1991},
+  publisher={Elsevier}
+}

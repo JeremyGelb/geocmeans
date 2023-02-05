@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -78,25 +78,25 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SGFCMeans</span><span class="op">(</span></span>
-<span>  <span class="va">data</span>,</span>
-<span>  nblistw <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">k</span>,</span>
-<span>  <span class="va">m</span>,</span>
-<span>  <span class="va">alpha</span>,</span>
-<span>  <span class="va">beta</span>,</span>
-<span>  lag_method <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span>  window <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  maxiter <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  tol <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>  standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  robust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  noise_cluster <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  delta <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  init <span class="op">=</span> <span class="st">"random"</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SGFCMeans</span><span class="op">(</span>
+  <span class="va">data</span>,
+  nblistw <span class="op">=</span> <span class="cn">NULL</span>,
+  <span class="va">k</span>,
+  <span class="va">m</span>,
+  <span class="va">alpha</span>,
+  <span class="va">beta</span>,
+  lag_method <span class="op">=</span> <span class="st">"mean"</span>,
+  window <span class="op">=</span> <span class="cn">NULL</span>,
+  maxiter <span class="op">=</span> <span class="fl">500</span>,
+  tol <span class="op">=</span> <span class="fl">0.01</span>,
+  standardize <span class="op">=</span> <span class="cn">TRUE</span>,
+  robust <span class="op">=</span> <span class="cn">FALSE</span>,
+  noise_cluster <span class="op">=</span> <span class="cn">FALSE</span>,
+  delta <span class="op">=</span> <span class="cn">NULL</span>,
+  verbose <span class="op">=</span> <span class="cn">TRUE</span>,
+  init <span class="op">=</span> <span class="st">"random"</span>,
+  seed <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -106,32 +106,20 @@
 rasters (produced by the package raster). In that case, each raster is
 considered as a variable and each pixel is an observation. Pixels with NA
 values are not used during the classification.</p></dd>
-
-
 <dt>nblistw</dt>
 <dd><p>A list.w object describing the neighbours typically produced
 by the spdep package. Required if data is a dataframe, see the parameter window
 if you use a list of rasters as input.</p></dd>
-
-
 <dt>k</dt>
 <dd><p>An integer describing the number of cluster to find</p></dd>
-
-
 <dt>m</dt>
 <dd><p>A float for the fuzziness degree</p></dd>
-
-
 <dt>alpha</dt>
 <dd><p>A float representing the weight of the space in the analysis (0
 is a typical fuzzy-c-mean algorithm, 1 is balanced between the two
 dimensions, 2 is twice the weight for space)</p></dd>
-
-
 <dt>beta</dt>
 <dd><p>A float for the beta parameter (control speed convergence and classification crispness)</p></dd>
-
-
 <dt>lag_method</dt>
 <dd><p>A string indicating if a classical lag must be used
 ("mean") or if a weighted median must be used ("median"). When working with rasters, a function
@@ -142,62 +130,39 @@ and set the window as: window &lt;- matrix(1/9,nrow = 3, ncol = 3). There is one
 with rasters: one can specify "nl" (standing for non-local) which calculated a lagged version of the 
 input rasters, using the inverse of the euclidean distance as spatial weights (see the section Advanced 
 examples in the vignette introduction for more details).</p></dd>
-
-
 <dt>window</dt>
 <dd><p>If data is a list of rasters, then a window must be specified instead of
 a list.w object. It will be used to calculate a focal function on each raster. The
 window must be a square numeric matrix with odd dimensions (such 3x3). The values in
 the matrix indicate the weight to give to each pixel and the centre of the matrix is
 the centre of the focal function.</p></dd>
-
-
 <dt>maxiter</dt>
 <dd><p>An integer for the maximum number of iterations</p></dd>
-
-
 <dt>tol</dt>
 <dd><p>The tolerance criterion used in the evaluateMatrices function for
 convergence assessment</p></dd>
-
-
 <dt>standardize</dt>
 <dd><p>A boolean to specify if the variables must be centred and
 reduced (default = True)</p></dd>
-
-
 <dt>robust</dt>
 <dd><p>A boolean indicating if the "robust" version of the algorithm must be used (see details)</p></dd>
-
-
 <dt>noise_cluster</dt>
 <dd><p>A boolean indicatong if a noise cluster must be added to the solution (see details)</p></dd>
-
-
 <dt>delta</dt>
 <dd><p>A float giving the distance of the noise cluster to each observation</p></dd>
-
-
 <dt>verbose</dt>
 <dd><p>A boolean to specify if the progress should be printed</p></dd>
-
-
 <dt>init</dt>
 <dd><p>A string indicating how the initial centres must be selected. "random"
 indicates that random observations are used as centres. "kpp" use a distance-based method
 resulting in more dispersed centres at the beginning. Both of them are heuristic.</p></dd>
-
-
 <dt>seed</dt>
 <dd><p>An integer used for random number generation. It ensures that the
 starting centres will be the same if the same value is selected.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>An S3 object of class FCMres with the following slots</p><ul><li><p>Centers: a dataframe describing the final centers of the groups</p></li>
+    <p>An S3 object of class FCMres with the following slots</p><ul><li><p>Centers: a dataframe describing the final centers of the groups</p></li>
 <li><p>Belongings: the final membership matrix</p></li>
 <li><p>Groups: a vector with the names of the most likely group for each observation</p></li>
 <li><p>Data: the dataset used to perform the clustering (might be standardized)</p></li>
@@ -231,13 +196,14 @@ $$b_k = \beta \times min(||x_{k} - v||)$$</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
-<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,</span>
-<span><span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
-<span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">SGFCMeans</span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
+<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,
+<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
+<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
+<span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">SGFCMeans</span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -251,7 +217,8 @@ $$b_k = \beta \times min(||x_{k} - v||)$$</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

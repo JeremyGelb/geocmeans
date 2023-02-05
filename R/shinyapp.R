@@ -188,7 +188,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
       rasterMode <- TRUE
 
       # let me check if the installed version of leaflet is enough
-      if(packageVersion("leaflet") <= "2.1.1"){
+      if(utils::packageVersion("leaflet") <= "2.1.1"){
         stop("To use the shiny app with raster data, you must have installed a version of leaflet > 2.1.1 (ex 2.1.1.9000 from github)")
       }
 

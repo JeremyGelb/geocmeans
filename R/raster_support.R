@@ -110,6 +110,13 @@ check_raters_dims <- function(rasters){
 #' # this is an internal function, no example provided
 input_raster_data <- function(dataset, w = NULL, fun = sum, standardize = TRUE){
   #nocov start
+
+  # checking if the given rasters are SpatRasters
+  test_types <- sapply(dataset, function(x){inherits(x, "SpatRaster")})
+  if(any(!test_types)){
+    stop("If data is a list, then raster data are expected. They must be given as a list of SpatRaster objects from the package terra, typically created with the function terra::rast")
+  }
+
   if(is.null(w) == FALSE){
     check_raters_dims(dataset)
     check_window(w)

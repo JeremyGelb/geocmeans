@@ -131,10 +131,46 @@ An environment called `geocmeans_env` is created in package the geocmeans. It co
 
 ## Test environments
 
-* local R installation (windows), R Under development
+* local R installation (windows), R Under development 4.3
 * GitHub Actions - (windows): release
 * rhub - (ubuntu): release
 * rhub - (macos): release
 
 ## R CMD check results
 0 ERRORs | 0 WARNINGs | 1 NOTES.
+
+
+# Version 0.3.3
+
+## Test environments
+
+* local R installation (windows), R Under development 4.3
+* GitHub Actions - (windows): release
+* rhub - (ubuntu): release
+* rhub - (macos): release
+
+── R CMD check results ────────────────────────────────────────────── geocmeans 0.3.3 ────
+Duration: 6m 48.8s
+
+❯ checking installed package size ... NOTE
+    installed size is  7.8Mb
+    sub-directories of 1Mb or more:
+      doc       1.8Mb
+      extdata   3.0Mb
+      libs      1.4Mb
+
+0 errors ✔ | 0 warnings ✔ | 1 note ✖
+
+## round 1 after manual checking from CRAN
+
+```
+ Package CITATION file contains call(s) to old-style personList() or
+ as.personList().  Please use c() on person objects instead.
+ Package CITATION file contains call(s) to old-style citEntry() or
+ citHeader()/citFooter().  Please use bibentry() instead, possibly with
+ arguments 'header' and 'footer'.
+```
+
+**solution**: 
+
+The CITATION file was rewritten as suggested.

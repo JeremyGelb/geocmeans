@@ -1,6 +1,11 @@
+# geocmeans 0.3.3.9000
+
+Adding an error when the user gives data using the old packages raster and sp.
+
 # geocmeans 0.3.3
 
 Correcting minor bugs caused by the recent removing of rgdal from dependencies
+Updating to C++17 to match CRAN new requirements
 
 # geocmeans 0.3.2.9000
 

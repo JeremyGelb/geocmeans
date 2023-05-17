@@ -1,7 +1,7 @@
 Package: geocmeans
 Type: Package
 Title: Implementing Methods for Spatial Fuzzy Unsupervised Classification
-Version: 0.3.3
+Version: 0.3.3.9000
 Authors@R: c(
     person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
     person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
@@ -63,5 +63,5 @@ RdMacros: Rdpack
 LinkingTo: 
     Rcpp,
     RcppArmadillo
-SystemRequirements: C++11
+SystemRequirements: C++17
 Language: en-CA

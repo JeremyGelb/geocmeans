@@ -1,4 +1,4 @@
-pandoc: 2.17.1.1
+pandoc: 2.19.2
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
@@ -8,5 +8,5 @@ articles:
   rasters: rasters.html
   advanced_examples: web_vignettes/advanced_examples.html
   optimizing_parameters: web_vignettes/optimizing_parameters.html
-last_built: 2023-02-05T19:14Z
+last_built: 2023-05-18T01:55Z
 

@@ -8,7 +8,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
-[![](https://img.shields.io/badge/devel%20version-0.3.3-green.svg)](https://github.com/JeremyGelb/geocmeans)
+[![](https://img.shields.io/badge/devel%20version-0.3.3.9000-green.svg)](https://github.com/JeremyGelb/geocmeans)
 [![](https://www.r-pkg.org/badges/version/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![Codecov test
@@ -66,11 +66,11 @@ method to perform a socio-residential and environmental taxonomy in Lyon
 
 Four Fuzzy classification algorithms are proposed :
 
--   FCM: Fuzzy C-Means, with the function `CMeans`
--   GFCM: Generalized Fuzzy C-Means, with the function `GFCMeans`
--   SFCM: Spatial Fuzzy C-Means, with the function `SFCMeans`
--   SGFCM: Spatial Generalized Fuzzy C-Means, with the function
-    `SGFCMeans`
+- FCM: Fuzzy C-Means, with the function `CMeans`
+- GFCM: Generalized Fuzzy C-Means, with the function `GFCMeans`
+- SFCM: Spatial Fuzzy C-Means, with the function `SFCMeans`
+- SGFCM: Spatial Generalized Fuzzy C-Means, with the function
+  `SGFCMeans`
 
 Each function return a membership matrix, the data used for the
 classification (scaled if required) and the centers of the clusters.
@@ -92,24 +92,24 @@ available to speed up the calculus.
 Many indices of classification quality can be calculated with the
 function `calcqualityIndexes`:
 
--   *Silhouette.index*: the silhouette index (`fclust::SIL.F`)
--   *Partition.entropy*: the partition entropy index (`fclust::PE`)
--   *Partition.coeff*: the partition entropy coefficient (`fclust::PC`)
--   *Modified.partition.coeff*: the modified partition entropy
-    coefficient (`fclust::MPC`)
--   *XieBeni.index*: the Xie and Beni index (`fclust::XB`)
--   *FukuyamaSugeno.index*: the Fukuyama and Sugeno index
-    (`geocmeans::calcFukuyamaSugeno`)
--   *DavidBoudlin.index*: the David-Bouldin index
-    (`geocmeans::calcDavidBouldin`)
--   *CalinskiHarabasz.index*: the Calinski-Harabasz index
-    (`geocmeans::calcCalinskiHarabasz`)
--   *GD43.index* and *GD53.index*: two version of the generalized Dunn
-    index (`geocmeans::calcGD43` and `calcGD53`)
--   *Negentropy.index*: the Negentropy Increment index
-    (`geocmeans::calcNegentropyI`)
--   *Explained.inertia*: the percentage of total inertia explained by
-    the solution
+- *Silhouette.index*: the silhouette index (`fclust::SIL.F`)
+- *Partition.entropy*: the partition entropy index (`fclust::PE`)
+- *Partition.coeff*: the partition entropy coefficient (`fclust::PC`)
+- *Modified.partition.coeff*: the modified partition entropy coefficient
+  (`fclust::MPC`)
+- *XieBeni.index*: the Xie and Beni index (`fclust::XB`)
+- *FukuyamaSugeno.index*: the Fukuyama and Sugeno index
+  (`geocmeans::calcFukuyamaSugeno`)
+- *DavidBoudlin.index*: the David-Bouldin index
+  (`geocmeans::calcDavidBouldin`)
+- *CalinskiHarabasz.index*: the Calinski-Harabasz index
+  (`geocmeans::calcCalinskiHarabasz`)
+- *GD43.index* and *GD53.index*: two version of the generalized Dunn
+  index (`geocmeans::calcGD43` and `calcGD53`)
+- *Negentropy.index*: the Negentropy Increment index
+  (`geocmeans::calcNegentropyI`)
+- *Explained.inertia*: the percentage of total inertia explained by the
+  solution
 
 #### Classification consistency
 
@@ -123,12 +123,12 @@ their centres vary.
 Several functions are also available to facilitate the interpretation of
 the classification:
 
--   summary statistics for each cluster: `summarizeClusters` (also
-    accessible with the generic function `summary`)
--   spider charts: `spiderPlots`
--   violin plots: `violinPlots`
--   maps of the membership matrix: `mapClusters` (support polygon,
-    points and polylines)
+- summary statistics for each cluster: `summarizeClusters` (also
+  accessible with the generic function `summary`)
+- spider charts: `spiderPlots`
+- violin plots: `violinPlots`
+- maps of the membership matrix: `mapClusters` (support polygon, points
+  and polylines)
 
 There is also a shiny app that can be used to go deeper in the result
 interpretation. It requires the packages `shiny`, `leaflet`, `bslib`,

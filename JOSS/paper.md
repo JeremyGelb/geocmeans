@@ -152,7 +152,7 @@ library(spdep)
 data(LyonIris)
 
 #selecting the columns for the analysis
-AnalysisFields <-c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
+AnalysisFields <- c("Lden","NO2","PM25","VegHautPrt","Pct0_14",
                    "Pct_65","Pct_Img","TxChom1564","Pct_brevet","NivVieMed")
                    
 #creating a spatial weights matrix
@@ -160,7 +160,7 @@ Neighbours <- poly2nb(LyonIris,queen = TRUE)
 WMat <- nb2listw(Neighbours,style="W",zero.policy = TRUE)
 
 #rescaling the columns
-Data <- LyonIris@data[AnalysisFields]
+Data <- st_drop_geometry(LyonIris[AnalysisFields])
 for (Col in names(Data)){
   Data[[Col]] <- scale(Data[[Col]])
 }
@@ -177,13 +177,13 @@ SFCM_results <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
                  verbose = FALSE, seed = 456)
 
 #calculating some quality indexes
-calcqualityIndexes(Data, SFCM_results$Belongings)
+calcqualityIndexes(Data, SFCM_results$Belongings, m = 1.5)
 
 #mapping the results
 mapClusters(LyonIris, SFCM_results$Belongings)
 
 #ploting a radar chart
-spiderPlots(LyonIris@data[AnalysisFields],
+spiderPlots(st_drop_geometry(LyonIris[AnalysisFields]),
             belongmatrix = SFCM_results$Belongings)
 ```
 

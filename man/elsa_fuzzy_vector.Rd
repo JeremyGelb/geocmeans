@@ -9,10 +9,10 @@ elsa_fuzzy_vector(memberships, nblistw, matdist)
 \arguments{
 \item{memberships}{A membership matrix}
 
+\item{nblistw}{The spatial weight matrix (nblistw object from spdep)}
+
 \item{matdist}{A matrix representing the dissimilarity between the clusters. The matrix must
 be squared and the diagonal must be filled with zeros.}
-
-\item{nbslitw}{The spatial weight matrix (nblistw object from spdep)}
 }
 \value{
 A vector of local ELSA values

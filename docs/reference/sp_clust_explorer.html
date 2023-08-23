@@ -78,14 +78,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">sp_clust_explorer</span><span class="op">(</span>
-  object <span class="op">=</span> <span class="cn">NULL</span>,
-  spatial <span class="op">=</span> <span class="cn">NULL</span>,
-  membership <span class="op">=</span> <span class="cn">NULL</span>,
-  dataset <span class="op">=</span> <span class="cn">NULL</span>,
-  port <span class="op">=</span> <span class="fl">8100</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sp_clust_explorer</span><span class="op">(</span></span>
+<span>  object <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  spatial <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  membership <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dataset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  port <span class="op">=</span> <span class="fl">8100</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -93,43 +93,53 @@
     <dl><dt>object</dt>
 <dd><p>A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans</p></dd>
+
+
 <dt>spatial</dt>
 <dd><p>A feature collection (sf) used to map the observations. Only needed if object was not created
 from rasters.</p></dd>
+
+
 <dt>membership</dt>
 <dd><p>A matrix or a dataframe representing the membership values
 obtained for each observation. If NULL, then the matrix is extracted from
 object.</p></dd>
+
+
 <dt>dataset</dt>
 <dd><p>A dataframe or matrix representing the data used for the
 classification. If NULL, then the matrix is extracted from object.</p></dd>
+
+
 <dt>port</dt>
 <dd><p>An integer of length 4 indicating the port on which to start the
 Shiny app. Default is 8100</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other parameters passed to the function runApp</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
-
-<span class="co">#selecting the columns for the analysis</span>
-<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
-                   <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
-
-<span class="co">#rescaling the columns</span>
-<span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu">sp_clust_explorer</span><span class="op">(</span><span class="va">Cmean</span>, <span class="va">LyonIris</span><span class="op">)</span>
-<span class="op">}</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#selecting the columns for the analysis</span></span>
+<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,</span>
+<span>                   <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#rescaling the columns</span></span>
+<span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">sp_clust_explorer</span><span class="op">(</span><span class="va">Cmean</span>, <span class="va">LyonIris</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -143,8 +153,7 @@ Shiny app. Default is 8100</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

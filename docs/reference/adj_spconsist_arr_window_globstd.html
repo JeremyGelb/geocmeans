@@ -78,26 +78,35 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">adj_spconsist_arr_window_globstd</span><span class="op">(</span><span class="va">data</span>, <span class="va">memberships</span>, <span class="va">window</span>, mindist <span class="op">=</span> <span class="fl">1e-11</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">adj_spconsist_arr_window_globstd</span><span class="op">(</span><span class="va">data</span>, <span class="va">memberships</span>, <span class="va">window</span>, mindist <span class="op">=</span> <span class="fl">1e-11</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>an arma cube of dimension nr,nc,ns</p></dd>
+
+
 <dt>memberships</dt>
 <dd><p>an arma cube of dimension nr, nc, ks</p></dd>
+
+
 <dt>mindist</dt>
 <dd><p>A minimum value for distance between two observations. If two
 neighbours have exactly the same values, then the euclidean distance
 between them is 0, leading to an infinite spatial weight. In that case,
 the minimum distance is used instead of 0.</p></dd>
+
+
 <dt>a</dt>
 <dd><p>matrix representing the neighbouring of each pixel</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a double, the adjusted spatial inconsitency index</p>
+    
+
+<p>a double, the adjusted spatial inconsitency index</p>
     </div>
 
   </div>
@@ -112,8 +121,7 @@ the minimum distance is used instead of 0.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

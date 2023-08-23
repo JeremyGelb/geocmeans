@@ -78,28 +78,39 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">boot_worker</span><span class="op">(</span><span class="va">object</span>, <span class="va">wdata</span>, <span class="va">tol</span>, <span class="va">maxiter</span>, <span class="va">init</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">boot_worker</span><span class="op">(</span><span class="va">object</span>, <span class="va">wdata</span>, <span class="va">tol</span>, <span class="va">maxiter</span>, <span class="va">init</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans</p></dd>
+
+
 <dt>wdata</dt>
 <dd><p>The lagged dataset if necessary, can be NULL if not required</p></dd>
+
+
 <dt>tol</dt>
 <dd><p>The tolerance criterion used in the evaluateMatrices function for
 convergence assessment</p></dd>
+
+
 <dt>maxiter</dt>
 <dd><p>An integer for the maximum number of iteration</p></dd>
+
+
 <dt>init</dt>
 <dd><p>A string indicating how the initial centres must be selected. "random"
 indicates that random observations are used as centres. "kpp" use a distance based method
 resulting in more dispersed centres at the beginning. Both of them are heuristic.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list, similar to a FCMres object, but with only necessary slots for cluster bootstraping.</p>
+    
+
+<p>A list, similar to a FCMres object, but with only necessary slots for cluster bootstraping.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -108,8 +119,7 @@ resulting in more dispersed centres at the beginning. Both of them are heuristic
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># this is an internal function, no example provided</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># this is an internal function, no example provided</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -123,8 +133,7 @@ resulting in more dispersed centres at the beginning. Both of them are heuristic
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

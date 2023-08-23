@@ -80,7 +80,7 @@ the Jaccard index calculated on the membership matrices.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">groups_matching</span><span class="op">(</span><span class="va">object.x</span>, <span class="va">object.y</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">groups_matching</span><span class="op">(</span><span class="va">object.x</span>, <span class="va">object.y</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -88,13 +88,18 @@ the Jaccard index calculated on the membership matrices.</p>
     <dl><dt>object.x</dt>
 <dd><p>A FCMres object, or a simple membership matrix. It is used as the reference
 for the ordering of the groups</p></dd>
+
+
 <dt>object.y</dt>
 <dd><p>A FCMres object, or a simple membership matrix. The order of its groups will
 be updated to match with the groups of object.x</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The FCMres object or the membership matrix provided for the parameter object.y with
+    
+
+<p>The FCMres object or the membership matrix provided for the parameter object.y with
 the order of the groups updated.</p>
     </div>
     <div id="details">
@@ -108,22 +113,21 @@ same algorithm.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
-
-<span class="co">#selecting the columns for the analysis</span>
-<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,
-                   <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
-
-<span class="co">#rescaling the columns</span>
-<span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">Cmean2</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">ordered_Cmean2</span> <span class="op">&lt;-</span> <span class="fu">groups_matching</span><span class="op">(</span><span class="va">Cmean</span>,<span class="va">Cmean2</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#selecting the columns for the analysis</span></span>
+<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,</span>
+<span>                   <span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#rescaling the columns</span></span>
+<span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">Cmean2</span> <span class="op">&lt;-</span> <span class="fu"><a href="CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">789</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">ordered_Cmean2</span> <span class="op">&lt;-</span> <span class="fu">groups_matching</span><span class="op">(</span><span class="va">Cmean</span>,<span class="va">Cmean2</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -137,8 +141,7 @@ same algorithm.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

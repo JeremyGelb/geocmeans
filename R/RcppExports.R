@@ -347,7 +347,7 @@ Elsa_fuzzy_matrix_window <- function(mats, window, dist) {
 #' @name adj_spconsist_arr_window_globstd
 #' @param data an arma cube of dimension nr,nc,ns
 #' @param memberships an arma cube of dimension nr, nc, ks
-#' @param a matrix representing the neighbouring of each pixel
+#' @param window a matrix representing the neighbouring of each pixel
 #' @param mindist A minimum value for distance between two observations. If two
 #'   neighbours have exactly the same values, then the euclidean distance
 #'   between them is 0, leading to an infinite spatial weight. In that case,

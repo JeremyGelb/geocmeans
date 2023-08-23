@@ -82,7 +82,7 @@ clusters.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calcELSA</span><span class="op">(</span><span class="va">object</span>, nblistw <span class="op">=</span> <span class="cn">NULL</span>, window <span class="op">=</span> <span class="cn">NULL</span>, matdist <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calcELSA</span><span class="op">(</span><span class="va">object</span>, nblistw <span class="op">=</span> <span class="cn">NULL</span>, window <span class="op">=</span> <span class="cn">NULL</span>, matdist <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -91,20 +91,29 @@ clusters.</p>
 <dd><p>A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans. Can also be a vector of categories. This vector must
 be filled with integers starting from 1. -1 can be used to indicate missing categories.</p></dd>
+
+
 <dt>nblistw</dt>
 <dd><p>A list.w object describing the neighbours typically produced
 by the spdep package. Required if data is a dataframe, see the parameter window
 if you use a list of rasters as input.</p></dd>
+
+
 <dt>window</dt>
 <dd><p>A binary (0,1) matrix representing the neighbours spatial weights when working
 with rasters. The matrix must have odd dimensions.</p></dd>
+
+
 <dt>matdist</dt>
 <dd><p>A matrix representing the dissimilarity between the clusters. The matrix must
 be squared and the diagonal must be filled with zeros.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A depending of the input, a vector of ELSA values or a raster with the ELSA values.</p>
+    
+
+<p>A depending of the input, a vector of ELSA values or a raster with the ELSA values.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -121,15 +130,14 @@ represented as a variogram-like graph.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
-<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,
-<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
-<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
-<span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span>
-<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">elsa_valus</span> <span class="op">&lt;-</span> <span class="fu">calcELSA</span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
+<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,</span>
+<span><span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
+<span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">elsa_valus</span> <span class="op">&lt;-</span> <span class="fu">calcELSA</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -143,8 +151,7 @@ represented as a variogram-like graph.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

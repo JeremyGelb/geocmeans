@@ -78,41 +78,51 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calc_raster_spinconsistency</span><span class="op">(</span>
-  <span class="va">matrices</span>,
-  <span class="va">window</span>,
-  adj <span class="op">=</span> <span class="cn">FALSE</span>,
-  dataset <span class="op">=</span> <span class="cn">NULL</span>,
-  mindist <span class="op">=</span> <span class="fl">1e-11</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_raster_spinconsistency</span><span class="op">(</span></span>
+<span>  <span class="va">matrices</span>,</span>
+<span>  <span class="va">window</span>,</span>
+<span>  adj <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  dataset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mindist <span class="op">=</span> <span class="fl">1e-11</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>matrices</dt>
 <dd><p>A list of matrices</p></dd>
+
+
 <dt>window</dt>
 <dd><p>The window to use to define spatial neighbouring</p></dd>
+
+
 <dt>adj</dt>
 <dd><p>A boolean indicating if the adjusted version of the algorithm must be
 calculated</p></dd>
+
+
 <dt>dataset</dt>
 <dd><p>A list of matrices with the original data (if adj = TRUE)</p></dd>
+
+
 <dt>mindist</dt>
 <dd><p>When adj is true, a minimum value for distance between two observations. If two
 neighbours have exactly the same values, then the euclidean distance between
 them is 0, leading to an infinite spatial weight. In that case, the minimum
 distance is used instead of 0.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A float: the sum of spatial inconsistency</p>
+    
+
+<p>A float: the sum of spatial inconsistency</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># this is an internal function, no example provided</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># this is an internal function, no example provided</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -126,8 +136,7 @@ distance is used instead of 0.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

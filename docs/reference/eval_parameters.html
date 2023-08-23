@@ -78,92 +78,124 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">eval_parameters</span><span class="op">(</span>
-  <span class="va">algo</span>,
-  <span class="va">parameters</span>,
-  <span class="va">data</span>,
-  nblistw <span class="op">=</span> <span class="cn">NULL</span>,
-  window <span class="op">=</span> <span class="cn">NULL</span>,
-  standardize <span class="op">=</span> <span class="cn">TRUE</span>,
-  robust <span class="op">=</span> <span class="cn">FALSE</span>,
-  noise_cluster <span class="op">=</span> <span class="cn">FALSE</span>,
-  spconsist <span class="op">=</span> <span class="cn">FALSE</span>,
-  classidx <span class="op">=</span> <span class="cn">TRUE</span>,
-  nrep <span class="op">=</span> <span class="fl">30</span>,
-  indices <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">tol</span>,
-  <span class="va">maxiter</span>,
-  seed <span class="op">=</span> <span class="cn">NULL</span>,
-  init <span class="op">=</span> <span class="st">"random"</span>,
-  verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  wrapped <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eval_parameters</span><span class="op">(</span></span>
+<span>  <span class="va">algo</span>,</span>
+<span>  <span class="va">parameters</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  nblistw <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  robust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  noise_cluster <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  spconsist <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  classidx <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  nrep <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  indices <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">tol</span>,</span>
+<span>  <span class="va">maxiter</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  init <span class="op">=</span> <span class="st">"random"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  wrapped <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>algo</dt>
 <dd><p>A string indicating which method to use (FCM, GFCM, SFCM, SGFCM)</p></dd>
+
+
 <dt>parameters</dt>
 <dd><p>A dataframe of parameters with columns k,m and alpha</p></dd>
+
+
 <dt>data</dt>
 <dd><p>A dataframe with numeric columns</p></dd>
+
+
 <dt>nblistw</dt>
 <dd><p>A list.w object describing the neighbours typically produced
 by the spdep package. Required if data is a dataframe, see the parameter window
 if you use a list of rasters as input.</p></dd>
+
+
 <dt>window</dt>
 <dd><p>If data is a list of rasters, then a window must be specified instead of
 a list.w object. It will be used to calculate a focal function on each raster. The
 window must be a square numeric matrix with odd dimensions (such 3x3). The values in
 the matrix indicate the weight to give to each pixel and the centre of the matrix is
 the centre of the focal function.</p></dd>
+
+
 <dt>standardize</dt>
 <dd><p>A boolean to specify if the variable must be centered and
 reduce (default = True)</p></dd>
+
+
 <dt>spconsist</dt>
 <dd><p>A boolean indicating if the spatial consistency must be
 calculated</p></dd>
+
+
 <dt>classidx</dt>
 <dd><p>A boolean indicating if the quality of classification
 indices must be calculated</p></dd>
+
+
 <dt>nrep</dt>
 <dd><p>An integer indicating the number of permutation to do to simulate
 the random distribution of the spatial inconsistency. Only used if spconsist
 is TRUE.</p></dd>
+
+
 <dt>indices</dt>
 <dd><p>A character vector with the names of the indices to calculate, to
 evaluate clustering quality. default is :c("Silhouette.index", "Partition.entropy",
 "Partition.coeff", "XieBeni.index", "FukuyamaSugeno.index", "Explained.inertia").
 Other available indices are : "DaviesBoulin.index", "CalinskiHarabasz.index",
 "GD43.index", "GD53.index" and "Negentropy.index".</p></dd>
+
+
 <dt>tol</dt>
 <dd><p>The tolerance criterion used in the evaluateMatrices function for
 convergence assessment</p></dd>
+
+
 <dt>maxiter</dt>
 <dd><p>An integer for the maximum number of iteration</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>An integer used for random number generation. It ensures that the
 start centers will be the same if the same integer is selected.</p></dd>
+
+
 <dt>init</dt>
 <dd><p>A string indicating how the initial centers must be selected. "random"
 indicates that random observations are used as centers. "kpp" use a distance based method
 resulting in more dispersed centers at the beginning. Both of them are heuristic.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>A boolean indicating if a progressbar should be displayed</p></dd>
+
+
 <dt>wrapped</dt>
 <dd><p>A boolean indicating if the data passed is wrapped or not (see wrap function of terra)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a DataFrame containing for each combinations of parameters several clustering
+    
+
+<p>a DataFrame containing for each combinations of parameters several clustering
 quality indexes.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co">#No example provided, this is an internal function</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co">#No example provided, this is an internal function</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -177,8 +209,7 @@ quality indexes.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

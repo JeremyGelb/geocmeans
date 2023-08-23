@@ -78,14 +78,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">spConsistency</span><span class="op">(</span>
-  <span class="va">object</span>,
-  nblistw <span class="op">=</span> <span class="cn">NULL</span>,
-  window <span class="op">=</span> <span class="cn">NULL</span>,
-  nrep <span class="op">=</span> <span class="fl">999</span>,
-  adj <span class="op">=</span> <span class="cn">FALSE</span>,
-  mindist <span class="op">=</span> <span class="fl">1e-11</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">spConsistency</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  nblistw <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nrep <span class="op">=</span> <span class="fl">999</span>,</span>
+<span>  adj <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mindist <span class="op">=</span> <span class="fl">1e-11</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -93,29 +93,44 @@
     <dl><dt>object</dt>
 <dd><p>A FCMres object, typically obtained from functions CMeans,
 GCMeans, SFCMeans, SGFCMeans. Can also be a simple membership matrix.</p></dd>
+
+
 <dt>nblistw</dt>
 <dd><p>A list.w object describing the neighbours typically produced
 by the spdep package. Required if data is a dataframe, see the parameter window
 if you use a list of rasters as input. Can also be NULL if object is a FCMres object.</p></dd>
+
+
 <dt>window</dt>
 <dd><p>if rasters were used for the classification, the window must be
 specified instead of a list.w object. Can also be NULL if object is a FCMres object.</p></dd>
+
+
 <dt>nrep</dt>
 <dd><p>An integer indicating the number of permutation to do to simulate
 spatial randomness. Note that if rasters are used, each permutation can be very long.</p></dd>
+
+
 <dt>adj</dt>
 <dd><p>A boolean indicating if the adjusted version of the indicator must be
 calculated when working with rasters (globally standardized). When working with vectors, see the function
 adjustSpatialWeights to modify the list.w object.</p></dd>
+
+
 <dt>mindist</dt>
 <dd><p>When adj is true, a minimum value for distance between two observations. If two
 neighbours have exactly the same values, then the euclidean distance between
 them is 0, leading to an infinite spatial weight. In that case, the minimum
 distance is used instead of 0.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list with</p><ul><li><p>Mean : the mean of the spatial consistency index</p></li>
+    
+
+<p>A named list with</p>
+<p></p>
+<ul><li><p>Mean : the mean of the spatial consistency index</p></li>
 <li><p>prt05 : the 5th percentile of the spatial consistency index</p></li>
 <li><p>prt95 : the 95th percentile of the spatial consistency index</p></li>
 <li><p>samples : all the value of the spatial consistency index</p></li>
@@ -144,15 +159,14 @@ solution able to reduce this index has a better spatial consistency</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span>
-<span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,
-<span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span>
-<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span>
-<span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span>
-<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">spConsistency</span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">Wqueen</span>, nrep<span class="op">=</span><span class="fl">50</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
+<span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,<span class="st">"Pct_65"</span>,<span class="st">"Pct_Img"</span>,</span>
+<span><span class="st">"TxChom1564"</span>,<span class="st">"Pct_brevet"</span>,<span class="st">"NivVieMed"</span><span class="op">)</span></span>
+<span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">spConsistency</span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">Wqueen</span>, nrep<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -166,8 +180,7 @@ solution able to reduce this index has a better spatial consistency</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

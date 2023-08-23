@@ -74,35 +74,25 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.3.9000" id="geocmeans-0339000">geocmeans 0.3.3.9000<a class="anchor" aria-label="anchor" href="#geocmeans-0339000"></a></h2>
-<p>Adding an error when the user gives data using the old packages
-raster and sp.</p>
+<p>Adding an error when the user gives data using the old packages raster and sp.</p>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.3" id="geocmeans-033">geocmeans 0.3.3<small>2023-02-07</small><a class="anchor" aria-label="anchor" href="#geocmeans-033"></a></h2>
-<p>Correcting minor bugs caused by the recent removing of rgdal from
-dependencies Updating to C++17 to match CRAN new requirements</p>
+<p>Correcting minor bugs caused by the recent removing of rgdal from dependencies Updating to C++17 to match CRAN new requirements</p>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.2.9000" id="geocmeans-0329000">geocmeans 0.3.2.9000<a class="anchor" aria-label="anchor" href="#geocmeans-0329000"></a></h2>
-<p>Removing dependencies from rgdal and raster to move to terra. The
-dataset Aracachon is now provided as a raw tiff file and must be read
-directly.</p>
-<p>Adding two new parameters to the functions CMeans, GCMeans, SFCMeans,
-SFGCMeans : noise_cluster and robust. They can be used to calculate the
-“robust” version of each algorithm, or to add a noise cluster. See the
-vignette “Advanced examples” on the website.</p>
-<p>Adding a little function to facilitate the scaling and unscaling of
-variables : standardizer</p>
+<p>Removing dependencies from rgdal and raster to move to terra. The dataset Aracachon is now provided as a raw tiff file and must be read directly.</p>
+<p>Adding two new parameters to the functions CMeans, GCMeans, SFCMeans, SFGCMeans : noise_cluster and robust. They can be used to calculate the “robust” version of each algorithm, or to add a noise cluster. See the vignette “Advanced examples” on the website.</p>
+<p>Adding a little function to facilitate the scaling and unscaling of variables : standardizer</p>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.1" id="geocmeans-031">geocmeans 0.3.1<small>2022-10-15</small><a class="anchor" aria-label="anchor" href="#geocmeans-031"></a></h2>
-<p>Replacing all the functions from maptools, sp and rgeos to work now
-with feature collections from sf.</p>
+<p>Replacing all the functions from maptools, sp and rgeos to work now with feature collections from sf.</p>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.2" id="geocmeans-022">geocmeans 0.2.2<small>2022-06-16</small><a class="anchor" aria-label="anchor" href="#geocmeans-022"></a></h2>
-<p>removed the old function future::multiprocess, for
-future::multisession as suggested in issue <a href="https://github.com/JeremyGelb/geocmeans/issues/3" class="external-link">#3</a></p>
+<p>removed the old function future::multiprocess, for future::multisession as suggested in issue <a href="https://github.com/JeremyGelb/geocmeans/issues/3" class="external-link">#3</a></p>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1.9000" id="geocmeans-0219000">geocmeans 0.2.1.9000<a class="anchor" aria-label="anchor" href="#geocmeans-0219000"></a></h2>
@@ -110,50 +100,28 @@ future::multisession as suggested in issue <a href="https://github.com/JeremyGel
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1" id="geocmeans-021">geocmeans 0.2.1<a class="anchor" aria-label="anchor" href="#geocmeans-021"></a></h2>
-<p>Minor release for correcting minor bugs and providing an updated
-documentation.</p>
+<p>Minor release for correcting minor bugs and providing an updated documentation.</p>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.0" id="geocmeans-020">geocmeans 0.2.0<small>2021-08-23</small><a class="anchor" aria-label="anchor" href="#geocmeans-020"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-2-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
-<ul><li>Added support to use raster data for clustering (see vignette
-<em>rasters</em>)</li>
-<li>Added a S3 method to predict the membership matrix of a new set of
-observations (<em>predict.FCMres</em>)</li>
-<li>Added a shiny app (function: <em>sp_clust_explorer</em>) for result
-exploration</li>
-<li>The results of the functions <em>CMeans</em>, <em>GCMeans</em>,
-<em>SFCMeans</em>, <em>SGFCMeans</em> are now objects of class
-<em>FCMres</em> and the generic methods <em>predict</em>,
-<em>summary</em>, <em>plot</em>, <em>is</em> and <em>print</em> can be
-used on them. <em>FMCres</em> object can easily be created by hand with
-results from other classifier if needed, see the new vignette
-<em>FMCres</em>.</li>
-<li>Added some clustering quality indices : Negentropy Increment index,
-Generalized Dunn’s index (43 and 53), David-Bouldin index,
-Calinski-Harabasz index</li>
-<li>Added a function to perform clustering validation by bootstrap (see
-function <em>bstp_group_validation</em>)</li>
-<li>Added a function to reorder the results of a classification to match
-the most similar groups in a second classification
-(<em>groups_matching</em>)</li>
-<li>Added functions to evaluate spatial autocorrelation of a
-classification results: ELSA and FuzzyELSA (see functions
-<em>calcELSA</em> and <em>calcFuzzyELSA</em> and the end of the vignette
-<em>rasters</em>)</li>
+<ul><li>Added support to use raster data for clustering (see vignette <em>rasters</em>)</li>
+<li>Added a S3 method to predict the membership matrix of a new set of observations (<em>predict.FCMres</em>)</li>
+<li>Added a shiny app (function: <em>sp_clust_explorer</em>) for result exploration</li>
+<li>The results of the functions <em>CMeans</em>, <em>GCMeans</em>, <em>SFCMeans</em>, <em>SGFCMeans</em> are now objects of class <em>FCMres</em> and the generic methods <em>predict</em>, <em>summary</em>, <em>plot</em>, <em>is</em> and <em>print</em> can be used on them. <em>FMCres</em> object can easily be created by hand with results from other classifier if needed, see the new vignette <em>FMCres</em>.</li>
+<li>Added some clustering quality indices : Negentropy Increment index, Generalized Dunn’s index (43 and 53), David-Bouldin index, Calinski-Harabasz index</li>
+<li>Added a function to perform clustering validation by bootstrap (see function <em>bstp_group_validation</em>)</li>
+<li>Added a function to reorder the results of a classification to match the most similar groups in a second classification (<em>groups_matching</em>)</li>
+<li>Added functions to evaluate spatial autocorrelation of a classification results: ELSA and FuzzyELSA (see functions <em>calcELSA</em> and <em>calcFuzzyELSA</em> and the end of the vignette <em>rasters</em>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="corrected-bugs-0-2-0">corrected bugs<a class="anchor" aria-label="anchor" href="#corrected-bugs-0-2-0"></a></h3>
-<ul><li>issue 1 fixed by editing the mapping functions. A bug occurred when
-the fid of a SpatialDataFrame read from a shapefile was different from
-1:nrow(df)</li>
+<ul><li>issue 1 fixed by editing the mapping functions. A bug occurred when the fid of a SpatialDataFrame read from a shapefile was different from 1:nrow(df)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="performance-0-2-0">performance<a class="anchor" aria-label="anchor" href="#performance-0-2-0"></a></h3>
-<ul><li>an important performance gain can be observed for large dataset, the
-function to compare matrices between two iterations is now significantly
-faster.</li>
+<ul><li>an important performance gain can be observed for large dataset, the function to compare matrices between two iterations is now significantly faster.</li>
 <li>core functions rewritten with Rcpp for massive time gain</li>
 </ul></div>
 </div>
@@ -175,8 +143,7 @@ faster.</li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

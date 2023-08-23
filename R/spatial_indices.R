@@ -652,7 +652,7 @@ calcFuzzyELSA <- function(object, nblistw = NULL, window = NULL, matdist = NULL)
 #' @description Calculate the Local Fuzzy ELSA statistic using a nblistw object
 #'
 #' @param memberships A membership matrix
-#' @param nbslitw The spatial weight matrix (nblistw object from spdep)
+#' @param nblistw The spatial weight matrix (nblistw object from spdep)
 #' @template matdist-arg
 #' @return A vector of local ELSA values
 #' @keywords internal

@@ -82,19 +82,24 @@ than this distance. This is helpful to create circular focals.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">circular_window</span><span class="op">(</span><span class="va">radius</span>, <span class="va">res</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">circular_window</span><span class="op">(</span><span class="va">radius</span>, <span class="va">res</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>radius</dt>
 <dd><p>The size in metres of the radius of the circular focal</p></dd>
+
+
 <dt>res</dt>
 <dd><p>The width in metres of a pixel. It is assumed that pixels are squares.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A binary weight matrix</p>
+    
+
+<p>A binary weight matrix</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -104,11 +109,10 @@ but we reworked it to make it faster and to ensure that the result is a matrix w
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># wide of 100 metres for pixels of 2 metres</span>
-<span class="va">window</span> <span class="op">&lt;-</span> <span class="fu">circular_window</span><span class="op">(</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span>
-<span class="co"># row standardisation</span>
-<span class="va">window_row_std</span> <span class="op">&lt;-</span> <span class="va">window</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">window</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># wide of 100 metres for pixels of 2 metres</span></span>
+<span><span class="va">window</span> <span class="op">&lt;-</span> <span class="fu">circular_window</span><span class="op">(</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co"># row standardisation</span></span>
+<span><span class="va">window_row_std</span> <span class="op">&lt;-</span> <span class="va">window</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">window</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -122,8 +126,7 @@ but we reworked it to make it faster and to ensure that the result is a matrix w
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

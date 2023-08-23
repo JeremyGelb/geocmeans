@@ -104,6 +104,10 @@ Many indices of classification quality can be calculated with the function `calc
 
 To assess the stability of the obtained clusters, a function for bootstrap validation is proposed: `boot_group_validation`. The results can be used to verify if the obtained clusters are stable and how much their centres vary.
 
+#### Reproductibility
+
+Clustering methods like CMeans depend on the initial centers selected. In `geocmeans`, they are selected randomly, and two runs of the functions can yield different results. To facilitate the reproductibility of the results, the main functions of the package (`CMeans`, `GFCMeans`, `SFCMeans`, `SGFCMeans`, `selectParameters`, `selectParameters.mc`) have a `seed` parameter. It can be set by the user to ensure that the results of the functions are exactly the same.
+
 #### Interpretation
 
 Several functions are also available to facilitate the interpretation of the classification: 

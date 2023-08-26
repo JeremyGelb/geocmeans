@@ -1209,6 +1209,19 @@ observation and their neighbours as weights.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="reproductibility">Reproductibility<a class="anchor" aria-label="anchor" href="#reproductibility"></a>
+</h2>
+<p>Clustering methods like CMeans depend on the initial centers
+selected. In <code>geocmeans</code>, they are selected randomly, and two
+runs of the functions can yield different results. To facilitate the
+reproductibility of the results, the main functions of the package
+(<code>CMeans</code>, <code>GFCMeans</code>, <code>SFCMeans</code>,
+<code>SGFCMeans</code>, <code>selectParameters</code>,
+<code>selectParameters.mc</code>) have a <code>seed</code> parameter. It
+can be set by the user to ensure that the results of the functions are
+exactly the same.</p>
+</div>
+<div class="section level2">
 <h2 id="final-words">Final words<a class="anchor" aria-label="anchor" href="#final-words"></a>
 </h2>
 <p>That’s all, folks ! Following are the enhancements for the next

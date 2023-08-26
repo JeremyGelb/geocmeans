@@ -215,11 +215,35 @@ and Lin 2011</a>)</span>. With this modification, the algorithm can find
 clusters with different densities.</p>
 <p>We illustrate this with a simple example, let us consider the
 following dataset with two clusters.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">150</span>, <span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.75</span>,<span class="fl">0.75</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">150</span>, <span class="fl">0</span>, <span class="fl">5</span>,<span class="op">-</span><span class="fl">3</span>,<span class="fl">5</span>,<span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">parameters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">rho</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">x</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">s1</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">s2</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[[</span><span class="fl">6</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">s1</span><span class="op">**</span><span class="fl">2</span>, <span class="va">s1</span><span class="op">*</span><span class="va">s2</span><span class="op">*</span><span class="va">rho</span>, <span class="va">s1</span><span class="op">*</span><span class="va">s2</span><span class="op">*</span><span class="va">rho</span>, <span class="va">s2</span><span class="op">**</span><span class="fl">2</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="va">gp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MASS/man/mvrnorm.html" class="external-link">mvrnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, mu <span class="op">=</span> <span class="va">mu</span>, Sigma <span class="op">=</span> <span class="va">sigma</span> <span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">gp</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">all_df</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>,<span class="st">"Y"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">X</span>, y <span class="op">=</span> <span class="va">Y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="advanced_examples_files/figure-html/unnamed-chunk-2-1.png" width="90%"></p>
 <p>The first cluster is a sphere and the second is spread along the Y
 axis. If we use the classical FCM algorthim , we end up with the
 following fuzzy partition.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># preparing the functions to scale and unscale the data</span></span>
 <span><span class="va">data_scales</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/standardizer.html">standardizer</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span></span>
@@ -247,7 +271,7 @@ following fuzzy partition.</p>
 cluster on the left of the picture. This is because they are closer to
 the first cluster. This can be corrected if we normalize the distances
 to the two clusters (robust FCM).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># robust fuzzy cmeans</span></span>
 <span><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>, robust <span class="op">=</span> <span class="cn">TRUE</span>,  verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">176</span><span class="op">)</span></span>
 <span></span>
@@ -284,7 +308,7 @@ to check the quality of the clustering. We just illustrate here how the
 parameter works. Let us consider the same dataset, but with more
 noise.</p>
 <p><img src="advanced_examples_files/figure-html/unnamed-chunk-5-1.png" width="90%"></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                  robust <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  noise_cluster <span class="op">=</span> <span class="cn">TRUE</span>, delta <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -298,7 +322,7 @@ noise.</p>
 <p><img src="advanced_examples_files/figure-html/unnamed-chunk-6-1.png" width="90%">
 We can see here that delta is too low because most of the points belong
 to the noise cluster. We will incrase the value of delta.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                  robust <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  noise_cluster <span class="op">=</span> <span class="cn">TRUE</span>, delta <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -312,7 +336,7 @@ to the noise cluster. We will incrase the value of delta.</p>
 <p><img src="advanced_examples_files/figure-html/unnamed-chunk-7-1.png" width="90%"></p>
 <p>Here delta is likely to small, even the points at the edge of the
 dataset have a weak membership value to the noise cluster.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                  robust <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  noise_cluster <span class="op">=</span> <span class="cn">TRUE</span>, delta <span class="op">=</span> <span class="fl">3</span>,</span>

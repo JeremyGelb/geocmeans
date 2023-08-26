@@ -95,7 +95,7 @@ It is possible to obtain a "robust" version of the FCM algorithm by normalizing 
 
 We illustrate this with a simple example, let us consider the following dataset with two clusters.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, out.width="90%"}
+```{r message=FALSE, warning=FALSE, out.width="90%"}
 library(MASS)
 
 parameters <- list(

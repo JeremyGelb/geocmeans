@@ -1,5 +1,10 @@
+# geocmeans 0.3.4
+
+Final update before resubmitting to CRAN and to JOSS
+
 # geocmeans 0.3.3.9000
 
+Slight modification in the vignettes and documentation.
 Adding an error when the user gives data using the old packages raster and sp.
 
 # geocmeans 0.3.3

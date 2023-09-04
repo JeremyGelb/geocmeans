@@ -1,10 +1,11 @@
 Package: geocmeans
 Type: Package
 Title: Implementing Methods for Spatial Fuzzy Unsupervised Classification
-Version: 0.3.3.9000
+Version: 0.3.4
 Authors@R: c(
-    person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre")),
-    person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb")))
+    person("Jeremy", "Gelb", email = "jeremy.gelb@ucs.inrs.ca",role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7114-2714")),
+    person("Philippe", "Apparicio", email="philippe.apparicio@ucs.inrs.ca", role=c("ctb"), comment = c(ORCID = "0000-0001-6466-9342"))
+    )
 Maintainer: Jeremy Gelb <jeremy.gelb@ucs.inrs.ca>
 Imports: 
     ggplot2 (>= 3.2.1),

@@ -24,6 +24,7 @@ bibentry(
   year         = "2021",
   organization = "LAEQ",
   url          = "https://github.com/JeremyGelb/geocmeans",
+  doi = "10.5281/zenodo.8316593",
   textVersion  =
   paste("Jeremy Gelb (2021).",
         "Package geocmeans.",

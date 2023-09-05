@@ -57,7 +57,8 @@
 #' queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-#' spConsistency(result$Belongings, nblistw = Wqueen, nrep=50)
+#' # NOTE : more replications are needed for proper inference
+#' spConsistency(result$Belongings, nblistw = Wqueen, nrep=25)
 spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj = FALSE, mindist = 1e-11) {
 
   if(inherits(object, "FCMres")){

@@ -79,5 +79,6 @@ dataset <- sf::st_drop_geometry(LyonIris[AnalysisFields])
 queen <- spdep::poly2nb(LyonIris,queen=TRUE)
 Wqueen <- spdep::nb2listw(queen,style="W")
 result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
-spConsistency(result$Belongings, nblistw = Wqueen, nrep=50)
+# NOTE : more replications are needed for proper inference
+spConsistency(result$Belongings, nblistw = Wqueen, nrep=25)
 }

@@ -174,3 +174,56 @@ Duration: 6m 48.8s
 **solution**: 
 
 The CITATION file was rewritten as suggested.
+
+
+# Version 0.3.4
+
+## Test environments
+
+* local R installation (windows), R Under development (unstable) (2023-08-21 r84998 ucrt) -- "Unsuffered Consequences"
+* GitHub Actions - (windows): release
+* rhub - (ubuntu): release
+* rhub - (macos): release
+
+── R CMD check results ───────────────────────────────────────────────────────────────────────────────────────────────── geocmeans 0.3.4 ────
+Duration: 6m 47.4s
+
+❯ checking installed package size ... NOTE
+    installed size is  7.7Mb
+    sub-directories of 1Mb or more:
+      doc       1.7Mb
+      extdata   3.0Mb
+      libs      1.4Mb
+
+0 errors ✔ | 0 warnings ✔ | 1 note ✖
+
+## Round 1, After automatic check
+
+**problem** : 
+
+```
+* checking S3 generic/method consistency ... NOTE
+Mismatches for methods registered for non-generic:
+is:
+  function(object, class2)
+is.FCMres:
+  function(x)
+See section ‘Registering S3 methods’ in the ‘Writing R Extensions’
+```
+
+**solution**:
+
+The is.FCMres method has now two parameters: object and class2. The documentation has also be changed.
+
+**problem** : 
+
+```
+* checking examples ... [65s/27s] NOTE
+Examples with CPU time > 2.5 times elapsed time
+               user system elapsed ratio
+spConsistency 1.925  0.056    0.58 3.416
+```
+
+**solution**:
+
+The example has been modified to take less time (25 replications instead of 50).

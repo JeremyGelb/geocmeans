@@ -4,10 +4,12 @@
 \alias{is.FCMres}
 \title{is method for FCMres}
 \usage{
-\method{is}{FCMres}(x)
+\method{is}{FCMres}(object, class2 = "FCMres")
 }
 \arguments{
-\item{x}{A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
+\item{object}{A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans}
+
+\item{class2}{Character string giving the names of the classe to test (usually "FCMres")}
 }
 \value{
 A boolean, TRUE if x can be considered as a FCMres object, FALSE otherwise

@@ -142,7 +142,8 @@ FCMres <- function(obj){
 #'
 #' @description Check if an object can be considered as a FCMres object
 #'
-#' @param x A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
+#' @param object A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans
+#' @param class2 Character string giving the names of the classe to test (usually "FCMres")
 #' @return A boolean, TRUE if x can be considered as a FCMres object, FALSE otherwise
 #'   group
 #' @importFrom methods is
@@ -157,8 +158,8 @@ FCMres <- function(obj){
 #' Wqueen <- spdep::nb2listw(queen,style="W")
 #' result <- SFCMeans(dataset, Wqueen,k = 5, m = 1.5, alpha = 1.5, standardize = TRUE)
 #' is(result, "FCMres")
-is.FCMres <- function(x){
-  attrs <- names(x)
+is.FCMres <- function(object, class2 = 'FCMres'){
+  attrs <- names(object)
 
   # the object must have this three attributes
   necessary <- c("Centers", "Belongings", "Data", "m", "algo")
@@ -168,18 +169,18 @@ is.FCMres <- function(x){
 
   # Data, Belongings and Centers must be coercible to matrices
   tryCatch({
-    as.matrix(x$Data)
-    as.matrix(x$Centers)
-    as.matrix(x$Belongings)
+    as.matrix(object$Data)
+    as.matrix(object$Centers)
+    as.matrix(object$Belongings)
     },error = function(e)return(FALSE))
 
   # the number of rows of Data and Belongings must match
-  if(nrow(x$Data) != nrow(x$Belongings)){
+  if(nrow(object$Data) != nrow(object$Belongings)){
     return(FALSE)
   }
 
   # the number of columns of Data and Centers must match
-  if(ncol(x$Data) != ncol(x$Centers)){
+  if(ncol(object$Data) != ncol(object$Centers)){
     return(FALSE)
   }
 

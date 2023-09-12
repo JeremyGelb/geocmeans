@@ -13,7 +13,7 @@ vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: geocmeans_references.bibtex
+bibliography: web_vignettes/geocmeans_references.bibtex
 link-citations: yes
 colorlinks: yes
 ---
@@ -24,7 +24,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This document is a short introduction to the package **geocmeans**. It implements fuzzy classification methods bringing spatial information and neighbouring in its calculation
+This document is a short introduction to the package **geocmeans**. It implements fuzzy classification methods bringing spatial information and neighbouring in its calculation.
+
+Note that more vignettes can be found on the website of the package: 
+
+* [asjuted version of the spatial inconsistency index](https://jeremygelb.github.io/geocmeans/articles/web_vignettes/adjustinconsistency.html)
+* [working with rasters](https://jeremygelb.github.io/geocmeans/articles/web_vignettes/rasters.html)
+* [working with FCMres objects](https://jeremygelb.github.io/geocmeans/articles/FCMres.html)
+* [optimizing parameters](https://jeremygelb.github.io/geocmeans/articles/web_vignettes/optimizing_parameters.html)
+* [advances examples](https://jeremygelb.github.io/geocmeans/articles/web_vignettes/advanced_examples.html)
 
 In their article, @cai2007fast described the method, originally applied in the analysis of brain imagery. The generalized version of the spatial fuzzy c-means is presented by @zhao2013kernel.
 
@@ -69,6 +77,9 @@ library(dplyr)
 library(viridis)
 library(spdep)
 library(tmap)
+
+spdep::set.mcOption(FALSE)
+spdep::set.coresOption(1L)
 
 data(LyonIris)
 
@@ -235,8 +246,6 @@ As expected, the results are very similar, but the generalized version provides 
 Now we can use the *SFCM* function to perform a spatial c-means. The first step is to define a spatial weight matrix indicating which observations are neighbours and the strength of their relationship. We propose here to use a basic queen neighbour matrix (built with **spdep**). The matrix must be row-standardized to ensure that the interpretation of all the parameters remains clear.
 
 ```{r message=FALSE, warning=FALSE}
-library(spdep)
-
 Neighbours <- poly2nb(LyonIris,queen = TRUE)
 WMat <- nb2listw(Neighbours,style="W",zero.policy = TRUE)
 ```
@@ -328,7 +337,7 @@ $$u_{ik} = \frac{(||x_{k} - v{_i}||^2 -\beta_k + \alpha||\bar{x_{k}} - v{_i}||^2
 Because we select a high resolution for our grid search of *alpha* and *beta*, we will use a multiprocessing approach.
 
 ```{r warning=FALSE, eval = FALSE}
-future::plan(future::multisession(workers=4))
+future::plan(future::multisession(workers=2))
 DFindices_SFGCM <- selectParameters.mc(algo = "SGFCM", data = Data,
                                k = 4, m = 1.5, alpha = seq(0,2,0.05),
                                beta = seq(0,0.85,0.05),
@@ -511,7 +520,7 @@ summarizeClusters(Data,
 # summary(SGFCM, Data)
 ```
 
-```{r warning=FALSE, eval = FALSE}
+```{r warning=FALSE}
 spiderPlots(Data, SGFCM$Belongings,
             chartcolors = c("darkorange3","grey4","darkgreen","royalblue"))
 violinPlots(Data, SGFCM$Groups)

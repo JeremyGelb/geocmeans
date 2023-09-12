@@ -13,7 +13,7 @@ vignette: >
   %\VignetteIndexEntry{Optimizing Parameters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: "../geocmeans_references.bibtex"
+bibliography: "geocmeans_references.bibtex"
 link-citations: yes
 colorlinks: yes
 ---
@@ -44,6 +44,8 @@ library(ggpubr, quietly = TRUE)
 library(tmap, quietly = TRUE)
 library(nsga2R, quietly = TRUE)
 library(plotly, quietly = TRUE)
+
+spdep::set.mcOption(FALSE)
 
 data(LyonIris)
 

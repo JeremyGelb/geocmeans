@@ -21,6 +21,7 @@ colorlinks: yes
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 ## Introduction
 
 This vignette is a short description of an adjusted version of the spatial inconsistency index proposed in the package **geocmeans**. For a published reference, please consider citing @gelb2021apport.
@@ -33,7 +34,7 @@ We proposed an index $S_{cr}$ to measure the spatial inconsistency of a classifi
 
 $$S_{cr}=\sum_{k=1}^{k} \sum_{l=1}^{l} w_{k l}\left\|u_{k}-u_{l}\right\|^{2}$$
 
-Because it is based on the euclidean distance, this index is related to the Gueary's C: 
+Because it is based on the euclidean distance, this index is related to the Gueary's C:
 
 $$C=\frac{(N-1) \sum_{k} \sum_{l} w_{k l}\left(x_{k}-x_{l}\right)^{2}}{2 W \sum_{k}\left(x_{k}-\bar{x}\right)^{2}}$$
 
@@ -49,6 +50,9 @@ It is easy to calculate this index with the package **geocmeans** using the func
 library(spdep)
 library(geocmeans)
 library(ggplot2)
+
+spdep::set.mcOption(FALSE)
+spdep::set.coresOption(1L)
 
 #preparing the data
 data("LyonIris")
@@ -75,20 +79,20 @@ SFCM <- SFCMeans(Data, WMat, k = 4, m = 1.5, alpha = 0.7,
 #calculating the spatial inconsistency index (more replications are recommended)
 consistIndex <- spConsistency(SFCM$Belongings, WMat, nrep = 100)
 
-ggplot() + 
+ggplot() +
   geom_histogram(aes(x = consistIndex$samples),
-                 bins = 30, fill = "white", color = "black") + 
+                 bins = 30, fill = "white", color = "black") +
   geom_vline(aes(xintercept = consistIndex$Mean),
-             color = "red", linetype="dashed", size = 1) + 
+             color = "red", linetype="dashed", size = 1) +
   geom_text(aes(x = consistIndex$Mean+0.0015, y = 43,
-                label = round(consistIndex$Mean,2))) + 
+                label = round(consistIndex$Mean,2))) +
   labs(x = "Spatial Inconsistency Index", y = "")
 ```
 So on average, for this classification, the spatial inconsistency index is about 0.18.
 
 ## Adjusted spatial inconsistency index
 
-The spatial inconsistency index presented above has two drawbacks : 
+The spatial inconsistency index presented above has two drawbacks :
 
 * first, as the number of clusters increases, the index will increase as well because more borders will be needed to delimit them in space.
 * second, two close observations should not have to belong to the same group if they are very dissimilar.
@@ -106,13 +110,13 @@ WMat2 <- adjustSpatialWeights(Data, WMat$neighbours, style = "C")
 # (more replications are recommanded)
 consistIndex2 <- spConsistency(SFCM$Belongings, WMat2, nrep = 100)
 
-ggplot() + 
+ggplot() +
   geom_histogram(aes(x = consistIndex2$samples),
-                 bins = 30, fill = "white", color = "black") + 
+                 bins = 30, fill = "white", color = "black") +
   geom_vline(aes(xintercept = consistIndex2$Mean),
-             color = "red", linetype="dashed", size = 1) + 
+             color = "red", linetype="dashed", size = 1) +
   geom_text(aes(x = consistIndex2$Mean+0.0015, y = 43,
-                label = round(consistIndex2$Mean,2))) + 
+                label = round(consistIndex2$Mean,2))) +
   labs(x = "Adjusted Spatial Inconsistency Index", y = "")
 ```
 

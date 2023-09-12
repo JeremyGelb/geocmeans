@@ -50,22 +50,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
-    </li>
-    <li>
-      <a href="../articles/FCMres.html">Creating a FCMres object</a>
-    </li>
-    <li>
       <a href="../articles/introduction.html">Spatial Fuzzy CMean with R</a>
     </li>
     <li>
-      <a href="../articles/rasters.html">Fuzzy clustering with rasters</a>
+      <a href="../articles/web_vignettes/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
     </li>
     <li>
       <a href="../articles/web_vignettes/advanced_examples.html">Advanced examples</a>
     </li>
     <li>
+      <a href="../articles/web_vignettes/FCMres.html">Creating a FCMres object</a>
+    </li>
+    <li>
       <a href="../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
+    </li>
+    <li>
+      <a href="../articles/web_vignettes/rasters.html">Fuzzy clustering with rasters</a>
     </li>
   </ul>
 </li>
@@ -111,7 +111,21 @@ Gelb</h4>
 </h2>
 <p>This document is a short introduction to the package
 <strong>geocmeans</strong>. It implements fuzzy classification methods
-bringing spatial information and neighbouring in its calculation</p>
+bringing spatial information and neighbouring in its calculation.</p>
+<p>Note that more vignettes can be found on the website of the
+package:</p>
+<ul>
+<li><a href="https://jeremygelb.github.io/geocmeans/articles/web_vignettes/adjustinconsistency.html" class="external-link">asjuted
+version of the spatial inconsistency index</a></li>
+<li><a href="https://jeremygelb.github.io/geocmeans/articles/web_vignettes/rasters.html" class="external-link">working
+with rasters</a></li>
+<li><a href="https://jeremygelb.github.io/geocmeans/articles/FCMres.html" class="external-link">working
+with FCMres objects</a></li>
+<li><a href="https://jeremygelb.github.io/geocmeans/articles/web_vignettes/optimizing_parameters.html" class="external-link">optimizing
+parameters</a></li>
+<li><a href="https://jeremygelb.github.io/geocmeans/articles/web_vignettes/advanced_examples.html" class="external-link">advances
+examples</a></li>
+</ul>
 <p>In their article, <span class="citation">Cai, Chen, and Zhang (<a href="#ref-cai2007fast" role="doc-biblioref">2007</a>)</span> described
 the method, originally applied in the analysis of brain imagery. The
 generalized version of the spatial fuzzy c-means is presented by <span class="citation">Zhao, Jiao, and Liu (<a href="#ref-zhao2013kernel" role="doc-biblioref">2013</a>)</span>.</p>
@@ -186,7 +200,13 @@ include Manhattan distance in a future release).</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/" class="external-link">spdep</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
+<span><span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/set.mcOption.html" class="external-link">set.mcOption</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] FALSE</span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/set.mcOption.html" class="external-link">set.coresOption</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## NULL</span></span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># selecting the columns for the analysis</span></span>
 <span><span class="va">AnalysisFields</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lden"</span>,<span class="st">"NO2"</span>,<span class="st">"PM25"</span>,<span class="st">"VegHautPrt"</span>,<span class="st">"Pct0_14"</span>,</span>
@@ -195,7 +215,7 @@ include Manhattan distance in a future release).</p>
 <span><span class="co"># rescaling the columns</span></span>
 <span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -203,7 +223,7 @@ include Manhattan distance in a future release).</p>
 </h2>
 <p>To explore the dataset and choose the right number of cluster/groups
 (k) we propose to start with a classical kmeans.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># finding the best k by using the r2 of the classification</span></span>
 <span><span class="co"># trying for k from 2 to 10</span></span>
 <span><span class="va">R2s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">10</span>,<span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">{</span></span>
@@ -231,7 +251,7 @@ of groups leads to a classification explaining only 43% of the original
 data variance. We decide to keep k=4 to have one more group in the
 analysis.</p>
 <p>Let us map the obtained groups.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">KMeanClust</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans</a></span><span class="op">(</span><span class="va">Data</span>,centers<span class="op">=</span><span class="fl">4</span>,iter.max <span class="op">=</span> <span class="fl">150</span><span class="op">)</span></span>
 <span><span class="va">LyonIris</span><span class="op">$</span><span class="va">Cluster</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"cluster"</span>,<span class="va">KMeanClust</span><span class="op">$</span><span class="va">cluster</span>,sep<span class="op">=</span><span class="st">"_"</span><span class="op">)</span></span>
 <span></span>
@@ -284,13 +304,13 @@ the cluster <span class="math inline">\(i\)</span>
 <li>
 <span class="math inline">\(m\)</span> the fuzziness index</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Cmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CMeans.html">CMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="fl">4</span>,<span class="fl">1.5</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span>, tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>We can now use the function <em>calcqualityIndexes</em> which
 combines many indices from the package <strong>fclust</strong> to
 analyze the quality of the classification. We will use these values
 later for the purpose of comparisons among the different algorithms.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/calcqualityIndexes.html">calcqualityIndexes</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">Cmean</span><span class="op">$</span><span class="va">Belongings</span>, m <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $Silhouette.index</span></span>
 <span><span class="co">## [1] 0.362851</span></span>
@@ -323,11 +343,11 @@ v||^2)\)</span> and <span class="math inline">\(0 \leq \beta \leq
 1\)</span>.</p>
 <p>To select an appropriate value for this parameter, we will try all
 the possible values between 0 and 1 with a step of 0.05.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">beta_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.html">selectParameters</a></span><span class="op">(</span><span class="st">"GFCM"</span>,data <span class="op">=</span> <span class="va">Data</span>, k <span class="op">=</span> <span class="fl">4</span>, m <span class="op">=</span> <span class="fl">1.5</span>,</span>
 <span>                                 beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0.05</span><span class="op">)</span>, spconsist <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                                 tol <span class="op">=</span> <span class="fl">0.00001</span>, seed <span class="op">=</span> <span class="fl">456</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">beta_values</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"beta"</span>,<span class="st">"Silhouette.index"</span>,<span class="st">"XieBeni.index"</span>,<span class="st">"Explained.inertia"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>             col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="st">"silhouette index"</span>,</span>
 <span>                           <span class="st">"Xie and Beni index"</span>, <span class="st">"explained inertia"</span><span class="op">)</span>,digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
@@ -470,7 +490,7 @@ the possible values between 0 and 1 with a step of 0.05.</p>
 <p>Considering the table above, we select <em>beta</em> = 0.7, it
 maintains a good silhouette index, and increases Xie and Beni index and
 explained inertia. Let us compare the results of GFCM and FCM.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GCmean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GCMeans.html">GCMeans</a></span><span class="op">(</span><span class="va">Data</span>,k <span class="op">=</span> <span class="fl">4</span>,m <span class="op">=</span> <span class="fl">1.5</span>, beta <span class="op">=</span> <span class="fl">0.7</span>,<span class="fl">500</span>,standardize <span class="op">=</span> <span class="cn">FALSE</span>, seed<span class="op">=</span><span class="fl">456</span>,</span>
 <span>                  tol <span class="op">=</span> <span class="fl">0.00001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">r1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcqualityIndexes.html">calcqualityIndexes</a></span><span class="op">(</span><span class="va">Data</span>,<span class="va">GCmean</span><span class="op">$</span><span class="va">Belongings</span>,m<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></span>
@@ -529,7 +549,7 @@ membership matrix, it will be labeled as “undecided” (represented with
 transparency on the map).</p>
 <p>We can compare the maps of the classical c-means and the generalized
 version.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cmeansMaps</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span><span class="va">LyonIris</span>,<span class="va">Cmean</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span><span class="va">GcmeansMaps</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span><span class="va">LyonIris</span>,<span class="va">GCmean</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span></span>
@@ -539,7 +559,7 @@ version.</p>
 Probability of belonging to cluster 1
 </p>
 </div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -547,7 +567,7 @@ Probability of belonging to cluster 1
 Probability of belonging to cluster 2
 </p>
 </div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -555,7 +575,7 @@ Probability of belonging to cluster 2
 Probability of belonging to cluster 3
 </p>
 </div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -563,7 +583,7 @@ Probability of belonging to cluster 3
 Probability of belonging to cluster 4
 </p>
 </div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,</span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -587,10 +607,8 @@ relationship. We propose here to use a basic queen neighbour matrix
 (built with <strong>spdep</strong>). The matrix must be row-standardized
 to ensure that the interpretation of all the parameters remains
 clear.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/" class="external-link">spdep</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Neighbours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">WMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">Neighbours</span>,style<span class="op">=</span><span class="st">"W"</span>,zero.policy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The main challenge with the SFCM method is to select the parameter
 <em>alpha</em>. It represents the weight of the spatial dimension
@@ -620,7 +638,7 @@ the degree of spatial smoothness. This smoothing can be interpreted as
 an attempt to reduce spatial overfitting of the classical c-means.</p>
 <p>To select <em>alpha</em>, we propose to check all possible values
 between 0 and 2 with a step of 0.05.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DFindices_SFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.html">selectParameters</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"SFCM"</span>, data <span class="op">=</span> <span class="va">Data</span>,</span>
 <span>                               k <span class="op">=</span> <span class="fl">4</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span>,<span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>                               nblistw <span class="op">=</span> <span class="va">WMat</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -647,7 +665,7 @@ details).</p>
 greater spatial consistency. 0 meaning that all observations have
 exactly the same values in the membership matrix as their neighbours
 (perfect spatial consistency).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFCM</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">spConsistency</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">spConsistency</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
@@ -660,7 +678,7 @@ Link between alpha and spatial inconsistency
 <p>Not surprisingly, increasing <em>alpha</em> leads to a decrease of
 the spatial inconsistency. This gain follows an inverse function.</p>
 <p>Let us now check the explained inertia</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFCM</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">Explained.inertia</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">Explained.inertia</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
@@ -677,7 +695,7 @@ the loss is very small here: only 3% between alpha = 0 and alpha =
 2.</p>
 <p>To finish here, we can observe the silhouette and Xie and Beni
 indicators.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFCM</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">Silhouette.index</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">Silhouette.index</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
@@ -686,7 +704,7 @@ indicators.</p>
 Link between alpha and silhouette index
 </p>
 </div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFCM</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">XieBeni.index</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">alpha</span>,y<span class="op">=</span><span class="va">XieBeni.index</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
@@ -702,7 +720,7 @@ indicates a better classification.</p>
 <p>After considering all the previous charts, we decide to keep alpha =
 0.7 as it seems to provide a good balance between spatial consistency
 and classification quality in this case.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">WMat</span>, k <span class="op">=</span> <span class="fl">4</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>                 tol <span class="op">=</span> <span class="fl">0.0001</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span><span class="op">)</span></span></code></pre></div>
@@ -723,14 +741,14 @@ v{_i}||^2)^{(-1/(m-1))}}{\sum_{j=1}^c(||x_{k} - v{_j}||^2 -\beta_k +
 <p>Because we select a high resolution for our grid search of
 <em>alpha</em> and <em>beta</em>, we will use a multiprocessing
 approach.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span><span class="op">(</span>workers<span class="op">=</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span><span class="op">(</span>workers<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">DFindices_SFGCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_parameters.mc.html">selectParameters.mc</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="st">"SGFCM"</span>, data <span class="op">=</span> <span class="va">Data</span>,</span>
 <span>                               k <span class="op">=</span> <span class="fl">4</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span>,<span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>                               beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.85</span>,<span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>                               nblistw <span class="op">=</span> <span class="va">WMat</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span>, chunk_size <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>                               tol <span class="op">=</span> <span class="fl">0.0001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFGCM</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">Silhouette.index</span><span class="op">)</span>,  size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -740,7 +758,7 @@ approach.</p>
 Impact of beta and alpha on silhouette index
 </p>
 </div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFGCM</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">XieBeni.index</span><span class="op">)</span>,  size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -750,7 +768,7 @@ Impact of beta and alpha on silhouette index
 Impact of beta and alpha on Xie and Beni index
 </p>
 </div>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DFindices_SFGCM</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha</span>, y <span class="op">=</span> <span class="va">beta</span>, fill <span class="op">=</span> <span class="va">spConsistency</span><span class="op">)</span>,  size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -768,12 +786,12 @@ spatial consistency.</p>
 <p>Considering the previous plots, we decide to retain the solution with
 <em>beta</em> = 0.65 and <em>alpha</em> = 0.95 which yield very good
 results for all the indices considered.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SGFCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SGFCMeans.html">SGFCMeans</a></span><span class="op">(</span><span class="va">Data</span>,<span class="va">WMat</span>,k <span class="op">=</span> <span class="fl">4</span>,m<span class="op">=</span><span class="fl">1.5</span>, alpha<span class="op">=</span><span class="fl">0.95</span>, beta <span class="op">=</span> <span class="fl">0.65</span>,</span>
 <span>                    tol<span class="op">=</span><span class="fl">0.0001</span>, standardize <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">456</span><span class="op">)</span></span></code></pre></div>
 <p>Again, we compare here the generalized and the classical version of
 the spatial c-means algorithm.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcqualityIndexes.html">calcqualityIndexes</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">SFCM</span><span class="op">$</span><span class="va">Belongings</span>,m <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
 <span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcqualityIndexes.html">calcqualityIndexes</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>,m <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
 <span></span>
@@ -836,7 +854,7 @@ the spatial c-means algorithm.</p>
 <p>The solution of the SGFCM is better on the semantic and the spatial
 aspects.</p>
 <p>We can compare the maps</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SFCMMaps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>geodata <span class="op">=</span> <span class="va">LyonIris</span>, object <span class="op">=</span> <span class="va">SFCM</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span><span class="va">SGFCMMaps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>geodata <span class="op">=</span> <span class="va">LyonIris</span>, object <span class="op">=</span> <span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span></span>
@@ -847,7 +865,7 @@ aspects.</p>
 Probability of belonging to cluster 1
 </p>
 </div>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -855,7 +873,7 @@ Probability of belonging to cluster 1
 Probability of belonging to cluster 2
 </p>
 </div>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -863,7 +881,7 @@ Probability of belonging to cluster 2
 Probability of belonging to cluster 3
 </p>
 </div>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -871,7 +889,7 @@ Probability of belonging to cluster 3
 Probability of belonging to cluster 4
 </p>
 </div>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -887,7 +905,7 @@ Most likely cluster and undecided units
 <p>Now, we can do a deeper spatial analysis and compare the spatial
 consistency of the four classifications realized (FCM, GFCM, SFCM,
 SGFCM).</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spdiag_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">Cmean</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">WMat</span>, nrep<span class="op">=</span><span class="fl">250</span><span class="op">)</span></span>
 <span><span class="va">spdiag_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">GCmean</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">WMat</span>, nrep<span class="op">=</span><span class="fl">250</span><span class="op">)</span></span>
 <span><span class="va">spdiag_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spatialDiag.html">spatialDiag</a></span><span class="op">(</span><span class="va">SFCM</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">WMat</span>, nrep<span class="op">=</span><span class="fl">250</span><span class="op">)</span></span>
@@ -948,14 +966,14 @@ matrix</caption>
 <p>Not surprisingly, the Moran I values calculated on the membership
 matrices are higher for SFCM and SGFCM, indicating stronger spatial
 structures in the classifications.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">spdiag_1</span><span class="op">$</span><span class="va">SpConsist</span>, <span class="va">spdiag_2</span><span class="op">$</span><span class="va">SpConsist</span>,<span class="va">spdiag_3</span><span class="op">$</span><span class="va">SpConsist</span>,<span class="va">spdiag_4</span><span class="op">$</span><span class="va">SpConsist</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.3344399 0.3933804 0.1837933 0.1713737</span></span></code></pre>
 <p>Considering the values of spatial inconsistency, we could check if
 the value obtained for SGFCM is significantly lower than the one of
 SFCM. Considering the previous 250 values obtained by permutations, we
 can calculate a pseudo p-value:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">spdiag_4</span><span class="op">$</span><span class="va">SpConsist</span> <span class="op">&gt;</span> <span class="va">spdiag_3</span><span class="op">$</span><span class="va">SpConsistSamples</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">spdiag_3</span><span class="op">$</span><span class="va">SpConsistSamples</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0</span></span></code></pre>
 <p>It appears that out of 250 permutations, the observed values of
@@ -965,7 +983,7 @@ difference is significant at the threshold 0.004 (=1/250)</p>
 entities should be analyzed more precisely. Selecting them is easy with
 the function <em>undecidedUnits</em> of the <strong>geocmeans</strong>
 package.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Undecided</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undecidedUnits.html">undecidedUnits</a></span><span class="op">(</span><span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>,<span class="fl">0.45</span><span class="op">)</span></span>
 <span><span class="va">LyonIris</span><span class="op">$</span><span class="va">FinalCluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">Undecided</span><span class="op">==</span><span class="st">"Undecided"</span>,</span>
 <span>                                <span class="st">"Undecided"</span>,<span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"cluster"</span>,<span class="va">Undecided</span>,sep<span class="op">=</span><span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
@@ -985,7 +1003,7 @@ package.</p>
 points. The idea is to draw random points in polygons and attribute them
 to a group proportionally to the membership values of the polygon the
 fall in.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"palegreen3"</span>,<span class="st">"firebrick"</span>,<span class="st">"lightyellow2"</span>,<span class="st">"steelblue"</span>,<span class="st">"pink"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/uncertaintyMap.html">uncertaintyMap</a></span><span class="op">(</span><span class="va">LyonIris</span>, <span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-38-1.png" width="700"></p>
@@ -994,7 +1012,7 @@ entropy index and use it as a measure of uncertainty with the function
 <code>calcUncertaintyIndex.</code> A value of 1 indicates that an
 observation has equal membership values among groups and a value of 0
 indicates that an observation belongs to only one group.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">LyonIris</span><span class="op">$</span><span class="va">entropyidx</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcUncertaintyIndex.html">calcUncertaintyIndex</a></span><span class="op">(</span><span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># mapping the uncertainty</span></span>
@@ -1026,7 +1044,7 @@ a given dataset. Observations must be grouped before.</li>
 <code>sp_clust_explorer</code>: launch a shiny app to investigate
 the results dynamically.</li>
 </ul>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/summarizeClusters.html">summarizeClusters</a></span><span class="op">(</span><span class="va">Data</span>,</span>
 <span>                  belongmatrix <span class="op">=</span> <span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>,</span>
@@ -1118,13 +1136,44 @@ the results dynamically.</li>
 <span><span class="co">## Q95  53.77      21802.5  </span></span>
 <span><span class="co">## Mean 38.608     16111.03 </span></span>
 <span><span class="co">## Std  11.927     3117.687</span></span></code></pre>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># equivalent to : </span></span>
 <span><span class="co"># summary(SGFCM, Data)</span></span></code></pre></div>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/spiderPlots.html">spiderPlots</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>,</span>
-<span>            chartcolors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"darkorange3"</span>,<span class="st">"grey4"</span>,<span class="st">"darkgreen"</span>,<span class="st">"royalblue"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/violinPlots.html">violinPlots</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">SGFCM</span><span class="op">$</span><span class="va">Groups</span><span class="op">)</span></span></code></pre></div>
+<span>            chartcolors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"darkorange3"</span>,<span class="st">"grey4"</span>,<span class="st">"darkgreen"</span>,<span class="st">"royalblue"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-1.png" width="700"><img src="introduction_files/figure-html/unnamed-chunk-41-2.png" width="700"><img src="introduction_files/figure-html/unnamed-chunk-41-3.png" width="700"><img src="introduction_files/figure-html/unnamed-chunk-41-4.png" width="700"><img src="introduction_files/figure-html/unnamed-chunk-41-5.png" width="700"></p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/violinPlots.html">violinPlots</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">SGFCM</span><span class="op">$</span><span class="va">Groups</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [[1]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-6.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[2]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-7.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[3]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-8.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[4]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-9.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[5]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-10.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[6]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-11.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[7]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-12.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[8]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-13.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[9]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-14.png" width="700"></p>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## [[10]]</span></span></code></pre>
+<p><img src="introduction_files/figure-html/unnamed-chunk-41-15.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="ensuring-clustering-stability">Ensuring clustering stability<a class="anchor" aria-label="anchor" href="#ensuring-clustering-stability"></a>
@@ -1134,15 +1183,15 @@ state that might influence the results. A good practice is to check the
 results to ensure that the groups obtained are stable if we replicate
 the analysis. The function <code>boost_group_validation</code> proposes
 an approach based on bootstrapping.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bootvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boot_group_validation.html">boot_group_validation</a></span><span class="op">(</span><span class="va">SGFCM</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, maxiter <span class="op">=</span> <span class="fl">1000</span>, </span>
 <span>                                     tol <span class="op">=</span> <span class="fl">0.0001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>We can now check if the groups are stable across simulations.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">melted_df</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">bootvalues</span><span class="op">$</span><span class="va">group_consistency</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## No id variables; using all as measure variables</span></span></code></pre>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/is.bool.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">melted_df</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1159,13 +1208,13 @@ presented case, the group 3 is more worisome with many Jacard values
 under 0.5.</p>
 <p>We can check the values of the centers of the group 3 across the 1000
 iterations.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_gp3</span> <span class="op">&lt;-</span> <span class="va">bootvalues</span><span class="op">$</span><span class="va">group_centers</span><span class="op">[[</span><span class="st">"group3"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">melted_df</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">df_gp3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## No id variables; using all as measure variables</span></span></code></pre>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/is.bool.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">melted_df</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1195,7 +1244,7 @@ of noise. When working with a classical vector dataset, one can use the
 function <code>adjustSpatialWeights</code> and create a row-standardized
 weight matrix using the inverse of the euclidean distance between
 observation and their neighbours as weights.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create the modified weight matrix</span></span>
 <span><span class="va">WMat_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/adjustSpatialWeights.html">adjustSpatialWeights</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">WMat</span><span class="op">$</span><span class="va">neighbours</span>, style <span class="op">=</span> <span class="st">"W"</span><span class="op">)</span></span>
 <span></span>

@@ -153,5 +153,5 @@ Please note that the `geocmeans` project is released with a [Contributor Code of
 
 ## License
 
-`geocmeans` version 0.3.2 is licensed under [GPL2 License](https://github.com/JeremyGelb/geocmeans/blob/master/LICENSE.txt).
+`geocmeans` version 0.3.4 is licensed under [GPL2 License](https://github.com/JeremyGelb/geocmeans/blob/master/LICENSE.txt).
 

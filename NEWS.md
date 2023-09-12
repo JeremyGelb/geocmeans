@@ -2,6 +2,8 @@
 
 Final update before resubmitting to CRAN and to JOSS
 
+Vignettes were removed from CRAN release considering the new NOTE raised and the absolute lack of insights on what could cause it.
+
 # geocmeans 0.3.3.9000
 
 Slight modification in the vignettes and documentation.

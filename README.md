@@ -194,5 +194,5 @@ By contributing to this project, you agree to abide by its terms.
 
 ## License
 
-`geocmeans` version 0.3.2 is licensed under [GPL2
+`geocmeans` version 0.3.4 is licensed under [GPL2
 License](https://github.com/JeremyGelb/geocmeans/blob/master/LICENSE.txt).

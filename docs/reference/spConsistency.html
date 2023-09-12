@@ -32,22 +32,22 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
-    </li>
-    <li>
-      <a href="../articles/FCMres.html">Creating a FCMres object</a>
-    </li>
-    <li>
       <a href="../articles/introduction.html">Spatial Fuzzy CMean with R</a>
     </li>
     <li>
-      <a href="../articles/rasters.html">Fuzzy clustering with rasters</a>
+      <a href="../articles/web_vignettes/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
     </li>
     <li>
       <a href="../articles/web_vignettes/advanced_examples.html">Advanced examples</a>
     </li>
     <li>
+      <a href="../articles/web_vignettes/FCMres.html">Creating a FCMres object</a>
+    </li>
+    <li>
       <a href="../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
+    </li>
+    <li>
+      <a href="../articles/web_vignettes/rasters.html">Fuzzy clustering with rasters</a>
     </li>
   </ul></li>
 <li>
@@ -166,7 +166,8 @@ solution able to reduce this index has a better spatial consistency</p>
 <span><span class="va">queen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html" class="external-link">poly2nb</a></span><span class="op">(</span><span class="va">LyonIris</span>,queen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">Wqueen</span> <span class="op">&lt;-</span> <span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/nb2listw.html" class="external-link">nb2listw</a></span><span class="op">(</span><span class="va">queen</span>,style<span class="op">=</span><span class="st">"W"</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="SFCMeans.html">SFCMeans</a></span><span class="op">(</span><span class="va">dataset</span>, <span class="va">Wqueen</span>,k <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">1.5</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">spConsistency</span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">Wqueen</span>, nrep<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># NOTE : more replications are needed for proper inference</span></span>
+<span><span class="fu">spConsistency</span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">Belongings</span>, nblistw <span class="op">=</span> <span class="va">Wqueen</span>, nrep<span class="op">=</span><span class="fl">25</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

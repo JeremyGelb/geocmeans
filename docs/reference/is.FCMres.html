@@ -32,22 +32,22 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
-    </li>
-    <li>
-      <a href="../articles/FCMres.html">Creating a FCMres object</a>
-    </li>
-    <li>
       <a href="../articles/introduction.html">Spatial Fuzzy CMean with R</a>
     </li>
     <li>
-      <a href="../articles/rasters.html">Fuzzy clustering with rasters</a>
+      <a href="../articles/web_vignettes/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
     </li>
     <li>
       <a href="../articles/web_vignettes/advanced_examples.html">Advanced examples</a>
     </li>
     <li>
+      <a href="../articles/web_vignettes/FCMres.html">Creating a FCMres object</a>
+    </li>
+    <li>
       <a href="../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
+    </li>
+    <li>
+      <a href="../articles/web_vignettes/rasters.html">Fuzzy clustering with rasters</a>
     </li>
   </ul></li>
 <li>
@@ -79,13 +79,17 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for FCMres</span></span>
-<span><span class="fu">is</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">is</span><span class="op">(</span><span class="va">object</span>, class2 <span class="op">=</span> <span class="st">"FCMres"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+    <dl><dt>object</dt>
 <dd><p>A FCMres object, typically obtained from functions CMeans, GCMeans, SFCMeans, SGFCMeans</p></dd>
+
+
+<dt>class2</dt>
+<dd><p>Character string giving the names of the classe to test (usually "FCMres")</p></dd>
 
 </dl></div>
     <div id="value">

@@ -227,3 +227,22 @@ spConsistency 1.925  0.056    0.58 3.416
 **solution**:
 
 The example has been modified to take less time (25 replications instead of 50).
+
+## Round 2, After automatic check
+
+**problem** : 
+
+```
+* checking re-building of vignette outputs ... [279s/99s] NOTE
+Re-building vignettes had CPU time 2.8 times elapsed time
+```
+
+**solution**:
+
+I tried to add the following code in each vignette to prevent spdep to use multiple cores on debian.
+
+```
+spdep::set.mcOption(FALSE)
+```
+
+Note that this solution did not work, so I removed all the vignettes from CRAN release. They will only be present on the package website from now.

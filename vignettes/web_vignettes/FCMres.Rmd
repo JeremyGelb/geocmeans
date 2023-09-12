@@ -40,6 +40,9 @@ library(spdep)
 library(terra)
 library(sf)
 
+spdep::set.mcOption(FALSE)
+spdep::set.coresOption(1L)
+
 data("LyonIris")
 
 # selecting the columns for the analysis

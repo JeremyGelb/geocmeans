@@ -28,6 +28,8 @@ cat(
 )
 ```
 [![Codecov test coverage](https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.svg)](https://app.codecov.io/gh/JeremyGelb/geocmeans?branch=master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8316593.svg)](https://doi.org/10.5281/zenodo.8316593)
+
 <!-- badges: end -->
 
 The website of the package is available [here](https://jeremygelb.github.io/geocmeans/)

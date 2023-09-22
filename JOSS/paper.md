@@ -25,7 +25,7 @@ affiliations:
 
 Unsupervised classification methods like *k-means* or the *Hierarchical Cluster Analysis* (HCA) are widely used in geography even though they are not well suited for spatial data [@romary2015unsupervised;] because they do not consider space. Yet, recent development has been proposed to include the geographical dimension into clustering. As an example, `ClustGeo` [@chavent2018clustgeo] is a spatial extension of the HAC, available in the R package with the same name. We present here the R package `geocmeans`, proposing several spatial extensions of the *Fuzzy C-Means* (FCM) algorithm to complete this growing toolbox with a fuzzy approach. The package provides also several helper functions to assess and compare quality of classifications, select appropriate hyperparameters, and interpret the final groups.
 
-![geocmeans logo.\label{fig:example}](../man/figures/geocmeans_logo.png){width="20%"}
+![geocmeans logo.\label{fig:logo}](../man/figures/geocmeans_logo.png){width="20%"}
 
 # Statement of need
 
@@ -44,7 +44,7 @@ Such methods have been discussed and applied in the brain imagery segmentation f
 
 The `geocmeans` package has been built to be self-sufficient and minimize the coding need from users. Thus, several helper functions are available along the main clustering algorithms to asses classification quality, select hyper parameters, test cluster robustness, and interpret results. It is also possible to use the results from external clustering algorithm to build `FCMres` objects and work with most of the functions of `geocmeans`.
 
-![geocmeans workflow.\label{fig:example}](../vignettes/images/workflow.png){width="40%"}
+![geocmeans workflow.\label{fig:workflow}](../vignettes/images/workflow.png){width="40%"}
 
 ## Main algorithm
 

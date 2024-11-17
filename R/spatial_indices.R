@@ -87,6 +87,13 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
     weights <- nblistw$weights
     neighbours <- nblistw$neighbours
     ## calcul de l'inconsistence spatiale actuelle
+
+    # we could aslo use the Aitchison distance (https://ima.udg.edu/~barcelo/index_archivos/Measures_of_difference__Clustering.pdf)
+    # this is simply done by calculating the clr transformation on the original data
+    # belongmat <- log(belongmat)
+    # belongmat <- sweep(belongmat, 1, rowMeans(belongmat), "-")
+    # belongmat <- as.matrix(belongmat)
+
     obsdev <- sapply(1:nrow(belongmat), function(i) {
       row <- belongmat[i, ]
       idneighbour <- neighbours[[i]]
@@ -95,6 +102,7 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
         neighbour <- t(as.matrix(neighbour))
       }
       W <- weights[[i]]
+      # we are using here the euclidean distance
       diff <- (neighbour-row[col(neighbour)])**2 * W
       tot <- sum(rowSums(diff))
       return(tot)
@@ -133,6 +141,9 @@ spConsistency <- function(object, nblistw = NULL, window = NULL, nrep = 999, adj
     rasters <- object$rasters[ok_names]
     matrices <- lapply(rasters, terra::as.matrix, wide = TRUE)
     mat_dim <- dim(matrices[[1]])
+
+
+    # applying the
 
     if(adj){
       dataset <- lapply(1:ncol(object$Data), function(ic){

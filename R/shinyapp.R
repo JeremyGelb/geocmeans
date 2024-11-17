@@ -250,7 +250,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
   ## prepare the leaflet maps in the first pannel ***************************************
 
   mymap <- leaflet(height = "600px") %>%
-    addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
+    addProviderTiles(leaflet::providers$Stadia.StamenTonerBackground, group = "Toner Lite", layerId = "back1") %>%
     addProviderTiles(leaflet::providers$OpenStreetMap, group = "Open Street Map", layerId = "back2")
 
   if(rasterMode == FALSE){
@@ -434,7 +434,7 @@ sp_clust_explorer <- function(object = NULL, spatial = NULL, membership = NULL, 
 
   ## preparing the map for the third pannel ***************************************
   uncertainMap <- leaflet(height = "600px") %>%
-    addProviderTiles(leaflet::providers$Stamen.TonerBackground, group = "Toner Lite", layerId = "back1") %>%
+    addProviderTiles(leaflet::providers$Stadia.StamenTonerBackground, group = "Toner Lite", layerId = "back1") %>%
     addProviderTiles(leaflet::providers$OpenStreetMap, group = "Open Street Map", layerId = "back2")
 
   if(rasterMode == FALSE){

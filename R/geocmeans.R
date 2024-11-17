@@ -16,9 +16,6 @@
 #' Several indices are provided to assess the quality of a classification on the
 #' semantic and spatial dimensions. To explore results, a shiny app is also
 #' available
-#'
-#'
-#' @docType package
-#' @name geocmeans
 #' @keywords internal
-NULL
+"_PACKAGE"
+

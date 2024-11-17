@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spatial Fuzzy CMean with R • geocmeans</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.1</span>
       </span>
     </div>
 
@@ -50,9 +50,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/introduction.html">Spatial Fuzzy CMean with R</a>
-    </li>
-    <li>
       <a href="../articles/web_vignettes/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
     </li>
     <li>
@@ -60,6 +57,9 @@
     </li>
     <li>
       <a href="../articles/web_vignettes/FCMres.html">Creating a FCMres object</a>
+    </li>
+    <li>
+      <a href="../articles/introduction.html">Spatial Fuzzy CMean with R</a>
     </li>
     <li>
       <a href="../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
@@ -126,13 +126,12 @@ parameters</a></li>
 <li><a href="https://jeremygelb.github.io/geocmeans/articles/web_vignettes/advanced_examples.html" class="external-link">advances
 examples</a></li>
 </ul>
-<p>In their article, <span class="citation">Cai, Chen, and Zhang (<a href="#ref-cai2007fast" role="doc-biblioref">2007</a>)</span> described
-the method, originally applied in the analysis of brain imagery. The
-generalized version of the spatial fuzzy c-means is presented by <span class="citation">Zhao, Jiao, and Liu (<a href="#ref-zhao2013kernel" role="doc-biblioref">2013</a>)</span>.</p>
-<p><span class="citation">Gelb and Apparicio (<a href="#ref-gelb2021apport" role="doc-biblioref">2021</a>)</span> applied
-the method to socio-residential and environmental data comparing the
-results with other unsupervised classification algorithms (in
-French).</p>
+<p>In their article, <span class="citation">Cai, Chen, and Zhang (<a href="#ref-cai2007fast">2007</a>)</span> described the method,
+originally applied in the analysis of brain imagery. The generalized
+version of the spatial fuzzy c-means is presented by <span class="citation">Zhao, Jiao, and Liu (<a href="#ref-zhao2013kernel">2013</a>)</span>.</p>
+<p><span class="citation">Gelb and Apparicio (<a href="#ref-gelb2021apport">2021</a>)</span> applied the method to
+socio-residential and environmental data comparing the results with
+other unsupervised classification algorithms (in French).</p>
 <p>There are actually numerous packages and functions to perform
 unsupervised classification in R (<em>hclust</em>, <em>kmeans</em>,
 <em>cmeans</em>, <em>factoextra</em>, etc.). However, these methods are
@@ -170,8 +169,8 @@ analysis of the final membership matrices:</p>
 algorithm with <strong>geocmeans</strong> is described with the
 following figure.</p>
 <center>
-<div class="figure">
-<img src="images/workflow.png" height="800" alt=""><p class="caption">Image Title</p>
+<div class="float">
+<img src="images/workflow.png" height="800" alt="Image Title"><div class="figcaption">Image Title</div>
 </div>
 </center>
 </div>
@@ -198,7 +197,7 @@ include Manhattan distance in a future release).</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/" class="external-link">spdep</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-tmap.github.io/tmap/" class="external-link">tmap</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/set.mcOption.html" class="external-link">set.mcOption</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] FALSE</span></span></code></pre>
@@ -214,8 +213,8 @@ include Manhattan distance in a future release).</p>
 <span></span>
 <span><span class="co"># rescaling the columns</span></span>
 <span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">[</span><span class="va">AnalysisFields</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">Col</span> <span class="kw">in</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[[</span><span class="va">Col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -256,13 +255,13 @@ analysis.</p>
 <span><span class="va">LyonIris</span><span class="op">$</span><span class="va">Cluster</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"cluster"</span>,<span class="va">KMeanClust</span><span class="op">$</span><span class="va">cluster</span>,sep<span class="op">=</span><span class="st">"_"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># mapping the groups</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span><span class="st">"Cluster"</span>, palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cluster_1"</span><span class="op">=</span><span class="st">"palegreen3"</span>,</span>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span><span class="st">"Cluster"</span>, palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cluster_1"</span><span class="op">=</span><span class="st">"palegreen3"</span>,</span>
 <span>                                 <span class="st">"cluster_2"</span><span class="op">=</span><span class="st">"firebrick"</span>,</span>
 <span>                                 <span class="st">"cluster_3"</span><span class="op">=</span><span class="st">"lightyellow2"</span>,</span>
 <span>                                 <span class="st">"cluster_4"</span><span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>legend.outside <span class="op">=</span> <span class="cn">TRUE</span>, frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-4-1.png" alt="Clusters identified by classical k-means" width="700"><p class="caption">
 Clusters identified by classical k-means
@@ -553,14 +552,14 @@ version.</p>
 <code class="sourceCode R"><span><span class="va">cmeansMaps</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span><span class="va">LyonIris</span>,<span class="va">Cmean</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span><span class="va">GcmeansMaps</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span><span class="va">LyonIris</span>,<span class="va">GCmean</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-10-1.png" alt="Probability of belonging to cluster 1" width="80%"><p class="caption">
 Probability of belonging to cluster 1
 </p>
 </div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-11-1.png" alt="Probability of belonging to cluster 2" width="80%"><p class="caption">
@@ -568,7 +567,7 @@ Probability of belonging to cluster 2
 </p>
 </div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-12-1.png" alt="Probability of belonging to cluster 3" width="80%"><p class="caption">
@@ -576,7 +575,7 @@ Probability of belonging to cluster 3
 </p>
 </div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-13-1.png" alt="Probability of belonging to cluster 4" width="80%"><p class="caption">
@@ -584,7 +583,7 @@ Probability of belonging to cluster 4
 </p>
 </div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">cmeansMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,<span class="va">GcmeansMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,</span>
 <span>          nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-14-1.png" alt="Most likely clusters and undecided units" width="80%"><p class="caption">
@@ -858,7 +857,7 @@ aspects.</p>
 <code class="sourceCode R"><span><span class="va">SFCMMaps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>geodata <span class="op">=</span> <span class="va">LyonIris</span>, object <span class="op">=</span> <span class="va">SFCM</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span><span class="va">SGFCMMaps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapClusters.html">mapClusters</a></span><span class="op">(</span>geodata <span class="op">=</span> <span class="va">LyonIris</span>, object <span class="op">=</span> <span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span>,undecided <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-28-1.png" alt="Probability of belonging to cluster 1" width="80%"><p class="caption">
@@ -866,7 +865,7 @@ Probability of belonging to cluster 1
 </p>
 </div>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-29-1.png" alt="Probability of belonging to cluster 2" width="80%"><p class="caption">
@@ -874,7 +873,7 @@ Probability of belonging to cluster 2
 </p>
 </div>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-30-1.png" alt="Probability of belonging to cluster 3" width="80%"><p class="caption">
@@ -882,7 +881,7 @@ Probability of belonging to cluster 3
 </p>
 </div>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ProbaMaps</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-31-1.png" alt="Probability of belonging to cluster 4" width="80%"><p class="caption">
@@ -890,7 +889,7 @@ Probability of belonging to cluster 4
 </p>
 </div>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">SFCMMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,<span class="va">SGFCMMaps</span><span class="op">$</span><span class="va">ClusterPlot</span>,</span>
 <span>             nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-32-1.png" alt="Most likely cluster and undecided units" width="80%"><p class="caption">
@@ -989,15 +988,15 @@ package.</p>
 <span>                                <span class="st">"Undecided"</span>,<span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"cluster"</span>,<span class="va">Undecided</span>,sep<span class="op">=</span><span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># mapping the groups</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span><span class="st">"FinalCluster"</span>, palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cluster_V1"</span><span class="op">=</span><span class="st">"palegreen3"</span>,</span>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span><span class="st">"FinalCluster"</span>, palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cluster_V1"</span><span class="op">=</span><span class="st">"palegreen3"</span>,</span>
 <span>                                 <span class="st">"cluster_V2"</span><span class="op">=</span><span class="st">"firebrick"</span>,</span>
 <span>                                 <span class="st">"cluster_V3"</span><span class="op">=</span><span class="st">"lightyellow2"</span>,</span>
 <span>                                 <span class="st">"cluster_V4"</span><span class="op">=</span><span class="st">"steelblue"</span>,</span>
 <span>                                 <span class="st">"cluster_V5"</span><span class="op">=</span><span class="st">"pink"</span>,</span>
 <span>                                 <span class="st">"Undecided"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0.4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>frame <span class="op">=</span> <span class="cn">FALSE</span>, legend.outside <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>frame <span class="op">=</span> <span class="cn">FALSE</span>, legend.outside <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-36-1.png" width="700"></p>
 <p>It is also possible to visualize the uncertainty by using jittered
 points. The idea is to draw random points in polygons and attribute them
@@ -1016,10 +1015,10 @@ indicates that an observation belongs to only one group.</p>
 <code class="sourceCode R"><span><span class="va">LyonIris</span><span class="op">$</span><span class="va">entropyidx</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calcUncertaintyIndex.html">calcUncertaintyIndex</a></span><span class="op">(</span><span class="va">SGFCM</span><span class="op">$</span><span class="va">Belongings</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># mapping the uncertainty</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span><span class="st">"entropyidx"</span>, palette <span class="op">=</span> <span class="st">"Greys"</span>, style <span class="op">=</span> <span class="st">"cont"</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>frame <span class="op">=</span> <span class="cn">FALSE</span>, legend.outside <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">LyonIris</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span><span class="st">"entropyidx"</span>, palette <span class="op">=</span> <span class="st">"Greys"</span>, style <span class="op">=</span> <span class="st">"cont"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_layout.html" class="external-link">tm_layout</a></span><span class="op">(</span>frame <span class="op">=</span> <span class="cn">FALSE</span>, legend.outside <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-39-1.png" width="700"></p>
 </div>
 <div class="section level2">
@@ -1191,7 +1190,7 @@ an approach based on bootstrapping.</p>
 <code class="sourceCode R"><span><span class="va">melted_df</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">bootvalues</span><span class="op">$</span><span class="va">group_consistency</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## No id variables; using all as measure variables</span></span></code></pre>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/is.bool.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">melted_df</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1214,7 +1213,7 @@ iterations.</p>
 <span><span class="va">melted_df</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">df_gp3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## No id variables; using all as measure variables</span></span></code></pre>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/is.bool.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">melted_df</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">melted_df</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1235,15 +1234,15 @@ very similar sub-groups.</p>
 </h3>
 <p>It has been proposed to modify the SFCM algorithm to include
 “non-local spatial information” instead of the information provided by
-close observations <span class="citation">(<a href="#ref-zhao2015multiobjective" role="doc-biblioref">Zhao, Liu, and
-Fan 2015</a>)</span>. Basically, this implies a modified spatial
-weighting scheme combining neighbouring and semantic distance. This way,
-more similar neighbours get more weights in the calculation of the
-lagged dataset which can be desirable in dataset characterized by a lot
-of noise. When working with a classical vector dataset, one can use the
-function <code>adjustSpatialWeights</code> and create a row-standardized
-weight matrix using the inverse of the euclidean distance between
-observation and their neighbours as weights.</p>
+close observations <span class="citation">(<a href="#ref-zhao2015multiobjective">Zhao, Liu, and Fan 2015</a>)</span>.
+Basically, this implies a modified spatial weighting scheme combining
+neighbouring and semantic distance. This way, more similar neighbours
+get more weights in the calculation of the lagged dataset which can be
+desirable in dataset characterized by a lot of noise. When working with
+a classical vector dataset, one can use the function
+<code>adjustSpatialWeights</code> and create a row-standardized weight
+matrix using the inverse of the euclidean distance between observation
+and their neighbours as weights.</p>
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create the modified weight matrix</span></span>
 <span><span class="va">WMat_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/adjustSpatialWeights.html">adjustSpatialWeights</a></span><span class="op">(</span><span class="va">Data</span>, <span class="va">WMat</span><span class="op">$</span><span class="va">neighbours</span>, style <span class="op">=</span> <span class="st">"W"</span><span class="op">)</span></span>
@@ -1285,7 +1284,7 @@ defining the convergence criterion)</li>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-cai2007fast" class="csl-entry">
 Cai, Weiling, Songcan Chen, and Daoqiang Zhang. 2007. <span>“Fast and
 Robust Fuzzy c-Means Clustering Algorithms Incorporating Local
@@ -1329,7 +1328,7 @@ Spatial Fuzzy Clustering Algorithm for Image Segmentation.”</span>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

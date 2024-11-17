@@ -74,7 +74,7 @@ boot_group_validation <- function(object, nsim = 1000, maxiter = 1000, tol = 0.0
         rast <- object$rasters[[1]]
         vec <- rep(NA, times = terra::ncell(rast))
         vec[object$missing] <- object$Data[,i]
-        terra::values(rast, mat = FALSE) <- vec
+        terra::values(rast) <- vec
         return(rast)
       })
       wdata <- calcWdataRaster(object$window, dataset, object$lag_method, object$missing)
@@ -244,7 +244,7 @@ boot_group_validation.mc <- function(object, nsim = 1000, maxiter = 1000, tol = 
         rast <- object$rasters[[1]]
         vec <- rep(NA, times = terra::ncell(rast))
         vec[object$missing] <- object$Data[,i]
-        terra::values(rast, mat = FALSE) <- vec
+        terra::values(rast) <- vec
         return(rast)
       })
       wdata <- calcWdataRaster(object$window, dataset, object$lag_method, object$missing)

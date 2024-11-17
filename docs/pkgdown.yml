@@ -1,12 +1,12 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: '3.2'
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  introduction: introduction.html
   adjustinconsistency: web_vignettes/adjustinconsistency.html
   advanced_examples: web_vignettes/advanced_examples.html
   FCMres: web_vignettes/FCMres.html
+  introduction: introduction.html
   optimizing_parameters: web_vignettes/optimizing_parameters.html
   rasters: web_vignettes/rasters.html
-last_built: 2023-09-12T01:47Z
+last_built: 2024-11-17T00:03Z
 

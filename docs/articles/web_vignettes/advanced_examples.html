@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advanced examples • geocmeans</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../../bootstrap-toc.css">
 <script src="../../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.1</span>
       </span>
     </div>
 
@@ -50,9 +50,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../../articles/introduction.html">Spatial Fuzzy CMean with R</a>
-    </li>
-    <li>
       <a href="../../articles/web_vignettes/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
     </li>
     <li>
@@ -60,6 +57,9 @@
     </li>
     <li>
       <a href="../../articles/web_vignettes/FCMres.html">Creating a FCMres object</a>
+    </li>
+    <li>
+      <a href="../../articles/introduction.html">Spatial Fuzzy CMean with R</a>
     </li>
     <li>
       <a href="../../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
@@ -118,22 +118,22 @@ Gelb</h4>
 </h3>
 <p>It has been proposed to modify the SFCM algorithm to include
 “non-local spatial information” instead of the information provided by
-close observations <span class="citation">(<a href="#ref-zhao2015multiobjective" role="doc-biblioref">Zhao, Liu, and
-Fan 2015</a>)</span>. Basically, this implies a modified spatial
-weighting scheme combining neighbouring and semantic distance. This way,
-more similar neighbours get more weights in the calculation of the
-lagged dataset which can be desirable in dataset characterized by a lot
-of noise. When working with a classical vector dataset, one can use the
-function <code>adjustSpatialWeights</code> and create a row-standardized
-weight matrix using the inverse of the euclidean distance between
-observation and their neighbours as weights.</p>
+close observations <span class="citation">(<a href="#ref-zhao2015multiobjective">Zhao, Liu, and Fan 2015</a>)</span>.
+Basically, this implies a modified spatial weighting scheme combining
+neighbouring and semantic distance. This way, more similar neighbours
+get more weights in the calculation of the lagged dataset which can be
+desirable in dataset characterized by a lot of noise. When working with
+a classical vector dataset, one can use the function
+<code>adjustSpatialWeights</code> and create a row-standardized weight
+matrix using the inverse of the euclidean distance between observation
+and their neighbours as weights.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeremyGelb/geocmeans" class="external-link">geocmeans</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/" class="external-link">spdep</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rpkgs.datanovia.com/ggpubr/" class="external-link">ggpubr</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-tmap.github.io/tmap/" class="external-link">tmap</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">spdep</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/spdep/reference/set.mcOption.html" class="external-link">set.mcOption</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] FALSE</span></span></code></pre>
@@ -213,8 +213,8 @@ a lower explained inertia.</p>
 </h3>
 <p>It is possible to obtain a “robust” version of the FCM algorithm by
 normalizing the calculated distances between the centres of the groups
-and the observations by the spread of the centres <span class="citation">(<a href="#ref-tsai2011fuzzy" role="doc-biblioref">Tsai
-and Lin 2011</a>)</span>. With this modification, the algorithm can find
+and the observations by the spread of the centres <span class="citation">(<a href="#ref-tsai2011fuzzy">Tsai and Lin
+2011</a>)</span>. With this modification, the algorithm can find
 clusters with different densities.</p>
 <p>We illustrate this with a simple example, let us consider the
 following dataset with two clusters.</p>
@@ -371,7 +371,7 @@ considered as a well defined cluster, but as a group of outliers.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-tsai2011fuzzy" class="csl-entry">
 Tsai, Du-Ming, and Chung-Chan Lin. 2011. <span>“Fuzzy c-Means Based
 Clustering for Linearly and Nonlinearly Separable Data.”</span>
@@ -403,7 +403,7 @@ Spatial Fuzzy Clustering Algorithm for Image Segmentation.”</span>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

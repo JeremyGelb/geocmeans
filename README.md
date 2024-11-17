@@ -8,11 +8,13 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JeremyGelb/geocmeans/actions/workflows/R-CMD-check.yaml)
-[![](https://img.shields.io/badge/devel%20version-0.3.4-green.svg)](https://github.com/JeremyGelb/geocmeans)
+[![](https://img.shields.io/badge/devel%20version-0.3.4.1-green.svg)](https://github.com/JeremyGelb/geocmeans)
 [![](https://www.r-pkg.org/badges/version/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/geocmeans?color=blue)](https://cran.r-project.org/package=geocmeans)
 [![Codecov test
 coverage](https://codecov.io/gh/JeremyGelb/geocmeans/branch/master/graph/badge.svg)](https://app.codecov.io/gh/JeremyGelb/geocmeans?branch=master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8316593.svg)](https://doi.org/10.5281/zenodo.8316593)
+
 <!-- badges: end -->
 
 The website of the package is available
@@ -144,8 +146,12 @@ There is also a shiny app that can be used to go deeper in the result
 interpretation. It requires the packages `shiny`, `leaflet`, `bslib`,
 `plotly`, `shinyWidgets`, `car`.
 
-![Alt
-Text](https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif)
+<figure>
+<img
+src="https://raw.githubusercontent.com/JeremyGelb/geocmeans/master/.github/gif/app_viz.gif"
+alt="Alt Text" />
+<figcaption aria-hidden="true">Alt Text</figcaption>
+</figure>
 
 #### Spatial diagnostic
 

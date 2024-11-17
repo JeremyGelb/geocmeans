@@ -41,7 +41,7 @@ $$C=\frac{(N-1) \sum_{k} \sum_{l} w_{k l}\left(x_{k}-x_{l}\right)^{2}}{2 W \sum_
 We also propose to standardize this sum by the total spatial inconsistency under the assumption of total spatial randomness (obtained by repeated permutation). A small value of this index indicates a strong spatial consistency as observations tend to belong to the same clusters as their neighbours. A value close to one indicates that the spatial inconsistency of the classification is close to what one can expect from a situation of total spatial randomness.
 
 <center>
-![Image Title](images/spinconsistency.png){width=400px}
+![spatial consistency](../images/spinconsistency.png){width=400px}
 </center>
 
 It is easy to calculate this index with the package **geocmeans** using the function `spConsistency`

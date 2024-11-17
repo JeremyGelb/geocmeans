@@ -1,3 +1,7 @@
+# geocmeans 0.3.4.1
+
+Minor bug correction (issue #8)
+
 # geocmeans 0.3.4
 
 Final update before resubmitting to CRAN and to JOSS

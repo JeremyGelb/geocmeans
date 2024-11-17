@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>An adjusted spatial inconsistency index • geocmeans</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../../bootstrap-toc.css">
 <script src="../../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">geocmeans</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.1</span>
       </span>
     </div>
 
@@ -50,9 +50,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../../articles/introduction.html">Spatial Fuzzy CMean with R</a>
-    </li>
-    <li>
       <a href="../../articles/web_vignettes/adjustinconsistency.html">An adjusted spatial inconsistency index</a>
     </li>
     <li>
@@ -60,6 +57,9 @@
     </li>
     <li>
       <a href="../../articles/web_vignettes/FCMres.html">Creating a FCMres object</a>
+    </li>
+    <li>
+      <a href="../../articles/introduction.html">Spatial Fuzzy CMean with R</a>
     </li>
     <li>
       <a href="../../articles/web_vignettes/optimizing_parameters.html">Optimizing Parameters</a>
@@ -112,7 +112,7 @@ Gelb</h4>
 <p>This vignette is a short description of an adjusted version of the
 spatial inconsistency index proposed in the package
 <strong>geocmeans</strong>. For a published reference, please consider
-citing <span class="citation">Gelb and Apparicio (<a href="#ref-gelb2021apport" role="doc-biblioref">2021</a>)</span>.</p>
+citing <span class="citation">Gelb and Apparicio (<a href="#ref-gelb2021apport">2021</a>)</span>.</p>
 <p>Most of the time, data with a spatial component show an
 autocorrelated structure: close observations tend to be more similar
 than distant ones. Classical unsupervised classification algorithms do
@@ -145,8 +145,8 @@ as their neighbours. A value close to one indicates that the spatial
 inconsistency of the classification is close to what one can expect from
 a situation of total spatial randomness.</p>
 <center>
-<div class="figure">
-<img src="images/spinconsistency.png" width="400" alt=""><p class="caption">Image Title</p>
+<div class="float">
+<img src="../images/spinconsistency.png" width="400" alt="spatial consistency"><div class="figcaption">spatial consistency</div>
 </div>
 </center>
 <p>It is easy to calculate this index with the package
@@ -251,7 +251,7 @@ index.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-gelb2021apport" class="csl-entry">
 Gelb, Jérémy, and Philippe Apparicio. 2021. <span>“Apport de La
 Classification Floue c-Means Spatiale En g<span>é</span>ographie: Essai
@@ -279,7 +279,7 @@ Geography</em>.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

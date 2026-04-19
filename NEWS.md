@@ -1,3 +1,7 @@
+# geocmeans 0.3.4.1.9000
+
+Minor edits in documentation
+
 # geocmeans 0.3.4.1
 
 Minor bug correction (issue #8)
